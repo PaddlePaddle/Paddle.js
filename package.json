@@ -1,0 +1,15 @@
+{
+  "name": "paddle-web-demo",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "echo \"Please implement your build script and modify scripts.build section in package.json\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://yangyanzhan@icode.baidu.com:8235/baidu/mms/paddle-web-demo"
+  },
+  "author": "yangyanzhan",
+  "license": "UNLICENSED"
+}

@@ -139,7 +139,7 @@ export default class gpu {
      * 更新材质
      * @param {WebGLTexture}    texture 材质对象
      * @param {number}          type    材质类型. FLOAT, UNSIGNED_BYTE, etc.
-     * @param {number[]}        data    材质数据
+     * @param {Float32Array[]}        data    材质数据
      */
     refreshTexture(texture, type, data) {
         const gl = this.gl;

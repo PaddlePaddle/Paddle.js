@@ -1,0 +1,43 @@
+/**
+ * @file 广播类
+ * @author yangmingming
+ */
+
+export function getBroadcastDims(inShape = [], outShape = []) {
+    const inRank = inShape.length;
+    const dims = [];
+    for (let i = 0; i < inRank; i++) {
+        const dim = inRank - 1 - i;
+        const a = inShape[dim] || 1;
+        const b = outShape[outShape.length - 1 - i] || 1;
+        if (b > 1 && a === 1) {
+            dims.unshift(dim);
+        }
+    }
+    return dims;
+};
+
+export function getBroadcastShape(shapeA = [], shapeB = []) {
+    const result = [];
+    const max = Math.max(shapeA.length, shapeB.length);
+    for (let i = 0; i < max; i++) {
+        let a = shapeA[shapeA.length - i - 1];
+        if (a === null) {
+            a = 1;
+        }
+        let b = shapeB[shapeB.length - i - 1];
+        if (b === null) {
+            b = 1;
+        }
+        if (a === 1) {
+            result.unshift(b);
+        } else if (b === 1) {
+            result.unshift(a);
+        } else if (a !== b) {
+            return null;
+        } else {
+            result.unshift(a);
+        }
+    }
+    return result;
+};

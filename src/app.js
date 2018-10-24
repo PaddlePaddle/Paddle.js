@@ -39,7 +39,7 @@ const ops = {
 
 function createTexture(vinfo) {
   const dim = [1, 1, 1, 1]
-  for (i = 4 - vinfo.dim.length; i < 4; i++) {
+  for (let i = 4 - vinfo.dim.length; i < 4; i++) {
     dim[i] = vinfo.dim[i-vinfo.dim.length]
     if (dim[i] < 0) dim[i] = 1
   }

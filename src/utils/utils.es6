@@ -56,7 +56,7 @@ export default {
         for (let i = 0; i < total; i++) {
             rData.push(pixelData[i * 4 + 0]);
             gData.push(pixelData[i * 4 + 1]);
-            bData.push(pixelData[i * 4 + 2])
+            bData.push(pixelData[i * 4 + 2]);
         }
         return rData.concat(gData).concat(bData);
     }

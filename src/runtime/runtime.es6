@@ -9,6 +9,21 @@ import Gpu from '../gpu/gpu';
 const VSHADER = 'v_shader';
 export default {
     /**
+     * 引入资源
+     * @param {string} url 图片地址
+     */
+    create(url) {
+        return new Promise(resolve => {
+            const img = new Image();
+            img.onload = function () {
+                console.log('raw width = ' + this.width + ', raw height = ' + this.height);
+                resolve(Utils.imgCompress(img, {w: 227, h: 227}));
+            };
+            img.src = url;
+        });
+    },
+
+    /**
      * 初始化
      * @param opts 运行时参数，包含el：canvas，dim: 256
      * @return {object}
@@ -27,6 +42,11 @@ export default {
      */
     compute() {
         return this.gpu.compute();
+    },
+
+    // 生成feed数据
+    feed(pixelData, size) {
+        return Utils.splitData(pixelData, size);
     },
 
     // 更新op

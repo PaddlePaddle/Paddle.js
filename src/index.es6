@@ -5,7 +5,7 @@ import Runtime from './runtime/runtime';
  * @author yangmingming
  *
  */
-const shapeA = [1, 3, 227, 227];
+const shapeA = [1, 3, 256, 256];
 const shapeB = [3];
 const imgUrl = require('./banana.jpeg');
 let shapeAData;
@@ -15,7 +15,7 @@ let inst;
 // 执行运行op
 Runtime.init().then(instance => {
     inst = instance;
-    return inst.create(imgUrl);
+    return inst.create(imgUrl, shapeA);
 }).then(data => {
     console.log('原始图片数据长度是：' + data.data.length);
     return inst.feed(data.data, {
@@ -23,9 +23,9 @@ Runtime.init().then(instance => {
         h: data.height
     });
 }).then(data => {
-    // 生成feed数据[-1, 3, 227, 227]
+    // 生成feed数据[-1, 3, 256, 256]
     shapeAData = new Float32Array(data);
-    console.dir(['图片过滤（227 * 227）后的长度是：' + shapeAData.length, shapeAData]);
+    console.dir(['图片过滤（256 * 256）后的长度是：' + shapeAData.length, shapeAData]);
 }).then(() => {
     // 生成shapeB的数据
     shapeBData = inst.mockShapeB(shapeA, shapeB);

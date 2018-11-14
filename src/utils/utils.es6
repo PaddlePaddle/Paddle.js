@@ -56,6 +56,8 @@ export default {
         for (let i = 0; i <= axis; i++) {
             result = result.concat(this.buildSameArray(total, bufferDataB[i]));
         }
+        // 添加alpha channel
+        result = result.concat(this.buildSameArray(total, 0));
         return result;
     },
 
@@ -120,12 +122,14 @@ export default {
         const rData = [];
         const gData = [];
         const bData = [];
+        const aData = [];
         for (let i = 0; i < total; i++) {
             rData.push(pixelData[i * 4 + 0]);
             gData.push(pixelData[i * 4 + 1]);
             bData.push(pixelData[i * 4 + 2]);
+            aData.push(0);
         }
-        return rData.concat(gData).concat(bData);
+        return rData.concat(gData).concat(bData).concat(aData);
     }
 };
 

@@ -8,9 +8,12 @@ export default class gpu {
         let size = this.dim = opts.dim ? opts.dim : 256;
         canvas.width = size;
         canvas.height = size;
-        this.gl = canvas.getContext('webgl');
+        this.gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        // Attempt to activate the extension, returns null if unavailable
+        let textureFloat  = this.gl.getExtension('OES_texture_float');
+        console.log('float extension is started or not? ' + !!textureFloat);
         // 设置对齐方式
-        this.gl.pixelStorei(this.gl.UNPACK_ALIGNMENT, 1);
+        // this.gl.pixelStorei(this.gl.UNPACK_ALIGNMENT, 1);
     }
 
     create(vshaderCode, fshaderCode) {
@@ -27,12 +30,19 @@ export default class gpu {
 
         // 传输点数据
         let vertices = new Float32Array([-1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0]);
+        /*let vertices = new Float32Array([-1.0,  1.0, 0.0, 0.0, 1.0,
+            -1.0, -1.0, 0.0, 0.0, 0.0,
+            1.0,  1.0, 0.0, 1.0, 1.0,
+            1.0, -1.0, 0.0, 1.0, 0.0]);*/
         let vertexBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
         let aPosition = gl.getAttribLocation(program, 'position');
         gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(aPosition);
+
+        gl.clearColor(.0, .0, .0, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
     }
 
     /**
@@ -85,11 +95,11 @@ export default class gpu {
         frameBuffer = gl.createFramebuffer();
         // Make it the target for framebuffer operations - including rendering.
         gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
-        gl.framebufferTexture2D(gl.FRAMEBUFFER,       // The target is always a FRAMEBUFFER.
+        /*gl.framebufferTexture2D(gl.FRAMEBUFFER,       // The target is always a FRAMEBUFFER.
             gl.COLOR_ATTACHMENT0, // We are providing the color buffer.
             gl.TEXTURE_2D,        // This is a 2D image texture.
             texture,              // The texture.
-            0);                   // 0, we aren't using MIPMAPs
+            0);                   // 0, we aren't using MIPMAPs*/
         return frameBuffer;
     }
 
@@ -186,8 +196,9 @@ export default class gpu {
         /*gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, this.dim, this.dim, 0,
             gl.RGBA, gl.FLOAT, bufferData, 0);*/
         // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.FLOAT, bufferData);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, this.dim, this.dim, 0,
-            gl.RGB, gl.FLOAT, bufferData, 0);
+        gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, this.dim, this.dim, 0,
+            gl.RGBA, gl.FLOAT, bufferData, 0);
         gl.uniform1i(this.getUniformLoc(tSampler), index);
     }
 
@@ -212,7 +223,7 @@ export default class gpu {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.generateMipmap(gl.TEXTURE_2D);
+        // gl.generateMipmap(gl.TEXTURE_2D);
 
         gl.uniform1i(uMap, 0);
     }
@@ -220,7 +231,7 @@ export default class gpu {
     render(bufferA, bufferB) {
         const gl = this.gl;
         const program = this.program;
-        let frameBuffer = this.attachFrameBuffer();
+        // let frameBuffer = this.attachFrameBuffer();
         // this.makeTexure(bufferData);
         if (!!bufferA) {
             this.initTexture(0, 'mapA', bufferA);
@@ -228,17 +239,20 @@ export default class gpu {
         if (!!bufferB) {
             this.initTexture(1, 'mapB', bufferB);
         }
-        gl.useProgram(program);
+        // gl.useProgram(program);
         // 绘制
-        gl.clearColor(0, 0, 0, 1);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-        gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+        // gl.clearColor(.2, 0, 0, 1);
+        // gl.clear(gl.COLOR_BUFFER_BIT);
+        // gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
     compute() {
         let gl = this.gl;
-        let pixels = new Float32Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 3);
-        gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGB, gl.FLOAT, pixels);
+        let pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+        gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+        console.dir(['framebuffer状态', this.frameBufferIsComplete()]);
+        gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels, 0);
 
         return pixels;
     }

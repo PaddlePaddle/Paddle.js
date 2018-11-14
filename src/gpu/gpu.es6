@@ -3,12 +3,14 @@
  * @author yangmingming
  */
 export default class gpu {
-    construnctor(opts = {}) {
+    constructor(opts = {}) {
         let canvas = opts.el ? opts.el : document.createElement('canvas');
         let size = this.dim = opts.dim ? opts.dim : 256;
         canvas.width = size;
         canvas.height = size;
         this.gl = canvas.getContext('webgl');
+        // 设置对齐方式
+        this.gl.pixelStorei(this.gl.UNPACK_ALIGNMENT, 1);
     }
 
     create(vshaderCode, fshaderCode) {
@@ -153,7 +155,7 @@ export default class gpu {
             0,             // yOffset
             this.dim,  // Width - normalized to s.
             this.dim, // Height - normalized to t.
-            gl.RGBA,       // Format for each pixel.
+            gl.RGB,       // Format for each pixel.
             type,          // Data type for each chanel.
             data);         // Image data in the described format.
 
@@ -161,6 +163,38 @@ export default class gpu {
         gl.bindTexture(gl.TEXTURE_2D, null);
 
         return texture;
+    }
+
+    /**
+     * 初始化材质
+     * @param {int} index 材质索引
+     * @param {string} tSampler 材质名称
+     * @param {Object} bufferData 数据
+     */
+    initTexture(index, tSampler, bufferData) {
+        const gl = this.gl;
+        const texture = gl.createTexture();
+        gl.activeTexture(gl[`TEXTURE${index}`]);
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+        // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.FLOAT, bufferData);
+        /*gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, this.dim, this.dim, 0,
+            gl.RGBA, gl.FLOAT, bufferData, 0);*/
+        // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.FLOAT, bufferData);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, this.dim, this.dim, 0,
+            gl.RGB, gl.FLOAT, bufferData, 0);
+        gl.uniform1i(this.getUniformLoc(tSampler), index);
+    }
+
+    getUniformLoc(name) {
+        let loc = this.gl.getUniformLocation(this.program, name);
+        if (loc === null) throw `getUniformLoc ${name} err`;
+        return loc;
     }
 
     makeTexure(bufferData) {
@@ -173,7 +207,7 @@ export default class gpu {
         gl.bindTexture(gl.TEXTURE_2D, texture);
 
 
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.FLOAT, bufferData);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.FLOAT, bufferData);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -183,11 +217,17 @@ export default class gpu {
         gl.uniform1i(uMap, 0);
     }
 
-    render(bufferData) {
+    render(bufferA, bufferB) {
         const gl = this.gl;
         const program = this.program;
         let frameBuffer = this.attachFrameBuffer();
-        this.makeTexure(bufferData);
+        // this.makeTexure(bufferData);
+        if (!!bufferA) {
+            this.initTexture(0, 'mapA', bufferA);
+        }
+        if (!!bufferB) {
+            this.initTexture(1, 'mapB', bufferB);
+        }
         gl.useProgram(program);
         // 绘制
         gl.clearColor(0, 0, 0, 1);
@@ -197,8 +237,8 @@ export default class gpu {
 
     compute() {
         let gl = this.gl;
-        let pixels = new Float32Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
-        gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.FLOAT, pixels);
+        let pixels = new Float32Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 3);
+        gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGB, gl.FLOAT, pixels);
 
         return pixels;
     }

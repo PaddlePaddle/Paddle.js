@@ -4,11 +4,11 @@
     precision mediump float;
 #endif
 varying vec2 vCoord;
-uniform sampler2D map;
+uniform sampler2D mapA;
+uniform sampler2D mapB;
 
 void main(void) {
-    vec4 color = texture2D(map, vCoord);
-    // 数据分别在r和g channel
-    color.r += color.g;
-    gl_FragColor = color;
+    vec4 colorA = texture2D(mapA, vCoord);
+    vec4 colorB = texture2D(mapB, vCoord);
+    gl_FragColor = vec4(colorA.r + colorB.r, colorA.g + colorB.g, colorA.b + colorB.b, colorA.a + colorB.a);
 }

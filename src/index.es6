@@ -15,7 +15,7 @@ let inst;
 // 执行运行op
 Runtime.init().then(instance => {
     if (!instance || typeof instance === 'string') {
-        throw new Error(instance || "不支持float texture");
+        throw new Error(instance || '不支持float texture');
     }
     inst = instance;
     return inst.create(imgUrl, shapeA);

@@ -31,11 +31,24 @@ export default {
      */
     async init(opts = {}) {
         const gpu = this.gpu = new Gpu(opts);
-        // 获取shader
-        const vshaderCode = await Utils.loadShader(VSHADER);
-        const fshaderCode = await Utils.loadShader(FSHADER_ADD);
-        gpu.create(vshaderCode, fshaderCode);
-        return this;
+        if (gpu.isFloatingTexture()) {
+            let texture = gpu.makeTexure(WebGLRenderingContext.FLOAT, null);
+            let framebuffer  = gpu.attachFrameBuffer(texture);
+            let bufferStatus = gpu.frameBufferIsComplete();
+            if (bufferStatus.isComplete) {
+                // 获取shader
+                const vshaderCode = await Utils.loadShader(VSHADER);
+                const fshaderCode = await Utils.loadShader(FSHADER_ADD);
+                gpu.create(vshaderCode, fshaderCode);
+                return this;
+            } else {
+                return bufferStatus.message;
+            }
+
+        } else {
+            return null;
+        }
+
     },
 
     /**

@@ -10,10 +10,13 @@ export default class gpu {
         canvas.height = size;
         this.gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
         // Attempt to activate the extension, returns null if unavailable
-        let textureFloat  = this.gl.getExtension('OES_texture_float');
-        console.log('float extension is started or not? ' + !!textureFloat);
-        // 设置对齐方式
-        // this.gl.pixelStorei(this.gl.UNPACK_ALIGNMENT, 1);
+        this.textureFloat  = this.gl.getExtension('OES_texture_float');
+        console.log('float extension is started or not? ' + !!this.textureFloat);
+        console.log('WebGl版本是 ' + this.gl.getParameter(this.gl.SHADING_LANGUAGE_VERSION));
+    }
+
+    isFloatingTexture() {
+        return (this.textureFloat !== null);
     }
 
     create(vshaderCode, fshaderCode) {
@@ -90,16 +93,15 @@ export default class gpu {
     attachFrameBuffer(texture) {
         const gl = this.gl;
         let frameBuffer;
-
-        // Create a framebuffer
         frameBuffer = gl.createFramebuffer();
-        // Make it the target for framebuffer operations - including rendering.
         gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
-        /*gl.framebufferTexture2D(gl.FRAMEBUFFER,       // The target is always a FRAMEBUFFER.
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, // The target is always a FRAMEBUFFER.
             gl.COLOR_ATTACHMENT0, // We are providing the color buffer.
-            gl.TEXTURE_2D,        // This is a 2D image texture.
-            texture,              // The texture.
-            0);                   // 0, we aren't using MIPMAPs*/
+            gl.TEXTURE_2D, // This is a 2D image texture.
+            texture, // The texture.
+            0 // 0, we aren't using MIPMAPs
+        );
+
         return frameBuffer;
     }
 
@@ -165,7 +167,7 @@ export default class gpu {
             0,             // yOffset
             this.dim,  // Width - normalized to s.
             this.dim, // Height - normalized to t.
-            gl.RGB,       // Format for each pixel.
+            gl.RGBA,       // Format for each pixel.
             type,          // Data type for each chanel.
             data);         // Image data in the described format.
 
@@ -208,24 +210,29 @@ export default class gpu {
         return loc;
     }
 
-    makeTexure(bufferData) {
+    makeTexure(type, data) {
         const gl = this.gl;
-        const program = this.program;
         let texture = this.texture = gl.createTexture();
-        let uMap = gl.getUniformLocation(program, 'map');
-
-        gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, texture);
 
-
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.FLOAT, bufferData);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        // gl.generateMipmap(gl.TEXTURE_2D);
+        // Pixel format and data for the texture
+        gl.texImage2D(gl.TEXTURE_2D, // Target, matches bind above.
+            0,             // Level of detail.
+            gl.RGBA,       // Internal format.
+            this.dim,         // Width - normalized to s.
+            this.dim,        // Height - normalized to t.
+            0,             // Always 0 in OpenGL ES.
+            gl.RGBA,       // Format for each pixel.
+            type,          // Data type for each chanel.
+            data);         // Image data in the described format, or null.
+        // Unbind the texture.
+        gl.bindTexture(gl.TEXTURE_2D, null);
 
-        gl.uniform1i(uMap, 0);
+        return texture;
     }
 
     render(bufferA, bufferB) {
@@ -249,10 +256,11 @@ export default class gpu {
 
     compute() {
         let gl = this.gl;
-        let pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+
+        let pixels = new Float32Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
         gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
         console.dir(['framebuffer状态', this.frameBufferIsComplete()]);
-        gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels, 0);
+        gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.FLOAT, pixels, 0);
 
         return pixels;
     }

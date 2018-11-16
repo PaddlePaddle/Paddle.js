@@ -9,10 +9,10 @@ uniform sampler2D mapB;
 
 vec4 transTorgba(vec4 va, vec4 vb) {
     vec4 v4;
-    v4.r = float((va.r - vb.r) / 255.);
-    v4.g = float((va.g - vb.g) / 255.);
-    v4.b = float((va.b - vb.b) / 255.);
-    v4.a = float((va.a - vb.a) / 255.);
+    v4.r = float((va.r + vb.r));
+    v4.g = float((va.g + vb.g));
+    v4.b = float((va.b + vb.b));
+    v4.a = float((va.a + vb.a));
     return v4;
 }
 

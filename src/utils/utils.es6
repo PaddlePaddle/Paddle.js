@@ -9,6 +9,19 @@ export default {
         return parseFloat(Math.random() * 10);
     },
 
+    // 生成zero数组
+    zeros(num) {
+        if (typeof num === 'undefined' || isNaN(num)) {
+            return [];
+        }
+        if (typeof  ArrayBuffer === 'undefined') {
+            return this.buildSameArray(num, 0);
+        } else {
+            return new Float32Array(num);
+        }
+    },
+
+
     // mock test
     mock(shapeA, shapeB) {
         // 生成shape为[3]的数据

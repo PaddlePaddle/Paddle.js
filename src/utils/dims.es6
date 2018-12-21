@@ -2,6 +2,7 @@
  * @file 广播类
  * @author yangmingming
  */
+import Utils from './utils';
 
 export function getBroadcastDims(inShape = [], outShape = []) {
     const inRank = inShape.length;
@@ -41,3 +42,21 @@ export function getBroadcastShape(shapeA = [], shapeB = []) {
     }
     return result;
 };
+// matrix数据
+export default class matrix {
+    constructor(opts = {}) {
+        this.sx = opts.sx || 1;
+        this.sy = opts.sy || 1;
+        this.depth = opts.depth || 1;
+        let num = this.sx * this.sy * this.depth;
+        this.data = Utils.zeros(num);
+        for (let i = 0; i < num; i++) {
+             this.data[i] = Utils.randomFloat();
+        }
+    }
+    get(x, y, d) {
+        let index = ((this.sx * y) + x) * this.depth + d;
+        return this.data[index];
+    }
+};
+

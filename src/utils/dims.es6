@@ -51,12 +51,12 @@ export default class matrix {
         let num = this.sx * this.sy * this.depth;
         this.data = Utils.zeros(num);
         for (let i = 0; i < num; i++) {
-             this.data[i] = Utils.randomFloat();
+            this.data[i] = Utils.randomFloat();
         }
     }
     get(x, y, d) {
         let index = ((this.sx * y) + x) * this.depth + d;
         return this.data[index];
     }
-};
+}
 

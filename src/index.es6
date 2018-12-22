@@ -16,10 +16,10 @@ const matrix = Runtime.mockOrigin();
 const filter = Runtime.mockFilter();
 
 Runtime.init2({
-    out_length: 3,
-    f_length: 3,
-    o_length: matrix.sx
-})
+    'out_length': 3,
+    'f_length': 3,
+    'o_length': matrix.sx
+});
 
 // 执行运行op
 Runtime.init().then(instance => {

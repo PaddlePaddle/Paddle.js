@@ -55,8 +55,8 @@ export default {
 
     /**
      * 初始化, conv_2d
-     * @param opts 运行时参数，包含el：canvas，dim: 256
-     * @return {object}
+     * @param {object} opts 运行时参数，包含el：canvas，dim: 256
+     * @return {object} this 实例对象
      */
     async init2(opts = {}) {
         const gpu = this.gpu = new Gpu(opts);

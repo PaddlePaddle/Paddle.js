@@ -43,7 +43,7 @@ export function getBroadcastShape(shapeA = [], shapeB = []) {
     return result;
 };
 // matrix数据
-export default class matrix {
+export default class Matrix {
     constructor(opts = {}) {
         this.sx = opts.sx || 1;
         this.sy = opts.sy || 1;

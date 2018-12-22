@@ -12,6 +12,15 @@ let shapeAData;
 let shapeBData;
 let inst;
 
+const matrix = Runtime.mockOrigin();
+const filter = Runtime.mockFilter();
+
+Runtime.init2({
+    out_length: 3,
+    f_length: 3,
+    o_length: matrix.sx
+})
+
 // 执行运行op
 Runtime.init().then(instance => {
     if (!instance || typeof instance === 'string') {
@@ -43,19 +52,4 @@ Runtime.init().then(instance => {
 }).catch(err => {
     console.log('-----------error---------' + err);
 });
-
-
-/*const promise = Runtime.create(imgUrl);
-promise.then(data => {
-    console.log('原始图片数据长度是：' + data.data.length);
-    return Runtime.feed(data.data, {
-        w: data.width,
-        h: data.height
-    });
-}).then(data => {
-    // 生成feed数据[-1, 3, 227, 227]
-    floatData = new Float32Array(data);
-    console.log('图片过滤（227 * 227）后的长度是：' + floatData.length);
-
-});*/
 

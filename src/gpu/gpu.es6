@@ -239,7 +239,7 @@ export default class gpu {
         return texture;
     }
 
-    render(bufferA, bufferB, type='texture') {
+    render(bufferA, bufferB, type = 'texture') {
         const gl = this.gl;
         const program = this.program;
         if (type === 'texture') {

@@ -4,11 +4,14 @@
  */
 export default class gpu {
     constructor(opts = {}) {
+        this.opts = opts;
         let canvas = opts.el ? opts.el : document.createElement('canvas');
         let size = this.dim = opts.dim ? opts.dim : 256;
+        size = opts.out_length || size;
         canvas.width = size;
         canvas.height = size;
         this.gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        this.gl.viewport(0, 0, opts.out_length, opts.out_length);
         // Attempt to activate the extension, returns null if unavailable
         this.textureFloat  = this.gl.getExtension('OES_texture_float');
         console.log('float extension is started or not? ' + !!this.textureFloat);
@@ -32,20 +35,21 @@ export default class gpu {
         gl.useProgram(program);
 
         // 传输点数据
-        let vertices = new Float32Array([-1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0]);
-        /*let vertices = new Float32Array([-1.0,  1.0, 0.0, 0.0, 1.0,
-            -1.0, -1.0, 0.0, 0.0, 0.0,
-            1.0,  1.0, 0.0, 1.0, 1.0,
-            1.0, -1.0, 0.0, 1.0, 0.0]);*/
+        // let vertices = new Float32Array([-1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0]);
+        let vertices = new Float32Array([
+            -1.0,  1.0, 0.0, 1.0,
+            -1.0, -1.0, 0.0, 0.0,
+            1.0,  1.0, 1.0, 1.0,
+            1.0, -1.0, 1.0, 0.0]);
         let vertexBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
         let aPosition = gl.getAttribLocation(program, 'position');
-        gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 16, 0);
         gl.enableVertexAttribArray(aPosition);
 
-        gl.clearColor(.0, .0, .0, 1);
-        gl.clear(gl.COLOR_BUFFER_BIT);
+        /*gl.clearColor(.0, .0, .0, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT);*/
     }
 
     /**
@@ -198,8 +202,8 @@ export default class gpu {
         /*gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, this.dim, this.dim, 0,
             gl.RGBA, gl.FLOAT, bufferData, 0);*/
         // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.FLOAT, bufferData);
-        gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, this.dim, this.dim, 0,
+        // gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, this.opts.o_length || this.dim, this.opts.o_length || this.dim, 0,
             gl.RGBA, gl.FLOAT, bufferData, 0);
         gl.uniform1i(this.getUniformLoc(tSampler), index);
     }
@@ -235,22 +239,32 @@ export default class gpu {
         return texture;
     }
 
-    render(bufferA, bufferB) {
+    render(bufferA, bufferB, type='texture') {
         const gl = this.gl;
         const program = this.program;
-        // let frameBuffer = this.attachFrameBuffer();
-        // this.makeTexure(bufferData);
-        if (!!bufferA) {
-            this.initTexture(0, 'mapA', bufferA);
-        }
-        if (!!bufferB) {
-            this.initTexture(1, 'mapB', bufferB);
+        if (type === 'texture') {
+            if (!!bufferA) {
+                this.initTexture(0, 'mapA', bufferA);
+            }
+            if (!!bufferB) {
+                this.initTexture(1, 'mapB', bufferB);
+            }
+        } else {
+            // const locFilter = this.getUniformLoc('filter');
+            // this.gl.uniform1fv(locFilter, bufferA);
+            this.initTexture(0, 'origin', bufferB);
+            const locFilter = this.getUniformLoc('filter');
+            this.gl.uniform1fv(locFilter, bufferA);
+            /*const locOri = this.getUniformLoc('origin');
+            this.gl.uniform1f(locOri, bufferB);*/
         }
         // gl.useProgram(program);
         // 绘制
         // gl.clearColor(.2, 0, 0, 1);
         // gl.clear(gl.COLOR_BUFFER_BIT);
         // gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+        gl.clearColor(.0, .0, .0, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
@@ -258,7 +272,7 @@ export default class gpu {
         let gl = this.gl;
 
         let pixels = new Float32Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
-        gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+        // gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
         console.dir(['framebuffer状态', this.frameBufferIsComplete()]);
         gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.FLOAT, pixels, 0);
 

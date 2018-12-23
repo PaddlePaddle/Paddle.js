@@ -9,7 +9,7 @@ import Matrix from '../utils/dims';
  */
 const VSHADER = require('../shader/v_shader.c');
 const FSHADER_ADD = require('../shader/f_elementwise_add_shader.c');
-const FSHADER_CON2D = require('../shader/f_elementwise_conv2d_shader.c');
+const FSHADER_CON2D = require('../shader/f_elementwise_conv2d2_shader.c');
 export default {
     /**
      * 引入资源
@@ -50,7 +50,6 @@ export default {
         } else {
             return null;
         }
-
     },
 
     /**
@@ -88,8 +87,8 @@ export default {
      * @param bufferA
      * @param bufferB
      */
-    compute(bufferA, bufferB) {
-        this.gpu.render(bufferA, bufferB);
+    compute(bufferA, bufferB, type) {
+        this.gpu.render(bufferA, bufferB, type);
     },
 
     /**
@@ -114,7 +113,7 @@ export default {
         return new Matrix({
             sx: 5,
             sy: 5,
-            depth: 1
+            depth: 4
         });
     },
 

@@ -19,10 +19,26 @@ Runtime.init2({
     'out_length': 3,
     'f_length': 3,
     'o_length': matrix.sx
+}).then(instance => {
+    if (!instance || typeof instance === 'string') {
+        throw new Error(instance || '不支持float texture');
+    }
+    inst = instance;
+}).then(() => {
+    console.dir(['卷积核', filter]);
+    console.dir(['origin data', matrix.data]);
+    // 执行conv2d
+    inst.compute(filter, matrix.data, 'conv2d');
+}).then(() => {
+    // 读取结果
+    const addResult = inst.read();
+    console.dir(['conv2d的执行结果', addResult]);
+}).catch(err => {
+    console.log('-----------error---------' + err);
 });
 
 // 执行运行op
-Runtime.init().then(instance => {
+/*Runtime.init().then(instance => {
     if (!instance || typeof instance === 'string') {
         throw new Error(instance || '不支持float texture');
     }
@@ -51,5 +67,4 @@ Runtime.init().then(instance => {
     console.dir(['加法op的执行结果', addResult]);
 }).catch(err => {
     console.log('-----------error---------' + err);
-});
-
+});*/

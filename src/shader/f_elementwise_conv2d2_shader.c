@@ -23,6 +23,11 @@ vec2 transToOut(vec2 vcoord) {
     return v2;
 }
 
+float sigmoid(float x) {
+    float result = 1.0 / (1.0 + exp(-x));
+    return result;
+}
+
 void main(void) {
     vec2 v2;
     v2.x = vCoord.x;
@@ -42,9 +47,10 @@ void main(void) {
             }
         }
     }
-
     vec4 v4;
-    // v4.r = compute(origin, filter, v2);
+    // v4.r = sigmoid(result);
     v4.r = result;
+    v4.g = 1.0 / exp(-result);
+    v4.b = sigmoid(result);
     gl_FragColor = v4;
 }

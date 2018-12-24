@@ -119,7 +119,7 @@ export default {
 
     // mock filter 1 * 3 * 3
     mockFilter() {
-        return new Float32Array([1.0, 1.0, 0.0, 0.0, 2.0, 0.0, 1.0, 3.0, 1.0]);
+        return new Float32Array([1.0, 1.0, 0.0, 0.0, -2.0, 0.0, 1.0, -3.0, 1.0]);
     },
 
     // 更新op

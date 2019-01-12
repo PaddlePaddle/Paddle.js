@@ -51,7 +51,7 @@ export default class Matrix {
         let num = this.sx * this.sy * this.depth;
         this.data = Utils.zeros(num);
         for (let i = 0; i < num; i++) {
-            this.data[i] = 2.3 || Utils.randomFloat();
+            this.data[i] = 2.0 || Utils.randomFloat();
         }
     }
     get(x, y, d) {

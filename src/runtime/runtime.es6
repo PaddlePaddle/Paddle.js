@@ -9,7 +9,7 @@ import Matrix from '../utils/dims';
  */
 const VSHADER = require('../shader/v_shader.c');
 const FSHADER_ADD = require('../shader/f_elementwise_add_shader.c');
-const FSHADER_CON2D = require('../shader/f_elementwise_conv2d2_shader.c');
+const FSHADER_CON2D = require('../shader/f_elementwise_conv2d3_shader.c');
 export default {
     /**
      * 引入资源
@@ -38,6 +38,7 @@ export default {
             let framebuffer  = gpu.attachFrameBuffer(texture);
             let bufferStatus = gpu.frameBufferIsComplete();
             if (bufferStatus.isComplete) {
+                console.log(bufferStatus.isComplete);
                 // 获取shader
                 const vshaderCode = await Utils.loadShader(VSHADER);
                 const fshaderCode = await Utils.loadShader(FSHADER_ADD);
@@ -64,12 +65,16 @@ export default {
             let framebuffer  = gpu.attachFrameBuffer(texture);
             let bufferStatus = gpu.frameBufferIsComplete();
             if (bufferStatus.isComplete) {
+                console.log(bufferStatus.isComplete);
                 // 获取shader
                 const vshaderCode = await Utils.loadShader(VSHADER);
                 let fshaderCode = await Utils.loadShader(FSHADER_CON2D);
                 fshaderCode = fshaderCode.replace(/FILTER_SIZE/g, opts.f_length);
                 fshaderCode = fshaderCode.replace(/ORIGIN_SIZE/g, opts.o_length);
                 fshaderCode = fshaderCode.replace(/OUT_SIZE/g, opts.out_length);
+                fshaderCode = fshaderCode.replace(/STRIDE/g, opts.stride);
+                fshaderCode = fshaderCode.replace(/PAD_LEFT/g, opts.pad_left);
+                fshaderCode = fshaderCode.replace(/PAD_TOP/g, opts.pad_top);
                 gpu.create(vshaderCode, fshaderCode);
                 return this;
             } else {

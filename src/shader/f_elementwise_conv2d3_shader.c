@@ -9,6 +9,11 @@
 const int F_LENGTH = FILTER_SIZE;
 const int O_LEGNTH = ORIGIN_SIZE;
 const int outLength = OUT_SIZE;
+// 步长
+int stride = STRIDE;
+// padding的数目
+int padLeft = PAD_LEFT;
+int padTop = PAD_TOP;
 
 uniform float filter[F_LENGTH * F_LENGTH];
 uniform sampler2D origin;
@@ -34,12 +39,14 @@ void main(void) {
     v2.y = vCoord.y;
     vec2 outCoord = transToOut(v2);
     float result = 0.0;
+    // X、Y方向的移动步长
+    int disX = -padLeft;
+    int disY = -padTop;
     vec2 oriCoord;
-    float filterValue = filter[0];
     for (int fy = 0; fy < F_LENGTH; fy++) {
-        float oy = outCoord.y + float(fy);
+        float oy = floor(outCoord.y) + float(fy + disY);
         for (int fx = 0; fx < F_LENGTH; fx++) {
-            float ox = outCoord.x + float(fx);
+            float ox = floor(outCoord.x) + float(fx + disX);
             if (oy >= 0.0 && oy < float(O_LEGNTH) && ox >= 0.0 && ox < float(O_LEGNTH)) {
                 oriCoord.x = ox / float(O_LEGNTH);
                 oriCoord.y = oy / float(O_LEGNTH);
@@ -48,7 +55,6 @@ void main(void) {
         }
     }
     vec4 v4;
-    // v4.r = sigmoid(result);
     v4.r = result;
     v4.g = sigmoid(result);
     v4.b = outCoord.x;

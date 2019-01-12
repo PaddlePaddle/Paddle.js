@@ -26,7 +26,6 @@ export default class gpu {
         let gl = this.gl;
         // 创建 & 绑定程序对象
         let program = this.program = gl.createProgram();
-
         // 创建&绑定vertex&frament shader
         this.initShader(vshaderCode);
         this.fragmentShader = this.initShader(fshaderCode, 'fragment');

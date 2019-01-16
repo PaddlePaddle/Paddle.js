@@ -44,9 +44,9 @@ void main(void) {
     int disY = -padTop;
     vec2 oriCoord;
     for (int fy = 0; fy < F_LENGTH; fy++) {
-        float oy = floor(outCoord.y) + float(fy + disY);
+        float oy = floor(outCoord.y) * float(stride) + float(fy + disY);
         for (int fx = 0; fx < F_LENGTH; fx++) {
-            float ox = floor(outCoord.x) + float(fx + disX);
+            float ox = floor(outCoord.x) * float(stride) + float(fx + disX);
             if (oy >= 0.0 && oy < float(O_LEGNTH) && ox >= 0.0 && ox < float(O_LEGNTH)) {
                 oriCoord.x = ox / float(O_LEGNTH);
                 oriCoord.y = oy / float(O_LEGNTH);

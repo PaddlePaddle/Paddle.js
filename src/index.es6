@@ -16,10 +16,10 @@ const matrix = Runtime.mockOrigin();
 const filter = Runtime.mockFilter();
 // 原始张量，上下左右1个单位的padding，步长是1
 Runtime.init2({
-    'out_length': 5,
+    'out_length': 3,
     'pad_left': 1,
     'pad_top': 1,
-    'stride': 1,
+    'stride': 2,
     'f_length': 3,
     'o_length': matrix.sx
 }).then(instance => {

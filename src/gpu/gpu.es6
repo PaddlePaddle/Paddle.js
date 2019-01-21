@@ -6,12 +6,13 @@ export default class gpu {
     constructor(opts = {}) {
         this.opts = opts;
         let canvas = opts.el ? opts.el : document.createElement('canvas');
-        let size = this.dim = opts.dim ? opts.dim : 256;
-        size = opts.out_length || size;
+        let size = this.dim = opts.dim ? opts.dim : 512;
+        // size = opts.out_length || size;
+        this.out = opts.out_length || size;
         canvas.width = size;
         canvas.height = size;
         this.gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-        this.gl.viewport(0, 0, opts.out_length, opts.out_length);
+        this.gl.viewport(0, 0, size, size);
         // Attempt to activate the extension, returns null if unavailable
         this.textureFloat  = this.gl.getExtension('OES_texture_float');
         console.log('float extension is started or not? ' + !!this.textureFloat);
@@ -270,10 +271,10 @@ export default class gpu {
     compute() {
         let gl = this.gl;
 
-        let pixels = new Float32Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+        let pixels = new Float32Array(this.out * this.out * 4);
         // gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
         console.dir(['framebuffer状态', this.frameBufferIsComplete()]);
-        gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.FLOAT, pixels, 0);
+        gl.readPixels(0, 0, this.out, this.out, gl.RGBA, gl.FLOAT, pixels, 0);
 
         return pixels;
     }

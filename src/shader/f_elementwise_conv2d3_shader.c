@@ -5,6 +5,8 @@
     precision mediump float;
     precision mediump int;
 #endif
+// canvas默认宽高
+const int size = 512;
 
 const int F_LENGTH = FILTER_SIZE;
 const int O_LEGNTH = ORIGIN_SIZE;
@@ -25,8 +27,8 @@ varying vec2 sCoord;
 
 vec2 transToOut(vec2 vcoord) {
     vec2 v2;
-    v2.x = vcoord.x * float(outLength);
-    v2.y = vcoord.y * float(outLength);
+    v2.x = vcoord.x * float(size);
+    v2.y = vcoord.y * float(size);
     return v2;
 }
 
@@ -39,27 +41,31 @@ void main(void) {
     vec2 v2;
     v2.x = vCoord.x;
     v2.y = vCoord.y;
+    // 获取原始长度
     vec2 outCoord = transToOut(v2);
-    float result = 0.0;
-    // X、Y方向的移动步长
-    int disX = -padLeft;
-    int disY = -padTop;
-    vec2 oriCoord;
-    for (int fy = 0; fy < F_LENGTH; fy++) {
-        float oy = floor(outCoord.y) * float(stride) + float(fy * dilation + disY);
-        for (int fx = 0; fx < F_LENGTH; fx++) {
-            float ox = floor(outCoord.x) * float(stride) + float(fx * dilation + disX);
-            if (oy >= 0.0 && oy < float(O_LEGNTH) && ox >= 0.0 && ox < float(O_LEGNTH)) {
-                oriCoord.x = ox / float(O_LEGNTH);
-                oriCoord.y = oy / float(O_LEGNTH);
-                result += filter[int(F_LENGTH) * fy + fx] * texture2D(origin, oriCoord).r;
+    // 输出数据
+    vec4 v4;
+    if (outCoord.x < float(outLength) && outCoord.y < float(outLength)) {
+        float result = 0.0;
+        // X、Y方向的移动步长
+        int disX = -padLeft;
+        int disY = -padTop;
+        vec2 oriCoord;
+        for (int fy = 0; fy < F_LENGTH; fy++) {
+            float oy = floor(outCoord.y) * float(stride) + float(fy * dilation + disY);
+            for (int fx = 0; fx < F_LENGTH; fx++) {
+                float ox = floor(outCoord.x) * float(stride) + float(fx * dilation + disX);
+                if (oy >= 0.0 && oy < float(O_LEGNTH) && ox >= 0.0 && ox < float(O_LEGNTH)) {
+                    oriCoord.x = ox / float(O_LEGNTH);
+                    oriCoord.y = oy / float(O_LEGNTH);
+                    result += filter[int(F_LENGTH) * fy + fx] * texture2D(origin, oriCoord).r;
+                }
             }
         }
+        v4.r = result;
+        v4.g = sigmoid(result);
+        v4.b = outCoord.x;
+        v4.a = outCoord.y;
     }
-    vec4 v4;
-    v4.r = result;
-    v4.g = sigmoid(result);
-    v4.b = outCoord.x;
-    v4.a = outCoord.y;
     gl_FragColor = v4;
 }

@@ -19,7 +19,8 @@ Runtime.init2({
     'out_length': 3,
     'pad_left': 1,
     'pad_top': 1,
-    'stride': 2,
+    'dilation': 2,
+    'stride': 1,
     'f_length': 3,
     'o_length': matrix.sx
 }).then(instance => {

@@ -14,6 +14,8 @@ int stride = STRIDE;
 // padding的数目
 int padLeft = PAD_LEFT;
 int padTop = PAD_TOP;
+// dilation膨胀系数
+int dilation = DILATION;
 
 uniform float filter[F_LENGTH * F_LENGTH];
 uniform sampler2D origin;
@@ -44,9 +46,9 @@ void main(void) {
     int disY = -padTop;
     vec2 oriCoord;
     for (int fy = 0; fy < F_LENGTH; fy++) {
-        float oy = floor(outCoord.y) * float(stride) + float(fy + disY);
+        float oy = floor(outCoord.y) * float(stride) + float(fy * dilation + disY);
         for (int fx = 0; fx < F_LENGTH; fx++) {
-            float ox = floor(outCoord.x) * float(stride) + float(fx + disX);
+            float ox = floor(outCoord.x) * float(stride) + float(fx * dilation + disX);
             if (oy >= 0.0 && oy < float(O_LEGNTH) && ox >= 0.0 && ox < float(O_LEGNTH)) {
                 oriCoord.x = ox / float(O_LEGNTH);
                 oriCoord.y = oy / float(O_LEGNTH);

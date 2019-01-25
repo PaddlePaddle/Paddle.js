@@ -76,6 +76,7 @@ export default {
                 fshaderCode = fshaderCode.replace(/PAD_LEFT/g, opts.pad_left);
                 fshaderCode = fshaderCode.replace(/PAD_TOP/g, opts.pad_top);
                 fshaderCode = fshaderCode.replace(/DILATION/g, opts.dilation);
+                fshaderCode = fshaderCode.replace(/DIM_SIZE/g, opts.dim);
                 gpu.create(vshaderCode, fshaderCode);
                 return this;
             } else {

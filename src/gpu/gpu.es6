@@ -5,8 +5,9 @@
 export default class gpu {
     constructor(opts = {}) {
         this.opts = opts;
+        opts.dim = Number(opts.dim) || 512;
         let canvas = opts.el ? opts.el : document.createElement('canvas');
-        let size = this.dim = opts.dim ? opts.dim : 512;
+        let size = this.dim = opts.dim;
         // size = opts.out_length || size;
         this.out = opts.out_length || size;
         canvas.width = size;

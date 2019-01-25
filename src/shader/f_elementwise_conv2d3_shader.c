@@ -6,7 +6,7 @@
     precision mediump int;
 #endif
 // canvas默认宽高
-const int size = 512;
+const int size = DIM_SIZE;
 
 const int F_LENGTH = FILTER_SIZE;
 const int O_LEGNTH = ORIGIN_SIZE;

@@ -3,7 +3,39 @@
  * @author yangmingming
  */
 let canvas = null;
+const CONV2D_VARIABLE = [
+    'DIM_SIZE_WIDTH',
+    'DIM_SIZE_HEIGHT',
+    'FILTER_SIZE_WIDTH',
+    'FILTER_SIZE_HEIGHT',
+    'ORIGIN_SIZE_WIDTH',
+    'ORIGIN_SIZE_HEIGHT',
+    'OUT_SIZE_WIDTH',
+    'OUT_SIZE_HEIGHT',
+    'STRIDE_HORIZONTAL',
+    'STRIDE_VERTICAL',
+    'PAD_LEFT',
+    'PAD_TOP',
+    'DILATION_HORIZONTAL',
+    'DILATION_VERTICAL'
+];
+// op的输入参数配置
+const conf = {
+    conv2d: CONV2D_VARIABLE
+};
 export default {
+    // 注入op数据
+    populateData(type, fscode = '', data = {}) {
+        let result = fscode;
+        const params = conf[type] || [];
+        params.forEach(key => {
+            let value = data[key.toLowerCase()];
+            // 默认值为1
+            result = result.replace(key, typeof value === 'undefined' ? 1 : value);
+        });
+        return result;
+    },
+
     // 生成随机数
     randomFloat() {
         return parseFloat(Math.random() * 10);

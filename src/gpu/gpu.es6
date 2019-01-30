@@ -5,15 +5,15 @@
 export default class gpu {
     constructor(opts = {}) {
         this.opts = opts;
-        opts.dim = Number(opts.dim) || 512;
+        opts.dim_size_width = Number(opts.dim_size_width) || 512;
+        opts.dim_size_height = Number(opts.dim_size_height) || 512;
         let canvas = opts.el ? opts.el : document.createElement('canvas');
-        let size = this.dim = opts.dim;
-        // size = opts.out_length || size;
-        this.out = opts.out_length || size;
-        canvas.width = size;
-        canvas.height = size;
+        this.out_size_width = opts.out_size_width || 1;
+        this.out_size_height = opts.out_size_height || 1;
+        canvas.width = opts.dim_size_width;
+        canvas.height = opts.dim_size_height;
         this.gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-        this.gl.viewport(0, 0, size, size);
+        this.gl.viewport(0, 0, canvas.width, canvas.height);
         // Attempt to activate the extension, returns null if unavailable
         this.textureFloat  = this.gl.getExtension('OES_texture_float');
         console.log('float extension is started or not? ' + !!this.textureFloat);
@@ -170,8 +170,8 @@ export default class gpu {
             0,             // Level of detail.
             0,             // xOffset
             0,             // yOffset
-            this.dim,  // Width - normalized to s.
-            this.dim, // Height - normalized to t.
+            this.opts.dim_size_width,  // Width - normalized to s.
+            this.opts.dim_size_height, // Height - normalized to t.
             gl.RGBA,       // Format for each pixel.
             type,          // Data type for each chanel.
             data);         // Image data in the described format.
@@ -204,7 +204,8 @@ export default class gpu {
             gl.RGBA, gl.FLOAT, bufferData, 0);*/
         // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.FLOAT, bufferData);
         // gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, this.opts.o_length || this.dim, this.opts.o_length || this.dim, 0,
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, this.opts.origin_size_width || this.opts.dim_size_width ,
+            this.opts.origin_size_width || this.opts.dim_size_width, 0,
             gl.RGBA, gl.FLOAT, bufferData, 0);
         gl.uniform1i(this.getUniformLoc(tSampler), index);
     }
@@ -228,8 +229,8 @@ export default class gpu {
         gl.texImage2D(gl.TEXTURE_2D, // Target, matches bind above.
             0,             // Level of detail.
             gl.RGBA,       // Internal format.
-            this.dim,         // Width - normalized to s.
-            this.dim,        // Height - normalized to t.
+            this.opts.dim_size_width,         // Width - normalized to s.
+            this.opts.dim_size_height,        // Height - normalized to t.
             0,             // Always 0 in OpenGL ES.
             gl.RGBA,       // Format for each pixel.
             type,          // Data type for each chanel.
@@ -272,10 +273,10 @@ export default class gpu {
     compute() {
         let gl = this.gl;
 
-        let pixels = new Float32Array(this.out * this.out * 4);
+        let pixels = new Float32Array(this.out_size_width * this.out_size_height * 4);
         // gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
         console.dir(['framebuffer状态', this.frameBufferIsComplete()]);
-        gl.readPixels(0, 0, this.out, this.out, gl.RGBA, gl.FLOAT, pixels, 0);
+        gl.readPixels(0, 0, this.out_size_width, this.out_size_height, gl.RGBA, gl.FLOAT, pixels, 0);
 
         return pixels;
     }

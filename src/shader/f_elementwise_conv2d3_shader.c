@@ -30,7 +30,8 @@ const int padLeft = PAD_LEFT;
 const int padTop = PAD_TOP;
 
 // dilation膨胀系数
-int dilation = DILATION;
+const int dilation_h = DILATION_HORIZONTAL;
+const int dilation_v = DILATION_VERTICAL;
 
 uniform float filter[filter_w * filter_h];
 uniform sampler2D origin;
@@ -65,9 +66,9 @@ void main(void) {
         int disY = -padTop;
         vec2 oriCoord;
         for (int fy = 0; fy < filter_h; fy++) {
-            float oy = floor(outCoord.y) * float(stride_v) + float(fy * dilation + disY);
+            float oy = floor(outCoord.y) * float(stride_v) + float(fy * dilation_v + disY);
             for (int fx = 0; fx < filter_w; fx++) {
-                float ox = floor(outCoord.x) * float(stride_h) + float(fx * dilation + disX);
+                float ox = floor(outCoord.x) * float(stride_h) + float(fx * dilation_h + disX);
                 if (oy >= 0.0 && oy < float(origin_h) && ox >= 0.0 && ox < float(origin_w)) {
                     oriCoord.x = ox / float(origin_w);
                     oriCoord.y = oy / float(origin_h);

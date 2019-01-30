@@ -69,14 +69,7 @@ export default {
                 // 获取shader
                 const vshaderCode = await Utils.loadShader(VSHADER);
                 let fshaderCode = await Utils.loadShader(FSHADER_CON2D);
-                fshaderCode = fshaderCode.replace(/FILTER_SIZE/g, opts.f_length);
-                fshaderCode = fshaderCode.replace(/ORIGIN_SIZE/g, opts.o_length);
-                fshaderCode = fshaderCode.replace(/OUT_SIZE/g, opts.out_length);
-                fshaderCode = fshaderCode.replace(/STRIDE/g, opts.stride);
-                fshaderCode = fshaderCode.replace(/PAD_LEFT/g, opts.pad_left);
-                fshaderCode = fshaderCode.replace(/PAD_TOP/g, opts.pad_top);
-                fshaderCode = fshaderCode.replace(/DILATION/g, opts.dilation);
-                fshaderCode = fshaderCode.replace(/DIM_SIZE/g, opts.dim);
+                fshaderCode = Utils.populateData('conv2d', fshaderCode, opts);
                 gpu.create(vshaderCode, fshaderCode);
                 return this;
             } else {

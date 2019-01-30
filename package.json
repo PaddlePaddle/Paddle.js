@@ -1,15 +1,29 @@
 {
   "name": "paddle-web-demo",
-  "version": "0.0.1",
-  "description": "",
+  "version": "1.0.0",
+  "description": "paddle",
   "main": "index.js",
   "scripts": {
-    "build": "echo \"Please implement your build script and modify scripts.build section in package.json\" && exit 1"
+    "server": "parcel ./src/index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "ssh://yangyanzhan@icode.baidu.com:8235/baidu/mms/paddle-web-demo"
+    "url": "ssh://yangmingming@icode.baidu.com:8235/baidu/mms/paddle-web-demo"
   },
-  "author": "yangyanzhan",
-  "license": "UNLICENSED"
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-decorators-legacy": "^1.3.5",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-runtime": "^6.26.0",
+    "parcel-bundler": "^1.10.3"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

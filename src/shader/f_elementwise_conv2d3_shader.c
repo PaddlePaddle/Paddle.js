@@ -60,7 +60,9 @@ void main(void) {
     // 输出数据
     vec4 v4;
     if (outCoord.x < float(out_w) && outCoord.y < float(out_h)) {
-        float result = 0.0;
+        float result_r = 0.0;
+        float result_g = 0.0;
+        float result_b = 0.0;
         // X、Y方向的移动步长
         int disX = -padLeft;
         int disY = -padTop;
@@ -72,14 +74,16 @@ void main(void) {
                 if (oy >= 0.0 && oy < float(origin_h) && ox >= 0.0 && ox < float(origin_w)) {
                     oriCoord.x = ox / float(origin_w);
                     oriCoord.y = oy / float(origin_h);
-                    result += filter[int(filter_w) * fy + fx] * texture2D(origin, oriCoord).r;
+                    result_r += filter[int(filter_w) * fy + fx] * texture2D(origin, oriCoord).r;
+                    result_g += filter[int(filter_w) * fy + fx] * texture2D(origin, oriCoord).g;
+                    result_b += filter[int(filter_w) * fy + fx] * texture2D(origin, oriCoord).b;
                 }
             }
         }
-        v4.r = result;
-        v4.g = sigmoid(result);
-        v4.b = outCoord.x;
-        v4.a = outCoord.y;
+        v4.r = sigmoid(result_r);
+        v4.g = sigmoid(result_g);
+        v4.b = sigmoid(result_b);
+        v4.a = result_r;
     }
     gl_FragColor = v4;
 }

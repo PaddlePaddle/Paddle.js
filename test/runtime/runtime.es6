@@ -17,8 +17,8 @@ export default {
      * @param {Object} opts 运行时参数，包含el：canvas，dim: 256
      * @return {Object} this 实例对象
      */
+
     async init(opts = {}, opShader) {
-        console.log(opts);
         const gpu = this.gpu = new Gpu(opts);
         if (gpu.isFloatingTexture()) {
             let texture = gpu.makeTexure(WebGLRenderingContext.FLOAT, null);

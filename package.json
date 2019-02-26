@@ -4,7 +4,7 @@
   "description": "paddle",
   "main": "index.js",
   "scripts": {
-    "server": "parcel ./test/unitTest.html",
+    "server": "parcel ./src/index.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

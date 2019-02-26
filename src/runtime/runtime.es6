@@ -71,6 +71,7 @@ export default {
                 let fshaderCode = await Utils.loadShader(FSHADER_CON2D);
                 fshaderCode = Utils.populateData('conv2d', fshaderCode, opts);
                 gpu.create(vshaderCode, fshaderCode);
+                console.dir(['测试数据---输入参数', opts]);
                 return this;
             } else {
                 return bufferStatus.message;
@@ -85,17 +86,19 @@ export default {
     /**
      * 计算op
      * @param bufferA
-     * @param bufferB
+     * @param matrix
      */
-    compute(bufferA, bufferB, type) {
-        this.gpu.render(bufferA, bufferB, type);
+    compute(bufferA, matrix, type) {
+        const texture = new Float32Array(Utils.tensor2Texture(matrix.data, matrix.sx * matrix.sy));
+        console.dir(['调试数据-图像材质数据', texture]);
+        this.gpu.render(bufferA, texture, type);
     },
 
     /**
      * 读取op计算结果, 并返回数据
      */
     read() {
-        return this.gpu.compute();
+        return Utils.shapeData(this.gpu.compute(), {w: 3, h: 3});
     },
 
     // 生成feed数据

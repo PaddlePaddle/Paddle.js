@@ -1,10 +1,12 @@
-#ifdef GL_FRAGMENT_PRECISION_HIGH
-    precision highp float;
-    precision highp int;
-#else
-    precision mediump float;
-    precision mediump int;
-#endif
+// #ifdef GL_FRAGMENT_PRECISION_HIGH
+//    precision highp float;
+//    precision highp int;
+// #else
+//    precision mediump float;
+//    precision mediump int;
+// #endif
+precision lowp float;
+precision lowp int;
 // canvas默认宽高
 const int size_w = DIM_SIZE_WIDTH;
 const int size_h = DIM_SIZE_HEIGHT;
@@ -63,6 +65,7 @@ void main(void) {
         float result_r = 0.0;
         float result_g = 0.0;
         float result_b = 0.0;
+        float result_a = 0.0;
         // X、Y方向的移动步长
         int disX = -padLeft;
         int disY = -padTop;
@@ -77,13 +80,15 @@ void main(void) {
                     result_r += filter[int(filter_w) * fy + fx] * texture2D(origin, oriCoord).r;
                     result_g += filter[int(filter_w) * fy + fx] * texture2D(origin, oriCoord).g;
                     result_b += filter[int(filter_w) * fy + fx] * texture2D(origin, oriCoord).b;
+                    result_a += filter[int(filter_w) * fy + fx] * texture2D(origin, oriCoord).a;
                 }
             }
         }
-        v4.r = sigmoid(result_r);
-        v4.g = sigmoid(result_g);
-        v4.b = sigmoid(result_b);
-        v4.a = result_r;
+        float result = result_r + result_g + result_b + result_a;
+        v4.r = result;
+        v4.g = result;
+        v4.b = result;
+        v4.a = result;
     }
     gl_FragColor = v4;
 }

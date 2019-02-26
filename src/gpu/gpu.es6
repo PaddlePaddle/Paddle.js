@@ -275,7 +275,7 @@ export default class gpu {
 
         let pixels = new Float32Array(this.out_size_width * this.out_size_height * 4);
         // gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-        console.dir(['framebuffer状态', this.frameBufferIsComplete()]);
+        // console.dir(['framebuffer状态', this.frameBufferIsComplete()]);
         gl.readPixels(0, 0, this.out_size_width, this.out_size_height, gl.RGBA, gl.FLOAT, pixels, 0);
 
         return pixels;

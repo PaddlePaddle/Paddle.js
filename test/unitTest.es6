@@ -1,5 +1,5 @@
 import 'babel-polyfill';
-import Runtime from './runtime/runtime';
+import units from './units/units';
 /**
  * @file 入口文件
  * @author wangqun@baidu.com
@@ -16,10 +16,10 @@ let shapeAData;
 let shapeBData;
 let inst;
 
-const matrix = Runtime.mockOrigin();
-const filter = Runtime.mockFilter();
+const matrix = units.mockOrigin();
+const filter = units.mockFilter();
 // 原始张量，上下左右1个单位的padding，步长是1
-Runtime.init({
+units.init({
     'filter_size_width': 3,
     'filter_size_height': 3,
     'origin_size_width': matrix.sx,
@@ -46,6 +46,7 @@ Runtime.init({
     // 读取结果
     const addResult = inst.read();
     console.dir(['conv2d的执行结果', addResult]);
+    inst.getResult(addResult);
 }).catch(err => {
     console.log('-----------error---------' + err);
 });

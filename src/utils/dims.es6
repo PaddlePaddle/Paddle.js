@@ -50,9 +50,14 @@ export default class Matrix {
         this.depth = opts.depth || 1;
         let num = this.sx * this.sy * this.depth;
         this.data = Utils.zeros(num);
+        /*let j = 0.0;
         for (let i = 0; i < num; i++) {
-            this.data[i] = Utils.randomFloat();
-        }
+            // this.data[i] = Utils.randomFloat();
+            if (i % 4 === 0) {
+                j += 1.0;
+            }
+            this.data[i] = j;
+        }*/
     }
     get(x, y, d) {
         let index = ((this.sx * y) + x) * this.depth + d;

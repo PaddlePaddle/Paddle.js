@@ -34,14 +34,14 @@ Runtime.init2({
     }
     inst = instance;
 }).then(() => {
-    console.dir(['卷积核', filter]);
-    console.dir(['origin data', matrix.data]);
+    console.dir(['测试数据---卷积核', filter]);
+    console.dir(['测试数据---输入tensor', matrix.data]);
     // 执行conv2d
-    inst.compute(filter, matrix.data, 'conv2d');
+    inst.compute(filter, matrix, 'conv2d');
 }).then(() => {
     // 读取结果
     const addResult = inst.read();
-    console.dir(['conv2d的执行结果', addResult]);
+    console.dir(['测试数据---op的执行结果', addResult]);
 }).catch(err => {
     console.log('-----------error---------' + err);
 });

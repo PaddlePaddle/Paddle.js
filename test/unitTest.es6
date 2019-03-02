@@ -1,5 +1,6 @@
 import 'babel-polyfill';
 import units from './units/units';
+let qs = require('qs');
 /**
  * @file 入口文件
  * @author wangqun@baidu.com
@@ -19,7 +20,7 @@ let inst;
 const matrix = units.mockOrigin();
 const filter = units.mockFilter();
 // 原始张量，上下左右1个单位的padding，步长是1
-units.init({
+let conf = {
     'filter_size_width': 3,
     'filter_size_height': 3,
     'origin_size_width': matrix.sx,
@@ -32,7 +33,8 @@ units.init({
     'pad_top': 1,
     'dilation_horizontal': 2,
     'dilation_vertical': 2
-}, FSHADER_CON2D).then(instance => {
+}
+units.init(conf, FSHADER_CON2D).then(instance => {
     if (!instance || typeof instance === 'string') {
         throw new Error(instance || '不支持float texture');
     }
@@ -44,9 +46,17 @@ units.init({
     inst.compute(filter, matrix.data, 'conv2d');
 }).then(() => {
     // 读取结果
-    const addResult = inst.read();
-    console.dir(['conv2d的执行结果', addResult]);
-    inst.getResult(addResult);
+    const result = inst.read();
+    console.dir(['conv2d的执行结果', result]);
+
+    let input = {
+        filter: filter,
+        origin: matrix.data,
+    };
+    Object.assign(input, conf);
+    console.dir(['完整input', input]);
+    // console.dir(['完整输入和输出', params]);
+    inst.getResult('conv2d', input, result);
 }).catch(err => {
     console.log('-----------error---------' + err);
 });

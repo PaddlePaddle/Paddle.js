@@ -188,7 +188,7 @@ export default class gpu {
      * @param {string} tSampler 材质名称
      * @param {Object} bufferData 数据
      */
-    initTexture(index, tSampler, bufferData) {
+    initTexture(index, tSampler, bufferData, width, height) {
         const gl = this.gl;
         const texture = gl.createTexture();
         gl.activeTexture(gl[`TEXTURE${index}`]);
@@ -204,8 +204,8 @@ export default class gpu {
             gl.RGBA, gl.FLOAT, bufferData, 0);*/
         // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.FLOAT, bufferData);
         // gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, this.opts.origin_size_width || this.opts.dim_size_width ,
-            this.opts.origin_size_width || this.opts.dim_size_width, 0,
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width || this.opts.dim_size_width ,
+            height || this.opts.dim_size_height, 0,
             gl.RGBA, gl.FLOAT, bufferData, 0);
         gl.uniform1i(this.getUniformLoc(tSampler), index);
     }
@@ -241,22 +241,25 @@ export default class gpu {
         return texture;
     }
 
-    render(bufferA, bufferB, type = 'texture') {
+    render(matrixA, matrixB, type = 'texture') {
         const gl = this.gl;
         const program = this.program;
         if (type === 'texture') {
-            if (!!bufferA) {
-                this.initTexture(0, 'mapA', bufferA);
+            if (!!matrixA) {
+                this.initTexture(0, 'filter', matrixA.data, matrixA.texture_width, matrixA.texture_height);
+                // this.gl.uniform1iv(this.getUniformLoc('filterShape'), matrixA.shape);
+                // this.gl.uniform1iv(this.getUniformLoc('filter_shape_numbers'), matrixA.shapeNumbers);
+                this.gl.uniform1iv(this.getUniformLoc('shape_numbers'), matrixA.shapeNumbers);
             }
-            if (!!bufferB) {
-                this.initTexture(1, 'mapB', bufferB);
+            if (!!matrixB) {
+                this.initTexture(1, 'origin', matrixB.data, matrixB.sx, matrixB.sy);
             }
         } else {
             // const locFilter = this.getUniformLoc('filter');
             // this.gl.uniform1fv(locFilter, bufferA);
-            this.initTexture(0, 'origin', bufferB);
+            this.initTexture(0, 'origin', matrixB.data);
             const locFilter = this.getUniformLoc('filter');
-            this.gl.uniform1fv(locFilter, bufferA);
+            this.gl.uniform1fv(locFilter, matrixA.data);
             /*const locOri = this.getUniformLoc('origin');
             this.gl.uniform1f(locOri, bufferB);*/
         }

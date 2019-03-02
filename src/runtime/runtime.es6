@@ -9,7 +9,7 @@ import Matrix from '../utils/dims';
  */
 const VSHADER = require('../shader/v_shader.c');
 const FSHADER_ADD = require('../shader/f_elementwise_add_shader.c');
-const FSHADER_CON2D = require('../shader/f_elementwise_conv2d3_shader.c');
+const FSHADER_CON2D = require('../shader/f_elementwise_conv2d4_shader.c');
 export default {
     /**
      * 引入资源
@@ -88,10 +88,11 @@ export default {
      * @param bufferA
      * @param matrix
      */
-    compute(bufferA, matrix, type) {
-        const texture = new Float32Array(Utils.tensor2Texture(matrix.data, matrix.sx * matrix.sy));
+    compute(matrixA, matrixB, type) {
+        const texture = new Float32Array(Utils.tensor2Texture(matrixB.data, 25));
         console.dir(['调试数据-图像材质数据', texture]);
-        this.gpu.render(bufferA, texture, type);
+        matrixB.data = texture;
+        this.gpu.render(matrixA, matrixB, type);
     },
 
     /**
@@ -114,15 +115,18 @@ export default {
     // mock origin 1 * 5 * 5
     mockOrigin() {
         return new Matrix({
-            sx: 5,
-            sy: 5,
-            depth: 4
+            shape: [1, 5, 5, 4]
         });
     },
 
     // mock filter 1 * 3 * 3
     mockFilter() {
-        return new Float32Array([1.0, 1.0, 0.0, 0.0, -2.0, 0.0, 1.0, -3.0, 1.0]);
+        let matrix = new Matrix({
+            shape: [1, 3, 3, 1],
+            type: 'texture',
+            value: new Float32Array([1.0, 1.0, 0.0, 0.0, -2.0, 0.0, 1.0, -3.0, 1.0])
+        });
+        return matrix;
     },
 
     // 更新op

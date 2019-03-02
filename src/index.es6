@@ -27,17 +27,23 @@ Runtime.init2({
     'pad_left': 1,
     'pad_top': 1,
     'dilation_horizontal': 2,
-    'dilation_vertical': 2
+    'dilation_vertical': 2,
+    'filter_shape_length': 4,
+    'tensor_length': 9,
+    'shape_length': 4,
+    'filter_texture_width': filter.texture_width,
+    'filter_texture_height': filter.texture_height,
+    'shape_numbers': filter.shapeNumbers
 }).then(instance => {
     if (!instance || typeof instance === 'string') {
         throw new Error(instance || '不支持float texture');
     }
     inst = instance;
 }).then(() => {
-    console.dir(['测试数据---卷积核', filter]);
+    console.dir(['测试数据---卷积核', filter.data]);
     console.dir(['测试数据---输入tensor', matrix.data]);
     // 执行conv2d
-    inst.compute(filter, matrix, 'conv2d');
+    inst.compute(filter, matrix);
 }).then(() => {
     // 读取结果
     const addResult = inst.read();

@@ -1,9 +1,9 @@
+import Utils from './utils';
 /**
  * @file 广播类
  * @author yangmingming
  */
-import Utils from './utils';
-
+/* eslint-disable */
 export function getBroadcastDims(inShape = [], outShape = []) {
     const inRank = inShape.length;
     const dims = [];
@@ -61,6 +61,7 @@ export default class Matrix {
         this.sy = this.shape[1];
         this.sx = this.shape[2];
     }
+
     /**
      * 获取数组下标, shape例子[M, W, H, D], D的索引从1开始，其他从0开始
      * @param pos {Array} tensor坐标索引
@@ -97,4 +98,4 @@ export default class Matrix {
         return numbers;
     }
 }
-
+/* eslint-enable */

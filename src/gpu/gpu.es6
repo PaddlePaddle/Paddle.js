@@ -204,7 +204,7 @@ export default class gpu {
             gl.RGBA, gl.FLOAT, bufferData, 0);*/
         // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.FLOAT, bufferData);
         // gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width || this.opts.dim_size_width ,
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width || this.opts.dim_size_width,
             height || this.opts.dim_size_height, 0,
             gl.RGBA, gl.FLOAT, bufferData, 0);
         gl.uniform1i(this.getUniformLoc(tSampler), index);

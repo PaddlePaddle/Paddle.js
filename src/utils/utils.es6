@@ -2,6 +2,7 @@
  * @file 工具类
  * @author yangmingming
  */
+/* eslint-disable */
 let canvas = null;
 const CONV2D_VARIABLE = [
     'DIM_SIZE_WIDTH',
@@ -226,7 +227,7 @@ export default {
                 w: 4,
                 d: 4,
                 data
-            }
+            };
         } else {
             let old = data.toString().split(',');
             // 补齐余数
@@ -332,4 +333,4 @@ export default {
         return rData.concat(gData).concat(bData).concat(aData);
     }
 };
-
+/* eslint-enable */

@@ -1,9 +1,9 @@
+/* eslint-disable */
 import Utils from './utils';
 /**
  * @file 广播类
  * @author yangmingming
  */
-/* eslint-disable */
 export function getBroadcastDims(inShape = [], outShape = []) {
     const inRank = inShape.length;
     const dims = [];

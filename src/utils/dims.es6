@@ -63,7 +63,7 @@ export default class Matrix {
     }
 
     /**
-     * 获取数组下标, shape例子[M, W, H, D], D的索引从1开始，其他从0开始
+     * 获取数组下标, shape例子[M, W, H, D]
      * @param pos {Array} tensor坐标索引
      * @return {Number} tensor数据
      */

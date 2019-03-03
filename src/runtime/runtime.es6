@@ -1,6 +1,7 @@
 import Utils from '../utils/utils';
 import Gpu from '../gpu/gpu';
 import Matrix from '../utils/dims';
+import Factory from '../factory/fshader/factory';
 
 /**
  * @file gpu运行时
@@ -10,6 +11,8 @@ import Matrix from '../utils/dims';
 const VSHADER = require('../shader/v_shader.c');
 const FSHADER_ADD = require('../shader/f_elementwise_add_shader.c');
 const FSHADER_CON2D = require('../shader/f_elementwise_conv2d4_shader.c');
+// 生成factory实例
+const factory = new Factory({});
 export default {
     /**
      * 引入资源
@@ -59,6 +62,9 @@ export default {
      * @return {Object} this 实例对象
      */
     async init2(opts = {}) {
+        // 生成conv2d的shader
+        const conv2d_code = await factory.buildShader('conv2d', opts);
+        console.dir(['conv2d shader', conv2d_code]);
         const gpu = this.gpu = new Gpu(opts);
         if (gpu.isFloatingTexture()) {
             let texture = gpu.makeTexure(WebGLRenderingContext.FLOAT, null);
@@ -68,9 +74,10 @@ export default {
                 console.log(bufferStatus.isComplete);
                 // 获取shader
                 const vshaderCode = await Utils.loadShader(VSHADER);
-                let fshaderCode = await Utils.loadShader(FSHADER_CON2D);
-                fshaderCode = Utils.populateData('conv2d', fshaderCode, opts);
-                gpu.create(vshaderCode, fshaderCode);
+                // let fshaderCode = await Utils.loadShader(FSHADER_CON2D);
+                // fshaderCode = Utils.populateData('conv2d', fshaderCode, opts);
+                // gpu.create(vshaderCode, fshaderCode);
+                gpu.create(vshaderCode, conv2d_code);
                 console.dir(['测试数据---输入参数', opts]);
                 return this;
             } else {

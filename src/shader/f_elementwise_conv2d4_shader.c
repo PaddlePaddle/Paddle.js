@@ -71,16 +71,16 @@ struct ivec6 {
 };
 
 // 获取材质中的数据
-float getValueFromTexture(const sampler2D matrix, vec3 pos) {
-    vec4 pixels = texture2D(matrix, pos.xy);
+float getValueFromTexture(vec3 pos) {
+    vec4 pixels = texture2D(filter, pos.xy);
     int d = int(pos.z);
-    if (d == 1) {
+    if (d == 0) {
         return pixels.r;
     }
-    else if (d == 2) {
+    else if (d == 1) {
         return pixels.g;
     }
-    else if (d == 3) {
+    else if (d == 2) {
         return pixels.b;
     }
     else {
@@ -94,7 +94,7 @@ int getIndexFromTensor(int shapeNumbers[SHAPE_LENGTH], ivec4 tensorPos) {
     for (int i = 0; i < SHAPE_LENGTH; i++) {
         index += tensorPos[i] * shapeNumbers[i];
     }
-    return index - 1;
+    return index;
 }
 
 // 获取材质元素在数组中的索引
@@ -108,17 +108,23 @@ int getIndexFromTexture(vec4 pos, int width, int height) {
 // 探测数组元素索引为N的元素，在texture上的坐标, 深度从1开始
 vec3 detectTexturePos(int n, int tWidth, int tHeight) {
     vec3 pos;
-    if (n < 4) {
-        pos = vec3(0.0, 0.0 , float(n + 1));
-    } else {
-        pos.z = mod(float(n + 1), 4.0);
-        pos.x = mod(float(n + 1) / 4.0, float(filter_texture_width));
-        if (int(pos.z) == 0) {
-            pos.x -= 1.0;
-            pos.z = 4.0;
-        }
-        pos.y = float(n + 1) / float(4 * filter_texture_width);
-    }
+//    if (n < 4) {
+//        pos = vec3(0.0, 0.0 , float(n + 1));
+//    } else {
+////        pos.z = mod(float(n + 1), 4.0);
+////        pos.x = mod(float(n + 1) / 4.0, float(filter_texture_width));
+////        if (int(pos.z) == 0) {
+////            pos.x -= 1.0;
+////            pos.z = 4.0;
+////        }
+////        pos.y = float(n + 1) / float(4 * filter_texture_width);
+//        pos.z = mod(float(n), 4.0);
+//        pos.x = mod(float(n) / 4.0, float(filter_texture_width));
+//        pos.y = float(n) / float(4 * filter_texture_width);
+//    }
+    pos.z = mod(float(n), 4.0);
+    pos.x = mod(float(n) / 4.0, float(filter_texture_width));
+    pos.y = float(n) / float(4 * filter_texture_width);
     pos.x = pos.x / float(tWidth);
     pos.y = pos.y / float(tHeight);
     return pos;
@@ -175,12 +181,12 @@ void main(void) {
                 if (oy >= 0.0 && oy < float(origin_h) && ox >= 0.0 && ox < float(origin_w)) {
                     oriCoord.x = ox / float(origin_w);
                     oriCoord.y = oy / float(origin_h);
-                    int index = getIndexFromTensor(shape_numbers, ivec4(0, fy, fx, 1));
+                    int index = getIndexFromTensor(shape_numbers, ivec4(0, fy, fx, 0));
                     vec3 pos = detectTexturePos(index, filter_texture_width, filter_texture_height);
-                    result_r += getValueFromTexture(filter, pos) * texture2D(origin, oriCoord).r;
-                    result_g += getValueFromTexture(filter, pos) * texture2D(origin, oriCoord).g;
-                    result_b += getValueFromTexture(filter, pos) * texture2D(origin, oriCoord).b;
-                    result_a += getValueFromTexture(filter, pos) * texture2D(origin, oriCoord).a;
+                    result_r += getValueFromTexture(pos) * texture2D(origin, oriCoord).r;
+                    result_g += getValueFromTexture(pos) * texture2D(origin, oriCoord).g;
+                    result_b += getValueFromTexture(pos) * texture2D(origin, oriCoord).b;
+                    result_a += getValueFromTexture(pos) * texture2D(origin, oriCoord).a;
                 }
             }
         }

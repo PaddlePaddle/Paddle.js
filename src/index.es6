@@ -16,23 +16,23 @@ const matrix = Runtime.mockOrigin();
 const filter = Runtime.mockFilter();
 // 原始张量，上下左右1个单位的padding，步长是1
 Runtime.init2({
-    'filter_size_width': 3,
-    'filter_size_height': 3,
-    'origin_size_width': matrix.sx,
-    'origin_size_height': matrix.sx,
-    'out_size_width': 3,
-    'out_size_height': 3,
+    'length_shape_filter': 4,
+    'width_shape_filter': 3,
+    'height_shape_filter': 3,
+    'width_texture_filter':filter.texture_width,
+    'height_texture_filter': filter.texture_height,
+    'width_shape_origin': matrix.sx,
+    'height_shape_origin': matrix.sx,
+    'width_shape_out': 3,
+    'height_shape_out': 3,
     'stride_horizontal': 1,
     'stride_vertical': 1,
     'pad_left': 1,
     'pad_top': 1,
     'dilation_horizontal': 2,
     'dilation_vertical': 2,
-    'filter_shape_length': 4,
-    'tensor_length': 9,
-    'shape_length': 4,
-    'filter_texture_width': filter.texture_width,
-    'filter_texture_height': filter.texture_height,
+    'width_raw_canvas': 512,
+    'height_raw_canvas': 512,
     'shape_numbers': filter.shapeNumbers
 }).then(instance => {
     if (!instance || typeof instance === 'string') {
@@ -51,6 +51,42 @@ Runtime.init2({
 }).catch(err => {
     console.log('-----------error---------' + err);
 });
+// Runtime.init2({
+//     'filter_size_width': 3,
+//     'filter_size_height': 3,
+//     'origin_size_width': matrix.sx,
+//     'origin_size_height': matrix.sx,
+//     'out_size_width': 3,
+//     'out_size_height': 3,
+//     'stride_horizontal': 1,
+//     'stride_vertical': 1,
+//     'pad_left': 1,
+//     'pad_top': 1,
+//     'dilation_horizontal': 2,
+//     'dilation_vertical': 2,
+//     'filter_shape_length': 4,
+//     'tensor_length': 9,
+//     'shape_length': 4,
+//     'filter_texture_width': filter.texture_width,
+//     'filter_texture_height': filter.texture_height,
+//     'shape_numbers': filter.shapeNumbers
+// }).then(instance => {
+//     if (!instance || typeof instance === 'string') {
+//         throw new Error(instance || '不支持float texture');
+//     }
+//     inst = instance;
+// }).then(() => {
+//     console.dir(['测试数据---卷积核', filter.data]);
+//     console.dir(['测试数据---输入tensor', matrix.data]);
+//     // 执行conv2d
+//     inst.compute(filter, matrix);
+// }).then(() => {
+//     // 读取结果
+//     const addResult = inst.read();
+//     console.dir(['测试数据---op的执行结果', addResult]);
+// }).catch(err => {
+//     console.log('-----------error---------' + err);
+// });
 
 // 执行运行op
 /*Runtime.init().then(instance => {

@@ -5,13 +5,13 @@
 export default class gpu {
     constructor(opts = {}) {
         this.opts = opts;
-        opts.dim_size_width = Number(opts.dim_size_width) || 512;
-        opts.dim_size_height = Number(opts.dim_size_height) || 512;
+        opts.width_raw_canvas = Number(opts.width_raw_canvas) || 512;
+        opts.height_raw_canvas = Number(opts.height_raw_canvas) || 512;
         let canvas = opts.el ? opts.el : document.createElement('canvas');
-        this.out_size_width = opts.out_size_width || 1;
-        this.out_size_height = opts.out_size_height || 1;
-        canvas.width = opts.dim_size_width;
-        canvas.height = opts.dim_size_height;
+        this.width_shape_out = opts.width_shape_out || 1;
+        this.height_shape_out = opts.height_shape_out || 1;
+        canvas.width = opts.width_raw_canvas;
+        canvas.height = opts.height_raw_canvas;
         this.gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
         this.gl.viewport(0, 0, canvas.width, canvas.height);
         // Attempt to activate the extension, returns null if unavailable
@@ -170,8 +170,8 @@ export default class gpu {
             0,             // Level of detail.
             0,             // xOffset
             0,             // yOffset
-            this.opts.dim_size_width,  // Width - normalized to s.
-            this.opts.dim_size_height, // Height - normalized to t.
+            this.opts.width_raw_canvas,  // Width - normalized to s.
+            this.opts.height_raw_canvas, // Height - normalized to t.
             gl.RGBA,       // Format for each pixel.
             type,          // Data type for each chanel.
             data);         // Image data in the described format.
@@ -204,8 +204,8 @@ export default class gpu {
             gl.RGBA, gl.FLOAT, bufferData, 0);*/
         // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.FLOAT, bufferData);
         // gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width || this.opts.dim_size_width,
-            height || this.opts.dim_size_height, 0,
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width || this.opts.width_raw_canvas,
+            height || this.opts.height_raw_canvas, 0,
             gl.RGBA, gl.FLOAT, bufferData, 0);
         gl.uniform1i(this.getUniformLoc(tSampler), index);
     }
@@ -229,8 +229,8 @@ export default class gpu {
         gl.texImage2D(gl.TEXTURE_2D, // Target, matches bind above.
             0,             // Level of detail.
             gl.RGBA,       // Internal format.
-            this.opts.dim_size_width,         // Width - normalized to s.
-            this.opts.dim_size_height,        // Height - normalized to t.
+            this.opts.width_raw_canvas,         // Width - normalized to s.
+            this.opts.height_raw_canvas,        // Height - normalized to t.
             0,             // Always 0 in OpenGL ES.
             gl.RGBA,       // Format for each pixel.
             type,          // Data type for each chanel.
@@ -246,21 +246,21 @@ export default class gpu {
         const program = this.program;
         if (type === 'texture') {
             if (!!matrixA) {
-                this.initTexture(0, 'filter', matrixA.data, matrixA.texture_width, matrixA.texture_height);
+                this.initTexture(0, 'texture_filter', matrixA.data, matrixA.texture_width, matrixA.texture_height);
                 // this.gl.uniform1iv(this.getUniformLoc('filterShape'), matrixA.shape);
                 // this.gl.uniform1iv(this.getUniformLoc('filter_shape_numbers'), matrixA.shapeNumbers);
-                this.gl.uniform1iv(this.getUniformLoc('shape_numbers'), matrixA.shapeNumbers);
+                this.gl.uniform1iv(this.getUniformLoc('numbers_shape_filter'), matrixA.shapeNumbers);
             }
             if (!!matrixB) {
-                this.initTexture(1, 'origin', matrixB.data, matrixB.sx, matrixB.sy);
+                this.initTexture(1, 'texture_origin', matrixB.data, matrixB.sx, matrixB.sy);
             }
         } else {
             // const locFilter = this.getUniformLoc('filter');
             // this.gl.uniform1fv(locFilter, bufferA);
-            this.initTexture(0, 'origin', matrixB.data);
-            const locFilter = this.getUniformLoc('filter');
+            this.initTexture(0, 'texture_origin', matrixB.data);
+            const locFilter = this.getUniformLoc('texture_filter');
             this.gl.uniform1fv(locFilter, matrixA.data);
-            /*const locOri = this.getUniformLoc('origin');
+            /*const locOri = this.getUniformLoc('texture_origin');
             this.gl.uniform1f(locOri, bufferB);*/
         }
         // gl.useProgram(program);
@@ -276,10 +276,10 @@ export default class gpu {
     compute() {
         let gl = this.gl;
 
-        let pixels = new Float32Array(this.out_size_width * this.out_size_height * 4);
+        let pixels = new Float32Array(this.width_shape_out * this.height_shape_out * 4);
         // gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
         // console.dir(['framebuffer状态', this.frameBufferIsComplete()]);
-        gl.readPixels(0, 0, this.out_size_width, this.out_size_height, gl.RGBA, gl.FLOAT, pixels, 0);
+        gl.readPixels(0, 0, this.width_shape_out, this.height_shape_out, gl.RGBA, gl.FLOAT, pixels, 0);
 
         return pixels;
     }

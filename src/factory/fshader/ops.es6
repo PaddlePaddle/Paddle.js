@@ -1,4 +1,4 @@
-import conf_conv2d from './confs/conv2d.es6';
+import conf_conv2d from './confs/conv2d';
 /**
  * @file op文件
  * @author yangmingming

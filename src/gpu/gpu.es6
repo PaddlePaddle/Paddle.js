@@ -2,6 +2,7 @@
  * @file gpu运算
  * @author yangmingming
  */
+/* eslint-disable */
 export default class gpu {
     constructor(opts = {}) {
         this.opts = opts;
@@ -288,3 +289,4 @@ export default class gpu {
         this.gl.deleteProgram(this.program);
     }
 }
+/* eslint-enable */

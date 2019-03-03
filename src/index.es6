@@ -19,7 +19,7 @@ Runtime.init2({
     'length_shape_filter': 4,
     'width_shape_filter': 3,
     'height_shape_filter': 3,
-    'width_texture_filter':filter.texture_width,
+    'width_texture_filter': filter.texture_width,
     'height_texture_filter': filter.texture_height,
     'width_shape_origin': matrix.sx,
     'height_shape_origin': matrix.sx,

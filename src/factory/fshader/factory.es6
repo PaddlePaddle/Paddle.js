@@ -1,4 +1,4 @@
-import ops from './ops.es6';
+import ops from './ops';
 import Utils from '../../utils/utils';
 /**
  * @file 工厂类，生成fragment shader

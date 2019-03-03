@@ -63,8 +63,8 @@ export default {
      */
     async init2(opts = {}) {
         // 生成conv2d的shader
-        const conv2d_code = await factory.buildShader('conv2d', opts);
-        console.dir(['conv2d shader', conv2d_code]);
+        const conv2dCode = await factory.buildShader('conv2d', opts);
+        console.dir(['conv2d shader', conv2dCode]);
         const gpu = this.gpu = new Gpu(opts);
         if (gpu.isFloatingTexture()) {
             let texture = gpu.makeTexure(WebGLRenderingContext.FLOAT, null);
@@ -77,7 +77,7 @@ export default {
                 // let fshaderCode = await Utils.loadShader(FSHADER_CON2D);
                 // fshaderCode = Utils.populateData('conv2d', fshaderCode, opts);
                 // gpu.create(vshaderCode, fshaderCode);
-                gpu.create(vshaderCode, conv2d_code);
+                gpu.create(vshaderCode, conv2dCode);
                 console.dir(['测试数据---输入参数', opts]);
                 return this;
             } else {

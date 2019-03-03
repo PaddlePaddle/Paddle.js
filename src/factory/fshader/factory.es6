@@ -55,5 +55,5 @@ export default class Factory {
         }
         return code;
     }
-};
+}
 

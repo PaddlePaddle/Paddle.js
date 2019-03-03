@@ -1,3 +1,4 @@
+/* eslint-disable */
 import conf_conv2d from './confs/conv2d';
 /**
  * @file op文件

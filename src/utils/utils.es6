@@ -2,6 +2,7 @@
  * @file 工具类
  * @author yangmingming
  */
+/* eslint-disable */
 let canvas = null;
 const CONV2D_VARIABLE = [
     'DIM_SIZE_WIDTH',
@@ -17,7 +18,13 @@ const CONV2D_VARIABLE = [
     'PAD_LEFT',
     'PAD_TOP',
     'DILATION_HORIZONTAL',
-    'DILATION_VERTICAL'
+    'DILATION_VERTICAL',
+    'FILTER_SHAPE_LENGTH',
+    'TENSOR_LENGTH',
+    'SHAPE_LENGTH',
+    'SHAPE_NUMBERS',
+    'FILTER_TEXTURE_WIDTH',
+    'FILTER_TEXTURE_HEIGHT'
 ];
 // op的输入参数配置
 const conf = {
@@ -31,7 +38,7 @@ export default {
         params.forEach(key => {
             let value = data[key.toLowerCase()];
             // 默认值为1
-            result = result.replace(key, typeof value === 'undefined' ? 1 : value);
+            result = result.replace(new RegExp(key, 'g'), typeof value === 'undefined' ? 1 : value);
         });
         return result;
     },
@@ -209,6 +216,35 @@ export default {
     },
 
     /**
+     * 生成tensor数据, H * W * D, H * 4 * 4
+     */
+    buildTensor(shape, data) {
+        let total = shape.reduce((all, num) => all * num);
+        let x = total % 16;
+        if (x === 0) {
+            return {
+                h: total / 16,
+                w: 4,
+                d: 4,
+                data
+            };
+        } else {
+            let old = data.toString().split(',');
+            // 补齐余数
+            for (let i = 0; i < (16 - x); i++) {
+                old.push(0);
+            }
+            data = new Float32Array(old);
+            return  {
+                h: data.length / 16,
+                w: 4,
+                d: 4,
+                data
+            };
+        }
+    },
+
+    /**
      * 生成相同value的数组
      * @param length
      */
@@ -297,4 +333,4 @@ export default {
         return rData.concat(gData).concat(bData).concat(aData);
     }
 };
-
+/* eslint-enable */

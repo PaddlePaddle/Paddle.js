@@ -1,6 +1,7 @@
 import Utils from '../utils/utils';
 import Gpu from '../gpu/gpu';
 import Matrix from '../utils/dims';
+import Factory from '../factory/fshader/factory';
 
 /**
  * @file gpu运行时
@@ -9,7 +10,9 @@ import Matrix from '../utils/dims';
  */
 const VSHADER = require('../shader/v_shader.c');
 const FSHADER_ADD = require('../shader/f_elementwise_add_shader.c');
-const FSHADER_CON2D = require('../shader/f_elementwise_conv2d3_shader.c');
+const FSHADER_CON2D = require('../shader/f_elementwise_conv2d4_shader.c');
+// 生成factory实例
+const factory = new Factory({});
 export default {
     /**
      * 引入资源
@@ -59,6 +62,9 @@ export default {
      * @return {Object} this 实例对象
      */
     async init2(opts = {}) {
+        // 生成conv2d的shader
+        const conv2dCode = await factory.buildShader('conv2d', opts);
+        console.dir(['conv2d shader', conv2dCode]);
         const gpu = this.gpu = new Gpu(opts);
         if (gpu.isFloatingTexture()) {
             let texture = gpu.makeTexure(WebGLRenderingContext.FLOAT, null);
@@ -68,9 +74,10 @@ export default {
                 console.log(bufferStatus.isComplete);
                 // 获取shader
                 const vshaderCode = await Utils.loadShader(VSHADER);
-                let fshaderCode = await Utils.loadShader(FSHADER_CON2D);
-                fshaderCode = Utils.populateData('conv2d', fshaderCode, opts);
-                gpu.create(vshaderCode, fshaderCode);
+                // let fshaderCode = await Utils.loadShader(FSHADER_CON2D);
+                // fshaderCode = Utils.populateData('conv2d', fshaderCode, opts);
+                // gpu.create(vshaderCode, fshaderCode);
+                gpu.create(vshaderCode, conv2dCode);
                 console.dir(['测试数据---输入参数', opts]);
                 return this;
             } else {
@@ -88,10 +95,11 @@ export default {
      * @param bufferA
      * @param matrix
      */
-    compute(bufferA, matrix, type) {
-        const texture = new Float32Array(Utils.tensor2Texture(matrix.data, matrix.sx * matrix.sy));
+    compute(matrixA, matrixB, type) {
+        const texture = new Float32Array(Utils.tensor2Texture(matrixB.data, 25));
         console.dir(['调试数据-图像材质数据', texture]);
-        this.gpu.render(bufferA, texture, type);
+        matrixB.data = texture;
+        this.gpu.render(matrixA, matrixB, type);
     },
 
     /**
@@ -114,15 +122,18 @@ export default {
     // mock origin 1 * 5 * 5
     mockOrigin() {
         return new Matrix({
-            sx: 5,
-            sy: 5,
-            depth: 4
+            shape: [1, 5, 5, 4]
         });
     },
 
     // mock filter 1 * 3 * 3
     mockFilter() {
-        return new Float32Array([1.0, 1.0, 0.0, 0.0, -2.0, 0.0, 1.0, -3.0, 1.0]);
+        let matrix = new Matrix({
+            shape: [1, 3, 3, 1],
+            type: 'texture',
+            value: new Float32Array([1.0, 1.0, 0.0, 0.0, -2.0, 0.0, 1.0, -3.0, 1.0])
+        });
+        return matrix;
     },
 
     // 更新op

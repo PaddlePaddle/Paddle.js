@@ -56,7 +56,7 @@ units.init(conf, FSHADER_CON2D).then(instance => {
     Object.assign(input, conf);
     console.dir(['完整input', input]);
     // console.dir(['完整输入和输出', params]);
-    inst.getResult('conv2d', input, result);
+    inst.getResult('pool2d', input, result);
 }).catch(err => {
     console.log('-----------error---------' + err);
 });

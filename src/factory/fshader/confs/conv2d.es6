@@ -49,5 +49,25 @@ export default {
         'DILATION_VERTICAL',
         'WIDTH_RAW_CANVAS',
         'HEIGHT_RAW_CANVAS'
+    ],
+    input: [
+        {
+            tensor: 'filter',
+            variable: 'numbers_shape_filter',
+            setter: 'uniform1iv',
+            type: 'uniform'
+        },
+        {
+            tensor: 'filter',
+            variable: 'texture_filter',
+            setter: 'initTexture',
+            type: 'texture'
+        },
+        {
+            tensor: 'origin',
+            variable: 'texture_origin',
+            setter: 'initTexture',
+            type: 'texture'
+        }
     ]
 };

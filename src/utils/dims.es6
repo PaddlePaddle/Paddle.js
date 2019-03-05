@@ -45,10 +45,14 @@ export function getBroadcastShape(shapeA = [], shapeB = []) {
 // matrix数据
 export default class Matrix {
     constructor(opts = {}) {
+        this.opts = opts;
         let shape = this.shape = opts.shape;
         let num = this.num = shape.reduce((total, num) => total * num);
-        this.shapeNumbers = this.getShapeNumbers();
+        this['numbers_shape_' + opts.name] = this.getShapeNumbers();
         this.data = opts.value || Utils.zeros(num);
+        // opts.name是tensor的name
+        this.tensorName = opts.name;
+        this.textureName = 'texture_' + opts.name;
         // 填充材质
         if (opts.type === 'texture') {
             this.tensor = Utils.buildTensor(shape, this.data);
@@ -56,10 +60,14 @@ export default class Matrix {
             this.texture_width = this.tensor.w;
             this.texture_height = this.tensor.h;
             this.data = this.tensor.data;
+            delete this.tensor;
+        } else {
+            // test, 计算的shape
+            this.texture_width = this.shape[1];
+            this.texture_height = this.shape[2];
+            this.data = new Float32Array(Utils.tensor2Texture(this.data, 25));
+            console.dir(['调试数据-图像材质数据', this.data]);
         }
-        // test, 计算的shape
-        this.sy = this.shape[1];
-        this.sx = this.shape[2];
     }
 
     /**

@@ -14,6 +14,7 @@ export default class gpu {
         canvas.height = opts.height_raw_canvas;
         this.gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
         this.gl.viewport(0, 0, canvas.width, canvas.height);
+        this.textureIndex = 0;
         // Attempt to activate the extension, returns null if unavailable
         this.textureFloat  = this.gl.getExtension('OES_texture_float');
         console.log('float extension is started or not? ' + !!this.textureFloat);
@@ -241,33 +242,18 @@ export default class gpu {
         return texture;
     }
 
-    render(matrixA, matrixB, type = 'texture') {
+    render(data = []) {
         const gl = this.gl;
-        const program = this.program;
-        if (type === 'texture') {
-            if (!!matrixA) {
-                this.initTexture(0, 'texture_filter', matrixA.data, matrixA.texture_width, matrixA.texture_height);
-                // this.gl.uniform1iv(this.getUniformLoc('filterShape'), matrixA.shape);
-                // this.gl.uniform1iv(this.getUniformLoc('filter_shape_numbers'), matrixA.shapeNumbers);
-                this.gl.uniform1iv(this.getUniformLoc('numbers_shape_filter'), matrixA.shapeNumbers);
+        this.textureIndex = 0;
+        // 输入数据
+        data.forEach(item => {
+            if (item.type === 'texture') {
+                this.initTexture(this.textureIndex++, item.variable, item.data, item.texture_width,
+                    item.texture_height);
+            } else if (item.type === 'uniform') {
+                gl[item.setter](this.getUniformLoc(item.variable), item.data);
             }
-            if (!!matrixB) {
-                this.initTexture(1, 'texture_origin', matrixB.data, matrixB.sx, matrixB.sy);
-            }
-        } else {
-            // const locFilter = this.getUniformLoc('filter');
-            // this.gl.uniform1fv(locFilter, bufferA);
-            this.initTexture(0, 'texture_origin', matrixB.data);
-            const locFilter = this.getUniformLoc('texture_filter');
-            this.gl.uniform1fv(locFilter, matrixA.data);
-            /*const locOri = this.getUniformLoc('texture_origin');
-            this.gl.uniform1f(locOri, bufferB);*/
-        }
-        // gl.useProgram(program);
-        // 绘制
-        // gl.clearColor(.2, 0, 0, 1);
-        // gl.clear(gl.COLOR_BUFFER_BIT);
-        // gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+        });
         gl.clearColor(.0, .0, .0, 1);
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);

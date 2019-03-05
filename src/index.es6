@@ -21,8 +21,8 @@ Runtime.init2({
     'height_shape_filter': 3,
     'width_texture_filter': filter.texture_width,
     'height_texture_filter': filter.texture_height,
-    'width_shape_origin': matrix.sx,
-    'height_shape_origin': matrix.sx,
+    'width_shape_origin': matrix.texture_width,
+    'height_shape_origin': matrix.texture_height,
     'width_shape_out': 3,
     'height_shape_out': 3,
     'stride_horizontal': 1,
@@ -43,7 +43,10 @@ Runtime.init2({
     console.dir(['测试数据---卷积核', filter.data]);
     console.dir(['测试数据---输入tensor', matrix.data]);
     // 执行conv2d
-    inst.compute(filter, matrix);
+    inst.compute({
+        filter,
+        origin: matrix
+    });
 }).then(() => {
     // 读取结果
     const addResult = inst.read();

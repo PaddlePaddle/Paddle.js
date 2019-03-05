@@ -2,17 +2,19 @@ import Utils from '../utils/utils';
 import Gpu from '../gpu/gpu';
 import Matrix from '../utils/dims';
 import Factory from '../factory/fshader/factory';
-
 /**
  * @file gpu运行时
  * @author yangmingming
  *
  */
+const op = 'conv2d';
 const VSHADER = require('../shader/v_shader.c');
 const FSHADER_ADD = require('../shader/f_elementwise_add_shader.c');
 const FSHADER_CON2D = require('../shader/f_elementwise_conv2d4_shader.c');
 // 生成factory实例
 const factory = new Factory({});
+// 获取op的输入配置
+const opConfs = factory.getOpConfs();
 export default {
     /**
      * 引入资源
@@ -63,7 +65,7 @@ export default {
      */
     async init2(opts = {}) {
         // 生成conv2d的shader
-        const conv2dCode = await factory.buildShader('conv2d', opts);
+        const conv2dCode = await factory.buildShader(op, opts);
         console.dir(['conv2d shader', conv2dCode]);
         const gpu = this.gpu = new Gpu(opts);
         if (gpu.isFloatingTexture()) {
@@ -92,14 +94,24 @@ export default {
 
     /**
      * 计算op
-     * @param bufferA
-     * @param matrix
+     *
+     * @param {Object} opts 输入数据
      */
-    compute(matrixA, matrixB, type) {
-        const texture = new Float32Array(Utils.tensor2Texture(matrixB.data, 25));
-        console.dir(['调试数据-图像材质数据', texture]);
-        matrixB.data = texture;
-        this.gpu.render(matrixA, matrixB, type);
+    compute(opts = {}) {
+        // 配置op的输入数据
+        const data = opConfs[op].map(item => {
+            const tensor = opts[item.tensor];
+            if (item.type === 'texture') {
+                item.data = tensor.data;
+                item['texture_width'] = tensor['texture_width'];
+                item['texture_height'] = tensor['texture_height'];
+            } else if (item.type === 'uniform') {
+                item.data = tensor[item.variable];
+            }
+            return item;
+        });
+
+        this.gpu.render(data);
     },
 
     /**
@@ -122,7 +134,8 @@ export default {
     // mock origin 1 * 5 * 5
     mockOrigin() {
         return new Matrix({
-            shape: [1, 5, 5, 4]
+            shape: [1, 5, 5, 4],
+            name: 'origin'
         });
     },
 
@@ -131,6 +144,7 @@ export default {
         let matrix = new Matrix({
             shape: [1, 3, 3, 1],
             type: 'texture',
+            name: 'filter',
             value: new Float32Array([1.0, 1.0, 0.0, 0.0, -2.0, 0.0, 1.0, -3.0, 1.0])
         });
         return matrix;

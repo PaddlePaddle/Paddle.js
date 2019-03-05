@@ -94,7 +94,8 @@ export default {
 
     /**
      * 计算op
-     * @param opts {Object} 输入数据
+     *
+     * @param {Object} opts 输入数据
      */
     compute(opts = {}) {
         // 配置op的输入数据

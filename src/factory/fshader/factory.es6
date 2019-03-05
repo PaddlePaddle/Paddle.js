@@ -61,5 +61,15 @@ export default class Factory {
         }
         return code;
     }
+
+    getOpConfs() {
+        const opsConfs = {};
+        for (let key in ops.ops) {
+            if (ops.ops.hasOwnProperty(key)) {
+                opsConfs[key] = ops.ops[key].confs.input;
+            }
+        }
+        return opsConfs;
+    }
 }
 

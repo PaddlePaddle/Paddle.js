@@ -4,7 +4,7 @@ import Utils from '../../utils/utils';
  * @file 工厂类，生成fragment shader
  * @author yangmingming
  */
-
+const snippets = {};
 export default class Factory {
     constructor(opts) {
         this.defaultOpts = Object.assign({}, opts);
@@ -20,15 +20,21 @@ export default class Factory {
     }
 
     async buildPrefix(opName) {
-        let prefix = '';
-        prefix = await Utils.loadShader(ops.common.prefix);
+        let prefix = snippets.prefix || '';
+        if (!prefix) {
+            prefix = await Utils.loadShader(ops.common.prefix);
+            snippets.prefix = prefix;
+        }
         return prefix;
     }
 
     async buildCommon(opName) {
-        let code = await Utils.loadShader(ops.common.params);
-        code += await Utils.loadShader(ops.common.func);
-        return code;
+        if (!snippets.common) {
+            snippets.common = {};
+            snippets.common.params = await Utils.loadShader(ops.common.params);
+            snippets.common.func = await Utils.loadShader(ops.common.func);
+        }
+        return snippets.common.params + snippets.common.func;
     }
 
     async buildOp(opName) {

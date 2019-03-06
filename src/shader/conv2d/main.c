@@ -1,0 +1,42 @@
+// start函数
+void main(void) {
+    vec2 v2;
+    v2.x = vCoord.x;
+    v2.y = vCoord.y;
+    // 获取原始长度
+    vec2 outCoord = moveTexture2PosToReal_canvas(v2);
+    // 输出数据
+    vec4 v4;
+    if (outCoord.x < float(width_shape_out) && outCoord.y < float(height_shape_out)) {
+        for (int i = 0; i < 4; i++) {
+            int n = getArrayIndexFromTexturePos_texture_out(vec3(outCoord.x, outCoord.y, float(i)));
+            // 获取output的坐标
+            ivec3 outPos = getTensorPosFromArrayIndex_out(n);
+
+            // X、Y方向的移动步长
+            int disX = -padLeft;
+            int disY = -padTop;
+            for (int fy = 0; fy < height_shape_filter; fy++) {
+                int oy = (outPos.y * stride_v) + (fy * dilation_v + disY);
+                for (int fx = 0; fx < width_shape_filter; fx++) {
+                    int ox = (outPos.x * stride_h) + (fx * dilation_h + disX);
+                    if (oy >= 0 && oy < (height_shape_origin) && ox >= 0 && ox < (width_shape_origin)) {
+                        // channel计算
+                        for (int j = 0; j < channel_filter; j++) {
+                            // todo: ivec4 动态适配
+                            int fIndex = getArrayIndexFromTensorPos_filter(ivec4(outPos.z, fy, fx, j));
+                            vec3 fPos = getTexturePosFromArrayIndex_texture_filter(fIndex);
+                            // todo: orgin数据
+                            int oIndex = getArrayIndexFromTensorPos_origin(ivec4(0, oy, ox, j));
+                            vec3 oPos = getTexturePosFromArrayIndex_texture_origin(oIndex);
+                            v4[i] += (getValueFromTexturePos_texture_filter(fPos) *
+                                getValueFromTexturePos_texture_origin(oPos));
+                            // v4 = vec4(float(ox), float(oy), getValueFromTexturePos_texture_filter(fPos), getValueFromTexturePos_texture_origin(oPos));
+                        }
+                    }
+                }
+            }
+        }
+    }
+    gl_FragColor = v4;
+}

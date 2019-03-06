@@ -216,32 +216,44 @@ export default {
     },
 
     /**
-     * 生成tensor数据, H * W * D, H * 4 * 4
+     * 生成tensor数据, M * H * W * D, H * 4 * 4
+     * @params {Array} shape 形状
+     * @params
      */
-    buildTensor(shape, data) {
+    buildTensor(shape = [], data) {
+        let batch = shape[0];
+        let height = shape[1];
+        let width = shape[2];
+        let channel = shape[3];
         let total = shape.reduce((all, num) => all * num);
-        let x = total % 16;
-        if (x === 0) {
-            return {
-                h: total / 16,
-                w: 4,
-                d: 4,
-                data
-            };
-        } else {
-            let old = data.toString().split(',');
-            // 补齐余数
-            for (let i = 0; i < (16 - x); i++) {
-                old.push(0);
+        let cube = total / batch;
+        let old = data.toString().split(',');
+        let newOne = [];
+        let tw = 2;
+        let th = 2;
+        // old的length是W*H
+        if (old.length < total) {
+            // 广播数组
+            for (let i = 0; i < batch * channel; i++) {
+                newOne = newOne.concat(old);
             }
-            data = new Float32Array(old);
-            return  {
-                h: data.length / 16,
-                w: 4,
-                d: 4,
-                data
-            };
+            /*for (let i = 0; i < batch; i++) {
+                for (let h = 0; h < height; h++) {
+                    for (let w = 0; w < width; w++) {
+                        for (let j = 0; j < channel; j++) {
+                            newOne.push(+old[h * width + w]);
+                        }
+                    }
+                }
+            }*/
         }
+        // todo: 需要计算生成对应材质
+        return {
+            data: new Float32Array(newOne),
+            d: 4,
+            w: width,
+            h: height
+        };
     },
 
     /**

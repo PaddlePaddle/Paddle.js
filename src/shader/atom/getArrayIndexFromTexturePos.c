@@ -4,7 +4,7 @@
 // 获取材质元素在数组中的索引
 // const int width_TEXTURE_NAME = WIDTH_TEXTURE_NAME_VALUE;
 
-int getArrayIndexFromTexturePos_TEXTURE_NAME(vec4 pos) {
+int getArrayIndexFromTexturePos_TEXTURE_NAME(vec3 pos) {
     int x = int(floor(pos.x));
     int y = int(floor(pos.y));
     int d = int(floor(pos.z));

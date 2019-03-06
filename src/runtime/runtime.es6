@@ -118,6 +118,7 @@ export default {
      * 读取op计算结果, 并返回数据
      */
     read() {
+        // return this.gpu.compute();
         return Utils.shapeData(this.gpu.compute(), {w: 3, h: 3});
     },
 
@@ -131,7 +132,7 @@ export default {
         return Utils.mock(shapeA, shapeB);
     },
 
-    // mock origin 1 * 5 * 5
+    // mock origin 1 * 4 * 5 * 5
     mockOrigin() {
         return new Matrix({
             shape: [1, 5, 5, 4],
@@ -139,10 +140,10 @@ export default {
         });
     },
 
-    // mock filter 1 * 3 * 3
+    // mock filter 4 * 4 * 3 * 3
     mockFilter() {
         let matrix = new Matrix({
-            shape: [1, 3, 3, 1],
+            shape: [4, 3, 3, 4],
             type: 'texture',
             name: 'filter',
             value: new Float32Array([1.0, 1.0, 0.0, 0.0, -2.0, 0.0, 1.0, -3.0, 1.0])

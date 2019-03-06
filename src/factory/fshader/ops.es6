@@ -1,5 +1,5 @@
 /* eslint-disable */
-import conf_conv2d from './confs/conv2d';
+import conf_conv2d from '../../shader/conv2d/conf';
 /**
  * @file op文件
  * @author yangmingming
@@ -15,8 +15,8 @@ export default {
     },
     ops: {
         conv2d: {
-            params: require('../../shader/conv2d_params.c'),
-            func: require('../../shader/conv2d_func.c'),
+            params: require('../../shader/conv2d/params.c'),
+            func: require('../../shader/conv2d/main.c'),
             confs: conf_conv2d
         }
     },

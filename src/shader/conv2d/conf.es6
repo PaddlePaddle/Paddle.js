@@ -19,6 +19,18 @@ export default {
             }
         },
         {
+            func: 'getArrayIndexFromTexturePos',
+            conf: {
+                TEXTURE_NAME: 'texture_out'
+            }
+        },
+        {
+            func: 'getTensorPosFromArrayIndex',
+            conf: {
+                TENSOR_NAME: 'out'
+            }
+        },
+        {
             func: 'getTexturePosFromArrayIndex',
             conf: {
                 TEXTURE_NAME: 'texture_filter'
@@ -29,6 +41,26 @@ export default {
             conf: {
                 TEXTURE_NAME: 'texture_filter'
             }
+        },
+
+        {
+            func: 'getArrayIndexFromTensorPos',
+            conf: {
+                TENSOR_TYPE: 'ivec4',
+                TENSOR_NAME: 'origin'
+            }
+        },
+        {
+            func: 'getTexturePosFromArrayIndex',
+            conf: {
+                TEXTURE_NAME: 'texture_origin'
+            }
+        },
+        {
+            func: 'getValueFromTexturePos',
+            conf: {
+                TEXTURE_NAME: 'texture_origin'
+            }
         }
     ],
     conf: [
@@ -37,10 +69,21 @@ export default {
         'HEIGHT_SHAPE_FILTER',
         'WIDTH_TEXTURE_FILTER',
         'HEIGHT_TEXTURE_FILTER',
+        'CHANNEL_FILTER',
+
         'WIDTH_SHAPE_ORIGIN',
         'HEIGHT_SHAPE_ORIGIN',
+        'LENGTH_SHAPE_ORIGIN',
+        'WIDTH_TEXTURE_ORIGIN',
+        'HEIGHT_TEXTURE_ORIGIN',
+        'CHANNEL_ORIGIN',
+
         'WIDTH_SHAPE_OUT',
         'HEIGHT_SHAPE_OUT',
+        'WIDTH_TEXTURE_OUT',
+        'HEIGHT_TEXTURE_OUT',
+        'CHANNEL_OUT',
+
         'STRIDE_HORIZONTAL',
         'STRIDE_VERTICAL',
         'PAD_LEFT',
@@ -48,7 +91,9 @@ export default {
         'DILATION_HORIZONTAL',
         'DILATION_VERTICAL',
         'WIDTH_RAW_CANVAS',
-        'HEIGHT_RAW_CANVAS'
+        'HEIGHT_RAW_CANVAS',
+
+        ''
     ],
     input: [
         {
@@ -68,6 +113,12 @@ export default {
             variable: 'texture_origin',
             setter: 'initTexture',
             type: 'texture'
+        },
+        {
+            tensor: 'origin',
+            variable: 'numbers_shape_origin',
+            setter: 'uniform1iv',
+            type: 'uniform'
         }
     ]
 };

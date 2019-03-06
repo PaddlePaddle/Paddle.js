@@ -135,7 +135,7 @@ export default {
     // mock origin 1 * 4 * 5 * 5
     mockOrigin() {
         return new Matrix({
-            shape: [1, 5, 5, 4],
+            shape: [1, 4, 5, 5],
             name: 'origin'
         });
     },
@@ -143,7 +143,7 @@ export default {
     // mock filter 4 * 4 * 3 * 3
     mockFilter() {
         let matrix = new Matrix({
-            shape: [4, 3, 3, 4],
+            shape: [4, 4, 3, 3],
             type: 'texture',
             name: 'filter',
             value: new Float32Array([1.0, 1.0, 0.0, 0.0, -2.0, 0.0, 1.0, -3.0, 1.0])

@@ -24,10 +24,10 @@ void main(void) {
                         // channel计算
                         for (int j = 0; j < channel_filter; j++) {
                             // todo: ivec4 动态适配
-                            int fIndex = getArrayIndexFromTensorPos_filter(ivec4(outPos.z, fy, fx, j));
+                            int fIndex = getArrayIndexFromTensorPos_filter(ivec4(outPos.z, j, fy, fx));
                             vec3 fPos = getTexturePosFromArrayIndex_texture_filter(fIndex);
                             // todo: orgin数据
-                            int oIndex = getArrayIndexFromTensorPos_origin(ivec4(0, oy, ox, j));
+                            int oIndex = getArrayIndexFromTensorPos_origin(ivec4(0, j, oy, ox));
                             vec3 oPos = getTexturePosFromArrayIndex_texture_origin(oIndex);
                             v4[i] += (getValueFromTexturePos_texture_filter(fPos) *
                                 getValueFromTexturePos_texture_origin(oPos));

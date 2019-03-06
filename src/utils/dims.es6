@@ -63,7 +63,7 @@ export default class Matrix {
             delete this.tensor;
         } else {
             // test, 计算的shape
-            this.texture_width = this.shape[1];
+            this.texture_width = this.shape[3];
             this.texture_height = this.shape[2];
             this.data = new Float32Array(Utils.tensor2Texture(this.data, this.texture_width * this.texture_height));
             console.dir(['调试数据-图像材质数据', this.data]);

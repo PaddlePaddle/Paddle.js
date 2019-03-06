@@ -222,9 +222,9 @@ export default {
      */
     buildTensor(shape = [], data) {
         let batch = shape[0];
-        let height = shape[1];
-        let width = shape[2];
-        let channel = shape[3];
+        let height = shape[2];
+        let width = shape[3];
+        let channel = shape[1];
         let total = shape.reduce((all, num) => all * num);
         let cube = total / batch;
         let old = data.toString().split(',');
@@ -318,6 +318,7 @@ export default {
      * @return texture {Array} 图像材质数据
      */
     tensor2Texture(tensor, size) {
+        return tensor;
         const texture = [];
         const len = tensor.length;
         const channel = len / size;

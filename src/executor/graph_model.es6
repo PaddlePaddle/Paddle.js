@@ -1,5 +1,6 @@
 
 import model from '../../demo/model/model';
+import GraphExecutor from './graph_executor';
 /**
  * @file GraphModel，绘制生成model网络
  * @author wangqun@baidu.com
@@ -99,9 +100,9 @@ export default class GraphModel  {
         // this.version = 2;
         // const weightMap =
         //     io.decodeWeights(artifacts.weightData, artifacts.weightSpecs);
-        // this.executor =
-        //     new GraphExecutor(OperationMapper.Instance.transformGraph(graph));
-        // this.executor.weightMap = this.convertTensorMapToTensorsMap(weightMap);
+        this.executor = new GraphExecutor(artifacts);
+        const weightMap = io.decodeWeights(artifacts.ops, artifacts.vars);
+        this.executor.weightMap = this.convertTensorMapToTensorsMap(weightMap);
         return true;
     }
 
@@ -139,16 +140,18 @@ export default class GraphModel  {
     }
 
     constructTensorMap(inputs) {
-        const inputArray = inputs instanceof Tensor ? [inputs] : inputs;
-        if (inputArray.length !== this.inputNodes.length) {
-            throw new Error(
-                'Input tensor count mismatch,' +
-                `the graph model has ${this.inputNodes.length} placeholders, ` +
-                `while there are ${inputArray.length} input tensors.`);
-        }
-        return this.inputNodes.reduce((map, inputName, i) => {
-            map[inputName] = inputArray[i];
+        // const inputArray = inputs instanceof Tensor ? [inputs] : inputs;
+        return inputs.reduce((map, inputName, i) => {
+            // map[inputName] = inputArray[i];
+            console.log(map, inputName, i);
             return map;
+        });
+    }
+
+    convertTensorMapToTensorsMap(map) {
+        return Object.keys(map).reduce((newMap, key) => {
+            newMap[key] = [map[key]];
+            return newMap;
         });
     }
 

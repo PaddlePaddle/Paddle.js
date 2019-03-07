@@ -251,7 +251,7 @@ export default {
         return {
             data: new Float32Array(newOne),
             d: 4,
-            w: width,
+            w: total / (1 * 4 * height),
             h: height
         };
     },

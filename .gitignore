@@ -74,3 +74,5 @@ Thumbs.db
 /output
 /dist
 /dll
+.cache
+package-lock.json

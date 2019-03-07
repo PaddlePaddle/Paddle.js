@@ -19,12 +19,20 @@ Runtime.init2({
     'length_shape_filter': 4,
     'width_shape_filter': 3,
     'height_shape_filter': 3,
+    'channel_filter': 4,
     'width_texture_filter': filter.texture_width,
     'height_texture_filter': filter.texture_height,
-    'width_shape_origin': matrix.texture_width,
-    'height_shape_origin': matrix.texture_height,
+    'length_shape_origin': 4,
+    'width_shape_origin': 5,
+    'height_shape_origin': 5,
+    'channel_origin': 4,
+    'width_texture_origin': matrix.texture_width,
+    'height_texture_origin': matrix.texture_height,
     'width_shape_out': 3,
     'height_shape_out': 3,
+    'channel_out': 4,
+    'width_texture_out': 3,
+    'height_texture_out': 3,
     'stride_horizontal': 1,
     'stride_vertical': 1,
     'pad_left': 1,
@@ -32,8 +40,7 @@ Runtime.init2({
     'dilation_horizontal': 2,
     'dilation_vertical': 2,
     'width_raw_canvas': 512,
-    'height_raw_canvas': 512,
-    'shape_numbers': filter.shapeNumbers
+    'height_raw_canvas': 512
 }).then(instance => {
     if (!instance || typeof instance === 'string') {
         throw new Error(instance || '不支持float texture');

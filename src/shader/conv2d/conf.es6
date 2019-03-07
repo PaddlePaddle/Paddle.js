@@ -15,7 +15,7 @@ export default {
         {
             func: 'moveTexture2PosToReal',
             conf: {
-                TEXTURE_NAME: 'canvas'
+                TEXTURE_NAME: 'texture_out'
             }
         },
         {
@@ -91,11 +91,7 @@ export default {
         'PAD_LEFT',
         'PAD_TOP',
         'DILATION_HORIZONTAL',
-        'DILATION_VERTICAL',
-        'WIDTH_RAW_CANVAS',
-        'HEIGHT_RAW_CANVAS',
-
-        ''
+        'DILATION_VERTICAL'
     ],
     input: [
         {

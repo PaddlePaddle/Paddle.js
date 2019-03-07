@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * @file gpu运算
  * @author yangmingming
@@ -10,6 +11,8 @@ export default class gpu {
         let canvas = opts.el ? opts.el : document.createElement('canvas');
         this.width_shape_out = opts.width_shape_out || 1;
         this.height_shape_out = opts.height_shape_out || 1;
+        this.width_texture_out = opts.width_texture_out || 1;
+        this.height_texture_out = opts.height_texture_out || 1;
         canvas.width = opts.width_raw_canvas;
         canvas.height = opts.height_raw_canvas;
         this.gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');

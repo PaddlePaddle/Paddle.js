@@ -27,7 +27,8 @@ export default {
         {
             func: 'getTensorPosFromArrayIndex',
             conf: {
-                TENSOR_NAME: 'out'
+                TENSOR_NAME: 'out',
+                TENSOR_TYPE: 'vec4'
             }
         },
         {
@@ -80,6 +81,7 @@ export default {
 
         'WIDTH_SHAPE_OUT',
         'HEIGHT_SHAPE_OUT',
+        'LENGTH_SHAPE_OUT',
         'WIDTH_TEXTURE_OUT',
         'HEIGHT_TEXTURE_OUT',
         'CHANNEL_OUT',
@@ -117,6 +119,12 @@ export default {
         {
             tensor: 'origin',
             variable: 'numbers_shape_origin',
+            setter: 'uniform1iv',
+            type: 'uniform'
+        },
+        {
+            tensor: 'origin',
+            variable: 'numbers_shape_out',
             setter: 'uniform1iv',
             type: 'uniform'
         }

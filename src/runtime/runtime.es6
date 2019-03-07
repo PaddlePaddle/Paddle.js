@@ -118,8 +118,8 @@ export default {
      * 读取op计算结果, 并返回数据
      */
     read() {
-        // return this.gpu.compute();
-        return Utils.shapeData(this.gpu.compute(), {w: 3, h: 3});
+        return this.gpu.compute();
+        // return Utils.shapeData(this.gpu.compute(), [4, 1, 3, 3]);
     },
 
     // 生成feed数据

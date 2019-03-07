@@ -15,7 +15,7 @@ export default {
         {
             func: 'moveTexture2PosToReal',
             conf: {
-                TEXTURE_NAME: 'canvas'
+                TEXTURE_NAME: 'texture_out'
             }
         },
         {
@@ -27,7 +27,8 @@ export default {
         {
             func: 'getTensorPosFromArrayIndex',
             conf: {
-                TENSOR_NAME: 'out'
+                TENSOR_NAME: 'out',
+                TENSOR_TYPE: 'vec4'
             }
         },
         {
@@ -80,6 +81,7 @@ export default {
 
         'WIDTH_SHAPE_OUT',
         'HEIGHT_SHAPE_OUT',
+        'LENGTH_SHAPE_OUT',
         'WIDTH_TEXTURE_OUT',
         'HEIGHT_TEXTURE_OUT',
         'CHANNEL_OUT',
@@ -89,11 +91,7 @@ export default {
         'PAD_LEFT',
         'PAD_TOP',
         'DILATION_HORIZONTAL',
-        'DILATION_VERTICAL',
-        'WIDTH_RAW_CANVAS',
-        'HEIGHT_RAW_CANVAS',
-
-        ''
+        'DILATION_VERTICAL'
     ],
     input: [
         {
@@ -117,6 +115,12 @@ export default {
         {
             tensor: 'origin',
             variable: 'numbers_shape_origin',
+            setter: 'uniform1iv',
+            type: 'uniform'
+        },
+        {
+            tensor: 'origin',
+            variable: 'numbers_shape_out',
             setter: 'uniform1iv',
             type: 'uniform'
         }

@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * @file gpu运算
  * @author yangmingming
@@ -8,8 +9,6 @@ export default class gpu {
         opts.width_raw_canvas = Number(opts.width_raw_canvas) || 512;
         opts.height_raw_canvas = Number(opts.height_raw_canvas) || 512;
         let canvas = opts.el ? opts.el : document.createElement('canvas');
-        this.width_shape_out = opts.width_shape_out || 1;
-        this.height_shape_out = opts.height_shape_out || 1;
         canvas.width = opts.width_raw_canvas;
         canvas.height = opts.height_raw_canvas;
         this.gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
@@ -17,8 +16,17 @@ export default class gpu {
         this.textureIndex = 0;
         // Attempt to activate the extension, returns null if unavailable
         this.textureFloat  = this.gl.getExtension('OES_texture_float');
+        this.setOutProps();
         console.log('float extension is started or not? ' + !!this.textureFloat);
         console.log('WebGl版本是 ' + this.gl.getParameter(this.gl.SHADING_LANGUAGE_VERSION));
+    }
+
+    setOutProps() {
+        const opts = this.opts;
+        this.width_shape_out = opts.width_shape_out || 1;
+        this.height_shape_out = opts.height_shape_out || 1;
+        this.width_texture_out = opts.width_texture_out || 1;
+        this.height_texture_out = opts.height_texture_out || 1;
     }
 
     isFloatingTexture() {
@@ -96,7 +104,7 @@ export default class gpu {
      * @param {WebGLTexture} texture 材质
      * @returns {WebGLFramebuffer} The framebuffer
      */
-    attachFrameBuffer(texture) {
+    attachFrameBuffer(texture, opts = {}) {
         const gl = this.gl;
         let frameBuffer;
         frameBuffer = gl.createFramebuffer();
@@ -107,7 +115,12 @@ export default class gpu {
             texture, // The texture.
             0 // 0, we aren't using MIPMAPs
         );
-
+        gl.viewport(
+            0,
+            0,
+            opts.width_texture_out || this.width_texture_out,
+            opts.height_texture_out || this.height_texture_out
+        );
         return frameBuffer;
     }
 
@@ -217,7 +230,8 @@ export default class gpu {
         return loc;
     }
 
-    makeTexure(type, data) {
+    // 生成帧缓存的texture
+    makeTexure(type, data, opts = {}) {
         const gl = this.gl;
         let texture = this.texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -230,8 +244,8 @@ export default class gpu {
         gl.texImage2D(gl.TEXTURE_2D, // Target, matches bind above.
             0,             // Level of detail.
             gl.RGBA,       // Internal format.
-            this.opts.width_raw_canvas,         // Width - normalized to s.
-            this.opts.height_raw_canvas,        // Height - normalized to t.
+            opts.width_texture_out || this.width_texture_out,
+            opts.height_texture_out || this.height_texture_out,
             0,             // Always 0 in OpenGL ES.
             gl.RGBA,       // Format for each pixel.
             type,          // Data type for each chanel.

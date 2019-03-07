@@ -251,7 +251,7 @@ export default {
         return {
             data: new Float32Array(newOne),
             d: 4,
-            w: width,
+            w: total / (1 * 4 * height),
             h: height
         };
     },
@@ -330,9 +330,10 @@ export default {
         return texture;
     },
 
-    // shape数据,rgb3个channel
-    shapeData(pixelData, size) {
-        const total = size.w * size.h;
+    // shape
+    shapeData(pixelData, shape) {
+
+        const total = shape.w * shape.h;
         const rData = [];
         const gData = [];
         const bData = [];

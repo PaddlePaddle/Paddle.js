@@ -11,20 +11,20 @@ void main(void) {
         for (int i = 0; i < 4; i++) {
             int n = getArrayIndexFromTexturePos_texture_out(vec3(outCoord.x, outCoord.y, float(i)));
             // 获取output的坐标
-            ivec3 outPos = getTensorPosFromArrayIndex_out(n);
+            ivec4 outPos = getTensorPosFromArrayIndex_out(n);
 
             // X、Y方向的移动步长
             int disX = -padLeft;
             int disY = -padTop;
             for (int fy = 0; fy < height_shape_filter; fy++) {
-                int oy = (outPos.y * stride_v) + (fy * dilation_v + disY);
+                int oy = (outPos[2] * stride_v) + (fy * dilation_v + disY);
                 for (int fx = 0; fx < width_shape_filter; fx++) {
-                    int ox = (outPos.x * stride_h) + (fx * dilation_h + disX);
+                    int ox = (outPos[3] * stride_h) + (fx * dilation_h + disX);
                     if (oy >= 0 && oy < (height_shape_origin) && ox >= 0 && ox < (width_shape_origin)) {
                         // channel计算
                         for (int j = 0; j < channel_filter; j++) {
                             // todo: ivec4 动态适配
-                            int fIndex = getArrayIndexFromTensorPos_filter(ivec4(outPos.z, j, fy, fx));
+                            int fIndex = getArrayIndexFromTensorPos_filter(ivec4(outPos[0], j, fy, fx));
                             vec3 fPos = getTexturePosFromArrayIndex_texture_filter(fIndex);
                             // todo: orgin数据
                             int oIndex = getArrayIndexFromTensorPos_origin(ivec4(0, j, oy, ox));

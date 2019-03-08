@@ -7,10 +7,8 @@ import Factory from '../factory/fshader/factory';
  * @author yangmingming
  *
  */
-const op = 'conv2d';
 const VSHADER = require('../shader/v_shader.c');
-const FSHADER_ADD = require('../shader/f_elementwise_add_shader.c');
-const FSHADER_CON2D = require('../shader/f_elementwise_conv2d4_shader.c');
+let vsshader = '';
 // 生成factory实例
 const factory = new Factory({});
 // 获取op的输入配置
@@ -32,64 +30,43 @@ export default {
     },
 
     /**
-     * 初始化
-     * @param opts 运行时参数，包含el：canvas，dim: 256
-     * @return {object}
+     * 初始化, 生成gpu实例
+     * @param {Object} opts 运行时参数，包含el：canvas，dim: 256
+     * @return {Object} this 实例对象
      */
-    async init(opts = {}) {
+    init(opts = {}) {
         const gpu = this.gpu = new Gpu(opts);
         if (gpu.isFloatingTexture()) {
-            let texture = gpu.makeTexure(WebGLRenderingContext.FLOAT, null);
-            let framebuffer  = gpu.attachFrameBuffer(texture);
-            let bufferStatus = gpu.frameBufferIsComplete();
-            if (bufferStatus.isComplete) {
-                console.log(bufferStatus.isComplete);
-                // 获取shader
-                const vshaderCode = await Utils.loadShader(VSHADER);
-                const fshaderCode = await Utils.loadShader(FSHADER_ADD);
-                gpu.create(vshaderCode, fshaderCode);
-                return this;
-            } else {
-                return bufferStatus.message;
-            }
-
+            return this;
         } else {
             return null;
         }
     },
 
-    /**
-     * 初始化, conv_2d
-     * @param {Object} opts 运行时参数，包含el：canvas，dim: 256
-     * @return {Object} this 实例对象
-     */
-    async init2(opts = {}) {
-        // 生成conv2d的shader
-        const conv2dCode = await factory.buildShader(op, opts);
-        console.dir(['conv2d shader', conv2dCode]);
-        const gpu = this.gpu = new Gpu(opts);
-        if (gpu.isFloatingTexture()) {
-            let texture = gpu.makeTexure(WebGLRenderingContext.FLOAT, null);
-            let framebuffer  = gpu.attachFrameBuffer(texture);
-            let bufferStatus = gpu.frameBufferIsComplete();
-            if (bufferStatus.isComplete) {
-                console.log(bufferStatus.isComplete);
-                // 获取shader
-                const vshaderCode = await Utils.loadShader(VSHADER);
-                // let fshaderCode = await Utils.loadShader(FSHADER_CON2D);
-                // fshaderCode = Utils.populateData('conv2d', fshaderCode, opts);
-                // gpu.create(vshaderCode, fshaderCode);
-                gpu.create(vshaderCode, conv2dCode);
-                console.dir(['测试数据---输入参数', opts]);
-                return this;
-            } else {
-                return bufferStatus.message;
+    async run(op, data) {
+        const gpu = this.gpu;
+        gpu.setOutProps(data);
+        // 生成shader
+        const fsCode = await factory.buildShader(op, data);
+        console.dir([op + ', shaderCode shader', fsCode]);
+        // 生成帧缓存材质
+        const texture = gpu.makeTexure(WebGLRenderingContext.FLOAT, null);
+        gpu.attachFrameBuffer(texture, data);
+        let bufferStatus = gpu.frameBufferIsComplete();
+        if (bufferStatus.isComplete) {
+            console.log(bufferStatus.isComplete);
+            // 获取shader
+            if (!vsshader) {
+                vsshader = await Utils.loadShader(VSHADER);
             }
-
+            gpu.create(vsshader, fsCode);
+            console.dir(['测试数据---输入参数', data]);
+            // 开始计算
+            this.compute(op, data);
+            return this;
         } else {
-            return null;
+            return bufferStatus.message;
         }
-
     },
 
     /**
@@ -97,7 +74,7 @@ export default {
      *
      * @param {Object} opts 输入数据
      */
-    compute(opts = {}) {
+    compute(op, opts = {}) {
         // 配置op的输入数据
         const data = opConfs[op].map(item => {
             const tensor = opts[item.tensor];

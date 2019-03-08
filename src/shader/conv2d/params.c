@@ -23,7 +23,6 @@ const int height_shape_out = HEIGHT_SHAPE_OUT;
 const int width_texture_out = WIDTH_TEXTURE_OUT;
 const int height_texture_out = HEIGHT_TEXTURE_OUT;
 const int channel_out = CHANNEL_OUT;
-// todo: 新增
 const int length_shape_out = LENGTH_SHAPE_OUT;
 
 // 计算相关
@@ -42,14 +41,8 @@ const int dilation_v = DILATION_VERTICAL;
 // 卷积核
 uniform int numbers_shape_filter[LENGTH_SHAPE_FILTER];
 uniform int numbers_shape_origin[LENGTH_SHAPE_ORIGIN];
-// todo: 新增
 uniform int numbers_shape_out[LENGTH_SHAPE_OUT];
 uniform sampler2D texture_filter;
 
 // 输入数据
 uniform sampler2D texture_origin;
-
-
-// varying变量
-// 顶点shader透传的材质坐标
-varying vec2 vCoord;

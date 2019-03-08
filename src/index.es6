@@ -62,7 +62,7 @@ inst.run('conv2d', {
         'height_shape_out': 3,
         'length_shape_out': 4,
         'width_texture_out': 3,
-        'height_texture_out': 3,
+        'height_texture_out': 3
     });
 }).then(() => {
     // 读取结果

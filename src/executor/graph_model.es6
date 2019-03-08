@@ -101,7 +101,7 @@ export default class GraphModel  {
         // const weightMap =
         //     io.decodeWeights(artifacts.weightData, artifacts.weightSpecs);
         this.executor = new GraphExecutor(artifacts);
-        const weightMap = io.decodeWeights(artifacts.ops, artifacts.vars);
+        const weightMap = this.setTensorMap(artifacts.ops, artifacts.vars);
         this.executor.weightMap = this.convertTensorMapToTensorsMap(weightMap);
         return true;
     }
@@ -142,6 +142,13 @@ export default class GraphModel  {
     constructTensorMap(inputs) {
         // const inputArray = inputs instanceof Tensor ? [inputs] : inputs;
         return inputs.reduce((map, inputName, i) => {
+            // map[inputName] = inputArray[i];
+            console.log(map, inputName, i);
+            return map;
+        });
+    }
+    setTensorMap(ops, vars) {
+        return ops.reduce((map, inputName, i) => {
             // map[inputName] = inputArray[i];
             console.log(map, inputName, i);
             return map;

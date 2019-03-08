@@ -15,19 +15,28 @@ let inst;
 const matrix = Runtime.mockOrigin();
 const filter = Runtime.mockFilter();
 // 原始张量，上下左右1个单位的padding，步长是1
-Runtime.init2({
+inst = Runtime.init({
+    'width_raw_canvas': 512,
+    'height_raw_canvas': 512
+});
+console.dir(['测试数据---卷积核', filter.data]);
+console.dir(['测试数据---输入tensor', matrix.data]);
+// 执行op conv2d
+inst.run('conv2d', {
     'length_shape_filter': 4,
     'width_shape_filter': 3,
     'height_shape_filter': 3,
     'channel_filter': 4,
     'width_texture_filter': filter.texture_width,
     'height_texture_filter': filter.texture_height,
+    filter,
     'length_shape_origin': 4,
     'width_shape_origin': 5,
     'height_shape_origin': 5,
     'channel_origin': 4,
     'width_texture_origin': matrix.texture_width,
     'height_texture_origin': matrix.texture_height,
+    origin: matrix,
     'width_shape_out': 3,
     'height_shape_out': 3,
     'channel_out': 1,
@@ -40,21 +49,20 @@ Runtime.init2({
     'pad_left': 1,
     'pad_top': 1,
     'dilation_horizontal': 2,
-    'dilation_vertical': 2,
-    'width_raw_canvas': 512,
-    'height_raw_canvas': 512
-}).then(instance => {
-    if (!instance || typeof instance === 'string') {
-        throw new Error(instance || '不支持float texture');
-    }
-    inst = instance;
+    'dilation_vertical': 2
 }).then(() => {
-    console.dir(['测试数据---卷积核', filter.data]);
-    console.dir(['测试数据---输入tensor', matrix.data]);
-    // 执行conv2d
-    inst.compute({
-        filter,
-        origin: matrix
+    console.log('执行dynamic:scale');
+    // 执行dynamic
+    return inst.run('dynamic', {
+        'multi_value': '1.0',
+        'bias_value': '1.0',
+        'active_function': 'scale',
+        origin: matrix,
+        'width_shape_out': 3,
+        'height_shape_out': 3,
+        'length_shape_out': 4,
+        'width_texture_out': 3,
+        'height_texture_out': 3,
     });
 }).then(() => {
     // 读取结果

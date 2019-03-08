@@ -13,16 +13,39 @@ export default class gpu {
         canvas.height = opts.height_raw_canvas;
         this.gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
         this.gl.viewport(0, 0, canvas.width, canvas.height);
-        this.textureIndex = 0;
         // Attempt to activate the extension, returns null if unavailable
         this.textureFloat  = this.gl.getExtension('OES_texture_float');
-        this.setOutProps();
+        // this.setOutProps();
+        this.initCache();
         console.log('float extension is started or not? ' + !!this.textureFloat);
         console.log('WebGl版本是 ' + this.gl.getParameter(this.gl.SHADING_LANGUAGE_VERSION));
     }
 
-    setOutProps() {
-        const opts = this.opts;
+    initCache() {
+        const gl = this.gl;
+        // 缓存每个op的texture
+        this.textures = [];
+        // 顶点数据
+        let vertices = new Float32Array([
+            -1.0,  1.0, 0.0, 1.0,
+            -1.0, -1.0, 0.0, 0.0,
+            1.0,  1.0, 1.0, 1.0,
+            1.0, -1.0, 1.0, 0.0]);
+        this.vertexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+        // shader
+        this.vertexShader = null;
+        this.fragmentShader = null;
+        // 上一个texture
+        this.prevTexture = null;
+        // 当前op输出texture
+        this.currentTexture = null;
+        // 帧缓存
+        this.frameBuffer = null;
+    }
+
+    setOutProps(opts) {
         this.width_shape_out = opts.width_shape_out || 1;
         this.height_shape_out = opts.height_shape_out || 1;
         this.width_texture_out = opts.width_texture_out || 1;
@@ -35,6 +58,9 @@ export default class gpu {
 
     create(vshaderCode, fshaderCode) {
         let gl = this.gl;
+        if (this.program) {
+            this.dispose();
+        }
         // 创建 & 绑定程序对象
         let program = this.program = gl.createProgram();
         // 创建&绑定vertex&frament shader
@@ -44,22 +70,12 @@ export default class gpu {
         gl.linkProgram(program);
         gl.useProgram(program);
 
-        // 传输点数据
-        // let vertices = new Float32Array([-1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0]);
-        let vertices = new Float32Array([
-            -1.0,  1.0, 0.0, 1.0,
-            -1.0, -1.0, 0.0, 0.0,
-            1.0,  1.0, 1.0, 1.0,
-            1.0, -1.0, 1.0, 0.0]);
-        let vertexBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
         let aPosition = gl.getAttribLocation(program, 'position');
-        gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 16, 0);
+        // Turn on the position attribute
         gl.enableVertexAttribArray(aPosition);
-
-        /*gl.clearColor(.0, .0, .0, 1);
-        gl.clear(gl.COLOR_BUFFER_BIT);*/
+        // Bind the position buffer.
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+        gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 16, 0);
     }
 
     /**
@@ -70,7 +86,17 @@ export default class gpu {
      */
     initShader(code, type = 'vertex') {
         const shaderType = type === 'vertex' ? this.gl.VERTEX_SHADER : this.gl.FRAGMENT_SHADER;
-        let shader = this.gl.createShader(shaderType);
+        let shader;
+        if (type === 'vertex' && this.vertexShader) {
+            shader = this.vertexShader;
+        } else {
+            shader = this.gl.createShader(shaderType);
+            if (type === 'vertex') {
+                this.vertexShader = shader;
+            } else {
+                this.fragmentShader = shader;
+            }
+        }
         this.gl.shaderSource(shader, code);
         this.gl.compileShader(shader);
         if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
@@ -106,8 +132,10 @@ export default class gpu {
      */
     attachFrameBuffer(texture, opts = {}) {
         const gl = this.gl;
-        let frameBuffer;
-        frameBuffer = gl.createFramebuffer();
+        let frameBuffer = this.frameBuffer;
+        if (!frameBuffer) {
+            frameBuffer = gl.createFramebuffer();
+        }
         gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
         gl.framebufferTexture2D(gl.FRAMEBUFFER, // The target is always a FRAMEBUFFER.
             gl.COLOR_ATTACHMENT0, // We are providing the color buffer.
@@ -121,6 +149,8 @@ export default class gpu {
             opts.width_texture_out || this.width_texture_out,
             opts.height_texture_out || this.height_texture_out
         );
+        this.prevTexture = this.currentTexture;
+        this.currentTexture = texture;
         return frameBuffer;
     }
 
@@ -202,26 +232,26 @@ export default class gpu {
      * @param {string} tSampler 材质名称
      * @param {Object} bufferData 数据
      */
-    initTexture(index, tSampler, bufferData, width, height) {
+    initTexture(index, item) {
         const gl = this.gl;
-        const texture = gl.createTexture();
+        let texture;
+        if (item.from === 'prev') {
+            texture = this.prevTexture;
+        } else {
+            texture = gl.createTexture();
+        }
+        this.textures.push(texture);
         gl.activeTexture(gl[`TEXTURE${index}`]);
         gl.bindTexture(gl.TEXTURE_2D, texture);
-
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
-        // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.FLOAT, bufferData);
-        /*gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, this.dim, this.dim, 0,
-            gl.RGBA, gl.FLOAT, bufferData, 0);*/
-        // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.FLOAT, bufferData);
-        // gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width || this.opts.width_raw_canvas,
-            height || this.opts.height_raw_canvas, 0,
-            gl.RGBA, gl.FLOAT, bufferData, 0);
-        gl.uniform1i(this.getUniformLoc(tSampler), index);
+        if (item.from !== 'prev') {
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, item.texture_width || this.opts.width_raw_canvas,
+                item.texture_height || this.opts.height_raw_canvas, 0,
+                gl.RGBA, gl.FLOAT, item.data, 0);
+        }
     }
 
     getUniformLoc(name) {
@@ -233,7 +263,7 @@ export default class gpu {
     // 生成帧缓存的texture
     makeTexure(type, data, opts = {}) {
         const gl = this.gl;
-        let texture = this.texture = gl.createTexture();
+        let texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture);
 
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
@@ -258,12 +288,12 @@ export default class gpu {
 
     render(data = []) {
         const gl = this.gl;
-        this.textureIndex = 0;
+        let textureIndex = 0;
         // 输入数据
         data.forEach(item => {
             if (item.type === 'texture') {
-                this.initTexture(this.textureIndex++, item.variable, item.data, item.texture_width,
-                    item.texture_height);
+                this.initTexture(textureIndex, item);
+                gl.uniform1i(this.getUniformLoc(item.variable), textureIndex++);
             } else if (item.type === 'uniform') {
                 gl[item.setter](this.getUniformLoc(item.variable), item.data);
             }
@@ -285,6 +315,14 @@ export default class gpu {
     }
 
     dispose() {
-        this.gl.deleteProgram(this.program);
+        const gl = this.gl;
+        this.textures.forEach(texture => {
+            gl.deleteTexture(texture);
+        });
+        this.textures = [];
+        gl.detachShader(this.program, this.vertexShader);
+        gl.detachShader(this.program, this.fragmentShader);
+        gl.deleteShader(this.fragmentShader);
+        gl.deleteProgram(this.program);
     }
 }

@@ -49,7 +49,7 @@ export default class Matrix {
         let shape = this.shape = opts.shape;
         let num = this.num = shape.reduce((total, num) => total * num);
         this['numbers_shape_' + opts.name] = this.getShapeNumbers();
-        this['numbers_shape_out'] = [9, 9, 3, 1];
+        this['numbers_shape_out'] = [36, 9, 3, 1];
         this.data = opts.value || Utils.zeros(num);
         // opts.name是tensor的name
         this.tensorName = opts.name;

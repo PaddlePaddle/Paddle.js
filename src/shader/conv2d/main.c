@@ -22,11 +22,11 @@ void main(void) {
                 if (oy >= 0 && oy < (height_shape_origin) && ox >= 0 && ox < (width_shape_origin)) {
                     // channel计算
                     for (int j = 0; j < channel_filter; j++) {
-                        // todo: ivec4 动态适配
-                        int fIndex = getArrayIndexFromTensorPos_filter(ivec4(outPos[0], j, fy, fx));
+                        // filter数据
+                        int fIndex = getArrayIndexFromTensorPos_filter(ivec4(outPos[1], j, fy, fx));
                         vec3 fPos = getTexturePosFromArrayIndex_texture_filter(fIndex);
-                        // todo: orgin数据
-                        int oIndex = getArrayIndexFromTensorPos_origin(ivec4(0, j, oy, ox));
+                        // origin数据
+                        int oIndex = getArrayIndexFromTensorPos_origin(ivec4(outPos[0], j, oy, ox));
                         vec3 oPos = getTexturePosFromArrayIndex_texture_origin(oIndex);
                         v4[i] += (getValueFromTexturePos_texture_filter(fPos) *
                             getValueFromTexturePos_texture_origin(oPos));

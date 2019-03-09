@@ -8,7 +8,9 @@ export default class io {
         this.fromPixels2DContext = document.createElement('canvas').getContext('2d');
     };
 
-    fromPixels(pixels, numChannels) {
+    fromPixels(pixels, opt) {
+        pixels = pixels.input;
+        const numChannels = opt[0].shape[0];
         if (pixels == null) {
             throw new Error(
                 'pixels passed to tf.browser.fromPixels() can not be null');
@@ -44,10 +46,10 @@ export default class io {
         }
         let values;
         if (numChannels === 4) {
-            values = new Int32Array(vals);
+            values = new Float32Array(vals);
         } else {
             const numPixels = pixels.width * pixels.height;
-            values = new Int32Array(numPixels * numChannels);
+            values = new Float32Array(numPixels * numChannels);
             for (let i = 0; i < numPixels; i++) {
                 for (let channel = 0; channel < numChannels; ++channel) {
                     values[i * numChannels + channel] = vals[i * 4 + channel];
@@ -57,7 +59,7 @@ export default class io {
         console.log(pixels.height, pixels.width, numChannels, values);
         // const outShape: [number, number, number] =
         //     [pixels.height, pixels.width, numChannels];
-        return [values, numChannels, 'int32'];
+        return [values, numChannels, 'Float32Array'];
     }
 }
 /* eslint-enable */

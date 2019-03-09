@@ -11,7 +11,7 @@ export default class GraphExecutor {
         this.type = model.type;
         this.finish = false;
         this.next = null;
-        this.id = +new Date();
+        this.id = +new Date() + model.type;
     }
 
     get inputsName() {
@@ -56,7 +56,36 @@ export default class GraphExecutor {
     }
 
     execute(inputs, outputs) {
-        console.log(inputs, this.type, outputs);
+        console.log(inputs, outputs);
+        // inst.run('conv2d', {
+        //     'length_shape_filter': 4,
+        //     'width_shape_filter': 3,
+        //     'height_shape_filter': 3,
+        //     'channel_filter': 4,
+        //     'width_texture_filter': filter.texture_width,
+        //     'height_texture_filter': filter.texture_height,
+        //     filter,
+        //     'length_shape_origin': 4,
+        //     'width_shape_origin': 5,
+        //     'height_shape_origin': 5,
+        //     'channel_origin': 4,
+        //     'width_texture_origin': matrix.texture_width,
+        //     'height_texture_origin': matrix.texture_height,
+        //     origin: matrix,
+        //     'width_shape_out': 3,
+        //     'height_shape_out': 3,
+        //     'channel_out': 4,
+        //     'length_shape_out': 4,
+        //     'width_texture_out': 3,
+        //     'height_texture_out': 3,
+        //     'shape_out': [1, 4, 3, 3],
+        //     'stride_horizontal': 1,
+        //     'stride_vertical': 1,
+        //     'pad_left': 1,
+        //     'pad_top': 1,
+        //     'dilation_horizontal': 2,
+        //     'dilation_vertical': 2
+        // })
     }
     // set next(id) {
     //     this.next = id;

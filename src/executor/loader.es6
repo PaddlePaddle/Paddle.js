@@ -1,7 +1,8 @@
 /* eslint-disable */
 import model from '../../demo/model/model';
 import GraphExecutor from './executor';
-
+import IO from './io';
+import Runtime from '../../src/runtime/runtime';
 /**
  * @file GraphModel，绘制生成model网络
  * @author wangqun@baidu.com
@@ -81,8 +82,21 @@ export default class GraphModel  {
         // if (inputs instanceof Tensor || Array.isArray(inputs)) {
         //     inputs = this.constructTensorMap(inputs);
         // }
-        inputs = this.constructTensor(inputs);
-        executor.execute(inputs);
+        if (executor.type === 'fetch'){
+            return;
+        }
+        const name = executor.outputsName[0];
+        const outputsName = this.getTensorAttr(executor.outputsName[0]);
+        const inputsName = this.getTensorAttr(executor.inputsName[0]);
+
+        const tensor = this.constructTensor(executor, inputs);
+        executor.execute(tensor, outputsName);
+
+        if (executor.next) {
+            const id = executor.next;
+            const next = this.getTensor(id);
+            this.execute_(inputs, next[0], outputs)
+        }
 
         // if (this.executor.isControlFlowModel || this.executor.isDynamicShapeModel) {
         //     throw new Error(
@@ -105,7 +119,12 @@ export default class GraphModel  {
      */
     execute(inputs, outputs) {
         const executor = this.getNetsStart(this.weightMap);
-        return this.execute_(inputs, executor, outputs);
+        const inst = Runtime.init({
+            'width_raw_canvas': 512,
+            'height_raw_canvas': 512
+        });
+
+        return this.execute_(inputs, executor[0], outputs);
     }
 
 
@@ -113,13 +132,51 @@ export default class GraphModel  {
         return this.execute_(inputs, true, this.outputNodes);
     }
 
-    constructTensor(inputs) {
-
-        return inputs.reduce((map, inputName, i) => {
-            map[inputName] = inputArray[i];
-            console.log(map, inputName, i);
-            return map;
+    getTensorAttr(name) {
+        
+        return this.handler.vars.filter((item, i) => {
+            if (name === item.name)
+            return item;
         });
+    }
+
+    constructTensor(executor, data) {
+        const that = this;
+        const name = executor.outputsName[0];
+        const outputsName = this.getTensorAttr(executor.outputsName[0]);
+        const inputsName = this.getTensorAttr(executor.inputsName[0]);
+        const input = executor.inputs;
+
+        const output = executor.outputs;
+        const outputs = Object.keys(output).forEach(function(key){
+
+            console.log(key, output[key]);
+            output[key] = that.getTensorAttr(output[key][0]);
+
+        });
+        const inputs = Object.keys(input).forEach(function(key){
+
+            if (name === 'pixel') {
+                const io = new IO();
+                input[key] = io.fromPixels(data, outputsName);
+            }
+            else {
+                input[key] = that.getTensorAttr(input[key][0]);
+            }
+
+        });
+        const tensor = {
+            inputs: input,
+            outputs: output,
+            type: executor.type,
+            next: executor.next
+        }
+        // if (name === 'pixel') {
+        //     const io = new IO();
+        //     inputs = io.fromPixels(inputs, outputsName);
+        // }
+
+        return tensor;
     }
 
     /**
@@ -161,6 +218,12 @@ export default class GraphModel  {
             if (item.type === 'fetch') {
                 return true;
             }
+        });
+    }
+    getTensor(id) {
+        return this.weightMap.filter((item, i) => {
+            if (id === item.id)
+                return item;
         });
     }
 

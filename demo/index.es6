@@ -13,4 +13,4 @@ const model = graphModel.loadGraphModel(MODEL_URL);
 const cat = document.getElementById('pic');
 const io = new IO();
 
-model.execute({input: io.fromPixels(cat)});
+model.execute({input: cat});

@@ -1,9 +1,9 @@
+/* eslint-disable */
 /**
  * @file op的数据对象
  * @author yangmingming
  *
  */
-/* eslint-disable */
 import Tensor from './tensor';
 const keys = [
     'paddings',

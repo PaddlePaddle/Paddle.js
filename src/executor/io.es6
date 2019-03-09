@@ -10,7 +10,7 @@ export default class io {
 
     fromPixels(pixels, opt) {
         pixels = pixels.input;
-        const numChannels = opt[0].shape[0];
+        const numChannels = opt[0].shape[1];
         if (pixels == null) {
             throw new Error(
                 'pixels passed to tf.browser.fromPixels() can not be null');
@@ -46,10 +46,10 @@ export default class io {
         }
         let values;
         if (numChannels === 4) {
-            values = new Float32Array(vals);
+            values = new Array(vals);
         } else {
             const numPixels = pixels.width * pixels.height;
-            values = new Float32Array(numPixels * numChannels);
+            values = new Array(numPixels * numChannels);
             for (let i = 0; i < numPixels; i++) {
                 for (let channel = 0; channel < numChannels; ++channel) {
                     values[i * numChannels + channel] = vals[i * 4 + channel];
@@ -59,7 +59,7 @@ export default class io {
         console.log(pixels.height, pixels.width, numChannels, values);
         // const outShape: [number, number, number] =
         //     [pixels.height, pixels.width, numChannels];
-        return [values, numChannels, 'Float32Array'];
+        return [values, numChannels, 'Array'];
     }
 }
 /* eslint-enable */

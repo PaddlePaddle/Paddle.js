@@ -142,23 +142,21 @@ export default class GraphModel  {
 
     constructTensor(executor, data) {
         const that = this;
-        const name = executor.outputsName[0];
-        const outputsName = this.getTensorAttr(executor.outputsName[0]);
-        const inputsName = this.getTensorAttr(executor.inputsName[0]);
+        const outputName = executor.outputsName[0];
+        const inputName = executor.inputsName[0]
+        const pixel = this.getTensorAttr(outputName);
+
         const input = executor.inputs;
 
         const output = executor.outputs;
-        const outputs = Object.keys(output).forEach(function(key){
-
-            console.log(key, output[key]);
+        Object.keys(output).forEach(function(key){
             output[key] = that.getTensorAttr(output[key][0]);
-
         });
-        const inputs = Object.keys(input).forEach(function(key){
+        Object.keys(input).forEach(function(key){
 
-            if (name === 'pixel') {
+            if ((outputName === 'pixel') || (inputName === 'pixel')) {
                 const io = new IO();
-                input[key] = io.fromPixels(data, outputsName);
+                input[key] = io.fromPixels(data, pixel);
             }
             else {
                 input[key] = that.getTensorAttr(input[key][0]);

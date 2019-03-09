@@ -8,6 +8,7 @@ export default class GraphExecutor {
     constructor(model) {
         this.inputs = model.inputs;
         this.outputs  = model.outputs;
+        this.attrs = model.attrs;
         this.type = model.type;
         this.finish = false;
         this.next = null;
@@ -57,6 +58,9 @@ export default class GraphExecutor {
 
     execute(inputs, outputs) {
         console.log(inputs, outputs);
+        if (this.type ==='feed') {
+
+        }
         // inst.run('conv2d', {
         //     'length_shape_filter': 4,
         //     'width_shape_filter': 3,

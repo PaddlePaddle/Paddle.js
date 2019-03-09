@@ -95,7 +95,7 @@
             }, 
             "outputs": {
                 "Out": [
-                    "conv2d_0.tmp_1"
+                    "conv2d_0.tmp_1-1"
                 ]
             }, 
             "type": "relu"
@@ -126,7 +126,7 @@
             }, 
             "inputs": {
                 "X": [
-                    "conv2d_0.tmp_1"
+                    "conv2d_0.tmp_1-1"
                 ]
             }, 
             "outputs": {
@@ -217,7 +217,7 @@
             }, 
             "outputs": {
                 "Out": [
-                    "conv2d_1.tmp_1"
+                    "conv2d_1.tmp_1-1"
                 ]
             }, 
             "type": "relu"
@@ -248,7 +248,7 @@
             }, 
             "inputs": {
                 "X": [
-                    "conv2d_1.tmp_1"
+                    "conv2d_1.tmp_1-1"
                 ]
             }, 
             "outputs": {
@@ -34066,6 +34066,22 @@
             "name": "conv2d_0.b_0", 
             "shape": [
                 20
+            ]
+        }, 
+        {
+            "name": "conv2d_0.tmp_1-1", 
+            "shape": [
+                20, 
+                24, 
+                24
+            ]
+        }, 
+        {
+            "name": "conv2d_1.tmp_1-1", 
+            "shape": [
+                50, 
+                8, 
+                8
             ]
         }
     ]

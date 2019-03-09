@@ -1,6 +1,7 @@
-
+/* eslint-disable */
 import model from '../../demo/model/model';
 import GraphExecutor from './executor';
+
 /**
  * @file GraphModel，绘制生成model网络
  * @author wangqun@baidu.com
@@ -223,3 +224,4 @@ export default class GraphModel  {
     }
 }
 
+/* eslint-enable */

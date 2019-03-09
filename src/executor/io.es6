@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * @file io，loader相关输入输出
  * @author wangqun@baidu.com
@@ -58,5 +59,5 @@ export default class io {
         //     [pixels.height, pixels.width, numChannels];
         return [values, numChannels, 'int32'];
     }
-
 }
+/* eslint-enable */

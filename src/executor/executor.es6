@@ -1,3 +1,7 @@
+/**
+ * @file GraphExecutor，封装可执行单元
+ * @author wangqun@baidu.com
+ */
 export default class GraphExecutor {
 
     constructor(model) {

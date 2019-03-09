@@ -1,6 +1,6 @@
 import Utils from '../utils/utils';
 import Gpu from '../gpu/gpu';
-import Matrix from '../utils/dims';
+import Tensor from '../utils/tensor';
 import Factory from '../factory/fshader/factory';
 /**
  * @file gpu运行时
@@ -114,7 +114,7 @@ export default {
 
     // mock origin 1 * 4 * 5 * 5
     mockOrigin() {
-        return new Matrix({
+        return new Tensor({
             shape: [1, 4, 5, 5],
             name: 'origin'
         });
@@ -122,13 +122,13 @@ export default {
 
     // mock filter 4 * 4 * 3 * 3
     mockFilter() {
-        let matrix = new Matrix({
+        let tensor = new Tensor({
             shape: [4, 4, 3, 3],
             type: 'texture',
             name: 'filter',
             value: new Float32Array([1.0, 1.0, 0.0, 0.0, -2.0, 0.0, 1.0, -3.0, 1.0])
         });
-        return matrix;
+        return tensor;
     },
 
 

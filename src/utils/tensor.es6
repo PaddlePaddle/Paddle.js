@@ -56,14 +56,12 @@ export default class Tensor {
 
         // 补充0, 生成数据
         if (zeroNumbers > 0) {
-            let data = opts.data.toString.split(',');
             for (let i = 0; i< zeroNumbers; i++) {
-                data.push(0);
+                opts.data.push(0);
             }
 
-        } else {
-            this.data = opts.data;
         }
+        this.data = new Float32Array(opts.data);
 
         let num = this.num = shape.reduce((total, num) => total * num);
         this['numbers_shape_' + opts.name] = this.getShapeNumbers();

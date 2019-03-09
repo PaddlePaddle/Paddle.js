@@ -154,7 +154,7 @@ export default class GraphModel  {
         });
         Object.keys(input).forEach(function(key){
 
-            if ((outputName === 'pixel') || (inputName === 'pixel')) {
+            if ((key === 'Input') && (inputName === 'pixel')) {
                 const io = new IO();
                 input[key] = io.fromPixels(data, pixel);
             }
@@ -166,6 +166,7 @@ export default class GraphModel  {
         const tensor = {
             inputs: input,
             outputs: output,
+            attrs: executor.attrs,
             type: executor.type,
             next: executor.next
         }

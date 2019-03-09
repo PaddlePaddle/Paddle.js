@@ -44,6 +44,9 @@ export default {
     },
 
     async run(op, data) {
+        // 生成op的数据
+        const  opData = this.adaptData(data);
+        // 设置gpu参数
         const gpu = this.gpu;
         gpu.setOutProps(data);
         // 生成shader
@@ -126,6 +129,11 @@ export default {
             value: new Float32Array([1.0, 1.0, 0.0, 0.0, -2.0, 0.0, 1.0, -3.0, 1.0])
         });
         return matrix;
+    },
+
+
+    adaptData(data = []) {
+
     },
 
     // 更新op

@@ -10,16 +10,6 @@ export default {
             conf: {
                 TEXTURE_NAME: 'texture_origin'
             }
-        },
-        {
-            func: 'prelu',
-            conf: {
-            }
-        },
-        {
-            func: 'scale',
-            conf: {
-            }
         }
     ],
     conf: [

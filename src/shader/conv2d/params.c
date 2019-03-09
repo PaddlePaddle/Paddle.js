@@ -35,9 +35,6 @@ const int padTop = PAD_TOP;
 // dilation膨胀系数
 const int dilation_h = DILATION_HORIZONTAL;
 const int dilation_v = DILATION_VERTICAL;
-// 激活函数
-const float multi_value = MULTI_VALUE;
-const float bias_value = BIAS_VALUE;
 
 // uniform变量
 // 卷积核

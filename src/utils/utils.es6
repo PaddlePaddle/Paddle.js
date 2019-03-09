@@ -257,6 +257,35 @@ export default {
     },
 
     /**
+     * 获取texture形状和补0个数
+     * @param shape {Array} tensor的形状
+     * @return {{shape: *[], zeroNumber: number}} {Object} texture信息
+     */
+    getTextureInfoFromTensorShape(shape = []) {
+        let total = shape.reduce((total, num) => total * num);
+        // 需要补0的个数
+        let zeroNumber = total % 4;
+        // 对齐材质channel 4
+        total += zeroNumber;
+        // 材质宽高
+        let width = 1;
+        let height = total / 4;
+        while (Math.abs(width - height) > 2) {
+            if (height % 2 === 0) {
+                width = width * 2;
+                height = height / 2;
+            } else {
+                height += 1;
+                zeroNumber += width;
+            }
+        }
+        return {
+            shape: [4, height, width],
+            zeroNumber
+        };
+    },
+
+    /**
      * 生成相同value的数组
      * @param length
      */

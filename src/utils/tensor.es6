@@ -42,14 +42,31 @@ export function getBroadcastShape(shapeA = [], shapeB = []) {
     }
     return result;
 };
-// matrix数据
-export default class Matrix {
+// tensor数据
+export default class Tensor {
     constructor(opts = {}) {
         this.opts = opts;
+        // 设置tensor名字
+        this.name = opts.name;
+        // tensor的形状
         let shape = this.shape = opts.shape;
+        // 获取转换到texture后的信息
+        let {zeroNumbers, shape: shape_texture} = Utils.getTextureInfoFromTensorShape(shape);
+        this.shape_texture = shape_texture;
+
+        // 补充0, 生成数据
+        if (zeroNumbers > 0) {
+            let data = opts.data.toString.split(',');
+            for (let i = 0; i< zeroNumbers; i++) {
+                data.push(0);
+            }
+
+        } else {
+            this.data = opts.data;
+        }
+
         let num = this.num = shape.reduce((total, num) => total * num);
         this['numbers_shape_' + opts.name] = this.getShapeNumbers();
-        this['numbers_shape_out'] = [36, 9, 3, 1];
         this.data = opts.value || Utils.zeros(num);
         // opts.name是tensor的name
         this.tensorName = opts.name;
@@ -69,6 +86,7 @@ export default class Matrix {
             this.data = new Float32Array(Utils.tensor2Texture(this.data, this.texture_width * this.texture_height));
             console.dir(['调试数据-图像材质数据', this.data]);
         }
+        this['numbers_shape_out'] = [36, 9, 3, 1];
     }
 
     /**
@@ -76,7 +94,7 @@ export default class Matrix {
      * @param pos {Array} tensor坐标索引
      * @return {Number} tensor数据
      */
-    get(pos = []) {
+    getValue(pos = []) {
         let p = [].concat(pos);
         let len = p.length;
         let sLen = this.shape.length;
@@ -91,11 +109,23 @@ export default class Matrix {
         return this.data[index];
     }
 
+    get name() {
+        return this.name;
+    }
+
+    get width_texture() {
+        return this.shape_texture.width;
+    }
+
+    get height_texture() {
+        return this.shape_texture.height;
+    }
+
     /**
      * 获取shape对应的个数
      * @return {Array} 和shape长度相等的对应个数
      */
-    getShapeNumbers() {
+    get numbers_shape() {
         let numbers = [];
         let sLen = this.shape.length;
         for (let i = 0; i < (sLen - 1); i++) {

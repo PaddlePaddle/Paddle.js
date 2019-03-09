@@ -52,7 +52,7 @@ inst.run('conv2d', {
     'dilation_vertical': 2,
     'multi_value': '1.0',
     'bias_value': '0.0',
-    'active_function': 'scale',
+    'active_function': 'scale'
 }).then(() => {
     console.log('执行dynamic:scale');
     // 执行dynamic

@@ -52,7 +52,7 @@ export default class io {
         console.log(pixels.height, pixels.width, numChannels, values);
         // const outShape: [number, number, number] =
         //     [pixels.height, pixels.width, numChannels];
-        // return tensor3d(values, outShape, 'int32');
+        return [values, numChannels, 'int32'];
     }
 
 }

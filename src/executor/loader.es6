@@ -8,15 +8,14 @@ import GraphExecutor from './executor';
 export default class GraphModel  {
 
     constructor(modelUrl, loadOptions) {
-        this.executor = 'GraphExecutor';
-        this.version  = 'n/a';
+
+        this.version  = '0.0.1';
         this.handler = 'io.IOHandler';
         this.modelUrl = modelUrl;
         this.loadOptions = loadOptions;
         if (this.loadOptions == null) {
             this.loadOptions = {};
         }
-
     }
 
 
@@ -76,22 +75,25 @@ export default class GraphModel  {
         return true;
     }
 
-    execute_(inputs, strictInputCheck = true, outputs) {
+    execute_(inputs, executor, outputs) {
         outputs = outputs || this.outputNodes;
-        if (inputs instanceof Tensor || Array.isArray(inputs)) {
-            inputs = this.constructTensorMap(inputs);
-        }
-        if (this.executor.isControlFlowModel || this.executor.isDynamicShapeModel) {
-            throw new Error(
-                'The model contains control flow or dynamic shape ops, ' +
-                'please use executeAsync method');
-        }
-        const result = this.executor.execute(
-            this.convertTensorMapToTensorsMap(inputs), strictInputCheck, outputs);
-        const keys = Object.keys(result);
-        return (Array.isArray(outputs) && outputs.length > 1) ?
-            outputs.map(node => result[node]) :
-            result[keys[0]];
+        // if (inputs instanceof Tensor || Array.isArray(inputs)) {
+        //     inputs = this.constructTensorMap(inputs);
+        // }
+        inputs = this.constructTensor(inputs);
+        executor.execute(inputs);
+
+        // if (this.executor.isControlFlowModel || this.executor.isDynamicShapeModel) {
+        //     throw new Error(
+        //         'The model contains control flow or dynamic shape ops, ' +
+        //         'please use executeAsync method');
+        // }
+        // const result = this.execute(
+        //     this.convertTensorMapToTensorsMap(inputs), strictInputCheck, outputs);
+        // const keys = Object.keys(result);
+        // return (Array.isArray(outputs) && outputs.length > 1) ?
+        //     outputs.map(node => result[node]) :
+        //     result[keys[0]];
     }
 
     /**
@@ -101,7 +103,8 @@ export default class GraphModel  {
      * @returns {*}
      */
     execute(inputs, outputs) {
-        return this.execute_(inputs, false, outputs);
+        const executor = this.getNetsStart(this.weightMap);
+        return this.execute_(inputs, executor, outputs);
     }
 
 
@@ -109,11 +112,10 @@ export default class GraphModel  {
         return this.execute_(inputs, true, this.outputNodes);
     }
 
-    constructTensorMap(inputs) {
-        // const inputArray = inputs instanceof Tensor ? [inputs] : inputs;
+    constructTensor(inputs) {
 
         return inputs.reduce((map, inputName, i) => {
-            // map[inputName] = inputArray[i];
+            map[inputName] = inputArray[i];
             console.log(map, inputName, i);
             return map;
         });

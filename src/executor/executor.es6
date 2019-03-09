@@ -9,8 +9,6 @@ export default class GraphExecutor {
         this.id = +new Date();
     }
 
-
-
     get inputsName() {
         if (this.type === 'feed') {
             return this.inputs.X;
@@ -52,6 +50,9 @@ export default class GraphExecutor {
 
     }
 
+    execute(inputs, outputs) {
+        console.log(inputs, this.type, outputs);
+    }
     // set next(id) {
     //     this.next = id;
     //

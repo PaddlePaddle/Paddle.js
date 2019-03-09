@@ -50,19 +50,29 @@ export default class Tensor {
         this.name = opts.name;
         // tensor的形状
         let shape = this.shape = opts.shape;
+        // 图像tensor是否带有batch
+        if (opts.needBatch && shape.length === 0) {
+            shape.unshift(1);
+        }
         // 获取转换到texture后的信息
         let {zeroNumbers, shape: shape_texture} = Utils.getTextureInfoFromTensorShape(shape);
         this.shape_texture = shape_texture;
 
-        // 补充0, 生成数据
-        if (zeroNumbers > 0) {
-            for (let i = 0; i< zeroNumbers; i++) {
-                opts.data.push(0);
+        // tensor数据
+        if (opts.data) {
+            // 补充0, 生成数据
+            if (zeroNumbers > 0) {
+                for (let i = 0; i < zeroNumbers; i++) {
+                    opts.data.push(0);
+                }
+
             }
-
+            this.data = new Float32Array(opts.data);
+            // 清理缓存
+            opts.data.length = 0;
         }
-        this.data = new Float32Array(opts.data);
 
+        // todo: delete test data
         let num = this.num = shape.reduce((total, num) => total * num);
         this['numbers_shape_' + opts.name] = this.getShapeNumbers();
         this.data = opts.value || Utils.zeros(num);
@@ -117,6 +127,28 @@ export default class Tensor {
 
     get height_texture() {
         return this.shape_texture.height;
+    }
+
+    get width_shape() {
+        let length = this.shape.length;
+        return this.shape[length - 1];
+    }
+
+    get height_shape() {
+        let length = this.shape.length;
+        return this.shape[length - 2];
+    }
+
+    get channel() {
+        let length = this.shape.length;
+        if (length >= 3) {
+            return this.shape[length - 3];
+        }
+        return 0;
+    }
+
+    get length_shape() {
+        return this.shape.length || 0;
     }
 
     /**

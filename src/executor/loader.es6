@@ -1,6 +1,6 @@
 
 import model from '../../demo/model/model';
-import GraphExecutor from './graph_executor';
+import GraphExecutor from './executor';
 /**
  * @file GraphModel，绘制生成model网络
  * @author wangqun@baidu.com
@@ -16,31 +16,9 @@ export default class GraphModel  {
         if (this.loadOptions == null) {
             this.loadOptions = {};
         }
+
     }
 
-    get modelVersion() {
-        return this.version;
-    }
-
-    get inputNodes() {
-        return this.executor.inputNodes;
-    }
-
-    get outputNodes() {
-        return this.executor.outputNodes;
-    }
-
-    get inputs() {
-        return this.executor.inputs;
-    }
-
-    get outputs() {
-        return this.executor.outputs;
-    }
-
-    get weights() {
-        return this.executor.weightMap;
-    }
 
     fetchModel() {
         const path = this.modelUrl;
@@ -85,24 +63,16 @@ export default class GraphModel  {
         this.handler = model;
 
     }
-    async load() {
+     load() {
         this.fetchModel();
-        // if (this.handler.load == null) {
-        //     throw new Error(
-        //         'Cannot proceed with model loading because the IOHandler provided ' +
-        //         'does not have the `load` method implemented.');
-        // }
         // const artifacts = await this.handler.load();
-        const artifacts = await this.handler;
+        const artifacts =  this.handler;
         console.log(artifacts);
-        // const graph = artifacts.modelTopology as tensorflow.IGraphDef;
-
-        // this.version = 2;
-        // const weightMap =
-        //     io.decodeWeights(artifacts.weightData, artifacts.weightSpecs);
-        this.executor = new GraphExecutor(artifacts);
-        const weightMap = this.setTensorMap(artifacts.ops, artifacts.vars);
-        this.executor.weightMap = this.convertTensorMapToTensorsMap(weightMap);
+        const opsMap = this.createOpsMap(artifacts.ops, artifacts.vars);
+        console.log(opsMap);
+        this.weightMap = this.constructOpsMap(opsMap);
+        console.log(this.weightMap);
+        // this.weightMap = this.convertTensorMapToTensorsMap(weightMap);
         return true;
     }
 
@@ -141,24 +111,83 @@ export default class GraphModel  {
 
     constructTensorMap(inputs) {
         // const inputArray = inputs instanceof Tensor ? [inputs] : inputs;
+
         return inputs.reduce((map, inputName, i) => {
             // map[inputName] = inputArray[i];
             console.log(map, inputName, i);
             return map;
         });
     }
-    setTensorMap(ops, vars) {
-        return ops.reduce((map, inputName, i) => {
-            // map[inputName] = inputArray[i];
-            console.log(map, inputName, i);
-            return map;
+
+    /**
+     * Construct Ops Relationship
+     * @param ops
+     * @returns {*}
+     */
+    constructOpsMap(ops) {
+        return ops.map((item, idx) => {
+            const outputsName = item.outputsName[0];
+            const next = this.getNextExecutor(ops, outputsName);
+            if (next.length > 0) {
+                item.next = next[0].id;
+            }
+            return item;
         });
     }
 
-    convertTensorMapToTensorsMap(map) {
-        return Object.keys(map).reduce((newMap, key) => {
-            newMap[key] = [map[key]];
-            return newMap;
+    /**
+     * Get Ops Nets Start Node
+     * @param ops
+     * @returns {*}
+     */
+    getNetsStart(ops) {
+        return ops.filter((item) => {
+            if (item.type === 'feed') {
+                return true;
+            }
+        });
+    }
+
+    /**
+     * Get Ops Nets Last Node
+     * @param ops
+     * @returns {*}
+     */
+    getNetsEnd(ops) {
+        return ops.filter((item) => {
+            if (item.type === 'fetch') {
+                return true;
+            }
+        });
+    }
+
+    /**
+     * Create Ops Executor Object Map
+     * @param ops
+     * @returns {*}
+     */
+    createOpsMap(ops) {
+        const firstOps = this.getNetsStart(ops);
+        const lastOps = this.getNetsEnd(ops);
+        console.log(firstOps);
+        return ops.map((item, idx) => {
+            const graphExecutor = new GraphExecutor(item);
+            console.log(graphExecutor.inputsName);
+            return graphExecutor;
+        });
+    }
+
+    /**
+     * Get The Next Executor need Exec
+     * @param ops
+     * @param id
+     * @returns {*}
+     */
+    getNextExecutor(ops, id) {
+        return ops.filter((item, key) => {
+            if (id === item.inputsName[0]) {
+                return true;
+            }
         });
     }
 
@@ -169,7 +198,7 @@ export default class GraphModel  {
      * @param options
      * @returns {Promise<void>}
      */
-    async loadGraphModel(modelUrl, options) {
+    loadGraphModel(modelUrl, options) {
         if (modelUrl == null) {
             throw new Error(
                 'modelUrl in loadGraphModel() cannot be null. Please provide a url ' +
@@ -180,10 +209,13 @@ export default class GraphModel  {
         }
 
         const model = new GraphModel(modelUrl, options);
-        await model.load();
+        model.load();
         return model;
     }
 
+    /**
+     * dispose
+     */
     dispose() {
         this.executor.dispose();
     }

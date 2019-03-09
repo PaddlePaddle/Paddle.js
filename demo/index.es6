@@ -1,6 +1,6 @@
 import 'babel-polyfill';
-import Graph from '../src/executor/graph_model';
-import IO from '../src/executor/graph_io';
+import Graph from '../src/executor/loader';
+import IO from '../src/executor/io';
 /**
  * @file model demo 入口文件
  * @author wangqun@baidu.com
@@ -12,6 +12,5 @@ const graphModel= new Graph();
 const model = graphModel.loadGraphModel(MODEL_URL);
 const cat = document.getElementById('pic');
 const io = new IO();
-io.fromPixels(cat);
 
-// model.execute({input: graph.browser.fromPixels(cat)});
+model.execute({input: io.fromPixels(cat)});

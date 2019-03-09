@@ -62,6 +62,21 @@ export default {
             conf: {
                 TEXTURE_NAME: 'texture_origin'
             }
+        },
+        {
+            func: 'prelu',
+            conf: {
+            }
+        },
+        {
+            func: 'scale',
+            conf: {
+            }
+        },
+        {
+            func: 'sigmoid',
+            conf: {
+            }
         }
     ],
     conf: [
@@ -91,7 +106,10 @@ export default {
         'PAD_LEFT',
         'PAD_TOP',
         'DILATION_HORIZONTAL',
-        'DILATION_VERTICAL'
+        'DILATION_VERTICAL',
+        'MULTI_VALUE',
+        'BIAS_VALUE',
+        'ACTIVE_FUNCTION'
     ],
     input: [
         {

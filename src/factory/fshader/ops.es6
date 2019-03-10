@@ -3,6 +3,7 @@ import conf_conv2d from '../../shader/conv2d/conf';
 import conf_dynamic from '../../shader/dynamic/conf';
 import conf_pool2d from '../../shader/pool2d/conf';
 import conf_elementwise_add from '../../shader/elementwise_add/conf';
+import conf_mul from '../../shader/mul/conf';
 
 /**
  * @file op文件
@@ -37,6 +38,11 @@ export default {
             func: require('../../shader/elementwise_add/main.c'),
             confs: conf_elementwise_add
         },
+        mul: {
+            params: require('../../shader/mul/params.c'),
+            func: require('../../shader/mul/main.c'),
+            confs: conf_mul
+        }
     },
     atoms: {
         getArrayIndexFromTensorPos: require('../../shader/atom/getArrayIndexFromTensorPos.c'),

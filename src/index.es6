@@ -74,6 +74,89 @@ inst.run('conv2d', {
 }).catch(err => {
     console.log('-----------error---------' + err);
 });
+matrix['numbers_shape_out'] = [100, 25, 5, 1];
+filter['numbers_shape_out'] = [100, 25, 5, 1];
+
+let doPool2d = () => {
+    let pool2dParams = {
+        'width_shape_pool': 3,
+        'height_shape_pool': 3,
+        'type_pool': 0, // 1表示最大池化 0表示平均池化
+        'length_shape_origin': 4,
+        'width_shape_origin': 5,
+        'height_shape_origin': 5,
+        'channel_origin': 4,
+        'width_texture_origin': matrix.texture_width,
+        'height_texture_origin': matrix.texture_height,
+        origin: matrix,
+        'width_shape_out': 5,
+        'height_shape_out': 5,
+        'channel_out': 4,
+        'length_shape_out': 4,
+        'width_texture_out': 5,
+        'height_texture_out': 5,
+        'shape_out': [1, 4, 5, 5],
+        'stride_horizontal': 1,
+        'stride_vertical': 1,
+        'pad_left': 1,
+        'pad_top': 1,
+        'dilation_horizontal': 2,
+        'dilation_vertical': 2
+    };
+    // 执行op pool2d
+    inst.run('pool2d', pool2dParams).then(() => {
+        // 读取结果
+        const addResult = inst.read();
+        console.dir(['测试数据---op的执行结果', addResult]);
+        let testArr = [];
+        matrix.data.forEach((item, index) => {
+            if (index % 5 === 0) {
+                testArr[Math.floor(index / 5)] = [];
+            }
+            testArr[Math.floor(index / 5)].push(item);
+        });
+        let maxArr = [];
+        for (let d = 0; d < 4; d++) {
+            for (let v = 0; v < 5; v++) {
+                for (let h = 0; h < 5; h++) {
+                    let max = 0.0;
+                    let countPool = 0;
+                    for (let y = 0; y < 3; y++) {
+                        for (let x = 0; x < 3; x++) {
+                            if (!((v === 0 && y === 0)
+                                || (h === 0 && x === 0)
+                                || (v === 4 && y === 2)
+                                || (h === 4 && x === 2))) {
+                                let curr = testArr[y + (5 * d) + (v - 1)][x + (h - 1)];
+                                if (pool2dParams.type_pool) {
+                                    if (curr > max) {
+                                        max = curr;
+                                    }
+                                }
+                                else {
+                                    max += curr;
+                                    countPool++;
+                                }
+                            }
+                        }
+                    }
+                    if (!pool2dParams.type_pool) {
+                        max = max / countPool;
+                    }
+                    maxArr.push(max);
+                }
+            }
+        }
+        console.log(testArr);
+        console.log(maxArr);
+        addResult.forEach((item, index)=> {
+            console.log(item, maxArr[index], parseFloat(item - maxArr[index]).toFixed(2));
+        });
+    }).catch(err => {
+        console.log('-----------error---------' + err);
+    });
+};
+doPool2d();
 // Runtime.init2({
 //     'filter_size_width': 3,
 //     'filter_size_height': 3,

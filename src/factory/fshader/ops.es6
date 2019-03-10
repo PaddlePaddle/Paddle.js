@@ -1,6 +1,7 @@
 /* eslint-disable */
 import conf_conv2d from '../../shader/conv2d/conf';
 import conf_dynamic from '../../shader/dynamic/conf';
+import conf_pool2d from '../../shader/pool2d/conf';
 /**
  * @file op文件
  * @author yangmingming
@@ -23,7 +24,12 @@ export default {
             params: require('../../shader/dynamic/params.c'),
             func: require('../../shader/dynamic/main.c'),
             confs: conf_dynamic
-        }
+        },
+        pool2d: {
+            params: require('../../shader/pool2d/params.c'),
+            func: require('../../shader/pool2d/main.c'),
+            confs: conf_pool2d
+        },
     },
     atoms: {
         getArrayIndexFromTensorPos: require('../../shader/atom/getArrayIndexFromTensorPos.c'),

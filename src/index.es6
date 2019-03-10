@@ -75,31 +75,31 @@ console.dir(['测试数据---输入tensor', matrix.data]);
 // }).catch(err => {
 //     console.log('-----------error---------' + err);
 // });
-// const filter = Runtime.mockFilter();
-// filter['numbers_shape_out'] = [9, 9, 3, 1];
+filter['numbers_shape_out'] = [4, 4, 2, 1];
+filter2['numbers_shape_out'] = [4, 4, 2, 1];
 let doMul = () => {
     let mulParams = {
         'length_shape_filter': 4,
-        'width_shape_filter': 3,
+        'width_shape_filter': 2,
         'height_shape_filter': 3,
-        'channel_filter': 4,
+        'channel_filter': 1,
         'width_texture_filter': filter.texture_width,
         'height_texture_filter': filter.texture_height,
         filter,
         'length_shape_origin': 4,
         'width_shape_origin': 3,
-        'height_shape_origin': 3,
-        'channel_origin': 4,
+        'height_shape_origin': 2,
+        'channel_origin': 1,
         'width_texture_origin': filter2.texture_width,
         'height_texture_origin': filter2.texture_height,
         origin: filter2,
-        'width_shape_out': 3,
-        'height_shape_out': 3,
-        'channel_out': 4,
+        'width_shape_out': 2,
+        'height_shape_out': 2,
+        'channel_out': 1,
         'length_shape_out': 4,
-        'width_texture_out': 3,
-        'height_texture_out': 3,
-        'shape_out': [1, 4, 3, 3]
+        'width_texture_out': 1,
+        'height_texture_out': 1,
+        'shape_out': [1, 1, 2, 2]
     };
     inst.run('mul', mulParams)
     .then(() => {
@@ -107,7 +107,18 @@ let doMul = () => {
         const addResult = inst.read();
         console.dir(['测试数据---op的执行结果', addResult]);
         addResult.forEach((item, index) => {
-            console.log(item, parseFloat(item).toFixed(2));
+            let width = mulParams.width_shape_origin;
+            let width2 = mulParams.width_shape_filter;
+            let y = Math.floor(index / mulParams.width_shape_out);
+            let x2 = index % mulParams.width_shape_out;
+            let resData = 0;
+            if (index < mulParams.width_shape_out * mulParams.height_shape_out) {
+                for(let i = 0; i < mulParams.width_shape_origin; i++) {
+                    resData += filter2.data[y * width + i] * filter.data[i*width2 + x2];
+                    console.log(y,x2,(y * width + i),(i*width2 + x2));
+                }
+            }
+            console.log(item, resData, parseFloat(item - resData).toFixed(2));
         });
     }).catch(err => {
         console.log('-----------error---------' + err);

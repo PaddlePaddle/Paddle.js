@@ -11,15 +11,17 @@ void main(void) {
         int n = getArrayIndexFromTexturePos_texture_out(vec3(outCoord.x, outCoord.y, float(i)));
         // 获取output的坐标
         ivec4 outPos = getTensorPosFromArrayIndex_out(n);
-
-        // filter数据
-        int fIndex = getArrayIndexFromTensorPos_filter(ivec4(outPos[0], outPos[1], outPos[2], outPos[3]));
-        vec3 fPos = getTexturePosFromArrayIndex_texture_filter(fIndex);
-        // origin数据
-        int oIndex = getArrayIndexFromTensorPos_origin(ivec4(outPos[0], outPos[1], outPos[2], outPos[3]));
-        vec3 oPos = getTexturePosFromArrayIndex_texture_origin(oIndex);
-        v4[i] = (getValueFromTexturePos_texture_filter(fPos) +
+        for (int j = 0; j < width_shape_origin; j++) {
+            // filter数据
+            int fIndex = getArrayIndexFromTensorPos_filter(ivec4(outPos[0], outPos[1], j, outPos[3]));
+            vec3 fPos = getTexturePosFromArrayIndex_texture_filter(fIndex);
+            // origin数据
+            int oIndex = getArrayIndexFromTensorPos_origin(ivec4(outPos[0], outPos[1], outPos[2], j));
+            vec3 oPos = getTexturePosFromArrayIndex_texture_origin(oIndex);
+            
+            v4[i] += (getValueFromTexturePos_texture_filter(fPos) *
             getValueFromTexturePos_texture_origin(oPos));
+        }
     }
     gl_FragColor = v4;
 }

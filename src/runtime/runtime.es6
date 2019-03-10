@@ -133,19 +133,19 @@ export default {
     // mock filter 4 * 4 * 3 * 3
     mockFilter() {
         let matrix = new Matrix({
-            shape: [1, 4, 3, 3],
+            shape: [1, 1, 3, 2],
             type: 'texture',
             name: 'filter',
-            value: new Float32Array([1.0, 1.0, 0.0, 0.0, -2.0, 0.0, 1.0, -3.0, 1.0])
+            value: new Float32Array([1.0, 4.0, 2.0, 5.0, 3.0, 6.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
         });
         return matrix;
     },
     mockFilter2() {
         let matrix = new Matrix({
-            shape: [1, 4, 3, 3],
+            shape: [1, 1, 2, 3],
             type: 'texture',
             name: 'origin',
-            value: new Float32Array([1.0, 1.0, 0.0, 0.0, -2.0, 0.0, 1.0, -3.0, 1.0])
+            value: new Float32Array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
         });
         return matrix;
     },

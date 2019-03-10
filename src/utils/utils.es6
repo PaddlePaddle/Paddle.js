@@ -249,10 +249,10 @@ export default {
         }
         // todo: 需要计算生成对应材质
         return {
-            data: new Float32Array(newOne),
+            data: data,
             d: 4,
-            w: total / (1 * 4 * height),
-            h: height
+            w: 1,
+            h: 4
         };
     },
 

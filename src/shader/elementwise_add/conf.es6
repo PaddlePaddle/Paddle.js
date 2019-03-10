@@ -14,7 +14,7 @@ export default {
         {
             func: 'getPixelsFromTexturePos',
             conf: {
-                TEXTURE_NAME: 'texture_add'
+                TEXTURE_NAME: 'texture_counter'
             }
         }
     ],
@@ -32,8 +32,8 @@ export default {
             from: 'prev'
         },
         {
-            tensor: 'add',
-            variable: 'texture_add',
+            tensor: 'counter',
+            variable: 'texture_counter',
             setter: 'initTexture',
             type: 'texture'
         }

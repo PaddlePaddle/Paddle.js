@@ -83,7 +83,7 @@ export default {
         const data = opConfs[op].map(item => {
             const tensor = opts.tensor[item.tensor];
             if (item.type === 'texture') {
-                item.data = tensor.data
+                item.data = tensor.data;
                 item['texture_width'] = tensor['texture_width'];
                 item['texture_height'] = tensor['texture_height'];
             } else if (item.type === 'uniform') {

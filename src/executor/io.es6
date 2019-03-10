@@ -10,6 +10,7 @@ export default class io {
 
     fromPixels(pixels, opt) {
         pixels = pixels.input;
+        const shape = opt[0].shape;
         const numChannels = opt[0].shape[1];
         if (pixels == null) {
             throw new Error(
@@ -59,7 +60,7 @@ export default class io {
         console.log(pixels.height, pixels.width, numChannels, values);
         // const outShape: [number, number, number] =
         //     [pixels.height, pixels.width, numChannels];
-        return [values, numChannels, 'Array'];
+        return {data: values, shape: shape, name: 'pixel'};
     }
 }
 /* eslint-enable */

@@ -22,8 +22,8 @@ const int length_shape_out = LENGTH_SHAPE_OUT;
 
 // 计算相关
 // 拆分步长
-const int stride_h = STRIDE_HORIZONTAL;
-const int stride_v = STRIDE_VERTICAL;
+const int stride_h = STRIDES_X;
+const int stride_v = STRIDES_Y;
 // padding的数目
 const int padLeft = PAD_LEFT;
 const int padTop = PAD_TOP;

@@ -63,8 +63,8 @@ export default {
         'HEIGHT_TEXTURE_OUT',
         'CHANNEL_OUT',
 
-        'STRIDE_HORIZONTAL',
-        'STRIDE_VERTICAL',
+        'STRIDES_X',
+        'STRIDES_Y',
         'PAD_LEFT',
         'PAD_TOP'
     ],
@@ -72,19 +72,19 @@ export default {
         // texture类型，若添加from: 'prev', 表示读取上一个op的产出
         {
             tensor: 'origin',
-            variable: 'texture_origin',
+            variable: 'texture',
             setter: 'initTexture',
             type: 'texture'
         },
         {
             tensor: 'origin',
-            variable: 'numbers_shape_origin',
+            variable: 'numbers_shape',
             setter: 'uniform1iv',
             type: 'uniform'
         },
         {
-            tensor: 'origin',
-            variable: 'numbers_shape_out',
+            tensor: 'out',
+            variable: 'numbers_shape',
             setter: 'uniform1iv',
             type: 'uniform'
         }

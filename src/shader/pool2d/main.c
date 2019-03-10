@@ -32,7 +32,8 @@ void main(void) {
                     }
                     else {
                         v4[i] += curr;
-                        count_pool++; // 在平均池化模式忽略填充值(exclusive默认为true）
+                        // 在平均池化模式忽略填充值(exclusive默认为true）
+                        count_pool++;
                     }
                 }
             }

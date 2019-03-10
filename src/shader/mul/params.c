@@ -2,12 +2,12 @@
 
 // 常量
 // 卷积核
-const int length_shape_filter = LENGTH_SHAPE_FILTER;
-const int width_shape_filter = WIDTH_SHAPE_FILTER;
-const int height_shape_filter = HEIGHT_SHAPE_FILTER;
-const int width_texture_filter = WIDTH_TEXTURE_FILTER;
-const int height_texture_filter = HEIGHT_TEXTURE_FILTER;
-const int channel_filter = CHANNEL_FILTER;
+const int length_shape_counter = LENGTH_SHAPE_COUNTER;
+const int width_shape_counter = WIDTH_SHAPE_COUNTER;
+const int height_shape_counter = HEIGHT_SHAPE_COUNTER;
+const int width_texture_counter = WIDTH_TEXTURE_COUNTER;
+const int height_texture_counter = HEIGHT_TEXTURE_COUNTER;
+const int channel_counter = CHANNEL_COUNTER;
 
 // 输入数据
 const int width_shape_origin = WIDTH_SHAPE_ORIGIN;
@@ -27,10 +27,10 @@ const int length_shape_out = LENGTH_SHAPE_OUT;
 
 // uniform变量
 // 卷积核
-uniform int numbers_shape_filter[LENGTH_SHAPE_FILTER];
+uniform int numbers_shape_counter[LENGTH_SHAPE_COUNTER];
 uniform int numbers_shape_origin[LENGTH_SHAPE_ORIGIN];
 uniform int numbers_shape_out[LENGTH_SHAPE_OUT];
-uniform sampler2D texture_filter;
+uniform sampler2D texture_counter;
 
 // 输入数据
 uniform sampler2D texture_origin;

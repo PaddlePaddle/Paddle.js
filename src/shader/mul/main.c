@@ -12,14 +12,14 @@ void main(void) {
         // 获取output的坐标
         ivec4 out_pos = getTensorPosFromArrayIndex_out(n);
         for (int j = 0; j < width_shape_origin; j++) {
-            // filter数据
-            int f_index = getArrayIndexFromTensorPos_filter(ivec4(out_pos[0], out_pos[1], j, out_pos[3]));
-            vec3 f_pos = getTexturePosFromArrayIndex_texture_filter(f_index);
+            // counter数据
+            int f_index = getArrayIndexFromTensorPos_counter(ivec4(out_pos[0], out_pos[1], j, out_pos[3]));
+            vec3 f_pos = getTexturePosFromArrayIndex_texture_counter(f_index);
             // origin数据
             int o_ndex = getArrayIndexFromTensorPos_origin(ivec4(out_pos[0], out_pos[1], out_pos[2], j));
             vec3 o_pos = getTexturePosFromArrayIndex_texture_origin(o_ndex);
             
-            v4[i] += (getValueFromTexturePos_texture_filter(f_pos) *
+            v4[i] += (getValueFromTexturePos_texture_counter(f_pos) *
             getValueFromTexturePos_texture_origin(o_pos));
         }
     }

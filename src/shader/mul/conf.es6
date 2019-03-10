@@ -9,7 +9,7 @@ export default {
             func: 'getArrayIndexFromTensorPos',
             conf: {
                 TENSOR_TYPE: 'ivec4',
-                TENSOR_NAME: 'filter'
+                TENSOR_NAME: 'counter'
             }
         },
         {
@@ -34,13 +34,13 @@ export default {
         {
             func: 'getTexturePosFromArrayIndex',
             conf: {
-                TEXTURE_NAME: 'texture_filter'
+                TEXTURE_NAME: 'texture_counter'
             }
         },
         {
             func: 'getValueFromTexturePos',
             conf: {
-                TEXTURE_NAME: 'texture_filter'
+                TEXTURE_NAME: 'texture_counter'
             }
         },
 
@@ -65,12 +65,12 @@ export default {
         }
     ],
     conf: [
-        'LENGTH_SHAPE_FILTER',
-        'WIDTH_SHAPE_FILTER',
-        'HEIGHT_SHAPE_FILTER',
-        'WIDTH_TEXTURE_FILTER',
-        'HEIGHT_TEXTURE_FILTER',
-        'CHANNEL_FILTER',
+        'LENGTH_SHAPE_COUNTER',
+        'WIDTH_SHAPE_COUNTER',
+        'HEIGHT_SHAPE_COUNTER',
+        'WIDTH_TEXTURE_COUNTER',
+        'HEIGHT_TEXTURE_COUNTER',
+        'CHANNEL_COUNTER',
 
         'WIDTH_SHAPE_ORIGIN',
         'HEIGHT_SHAPE_ORIGIN',
@@ -88,33 +88,32 @@ export default {
     ],
     input: [
         {
-            tensor: 'filter',
-            variable: 'numbers_shape_filter',
+            tensor: 'counter',
+            variable: 'numbers_shape',
             setter: 'uniform1iv',
             type: 'uniform'
         },
         {
-            tensor: 'filter',
-            variable: 'texture_filter',
-            setter: 'initTexture',
-            type: 'texture'
-        },
-        // texture类型，若添加from: 'prev', 表示读取上一个op的产出
-        {
-            tensor: 'origin',
-            variable: 'texture_origin',
+            tensor: 'counter',
+            variable: 'texture',
             setter: 'initTexture',
             type: 'texture'
         },
         {
             tensor: 'origin',
-            variable: 'numbers_shape_origin',
+            variable: 'texture',
+            setter: 'initTexture',
+            type: 'texture'
+        },
+        {
+            tensor: 'origin',
+            variable: 'numbers_shape',
             setter: 'uniform1iv',
             type: 'uniform'
         },
         {
-            tensor: 'origin',
-            variable: 'numbers_shape_out',
+            tensor: 'out',
+            variable: 'numbers_shape',
             setter: 'uniform1iv',
             type: 'uniform'
         }

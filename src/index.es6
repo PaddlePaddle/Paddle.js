@@ -92,13 +92,13 @@ let doMul = () => {
     filter0['numbers_shape_out'] = [4, 4, 2, 1];
     filter2['numbers_shape_out'] = [4, 4, 2, 1];
     let mulParams = {
-        'length_shape_filter': 4,
-        'width_shape_filter': 2,
-        'height_shape_filter': 3,
-        'channel_filter': 1,
-        'width_texture_filter': filter0.texture_width,
-        'height_texture_filter': filter0.texture_height,
-        filter: filter0,
+        'length_shape_counter': 4,
+        'width_shape_counter': 2,
+        'height_shape_counter': 3,
+        'channel_counter': 1,
+        'width_texture_counter': filter0.texture_width,
+        'height_texture_counter': filter0.texture_height,
+        counter: filter0,
         'length_shape_origin': 4,
         'width_shape_origin': 3,
         'height_shape_origin': 2,
@@ -121,7 +121,7 @@ let doMul = () => {
         console.dir(['测试数据---op的执行结果', addResult]);
         addResult.forEach((item, index) => {
             let width = mulParams.width_shape_origin;
-            let width2 = mulParams.width_shape_filter;
+            let width2 = mulParams.width_shape_counter;
             let y = Math.floor(index / mulParams.width_shape_out);
             let x = index % mulParams.width_shape_out;
             let resData = 0;

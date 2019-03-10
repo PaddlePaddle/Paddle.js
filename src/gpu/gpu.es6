@@ -235,7 +235,7 @@ export default class gpu {
     initTexture(index, item) {
         const gl = this.gl;
         let texture;
-        if (item.from === 'prev') {
+        if (!item.data) {
             texture = this.prevTexture;
         } else {
             texture = gl.createTexture();
@@ -243,7 +243,7 @@ export default class gpu {
         this.textures.push(texture);
         gl.activeTexture(gl[`TEXTURE${index}`]);
         gl.bindTexture(gl.TEXTURE_2D, texture);
-        if (item.from !== 'prev') {
+        if (item.data) {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -306,10 +306,10 @@ export default class gpu {
     compute() {
         let gl = this.gl;
 
-        let pixels = new Float32Array(this.width_shape_out * this.height_shape_out * 4);
+        let pixels = new Float32Array(this.width_texture_out * this.height_texture_out * 4);
         // gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
         // console.dir(['framebuffer状态', this.frameBufferIsComplete()]);
-        gl.readPixels(0, 0, this.width_shape_out, this.height_shape_out, gl.RGBA, gl.FLOAT, pixels, 0);
+        gl.readPixels(0, 0, this.width_texture_out, this.height_texture_out, gl.RGBA, gl.FLOAT, pixels, 0);
 
         return pixels;
     }

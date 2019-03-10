@@ -9,7 +9,8 @@ import Tensor from './tensor';
 const keys = [
     'paddings',
     'strides',
-    'dilations'
+    'dilations',
+    'ksize'
 ];
 // 从tensor对象中获取的数据
 const tensorAttrs = [

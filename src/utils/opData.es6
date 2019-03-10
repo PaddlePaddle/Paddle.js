@@ -11,6 +11,7 @@ const keys = [
     'strides',
     'dilations'
 ];
+// 从tensor对象中获取的数据
 const tensorAttrs = [
     'length_shape',
     'width_shape',
@@ -19,6 +20,16 @@ const tensorAttrs = [
     'height_texture',
     'channel'
 ];
+// shader中需要的常量
+const shaderAttrs = {
+    scale: {
+        'bias': 'bias_value',
+        'scale': 'multi_value'
+    },
+    pool2d: {
+        'pooling_type': 'type_pool'
+    }
+};
 // model的名字和paddle web的tensor名字mapping
 const tensorName = {
     conv2d: {
@@ -28,6 +39,42 @@ const tensorName = {
         'conv2d_1.w_0': 'filter',
         'pool2d_0.tmp_0': 'origin',
         'conv2d_1.tmp_0': 'out'
+    },
+    elementwise_add: {
+        'conv2d_0.tmp_0': 'origin',
+        'conv2d_0.b_0': 'counter',
+        'conv2d_0.tmp_1': 'out',
+        'conv2d_1.tmp_0': 'origin',
+        'conv2d_1.b_0': 'counter',
+        'conv2d_1.tmp_1': 'out',
+        'fc_0.tmp_0': 'origin',
+        'fc_0.b_0': 'counter',
+        'fc_0.tmp_1': 'out'
+    },
+    relu: {
+        'conv2d_0.tmp_1': 'origin',
+        'conv2d_0.tmp_1-1': 'out',
+        'conv2d_1.tmp_1': 'origin',
+        'conv2d_1.tmp_1-1': 'out'
+    },
+    pool2d: {
+        'conv2d_0.tmp_1-1': 'origin',
+        'pool2d_0.tmp_0': 'out',
+        'conv2d_1.tmp_1-1': 'origin',
+        'pool2d_1.tmp_0': 'out'
+    },
+    mul: {
+        'pool2d_1.tmp_0': 'origin',
+        'fc_0.w_0': 'counter',
+        'fc_0.tmp_0': 'out'
+    },
+    softmax: {
+        'fc_0.tmp_1': 'origin',
+        'fc_0.tmp_2': 'out'
+    },
+    scale: {
+        'fc_0.tmp_2': 'origin',
+        'scale_0.tmp_0': 'out'
     }
 };
 // unique behavior
@@ -37,6 +84,12 @@ const opBehavior = {
     ],
     elementwise_add: [
         'broadcast'
+    ],
+    pool2d: [
+        'isMax'
+    ],
+    relu: [
+        'transToPrelu'
     ]
 };
 export default class OpData {
@@ -84,11 +137,25 @@ export default class OpData {
     }
 
     buildAttrs() {
-        keys.forEach(key => {
-            const item = this.attrs[key] || [0 , 0];
-            this.data[key + '_x'] = item[0];
-            this.data[key + '_y'] = item[1];
-        });
+        // 计算属性
+        for (let key in this.attrs) {
+            if (this.attrs.hasOwnProperty(key)) {
+                const item = this.attrs[key];
+                if (Object.prototype.toString.call(item) === '[object Array]') {
+                    if (keys.hasOwnProperty(key)) {
+                        this.data[key + '_x'] = item[0];
+                        this.data[key + '_y'] = item[1];
+                    }
+                } else {
+                    this.data[key] = item;
+                    // 获取shader所需的数据
+                    const shaderAttr = shaderAttrs[this.name];
+                    if (shaderAttr.hasOwnProperty(key)) {
+                        this.data[shaderAttr[key]] = item;
+                    }
+                }
+            }
+        }
         // 获取tensor的数据
         for (let key in this.tensor) {
             const tensor = this.tensor[key];
@@ -96,10 +163,6 @@ export default class OpData {
                 this.data[attr+ '_' + tensor.name] = tensor[attr];
             });
         }
-    }
-
-    get data() {
-        return data;
     }
 
     needBatch(tensorData = []) {
@@ -114,7 +177,7 @@ export default class OpData {
             small = x;
         }
         // todo: 默认y的shape length是1, 以后需要实现通用版本
-        let shape = Utils.getBroadcastShapeInPaddle(x.shape, y.shape);
+        let shape = Utils.getBroadcastShapeInPaddle(x.shape, y.shape, this.attrs['axis']);
         // 填充shape数据
         if (small.shape.length === 1) {
             const result = [];
@@ -128,6 +191,15 @@ export default class OpData {
             }
             small.data = result;
         }
+    }
+
+    isMax(tensorData = []) {
+        const type = this.attrs['pooling_type'] === 'max' ? 1 : 0;
+        this.attrs['pooling_type'] = type;
+    }
+
+    transToPrelu(tensorData = []) {
+        this.data['multi_value'] = '0.0';
     }
 
     dispose() {

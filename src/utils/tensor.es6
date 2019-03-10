@@ -78,10 +78,6 @@ export default class Tensor {
         return this.data[index];
     }
 
-    get name() {
-        return this.name;
-    }
-
     get width_texture() {
         return this.shape_texture.width;
     }

@@ -1,6 +1,6 @@
 /* eslint-disable */
 /**
- * @file dynamic的配置文件
+ * @file 加法的配置文件
  * @author yangmingming
  */
 export default {
@@ -14,23 +14,26 @@ export default {
         {
             func: 'getPixelsFromTexturePos',
             conf: {
-                TEXTURE_NAME: 'texture_origin2'
+                TEXTURE_NAME: 'texture_counter'
             }
         }
     ],
     conf: [
+        'MULTI_VALUE',
+        'BIAS_VALUE',
+        'ACTIVE_FUNCTION'
     ],
     input: [
-        // texture类型，若添加from: 'prev', 表示读取上一个op的产出
         {
             tensor: 'origin',
             variable: 'texture_origin',
             setter: 'initTexture',
-            type: 'texture'
+            type: 'texture',
+            from: 'prev'
         },
         {
-            tensor: 'origin2',
-            variable: 'texture_origin2',
+            tensor: 'counter',
+            variable: 'texture_counter',
             setter: 'initTexture',
             type: 'texture'
         }

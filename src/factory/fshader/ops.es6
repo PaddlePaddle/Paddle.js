@@ -42,6 +42,21 @@ export default {
             params: require('../../shader/mul/params.c'),
             func: require('../../shader/mul/main.c'),
             confs: conf_mul
+        },
+        relu: {
+            params: require('../../shader/dynamic/params.c'),
+            func: require('../../shader/dynamic/main.c'),
+            confs: conf_dynamic
+        },
+        scale: {
+            params: require('../../shader/dynamic/params.c'),
+            func: require('../../shader/dynamic/main.c'),
+            confs: conf_dynamic
+        },
+        softmax: {
+            params: require('../../shader/dynamic/params.c'),
+            func: require('../../shader/dynamic/main.c'),
+            confs: conf_dynamic
         }
     },
     atoms: {

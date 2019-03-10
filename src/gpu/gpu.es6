@@ -235,7 +235,7 @@ export default class gpu {
     initTexture(index, item) {
         const gl = this.gl;
         let texture;
-        if (item.from === 'prev') {
+        if (!item.data) {
             texture = this.prevTexture;
         } else {
             texture = gl.createTexture();
@@ -243,7 +243,7 @@ export default class gpu {
         this.textures.push(texture);
         gl.activeTexture(gl[`TEXTURE${index}`]);
         gl.bindTexture(gl.TEXTURE_2D, texture);
-        if (item.from !== 'prev') {
+        if (item.data) {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -293,9 +293,9 @@ export default class gpu {
         data.forEach(item => {
             if (item.type === 'texture') {
                 this.initTexture(textureIndex, item);
-                gl.uniform1i(this.getUniformLoc(item.variable), textureIndex++);
+                gl.uniform1i(this.getUniformLoc(item.variable + '_' + item.tensor), textureIndex++);
             } else if (item.type === 'uniform') {
-                gl[item.setter](this.getUniformLoc(item.variable), item.data);
+                gl[item.setter](this.getUniformLoc(item.variable + '_' + item.tensor), item.data);
             }
         });
         gl.clearColor(.0, .0, .0, 1);

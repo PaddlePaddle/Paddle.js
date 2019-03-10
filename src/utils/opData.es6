@@ -1,10 +1,11 @@
 /* eslint-disable */
+import Utils from './utils';
+import Tensor from './tensor';
 /**
  * @file op的数据对象
  * @author yangmingming
  *
  */
-import Tensor from './tensor';
 const keys = [
     'paddings',
     'strides',
@@ -21,10 +22,22 @@ const tensorAttrs = [
 // model的名字和paddle web的tensor名字mapping
 const tensorName = {
     conv2d: {
-        'pixels': 'origin', // testDemo里却失
+        'pixel': 'origin',
         'conv2d_0.w_0': 'filter',
-        'conv2d_0.tmp_0': 'out'
+        'conv2d_0.tmp_0': 'out',
+        'conv2d_1.w_0': 'filter',
+        'pool2d_0.tmp_0': 'origin',
+        'conv2d_1.tmp_0': 'out'
     }
+};
+// unique behavior
+const opBehavior = {
+    conv2d: [
+        'needBatch'
+    ],
+    elementwise_add: [
+        'broadcast'
+    ]
 };
 export default class OpData {
     constructor(name, input = {}, output = {}, attrs = {}) {
@@ -32,7 +45,7 @@ export default class OpData {
         this.input = input;
         this.output = output;
         this.attrs = attrs;
-        // op数据
+        // op数据, 当前不扩展
         this.data = {
             'active_function': 'scale',
             'multi_value': '1.0',
@@ -48,16 +61,26 @@ export default class OpData {
         // todo: 是否需要形状对齐
         // todo: 是否需要广播tensor
         const names = tensorName[this.name];
+        const tensorData = [];
         for (let key in this.input) {
             // 默认取第一个数据
             const data = this.input[key] || [{}];
-            let name = names[data[0].name];
+            tensorData.push(data[0]);
+        }
+        // unique behavior
+        opBehavior[this.name].forEach(behavior => {
+            this[behavior](tensorData);
+        });
+        // 生成tensor对象
+        tensorData.forEach(data => {
+            let name = names[data.name];
             this.tensor[name] = new Tensor({
                 name: name,
-                shape: data[0].shape,
-                data: data[0].data
+                shape: data.shape,
+                data: data.data,
+                needBatch: data.needBatch || false
             });
-        }
+        });
     }
 
     buildAttrs() {
@@ -77,6 +100,34 @@ export default class OpData {
 
     get data() {
         return data;
+    }
+
+    needBatch(tensorData = []) {
+        tensorData.forEach(data => (data.needBatch = true));
+    }
+
+    broadcast(tensorData = []) {
+        const x = tensorData[0];
+        const y = tensorData[1];
+        let small = y;
+        if (x.shape.length - y.shape.length < 0) {
+            small = x;
+        }
+        // todo: 默认y的shape length是1, 以后需要实现通用版本
+        let shape = Utils.getBroadcastShapeInPaddle(x.shape, y.shape);
+        // 填充shape数据
+        if (small.shape.length === 1) {
+            const result = [];
+            small.shape = shape;
+            let total = shape.reduce((all, num) => all * num);
+            for (let i = 0; i < small.shape[0]; i++) {
+                let item = small.data[i];
+                for (let j = 0; j < total / shape[0]; j++) {
+                    result.push(item);
+                }
+            }
+            small.data = result;
+        }
     }
 
     dispose() {

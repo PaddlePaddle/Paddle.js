@@ -98,7 +98,7 @@ let doElementwiseAdd = () => {
         console.dir(['测试数据---op的执行结果', addResult]);
         addResult.forEach((item, index) => {
             let resData = matrixPool.data[index] + matrixPool2.data[index];
-            console.log(item, resData, parseFloat(item -resData).toFixed(2));
+            console.log(item, resData, parseFloat(item - resData).toFixed(2));
         });
     }).catch(err => {
         console.log('-----------error---------' + err);

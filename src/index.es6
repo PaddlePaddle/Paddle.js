@@ -76,7 +76,35 @@ inst.run('conv2d', {
 });
 const matrixPool = Runtime.mockPoolOrigin();
 matrixPool['numbers_shape_out'] = [100, 25, 5, 1];
-
+const matrixPool2 = Runtime.mockPoolOrigin2();
+matrixPool2['numbers_shape_out'] = [100, 25, 5, 1];
+let doElementwiseAdd = () => {
+    let elementwiseAddParams = {
+        'multi_value': '1.0',
+        'bias_value': '1.0',
+        'active_function': 'scale',
+        origin: matrixPool,
+        origin2: matrixPool2,
+        'width_shape_out': 5,
+        'height_shape_out': 5,
+        'length_shape_out': 4,
+        'width_texture_out': 5,
+        'height_texture_out': 5
+    };
+    return inst.run('elementwise_add', elementwiseAddParams)
+    .then(() => {
+        // 读取结果
+        const addResult = inst.read();
+        console.dir(['测试数据---op的执行结果', addResult]);
+        addResult.forEach((item, index) => {
+            let resData = matrixPool.data[index] + matrixPool2.data[index];
+            console.log(item, resData, parseFloat(item -resData).toFixed(2));
+        });
+    }).catch(err => {
+        console.log('-----------error---------' + err);
+    });
+};
+// doElementwiseAdd();
 let doPool2d = () => {
     let pool2dParams = {
         'width_shape_pool': 3,

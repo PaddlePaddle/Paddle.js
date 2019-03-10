@@ -120,7 +120,13 @@ export default {
     mockPoolOrigin() {
         return new Matrix({
             shape: [1, 4, 5, 5],
-            name: 'origin'
+            name: 'origin',// 加value
+        });
+    },
+    mockPoolOrigin2() {
+        return new Matrix({
+            shape: [1, 4, 5, 5],
+            name: 'origin' // 加value
         });
     },
 

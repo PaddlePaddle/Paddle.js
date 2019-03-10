@@ -31,6 +31,16 @@ const conf = {
     conv2d: CONV2D_VARIABLE
 };
 export default {
+    // todo: 适用2维矩阵乘法，以后实现通用版本
+    getReshapeInPaddle(inputShape = [], counterShape = [], outShape = []) {
+        let total = inputShape.reduce((all, num) => all * num);
+        if (outShape.length === 1) {
+            return [1, total];
+        } else {
+            return [outShape[0], total / outShape[0]];
+        }
+    },
+
     getBroadcastShapeInPaddle(shapeA= [], shapeB = [], axis = 1) {
         // todo: 简易版本，以后需要实现一个通用版本
         let bigger = shapeA;

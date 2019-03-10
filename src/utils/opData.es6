@@ -90,6 +90,9 @@ const opBehavior = {
     ],
     relu: [
         'transToPrelu'
+    ],
+    mul: [
+        'reshape'
     ]
 };
 export default class OpData {
@@ -200,6 +203,20 @@ export default class OpData {
 
     transToPrelu(tensorData = []) {
         this.data['multi_value'] = '0.0';
+    }
+
+    reshape(tensorData = []) {
+        let input = tensorData[0];
+        let counter = tensorData[1];
+        if (counter.shape.length > input.shape.length) {
+            input = tensorData[1];
+            counter = tensorData[0];
+        }
+        if (input.length > 2 && counter.length === 2) {
+            let shape = Utils.getReshapeInPaddle(input, counter, this.output['Input'][0].shape);
+            input.shape = shape;
+        }
+
     }
 
     dispose() {

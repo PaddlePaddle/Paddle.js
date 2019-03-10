@@ -23,58 +23,58 @@ inst = Runtime.init({
 console.dir(['测试数据---卷积核', filter.data]);
 console.dir(['测试数据---输入tensor', matrix.data]);
 // 执行op conv2d
-// inst.run('conv2d', {
-//     'length_shape_filter': 4,
-//     'width_shape_filter': 3,
-//     'height_shape_filter': 3,
-//     'channel_filter': 4,
-//     'width_texture_filter': filter.texture_width,
-//     'height_texture_filter': filter.texture_height,
-//     filter,
-//     'length_shape_origin': 4,
-//     'width_shape_origin': 5,
-//     'height_shape_origin': 5,
-//     'channel_origin': 4,
-//     'width_texture_origin': matrix.texture_width,
-//     'height_texture_origin': matrix.texture_height,
-//     origin: matrix,
-//     'width_shape_out': 3,
-//     'height_shape_out': 3,
-//     'channel_out': 4,
-//     'length_shape_out': 4,
-//     'width_texture_out': 3,
-//     'height_texture_out': 3,
-//     'shape_out': [1, 4, 3, 3],
-//     'stride_horizontal': 1,
-//     'stride_vertical': 1,
-//     'pad_left': 1,
-//     'pad_top': 1,
-//     'dilation_horizontal': 2,
-//     'dilation_vertical': 2,
-//     'multi_value': '1.0',
-//     'bias_value': '0.0',
-//     'active_function': 'scale'
-// }).then(() => {
-//     console.log('执行dynamic:scale');
-//     // 执行dynamic
-//     return inst.run('dynamic', {
-//         'multi_value': '1.0',
-//         'bias_value': '1.0',
-//         'active_function': 'scale',
-//         origin: matrix,
-//         'width_shape_out': 3,
-//         'height_shape_out': 3,
-//         'length_shape_out': 4,
-//         'width_texture_out': 3,
-//         'height_texture_out': 3
-//     });
-// }).then(() => {
-//     // 读取结果
-//     const addResult = inst.read();
-//     console.dir(['测试数据---op的执行结果', addResult]);
-// }).catch(err => {
-//     console.log('-----------error---------' + err);
-// });
+inst.run('conv2d', {
+    'length_shape_filter': 4,
+    'width_shape_filter': 3,
+    'height_shape_filter': 3,
+    'channel_filter': 4,
+    'width_texture_filter': filter.texture_width,
+    'height_texture_filter': filter.texture_height,
+    filter,
+    'length_shape_origin': 4,
+    'width_shape_origin': 5,
+    'height_shape_origin': 5,
+    'channel_origin': 4,
+    'width_texture_origin': matrix.texture_width,
+    'height_texture_origin': matrix.texture_height,
+    origin: matrix,
+    'width_shape_out': 3,
+    'height_shape_out': 3,
+    'channel_out': 4,
+    'length_shape_out': 4,
+    'width_texture_out': 3,
+    'height_texture_out': 3,
+    'shape_out': [1, 4, 3, 3],
+    'stride_horizontal': 1,
+    'stride_vertical': 1,
+    'pad_left': 1,
+    'pad_top': 1,
+    'dilation_horizontal': 2,
+    'dilation_vertical': 2,
+    'multi_value': '1.0',
+    'bias_value': '0.0',
+    'active_function': 'scale'
+}).then(() => {
+    console.log('执行dynamic:scale');
+    // 执行dynamic
+    return inst.run('dynamic', {
+        'multi_value': '1.0',
+        'bias_value': '1.0',
+        'active_function': 'scale',
+        origin: matrix,
+        'width_shape_out': 3,
+        'height_shape_out': 3,
+        'length_shape_out': 4,
+        'width_texture_out': 3,
+        'height_texture_out': 3
+    });
+}).then(() => {
+    // 读取结果
+    const addResult = inst.read();
+    console.dir(['测试数据---op的执行结果', addResult]);
+}).catch(err => {
+    console.log('-----------error---------' + err);
+});
 filter['numbers_shape_out'] = [4, 4, 2, 1];
 filter2['numbers_shape_out'] = [4, 4, 2, 1];
 let doMul = () => {
@@ -110,12 +110,12 @@ let doMul = () => {
             let width = mulParams.width_shape_origin;
             let width2 = mulParams.width_shape_filter;
             let y = Math.floor(index / mulParams.width_shape_out);
-            let x2 = index % mulParams.width_shape_out;
+            let x = index % mulParams.width_shape_out;
             let resData = 0;
             if (index < mulParams.width_shape_out * mulParams.height_shape_out) {
-                for(let i = 0; i < mulParams.width_shape_origin; i++) {
-                    resData += filter2.data[y * width + i] * filter.data[i*width2 + x2];
-                    console.log(y,x2,(y * width + i),(i*width2 + x2));
+                for (let i = 0; i < mulParams.width_shape_origin; i++) {
+                    resData += filter2.data[y * width + i] * filter.data[i * width2 + x];
+                    console.log(y, x, (y * width + i), (i * width2 + x));
                 }
             }
             console.log(item, resData, parseFloat(item - resData).toFixed(2));
@@ -124,7 +124,7 @@ let doMul = () => {
         console.log('-----------error---------' + err);
     });
 };
-doMul();
+// doMul();
 const matrixPool = Runtime.mockPoolOrigin();
 matrixPool['numbers_shape_out'] = [100, 25, 5, 1];
 const matrixPool2 = Runtime.mockPoolOrigin2();

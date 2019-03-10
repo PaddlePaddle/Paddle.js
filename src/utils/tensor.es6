@@ -1,48 +1,9 @@
 /* eslint-disable */
 import Utils from './utils';
 /**
- * @file 广播类
+ * @file Tensor类
  * @author yangmingming
  */
-export function getBroadcastDims(inShape = [], outShape = []) {
-    const inRank = inShape.length;
-    const dims = [];
-    for (let i = 0; i < inRank; i++) {
-        const dim = inRank - 1 - i;
-        const a = inShape[dim] || 1;
-        const b = outShape[outShape.length - 1 - i] || 1;
-        if (b > 1 && a === 1) {
-            dims.unshift(dim);
-        }
-    }
-    return dims;
-};
-
-export function getBroadcastShape(shapeA = [], shapeB = []) {
-    const result = [];
-    const max = Math.max(shapeA.length, shapeB.length);
-    for (let i = 0; i < max; i++) {
-        let a = shapeA[shapeA.length - i - 1];
-        if (a === null) {
-            a = 1;
-        }
-        let b = shapeB[shapeB.length - i - 1];
-        if (b === null) {
-            b = 1;
-        }
-        if (a === 1) {
-            result.unshift(b);
-        } else if (b === 1) {
-            result.unshift(a);
-        } else if (a !== b) {
-            return null;
-        } else {
-            result.unshift(a);
-        }
-    }
-    return result;
-};
-// tensor数据
 export default class Tensor {
     constructor(opts = {}) {
         this.opts = opts;
@@ -51,7 +12,7 @@ export default class Tensor {
         // tensor的形状
         let shape = this.shape = opts.shape;
         // 图像tensor是否带有batch
-        if (opts.needBatch && shape.length === 0) {
+        if (opts.needBatch && shape.length === 3) {
             shape.unshift(1);
         }
         // 获取转换到texture后的信息
@@ -73,28 +34,28 @@ export default class Tensor {
         }
 
         // todo: delete test data
-        let num = this.num = shape.reduce((total, num) => total * num);
-        this['numbers_shape_' + opts.name] = this.getShapeNumbers();
-        this.data = opts.value || Utils.zeros(num);
-        // opts.name是tensor的name
-        this.tensorName = opts.name;
-        this.textureName = 'texture_' + opts.name;
-        // 填充材
-        if (opts.type === 'texture') {
-            this.tensor = Utils.buildTensor(shape, this.data);
-            // 实际存储的
-            this.texture_width = this.tensor.w;
-            this.texture_height = this.tensor.h;
-            this.data = this.tensor.data;
-            delete this.tensor;
-        } else {
-            // test, 计算的shape
-            this.texture_width = this.shape[3];
-            this.texture_height = this.shape[2];
-            this.data = new Float32Array(Utils.tensor2Texture(this.data, this.texture_width * this.texture_height));
-            console.dir(['调试数据-图像材质数据', this.data]);
-        }
-        this['numbers_shape_out'] = [36, 9, 3, 1];
+        // let num = this.num = shape.reduce((total, num) => total * num);
+        // this['numbers_shape_' + opts.name] = this.getShapeNumbers();
+        // this.data = opts.value || Utils.zeros(num);
+        // // opts.name是tensor的name
+        // this.tensorName = opts.name;
+        // this.textureName = 'texture_' + opts.name;
+        // // 填充材
+        // if (opts.type === 'texture') {
+        //     this.tensor = Utils.buildTensor(shape, this.data);
+        //     // 实际存储的
+        //     this.texture_width = this.tensor.w;
+        //     this.texture_height = this.tensor.h;
+        //     this.data = this.tensor.data;
+        //     delete this.tensor;
+        // } else {
+        //     // test, 计算的shape
+        //     this.texture_width = this.shape[3];
+        //     this.texture_height = this.shape[2];
+        //     this.data = new Float32Array(Utils.tensor2Texture(this.data, this.texture_width * this.texture_height));
+        //     console.dir(['调试数据-图像材质数据', this.data]);
+        // }
+        // this['numbers_shape_out'] = [36, 9, 3, 1];
     }
 
     /**

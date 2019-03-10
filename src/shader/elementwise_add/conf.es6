@@ -24,7 +24,6 @@ export default {
         'ACTIVE_FUNCTION'
     ],
     input: [
-        // texture类型，若添加from: 'prev', 表示读取上一个op的产出
         {
             tensor: 'origin',
             variable: 'texture_origin',

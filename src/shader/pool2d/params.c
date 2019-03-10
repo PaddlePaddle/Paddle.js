@@ -1,8 +1,8 @@
 
 // 常量
 // 池化大小
-const int width_shape_pool = WIDTH_SHAPE_POOL;
-const int height_shape_pool = HEIGHT_SHAPE_POOL;
+const int width_shape_pool = KSIZE_X;
+const int height_shape_pool = KSIZE_Y;
 const int type_pool = TYPE_POOL;
 // 输入数据
 const int width_shape_origin = WIDTH_SHAPE_ORIGIN;

@@ -45,8 +45,8 @@ export default {
         }
     ],
     conf: [
-        'WIDTH_SHAPE_POOL',
-        'HEIGHT_SHAPE_POOL',
+        'KSIZE_X',
+        'KSIZE_Y',
         'TYPE_POOL',
 
         'WIDTH_SHAPE_ORIGIN',

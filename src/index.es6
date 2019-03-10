@@ -1,5 +1,6 @@
 import 'babel-polyfill';
 import Runtime from './runtime/runtime';
+import Matrix from './utils/dims';
 /**
  * @file 入口文件
  * @author yangmingming
@@ -14,7 +15,6 @@ let inst;
 
 const matrix = Runtime.mockOrigin();
 const filter = Runtime.mockFilter();
-const filter2 = Runtime.mockFilter2();
 // 原始张量，上下左右1个单位的padding，步长是1
 inst = Runtime.init({
     'width_raw_canvas': 512,
@@ -75,17 +75,30 @@ inst.run('conv2d', {
 }).catch(err => {
     console.log('-----------error---------' + err);
 });
-filter['numbers_shape_out'] = [4, 4, 2, 1];
-filter2['numbers_shape_out'] = [4, 4, 2, 1];
+
 let doMul = () => {
+    const filter0 = new Matrix({
+        shape: [1, 1, 3, 2],
+        type: 'texture',
+        name: 'filter',
+        value: new Float32Array([1.0, 4.0, 2.0, 5.0, 3.0, 6.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+    });
+    const filter2 = new Matrix({
+        shape: [1, 1, 2, 3],
+        type: 'texture',
+        name: 'origin',
+        value: new Float32Array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+    });
+    filter0['numbers_shape_out'] = [4, 4, 2, 1];
+    filter2['numbers_shape_out'] = [4, 4, 2, 1];
     let mulParams = {
         'length_shape_filter': 4,
         'width_shape_filter': 2,
         'height_shape_filter': 3,
         'channel_filter': 1,
-        'width_texture_filter': filter.texture_width,
-        'height_texture_filter': filter.texture_height,
-        filter,
+        'width_texture_filter': filter0.texture_width,
+        'height_texture_filter': filter0.texture_height,
+        filter: filter0,
         'length_shape_origin': 4,
         'width_shape_origin': 3,
         'height_shape_origin': 2,
@@ -114,7 +127,7 @@ let doMul = () => {
             let resData = 0;
             if (index < mulParams.width_shape_out * mulParams.height_shape_out) {
                 for (let i = 0; i < mulParams.width_shape_origin; i++) {
-                    resData += filter2.data[y * width + i] * filter.data[i * width2 + x];
+                    resData += filter2.data[y * width + i] * filter0.data[i * width2 + x];
                     console.log(y, x, (y * width + i), (i * width2 + x));
                 }
             }
@@ -125,11 +138,18 @@ let doMul = () => {
     });
 };
 // doMul();
-const matrixPool = Runtime.mockPoolOrigin();
-matrixPool['numbers_shape_out'] = [100, 25, 5, 1];
-const matrixPool2 = Runtime.mockPoolOrigin2();
-matrixPool2['numbers_shape_out'] = [100, 25, 5, 1];
+
 let doElementwiseAdd = () => {
+    const matrixPool = new Matrix({
+        shape: [1, 4, 5, 5],
+        name: 'origin' // 加value
+    });
+    matrixPool['numbers_shape_out'] = [100, 25, 5, 1];
+    const matrixPool2 = new Matrix({
+        shape: [1, 4, 5, 5],
+        name: 'origin' // 加value
+    });
+    matrixPool2['numbers_shape_out'] = [100, 25, 5, 1];
     let elementwiseAddParams = {
         'multi_value': '1.0',
         'bias_value': '1.0',
@@ -157,6 +177,11 @@ let doElementwiseAdd = () => {
 };
 // doElementwiseAdd();
 let doPool2d = () => {
+    const matrixPool = new Matrix({
+        shape: [1, 4, 5, 5],
+        name: 'origin' // 加value
+    });
+    matrixPool['numbers_shape_out'] = [100, 25, 5, 1];
     let pool2dParams = {
         'width_shape_pool': 3,
         'height_shape_pool': 3,

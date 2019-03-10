@@ -116,6 +116,13 @@ export default {
             name: 'origin'
         });
     },
+    // pool2d mock data
+    mockPoolOrigin() {
+        return new Matrix({
+            shape: [1, 4, 5, 5],
+            name: 'origin'
+        });
+    },
 
     // mock filter 4 * 4 * 3 * 3
     mockFilter() {

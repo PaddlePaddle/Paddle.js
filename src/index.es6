@@ -74,8 +74,8 @@ inst.run('conv2d', {
 }).catch(err => {
     console.log('-----------error---------' + err);
 });
-matrix['numbers_shape_out'] = [100, 25, 5, 1];
-filter['numbers_shape_out'] = [100, 25, 5, 1];
+const matrixPool = Runtime.mockPoolOrigin();
+matrixPool['numbers_shape_out'] = [100, 25, 5, 1];
 
 let doPool2d = () => {
     let pool2dParams = {
@@ -86,9 +86,9 @@ let doPool2d = () => {
         'width_shape_origin': 5,
         'height_shape_origin': 5,
         'channel_origin': 4,
-        'width_texture_origin': matrix.texture_width,
-        'height_texture_origin': matrix.texture_height,
-        origin: matrix,
+        'width_texture_origin': matrixPool.texture_width,
+        'height_texture_origin': matrixPool.texture_height,
+        origin: matrixPool,
         'width_shape_out': 5,
         'height_shape_out': 5,
         'channel_out': 4,
@@ -109,7 +109,7 @@ let doPool2d = () => {
         const addResult = inst.read();
         console.dir(['测试数据---op的执行结果', addResult]);
         let testArr = [];
-        matrix.data.forEach((item, index) => {
+        matrixPool.data.forEach((item, index) => {
             if (index % 5 === 0) {
                 testArr[Math.floor(index / 5)] = [];
             }
@@ -156,7 +156,7 @@ let doPool2d = () => {
         console.log('-----------error---------' + err);
     });
 };
-doPool2d();
+// doPool2d();
 // Runtime.init2({
 //     'filter_size_width': 3,
 //     'filter_size_height': 3,

@@ -293,9 +293,9 @@ export default class gpu {
         data.forEach(item => {
             if (item.type === 'texture') {
                 this.initTexture(textureIndex, item);
-                gl.uniform1i(this.getUniformLoc(item.variable), textureIndex++);
+                gl.uniform1i(this.getUniformLoc(item.variable + '_' + item.tensor), textureIndex++);
             } else if (item.type === 'uniform') {
-                gl[item.setter](this.getUniformLoc(item.variable), item.data);
+                gl[item.setter](this.getUniformLoc(item.variable + '_' + item.tensor), item.data);
             }
         });
         gl.clearColor(.0, .0, .0, 1);

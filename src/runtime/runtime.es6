@@ -1,6 +1,7 @@
 import Utils from '../utils/utils';
 import Gpu from '../gpu/gpu';
-import Matrix from '../utils/dims';
+import Tensor from '../utils/tensor';
+import OpData from '../utils/opData';
 import Factory from '../factory/fshader/factory';
 /**
  * @file gpu运行时
@@ -44,14 +45,17 @@ export default {
     },
 
     async run(op, data) {
+        // 生成op的数据
+        const  opData = this.adaptData(op, data);
+        // 设置gpu参数
         const gpu = this.gpu;
-        gpu.setOutProps(data);
+        gpu.setOutProps(opData.tensor['out']);
         // 生成shader
-        const fsCode = await factory.buildShader(op, data);
+        const fsCode = await factory.buildShader(op, opData.data);
         console.dir([op + ', shaderCode shader', fsCode]);
         // 生成帧缓存材质
         const texture = gpu.makeTexure(WebGLRenderingContext.FLOAT, null);
-        gpu.attachFrameBuffer(texture, data);
+        gpu.attachFrameBuffer(texture, opData.data);
         let bufferStatus = gpu.frameBufferIsComplete();
         if (bufferStatus.isComplete) {
             console.log(bufferStatus.isComplete);
@@ -62,7 +66,7 @@ export default {
             gpu.create(vsshader, fsCode);
             console.dir(['测试数据---输入参数', data]);
             // 开始计算
-            this.compute(op, data);
+            this.compute(op, opData);
             return this;
         } else {
             return bufferStatus.message;
@@ -77,7 +81,7 @@ export default {
     compute(op, opts = {}) {
         // 配置op的输入数据
         const data = opConfs[op].map(item => {
-            const tensor = opts[item.tensor];
+            const tensor = opts.tensor[item.tensor];
             if (item.type === 'texture') {
                 item.data = tensor.data;
                 item['texture_width'] = tensor['texture_width'];
@@ -111,7 +115,7 @@ export default {
 
     // mock origin 1 * 4 * 5 * 5
     mockOrigin() {
-        return new Matrix({
+        return new Tensor({
             shape: [1, 4, 5, 5],
             name: 'origin'
         });
@@ -119,13 +123,19 @@ export default {
 
     // mock filter 4 * 4 * 3 * 3
     mockFilter() {
-        let matrix = new Matrix({
+        let tensor = new Tensor({
             shape: [4, 4, 3, 3],
             type: 'texture',
             name: 'filter',
             value: new Float32Array([1.0, 1.0, 0.0, 0.0, -2.0, 0.0, 1.0, -3.0, 1.0])
         });
-        return matrix;
+        return tensor;
+    },
+
+
+    adaptData(op, data = {}) {
+        const opData = new OpData(op, data.inputs, data.outputs, data.attrs);
+        return opData;
     },
 
     // 更新op

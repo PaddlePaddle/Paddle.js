@@ -62,21 +62,6 @@ export default {
             conf: {
                 TEXTURE_NAME: 'texture_origin'
             }
-        },
-        {
-            func: 'prelu',
-            conf: {
-            }
-        },
-        {
-            func: 'scale',
-            conf: {
-            }
-        },
-        {
-            func: 'sigmoid',
-            conf: {
-            }
         }
     ],
     conf: [
@@ -114,32 +99,32 @@ export default {
     input: [
         {
             tensor: 'filter',
-            variable: 'numbers_shape_filter',
+            variable: 'numbers_shape',
             setter: 'uniform1iv',
             type: 'uniform'
         },
         {
             tensor: 'filter',
-            variable: 'texture_filter',
+            variable: 'texture',
             setter: 'initTexture',
             type: 'texture'
         },
         // texture类型，若添加from: 'prev', 表示读取上一个op的产出
         {
             tensor: 'origin',
-            variable: 'texture_origin',
+            variable: 'texture',
             setter: 'initTexture',
             type: 'texture'
         },
         {
             tensor: 'origin',
-            variable: 'numbers_shape_origin',
+            variable: 'numbers_shape',
             setter: 'uniform1iv',
             type: 'uniform'
         },
         {
-            tensor: 'origin',
-            variable: 'numbers_shape_out',
+            tensor: 'out',
+            variable: 'numbers_shape',
             setter: 'uniform1iv',
             type: 'uniform'
         }

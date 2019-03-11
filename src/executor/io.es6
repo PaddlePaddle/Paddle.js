@@ -60,7 +60,7 @@ export default class io {
         console.log(pixels.height, pixels.width, numChannels, values);
         // const outShape: [number, number, number] =
         //     [pixels.height, pixels.width, numChannels];
-        return {data: values, shape: shape, name: 'pixel'};
+        return [{data: values, shape: shape, name: 'pixel'}];
     }
 }
 /* eslint-enable */

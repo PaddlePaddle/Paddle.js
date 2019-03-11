@@ -305,7 +305,6 @@ export default class gpu {
 
     compute() {
         let gl = this.gl;
-
         let pixels = new Float32Array(this.width_texture_out * this.height_texture_out * 4);
         // gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
         // console.dir(['framebuffer状态', this.frameBufferIsComplete()]);

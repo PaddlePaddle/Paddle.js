@@ -125,9 +125,16 @@ export default class OpData {
             tensorData.push(data[0]);
         }
         // unique behavior
-        opBehavior[this.name].forEach(behavior => {
+        const behavior = opBehavior[this.name] || [];
+        behavior.forEach(behavior => {
             this[behavior](tensorData);
         });
+        // 输出tensor
+        for (let key in this.output) {
+            // 默认取第一个数据
+            const data = this.output[key] || [{}];
+            tensorData.push(data[0]);
+        }
         // 生成tensor对象
         tensorData.forEach(data => {
             let name = names[data.name];
@@ -146,15 +153,15 @@ export default class OpData {
             if (this.attrs.hasOwnProperty(key)) {
                 const item = this.attrs[key];
                 if (Object.prototype.toString.call(item) === '[object Array]') {
-                    if (keys.hasOwnProperty(key)) {
+                    if (keys.indexOf(key) > -1) {
                         this.data[key + '_x'] = item[0];
                         this.data[key + '_y'] = item[1];
                     }
                 } else {
                     this.data[key] = item;
                     // 获取shader所需的数据
-                    const shaderAttr = shaderAttrs[this.name];
-                    if (shaderAttr.hasOwnProperty(key)) {
+                    let shaderAttr = shaderAttrs[this.name];
+                    if (shaderAttr && shaderAttr.hasOwnProperty(key)) {
                         this.data[shaderAttr[key]] = item;
                     }
                 }
@@ -224,5 +231,9 @@ export default class OpData {
         this.input = null;
         this.output = null;
         this.attrs = null;
+        for (let key in this.tensor) {
+            this.tensor[key].dispose();
+        }
+        this.tensor = {};
     }
 }

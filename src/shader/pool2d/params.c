@@ -25,8 +25,8 @@ const int length_shape_out = LENGTH_SHAPE_OUT;
 const int stride_h = STRIDES_X;
 const int stride_v = STRIDES_Y;
 // padding的数目
-const int padLeft = PADDING_X;
-const int padTop = PADDING_Y;
+const int padLeft = PADDINGS_X;
+const int padTop = PADDINGS_Y;
 
 
 // uniform变量

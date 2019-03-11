@@ -20,7 +20,7 @@ export default {
     input: [
         {
             tensor: 'origin',
-            variable: 'texture_origin',
+            variable: 'texture',
             setter: 'initTexture',
             type: 'texture'
         }

@@ -15,6 +15,8 @@ export default class GraphModel  {
         this.handler = 'io.IOHandler';
         this.modelUrl = modelUrl;
         this.loadOptions = loadOptions;
+        // op runner
+        this.inst = null;
         if (this.loadOptions == null) {
             this.loadOptions = {};
         }
@@ -77,7 +79,7 @@ export default class GraphModel  {
         return true;
     }
 
-    execute_(inputs, executor, outputs) {
+    async execute_(inputs, executor, outputs) {
         outputs = outputs || this.outputNodes;
         // if (inputs instanceof Tensor || Array.isArray(inputs)) {
         //     inputs = this.constructTensorMap(inputs);
@@ -90,12 +92,12 @@ export default class GraphModel  {
         const inputsName = this.getTensorAttr(executor.inputsName[0]);
 
         const tensor = this.constructTensor(executor, inputs);
-        executor.execute(tensor, outputsName);
+        await executor.execute(tensor, outputsName, this.inst);
 
         if (executor.next) {
             const id = executor.next;
             const next = this.getTensor(id);
-            this.execute_(inputs, next[0], outputs)
+            await this.execute_(inputs, next[0], outputs)
         }
 
         // if (this.executor.isControlFlowModel || this.executor.isDynamicShapeModel) {
@@ -117,14 +119,15 @@ export default class GraphModel  {
      * @param outputs
      * @returns {*}
      */
-    execute(inputs, outputs) {
+    async execute(inputs, outputs) {
         const executor = this.getNetsStart(this.weightMap);
-        const inst = Runtime.init({
+        this.inst = Runtime.init({
             'width_raw_canvas': 512,
             'height_raw_canvas': 512
         });
 
-        return this.execute_(inputs, executor[0], outputs);
+        await this.execute_(inputs, executor[0], outputs);
+        return this.inst;
     }
 
 
@@ -133,7 +136,7 @@ export default class GraphModel  {
     }
 
     getTensorAttr(name) {
-        
+
         return this.handler.vars.filter((item, i) => {
             if (name === item.name)
             return item;

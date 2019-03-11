@@ -1,7 +1,7 @@
 /* eslint-disable */
 /**
- * @file conv2d的配置文件
- * @author yangmingming
+ * @file mul的配置文件
+ * @author yangmingming zhangmiao06
  */
 export default {
     dep: [

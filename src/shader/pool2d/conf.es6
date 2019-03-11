@@ -65,8 +65,8 @@ export default {
 
         'STRIDES_X',
         'STRIDES_Y',
-        'PAD_LEFT',
-        'PAD_TOP'
+        'PADDING_X',
+        'PADDING_Y'
     ],
     input: [
         // texture类型，若添加from: 'prev', 表示读取上一个op的产出

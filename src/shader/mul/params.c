@@ -1,7 +1,6 @@
-// conv2d的input数据
-
+// mul的input数据
 // 常量
-// 卷积核
+// 输入数据
 const int length_shape_counter = LENGTH_SHAPE_COUNTER;
 const int width_shape_counter = WIDTH_SHAPE_COUNTER;
 const int height_shape_counter = HEIGHT_SHAPE_COUNTER;
@@ -9,7 +8,6 @@ const int width_texture_counter = WIDTH_TEXTURE_COUNTER;
 const int height_texture_counter = HEIGHT_TEXTURE_COUNTER;
 const int channel_counter = CHANNEL_COUNTER;
 
-// 输入数据
 const int width_shape_origin = WIDTH_SHAPE_ORIGIN;
 const int height_shape_origin = HEIGHT_SHAPE_ORIGIN;
 const int length_shape_origin = LENGTH_SHAPE_ORIGIN;
@@ -26,11 +24,10 @@ const int channel_out = CHANNEL_OUT;
 const int length_shape_out = LENGTH_SHAPE_OUT;
 
 // uniform变量
-// 卷积核
+// 输入数据
 uniform int numbers_shape_counter[LENGTH_SHAPE_COUNTER];
 uniform int numbers_shape_origin[LENGTH_SHAPE_ORIGIN];
-uniform int numbers_shape_out[LENGTH_SHAPE_OUT];
 uniform sampler2D texture_counter;
-
-// 输入数据
 uniform sampler2D texture_origin;
+// 输出数据
+uniform int numbers_shape_out[LENGTH_SHAPE_OUT];

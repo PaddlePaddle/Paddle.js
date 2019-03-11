@@ -25,13 +25,13 @@ const int length_shape_out = LENGTH_SHAPE_OUT;
 const int stride_h = STRIDES_X;
 const int stride_v = STRIDES_Y;
 // padding的数目
-const int padLeft = PAD_LEFT;
-const int padTop = PAD_TOP;
+const int padLeft = PADDING_X;
+const int padTop = PADDING_Y;
 
 
 // uniform变量
-uniform int numbers_shape_origin[LENGTH_SHAPE_ORIGIN];
-uniform int numbers_shape_out[LENGTH_SHAPE_OUT];
-
 // 输入数据
+uniform int numbers_shape_origin[LENGTH_SHAPE_ORIGIN];
 uniform sampler2D texture_origin;
+// 输出数据
+uniform int numbers_shape_out[LENGTH_SHAPE_OUT];

@@ -49,7 +49,7 @@ export default class io {
         if (numChannels === 4) {
             values = new Array(vals);
         } else {
-            const numPixels = pixels.width * pixels.height;
+            const numPixels = (shape[2] || pixels.width) * (shape[3] ||pixels.height);
             values = new Array(numPixels * numChannels);
             for (let i = 0; i < numPixels; i++) {
                 for (let channel = 0; channel < numChannels; ++channel) {

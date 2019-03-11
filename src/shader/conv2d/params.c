@@ -27,17 +27,14 @@ const int length_shape_out = LENGTH_SHAPE_OUT;
 
 // 计算相关
 // 拆分步长
-const int stride_h = STRIDE_HORIZONTAL;
-const int stride_v = STRIDE_VERTICAL;
+const int stride_h = STRIDES_X;
+const int stride_v = STRIDES_Y;
 // padding的数目
-const int padLeft = PAD_LEFT;
-const int padTop = PAD_TOP;
+const int padLeft = PADDINGS_X;
+const int padTop = PADDINGS_Y;
 // dilation膨胀系数
-const int dilation_h = DILATION_HORIZONTAL;
-const int dilation_v = DILATION_VERTICAL;
-// 激活函数
-const float multi_value = MULTI_VALUE;
-const float bias_value = BIAS_VALUE;
+const int dilation_h = DILATIONS_X;
+const int dilation_v = DILATIONS_Y;
 
 // uniform变量
 // 卷积核

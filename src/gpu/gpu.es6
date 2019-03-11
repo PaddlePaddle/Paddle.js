@@ -46,10 +46,10 @@ export default class gpu {
     }
 
     setOutProps(opts) {
-        this.width_shape_out = opts.width_shape_out || 1;
-        this.height_shape_out = opts.height_shape_out || 1;
-        this.width_texture_out = opts.width_texture_out || 1;
-        this.height_texture_out = opts.height_texture_out || 1;
+        this.width_shape_out = opts.width_shape || 1;
+        this.height_shape_out = opts.height_shape || 1;
+        this.width_texture_out = opts.width_texture || 1;
+        this.height_texture_out = opts.height_texture || 1;
     }
 
     isFloatingTexture() {
@@ -248,8 +248,8 @@ export default class gpu {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, item.texture_width || this.opts.width_raw_canvas,
-                item.texture_height || this.opts.height_raw_canvas, 0,
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, item.width_texture || this.opts.width_raw_canvas,
+                item.height_texture || this.opts.height_raw_canvas, 0,
                 gl.RGBA, gl.FLOAT, item.data, 0);
         }
     }

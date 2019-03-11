@@ -16,17 +16,22 @@ export default class Tensor {
             shape.unshift(1);
         }
         // 获取转换到texture后的信息
-        let {zeroNumbers, shape: shape_texture} = Utils.getTextureInfoFromTensorShape(shape);
+        let {zeroNumber, shape: shape_texture} = Utils.getTextureInfoFromTensorShape(shape);
         this.shape_texture = shape_texture;
 
         // tensor数据
         if (opts.data) {
             // 补充0, 生成数据
-            if (zeroNumbers > 0) {
-                for (let i = 0; i < zeroNumbers; i++) {
+            if (zeroNumber > 0) {
+                for (let i = 0; i < zeroNumber; i++) {
                     opts.data.push(0);
                 }
 
+            }
+            // todo: 需要在外层保证data的长度和shape一致
+            let total = shape_texture.reduce((all, num) => all * num);
+            if (opts.data.length > total) {
+                opts.data = opts.data.slice(0, total);
             }
             this.data = new Float32Array(opts.data);
             // 清理缓存
@@ -79,11 +84,13 @@ export default class Tensor {
     }
 
     get width_texture() {
-        return this.shape_texture.width;
+        let length = this.shape_texture.length;
+        return this.shape_texture[length - 1];
     }
 
     get height_texture() {
-        return this.shape_texture.height;
+        let length = this.shape_texture.length;
+        return this.shape_texture[length - 2];
     }
 
     get width_shape() {
@@ -122,6 +129,12 @@ export default class Tensor {
         // 和shape长度保持一致
         numbers.push(1);
         return numbers;
+    }
+
+    dispose() {
+        if (this.data) {
+            this.data = null;
+        }
     }
 }
 /* eslint-enable */

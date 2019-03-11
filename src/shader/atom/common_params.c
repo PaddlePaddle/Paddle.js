@@ -18,5 +18,5 @@ struct ivec6 {
     int v;
 };
 // dynamic的input数据
-const float multi_value = MULTI_VALUE;
-const float bias_value = BIAS_VALUE;
+const float multi_value = float(MULTI_VALUE);
+const float bias_value = float(BIAS_VALUE);

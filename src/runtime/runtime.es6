@@ -84,8 +84,8 @@ export default {
             const tensor = opts.tensor[item.tensor];
             if (item.type === 'texture') {
                 item.data = tensor.data;
-                item['texture_width'] = tensor['texture_width'];
-                item['texture_height'] = tensor['texture_height'];
+                item['width_texture'] = tensor['width_texture'];
+                item['height_texture'] = tensor['height_texture'];
             } else if (item.type === 'uniform') {
                 item.data = tensor[item.variable];
             }

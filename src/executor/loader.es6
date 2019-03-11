@@ -147,7 +147,7 @@ export default class GraphModel  {
         const that = this;
         const outputName = executor.outputsName[0];
         const inputName = executor.inputsName[0]
-        const pixel = this.getTensorAttr(outputName);
+
 
         const input = executor.inputs;
 
@@ -158,6 +158,7 @@ export default class GraphModel  {
         Object.keys(input).forEach(function(key){
 
             if ((key === 'Input') && (inputName === 'pixel')) {
+                const pixel = that.getTensorAttr(inputName);
                 const io = new IO();
                 input[key] = io.fromPixels(data, pixel);
             }

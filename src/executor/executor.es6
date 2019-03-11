@@ -3,6 +3,7 @@
  * @file GraphExecutor，封装可执行单元
  * @author wangqun@baidu.com
  */
+let first = true;
 export default class GraphExecutor {
 
     constructor(model) {
@@ -56,40 +57,16 @@ export default class GraphExecutor {
 
     }
 
-    execute(inputs, outputs) {
+    async execute(inputs, outputs, runtime) {
         console.log(inputs, outputs);
-        if (this.type ==='feed') {
-
+        if (this.type !== 'feed') {
+            await runtime.run(this.type, inputs);
         }
-        // inst.run('conv2d', {
-        //     'length_shape_filter': 4,
-        //     'width_shape_filter': 3,
-        //     'height_shape_filter': 3,
-        //     'channel_filter': 4,
-        //     'width_texture_filter': filter.texture_width,
-        //     'height_texture_filter': filter.texture_height,
-        //     filter,
-        //     'length_shape_origin': 4,
-        //     'width_shape_origin': 5,
-        //     'height_shape_origin': 5,
-        //     'channel_origin': 4,
-        //     'width_texture_origin': matrix.texture_width,
-        //     'height_texture_origin': matrix.texture_height,
-        //     origin: matrix,
-        //     'width_shape_out': 3,
-        //     'height_shape_out': 3,
-        //     'channel_out': 4,
-        //     'length_shape_out': 4,
-        //     'width_texture_out': 3,
-        //     'height_texture_out': 3,
-        //     'shape_out': [1, 4, 3, 3],
-        //     'stride_horizontal': 1,
-        //     'stride_vertical': 1,
-        //     'pad_left': 1,
-        //     'pad_top': 1,
-        //     'dilation_horizontal': 2,
-        //     'dilation_vertical': 2
-        // })
+        // if (this.type === 'conv2d' && runtime && first) {
+        //     first = false;
+        //     await runtime.run(this.type, inputs);
+        // }:W
+
     }
     // set next(id) {
     //     this.next = id;

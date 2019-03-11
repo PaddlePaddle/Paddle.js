@@ -26,14 +26,14 @@ export default {
     input: [
         {
             tensor: 'origin',
-            variable: 'texture_origin',
+            variable: 'texture',
             setter: 'initTexture',
             type: 'texture',
             from: 'prev'
         },
         {
             tensor: 'counter',
-            variable: 'texture_counter',
+            variable: 'texture',
             setter: 'initTexture',
             type: 'texture'
         }

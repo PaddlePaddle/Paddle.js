@@ -323,24 +323,22 @@ export default {
     getTextureInfoFromTensorShape(shape = []) {
         let total = shape.reduce((total, num) => total * num);
         // 需要补0的个数
-        let zeroNumber = total % 4;
+        let zeroNumber = (total % 4 === 0) ? 0 : (4 - (total % 4));
         // 对齐材质channel 4
-        total += zeroNumber;
         // 材质宽高
         let width = 1;
-        let height = total / 4;
-        while (Math.abs(width - height) > 2) {
+        let height = (total + zeroNumber) / 4;
+        while (Math.abs(width - height) > 2 && width < height) {
             if (height % 2 === 0) {
                 width = width * 2;
                 height = height / 2;
             } else {
                 height += 1;
-                zeroNumber += width;
             }
         }
         return {
             shape: [4, height, width],
-            zeroNumber
+            zeroNumber: 4 * height * width - total
         };
     },
 
@@ -358,8 +356,15 @@ export default {
 
     // 压缩
     async loadShader(name) {
-        let shader = await fetch(name);
+        let shader = await fetch(this.getShaderFile(name));
         return shader.text();
+    },
+
+    getShaderFile(url) {
+        // todo: 根据脚手架获取shader文件
+        const aa = url.split('/');
+        let length = aa.length;
+        return '/' + aa[length - 1];
     },
 
     // 获取一个数的幂，用来设定图片的大小

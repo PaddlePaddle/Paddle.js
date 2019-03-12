@@ -87,13 +87,15 @@ const opBehavior = {
         'broadcast'
     ],
     pool2d: [
-        'isMax'
+        'isMax',
+        'needBatch'
     ],
     relu: [
         'transToPrelu'
     ],
     mul: [
-        'reshape'
+        'reshape',
+        'needBatch'
     ]
 };
 export default class OpData {
@@ -211,6 +213,7 @@ export default class OpData {
 
     transToPrelu(tensorData = []) {
         this.data['multi_value'] = '0.0';
+        this.data['active_function'] = 'prelu';
     }
 
     reshape(tensorData = []) {
@@ -220,8 +223,8 @@ export default class OpData {
             input = tensorData[1];
             counter = tensorData[0];
         }
-        if (input.length > 2 && counter.length === 2) {
-            let shape = Utils.getReshapeInPaddle(input, counter, this.output['Input'][0].shape);
+        if (input.shape.length > 2 && counter.shape.length === 2) {
+            let shape = Utils.getReshapeInPaddle(input.shape, counter.shape, tensorData[2].shape);
             input.shape = shape;
         }
 

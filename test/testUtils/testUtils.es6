@@ -45,7 +45,7 @@ let getValue = function(name) {
     });
 };
 
-let item = getTensor('conv2d');
+let item = getTensor('pool2d');
 
 
 

@@ -12,8 +12,13 @@ export default class Tensor {
         // tensor的形状
         let shape = this.shape = opts.shape;
         // 图像tensor是否带有batch
-        if (opts.needBatch && shape.length === 3) {
-            shape.unshift(1);
+        if (opts.needBatch && shape.length < 4) {
+            let batch = [];
+            for (let i = 0; i < (4 - shape.length); i++) {
+                batch.push(1);
+            }
+            shape = batch.concat(shape);
+            this.shape = shape;
         }
         // 获取转换到texture后的信息
         let {zeroNumber, shape: shape_texture} = Utils.getTextureInfoFromTensorShape(shape);

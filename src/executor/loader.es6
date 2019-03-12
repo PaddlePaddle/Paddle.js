@@ -136,7 +136,6 @@ export default class GraphModel  {
     }
 
     getTensorAttr(name) {
-
         return this.handler.vars.filter((item, i) => {
             if (name === item.name)
             return item;
@@ -147,8 +146,6 @@ export default class GraphModel  {
         const that = this;
         const outputName = executor.outputsName[0];
         const inputName = executor.inputsName[0]
-
-
         const input = executor.inputs;
 
         const output = executor.outputs;
@@ -174,11 +171,6 @@ export default class GraphModel  {
             type: executor.type,
             next: executor.next
         }
-        // if (name === 'pixel') {
-        //     const io = new IO();
-        //     inputs = io.fromPixels(inputs, outputsName);
-        // }
-
         return tensor;
     }
 
@@ -236,12 +228,8 @@ export default class GraphModel  {
      * @returns {*}
      */
     createOpsMap(ops) {
-        const firstOps = this.getNetsStart(ops);
-        const lastOps = this.getNetsEnd(ops);
-        console.log(firstOps);
         return ops.map((item, idx) => {
             const graphExecutor = new GraphExecutor(item);
-            console.log(graphExecutor.inputsName);
             return graphExecutor;
         });
     }

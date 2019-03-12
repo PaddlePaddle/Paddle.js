@@ -13,7 +13,7 @@ export default class GraphExecutor {
         this.type = model.type;
         this.finish = false;
         this.next = null;
-        this.id = +new Date() + model.type;
+        this.id = +new Date() + model.type + Math.floor(Math.random() * 10 + 1);
     }
 
     get inputsName() {
@@ -58,8 +58,9 @@ export default class GraphExecutor {
     }
 
     async execute(inputs, outputs, runtime) {
-        console.log(inputs, outputs);
-        if (this.type !== 'feed') {
+        if (this.type === 'conv2d' && first) {
+            first = false;
+            console.log(inputs, outputs);
             await runtime.run(this.type, inputs);
         }
     }

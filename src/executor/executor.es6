@@ -58,8 +58,9 @@ export default class GraphExecutor {
     }
 
     async execute(inputs, outputs, runtime) {
-        console.log(inputs, outputs);
-        if (this.type !== 'feed') {
+        if (this.type === 'conv2d' && first) {
+            first = false;
+            console.log(inputs, outputs);
             await runtime.run(this.type, inputs);
         }
     }

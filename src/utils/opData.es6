@@ -124,17 +124,17 @@ export default class OpData {
             const data = this.input[key] || [{}];
             tensorData.push(data[0]);
         }
-        // unique behavior
-        const behavior = opBehavior[this.name] || [];
-        behavior.forEach(behavior => {
-            this[behavior](tensorData);
-        });
         // 输出tensor
         for (let key in this.output) {
             // 默认取第一个数据
             const data = this.output[key] || [{}];
             tensorData.push(data[0]);
         }
+        // unique behavior
+        const behavior = opBehavior[this.name] || [];
+        behavior.forEach(behavior => {
+            this[behavior](tensorData);
+        });
         // 生成tensor对象
         tensorData.forEach(data => {
             let name = names[data.name];

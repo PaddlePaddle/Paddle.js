@@ -13,7 +13,7 @@ export default class GraphExecutor {
         this.type = model.type;
         this.finish = false;
         this.next = null;
-        this.id = +new Date() + model.type;
+        this.id = +new Date() + model.type + Math.floor(Math.random() * 10 + 1);
     }
 
     get inputsName() {

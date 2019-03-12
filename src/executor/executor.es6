@@ -62,21 +62,8 @@ export default class GraphExecutor {
         if (this.type !== 'feed') {
             await runtime.run(this.type, inputs);
         }
-        // if (this.type === 'conv2d' && runtime && first) {
-        //     first = false;
-        //     await runtime.run(this.type, inputs);
-        // }:W
-
     }
-    // set next(id) {
-    //     this.next = id;
-    //
-    // }
 
-    // get next() {
-    //     return this.next;
-    //
-    // }
 }
 
 /* eslint-enable */

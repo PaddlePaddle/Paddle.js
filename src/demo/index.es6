@@ -17,4 +17,6 @@ let func = async function () {
     let inst = await model.execute({input: cat});
     console.dir(['result', inst.read()]);
 };
+let startTime = Date.now();
 func();
+console.log('运行时间是' + (Date.now() - startTime));

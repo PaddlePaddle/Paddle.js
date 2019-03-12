@@ -57,7 +57,8 @@ export default class Factory {
     populateData(result, data) {
         let code = result;
         for (let key in data) {
-            code = code.replace(new RegExp(key.toUpperCase(), 'g'), data[key] || 1);
+            code = code.replace(new RegExp(key.toUpperCase(), 'g'),
+                ((typeof data[key]) === 'undefined') ? 1 : data[key]);
         }
         return code;
     }

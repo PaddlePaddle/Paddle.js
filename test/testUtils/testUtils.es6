@@ -76,10 +76,10 @@ let func = async function () {
     console.dir(['result', inst.read()]);
 
 
-    var one = inst.read();
-    var other = getResult('softmax');
-    var color ='';
-    var span = null;
+    // var one = inst.read();
+    // var other = getResult('softmax');
+    // var color ='';
+    // var span = null;
 
     // var diff = Diff.diffChars(one.toString(), other.toString()),
     //     display = document.getElementById('display'),

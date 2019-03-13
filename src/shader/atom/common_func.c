@@ -16,3 +16,11 @@ float sigmoid(float x, float y, float z) {
     float result = 1.0 / (1.0 + exp(-x));
     return result;
 }
+
+float softmax(float x, float p, float b) {
+    float result = x;
+    if (x < 0.0) {
+        result = x * p;
+    }
+    return result;
+}

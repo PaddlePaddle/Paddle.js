@@ -93,6 +93,9 @@ const opBehavior = {
     relu: [
         'transToPrelu'
     ],
+    softmax: [
+        'setActiveFunc'
+    ],
     mul: [
         'reshape',
         'needBatch'
@@ -214,6 +217,11 @@ export default class OpData {
     transToPrelu(tensorData = []) {
         this.data['multi_value'] = '0.0';
         this.data['active_function'] = 'prelu';
+    }
+
+    setActiveFunc(tensorData = []) {
+        this.data['multi_value'] = '0.0';
+        this.data['active_function'] = 'softmax';
     }
 
     reshape(tensorData = []) {

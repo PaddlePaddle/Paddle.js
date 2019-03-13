@@ -12,7 +12,7 @@ function deepCopy (data) {
 let otherResult;
 let output = deepCopy(datas);
 let getTensor = function(id) {
-     let data = datas.ops.filter((item, idx) => {
+    let data = datas.ops.filter((item, idx) => {
         if (id === item.type) {
 
             return true;
@@ -23,15 +23,15 @@ let getTensor = function(id) {
 
 let getInputs = function(data) {
 
-        Object.keys(data.inputs).forEach(function(key){
-            data.inputs[key] = getValue(data.inputs[key][0], datas);
+    Object.keys(data.inputs).forEach(function(key){
+        data.inputs[key] = getValue(data.inputs[key][0], datas);
 
-        });
-        Object.keys(data.outputs).forEach(function(key){
-            let out = getValue(data.outputs[key][0], datas)
-            data.outputs[key] = out;
-            otherResult = out[0].data;
-        });
+    });
+    Object.keys(data.outputs).forEach(function(key){
+        let out = getValue(data.outputs[key][0], datas)
+        data.outputs[key] = out;
+        otherResult = out[0].data;
+    });
     return data;
 
 };
@@ -76,10 +76,10 @@ let func = async function () {
     console.dir(['result', inst.read()]);
 
 
-    var one = inst.read();
-    var other = getResult('softmax');
-    var color ='';
-    var span = null;
+    // var one = inst.read();
+    // var other = getResult('softmax');
+    // var color ='';
+    // var span = null;
 
     // var diff = Diff.diffChars(one.toString(), other.toString()),
     //     display = document.getElementById('display'),

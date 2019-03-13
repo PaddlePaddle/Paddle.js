@@ -222,6 +222,7 @@ export default class OpData {
     setActiveFunc(tensorData = []) {
         this.data['multi_value'] = '0.0';
         this.data['active_function'] = 'softmax';
+
     }
 
     reshape(tensorData = []) {

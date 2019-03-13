@@ -60,8 +60,17 @@
             word-wrap: break-word;
             word-break: normal;
         }
+        span {
+            word-wrap: break-word;
+            word-break: normal;
+        }
+        #display {
+            width: 100%;
+
+        }
     </style>
     <!--<script src="unitTest.es6"></script>-->
+    <!--<script src="testUtils/diff.js"></script>-->
     <script src="testUtils/testUtils.es6"></script>
 </head>
 <body>
@@ -96,8 +105,11 @@
                 <div class="unit-li-assert pass">pass</div>
             </li>
         </ul>
-
+        <div id="display"></div>
     </div>
+
 </div>
+
+
 </body>
 </html>

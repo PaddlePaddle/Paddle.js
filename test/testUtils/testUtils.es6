@@ -11,11 +11,14 @@ function deepCopy (data) {
 }
 let otherResult;
 let output = deepCopy(datas);
-let getTensor = function(id) {
+let getTensor = function(id, times = 1) {
+    let find = 0;
     let data = datas.ops.filter((item, idx) => {
         if (id === item.type) {
-
-            return true;
+            ++find;
+            if (find === times) {
+                return true;
+            }
         }
     });
     return getInputs(data[0]);
@@ -62,17 +65,17 @@ let getValue = function(name, datas) {
     });
 };
 
-let item = getTensor('softmax');
+let item = getTensor('conv2d', 2);
 
 
 
-let func = async function () {
+let func = function () {
     let inst = Runtime.init({
         'width_raw_canvas': 512,
         'height_raw_canvas': 512
     });
     const executor = new GraphExecutor(item);
-    await executor.execute(executor, {}, inst);
+    executor.execute(executor, {}, inst);
     console.dir(['result', inst.read()]);
 
 

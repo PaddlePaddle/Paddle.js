@@ -3,13 +3,12 @@ import Gpu from '../gpu/gpu';
 import Tensor from '../utils/tensor';
 import OpData from '../utils/opData';
 import Factory from '../factory/fshader/factory';
+import VSHADER from '../shader/v_shader';
 /**
  * @file gpu运行时
  * @author yangmingming
  *
  */
-const VSHADER = require('../shader/v_shader.c');
-let vsshader = '';
 // 生成factory实例
 const factory = new Factory({});
 // 获取op的输入配置
@@ -44,27 +43,23 @@ export default {
         }
     },
 
-    async run(op, data) {
+    run(op, data) {
         // 生成op的数据
         const  opData = this.adaptData(op, data);
         // 设置gpu参数
         const gpu = this.gpu;
         gpu.setOutProps(opData.tensor['out']);
         // 生成shader
-        const fsCode = await factory.buildShader(op, opData.data);
+        const fsCode = factory.buildShader(op, opData.data);
         console.dir([op + ', shaderCode shader', fsCode]);
         // 生成帧缓存材质
         const texture = gpu.makeTexure(WebGLRenderingContext.FLOAT, null);
         gpu.attachFrameBuffer(texture, opData.data);
         let bufferStatus = gpu.frameBufferIsComplete();
         if (bufferStatus.isComplete) {
-            console.log(bufferStatus.isComplete);
-            // 获取shader
-            if (!vsshader) {
-                vsshader = await Utils.loadShader(VSHADER);
-            }
-            gpu.create(vsshader, fsCode);
-            console.dir(['测试数据---输入参数', data]);
+            // console.log(bufferStatus.isComplete);
+            gpu.create(VSHADER, fsCode);
+            // console.dir(['测试数据---输入参数', data]);
             // 开始计算
             this.compute(op, opData);
             return this;

@@ -1,10 +1,39 @@
 /* eslint-disable */
-import conf_conv2d from '../../shader/conv2d/conf';
-import conf_dynamic from '../../shader/dynamic/conf';
-import conf_pool2d from '../../shader/pool2d/conf';
-import conf_elementwise_add from '../../shader/elementwise_add/conf';
-import conf_mul from '../../shader/mul/conf';
+import common_params from '../../shader/atom/common_params';
+import common_func from '../../shader/atom/common_func';
+import prefix from '../../shader/atom/prefix';
+import ivec56 from '../../shader/atom/type_ivec56';
 
+import conv2d_params from '../../shader/conv2d/params';
+import conv2d_func from '../../shader/conv2d/main';
+import conv2d_conf from '../../shader/conv2d/conf';
+import dynamic_params from '../../shader/dynamic/params';
+import dynamic_func from '../../shader/dynamic/main';
+import dynamic_conf from '../../shader/dynamic/conf';
+import pool2d_params from '../../shader/pool2d/params';
+import pool2d_func from '../../shader/pool2d/main';
+import pool2d_conf from '../../shader/pool2d/conf';
+import elementwise_add_params from '../../shader/elementwise_add/params';
+import elementwise_add_func from '../../shader/elementwise_add/main';
+import elementwise_add_conf from '../../shader/elementwise_add/conf';
+import mul_params from '../../shader/mul/params';
+import mul_func from '../../shader/mul/main';
+import mul_conf from '../../shader/mul/conf';
+import softmax_params from '../../shader/softmax/params';
+import softmax_func from '../../shader/softmax/main';
+import softmax_conf from '../../shader/softmax/conf';
+
+import getArrayIndexFromTensorPos from '../../shader/atom/getArrayIndexFromTensorPos';
+import getArrayIndexFromTexturePos from '../../shader/atom/getArrayIndexFromTexturePos';
+import getTensorPosFromArrayIndex from '../../shader/atom/getTensorPosFromArrayIndex';
+import getTexturePosFromArrayIndex from '../../shader/atom/getTexturePosFromArrayIndex';
+import getValueFromTexturePos from '../../shader/atom/getValueFromTexturePos';
+import moveTexture2PosToReal from '../../shader/atom/moveTexture2PosToReal';
+import getPixelsFromTexturePos from '../../shader/atom/getPixelsFromTexturePos';
+import sigmoid from '../../shader/atom/sigmoid';
+import prelu from '../../shader/atom/prelu';
+import scale from '../../shader/atom/scale';
+import softmax from '../../shader/atom/softmax';
 /**
  * @file op文件
  * @author yangmingming
@@ -12,65 +41,64 @@ import conf_mul from '../../shader/mul/conf';
 
 export default {
     common: {
-        params: require('../../shader/atom/common_params.c'),
-        func: require('../../shader/atom/common_func.c'),
-        prefix: require('../../shader/atom/prefix.c'),
-        ivec56: require('../../shader/atom/type_ivec56.c')
+        params: common_params,
+        func: common_func,
+        prefix,
+        ivec56
     },
     ops: {
         conv2d: {
-            params: require('../../shader/conv2d/params.c'),
-            func: require('../../shader/conv2d/main.c'),
-            confs: conf_conv2d
+            params: conv2d_params,
+            func: conv2d_func,
+            confs: conv2d_conf
         },
         dynamic: {
-            params: require('../../shader/dynamic/params.c'),
-            func: require('../../shader/dynamic/main.c'),
-            confs: conf_dynamic
+            params: dynamic_params,
+            func: dynamic_func,
+            confs: dynamic_conf
         },
         pool2d: {
-            params: require('../../shader/pool2d/params.c'),
-            func: require('../../shader/pool2d/main.c'),
-            confs: conf_pool2d
+            params: pool2d_params,
+            func: pool2d_func,
+            confs: pool2d_conf
         },
         elementwise_add: {
-            params: require('../../shader/elementwise_add/params.c'),
-            func: require('../../shader/elementwise_add/main.c'),
-            confs: conf_elementwise_add
+            params: elementwise_add_params,
+            func: elementwise_add_func,
+            confs: elementwise_add_conf
         },
         mul: {
-            params: require('../../shader/mul/params.c'),
-            func: require('../../shader/mul/main.c'),
-            confs: conf_mul
+            params: mul_params,
+            func: mul_func,
+            confs: mul_conf
         },
         relu: {
-            params: require('../../shader/dynamic/params.c'),
-            func: require('../../shader/dynamic/main.c'),
-            confs: conf_dynamic
+            params: dynamic_params,
+            func: dynamic_func,
+            confs: dynamic_conf
         },
         scale: {
-            params: require('../../shader/dynamic/params.c'),
-            func: require('../../shader/dynamic/main.c'),
-            confs: conf_dynamic
+            params: dynamic_params,
+            func: dynamic_func,
+            confs: dynamic_conf
         },
         softmax: {
-            params: require('../../shader/dynamic/params.c'),
-            func: require('../../shader/dynamic/main.c'),
-            confs: conf_dynamic
+            params: softmax_params,
+            func: softmax_func,
+            confs: softmax_conf
         }
     },
     atoms: {
-        getArrayIndexFromTensorPos: require('../../shader/atom/getArrayIndexFromTensorPos.c'),
-        getArrayIndexFromTexturePos: require('../../shader/atom/getArrayIndexFromTexturePos.c'),
-        getTensorPosFromArrayIndex: require('../../shader/atom/getTensorPosFromArrayIndex.c'),
-        getTexturePosFromArrayIndex: require('../../shader/atom/getTexturePosFromArrayIndex.c'),
-        getValueFromTensorPos: require('../../shader/atom/getValueFromTensorPos.c'),
-        getValueFromTexturePos: require('../../shader/atom/getValueFromTexturePos.c'),
-        moveTexture2PosToReal: require('../../shader/atom/moveTexture2PosToReal.c'),
-        getPixelsFromTexturePos: require('../../shader/atom/getPixelsFromTexturePos.c'),
-        sigmoid: require('../../shader/atom/sigmoid.c'),
-        prelu: require('../../shader/atom/prelu.c'),
-        scale: require('../../shader/atom/scale.c'),
-        softmax: require('../../shader/atom/softmax.c')
+        getArrayIndexFromTensorPos,
+        getArrayIndexFromTexturePos,
+        getTensorPosFromArrayIndex,
+        getTexturePosFromArrayIndex,
+        getValueFromTexturePos,
+        moveTexture2PosToReal,
+        getPixelsFromTexturePos,
+        sigmoid,
+        prelu,
+        scale,
+        softmax
     }
 };

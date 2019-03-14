@@ -1,6 +1,6 @@
 /* eslint-disable */
 /**
- * @file 加法的配置文件
+ * @file softmax的配置文件
  * @author yangmingming
  */
 export default {
@@ -10,28 +10,16 @@ export default {
             conf: {
                 TEXTURE_NAME: 'texture_origin'
             }
-        },
-        {
-            func: 'getPixelsFromTexturePos',
-            conf: {
-                TEXTURE_NAME: 'texture_counter'
-            }
         }
     ],
     conf: [
-        'MULTI_VALUE',
-        'BIAS_VALUE',
-        'ACTIVE_FUNCTION'
+        'WIDTH_TEXTURE_ORIGIN',
+        'HEIGHT_TEXTURE_ORIGIN',
+        'TOTAL_SHAPE_ORIGIN'
     ],
     input: [
         {
             tensor: 'origin',
-            variable: 'texture',
-            setter: 'initTexture',
-            type: 'texture'
-        },
-        {
-            tensor: 'counter',
             variable: 'texture',
             setter: 'initTexture',
             type: 'texture'

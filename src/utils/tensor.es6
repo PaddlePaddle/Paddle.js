@@ -11,6 +11,8 @@ export default class Tensor {
         this.name = opts.name;
         // tensor的形状
         let shape = this.shape = opts.shape;
+        // 原始数据个数
+        this.total = shape.reduce((all, num) => all * num);
         // 图像tensor是否带有batch
         if (opts.needBatch && shape.length < 4) {
             let batch = [];
@@ -42,30 +44,6 @@ export default class Tensor {
             // 清理缓存
             opts.data.length = 0;
         }
-
-        // todo: delete test data
-        // let num = this.num = shape.reduce((total, num) => total * num);
-        // this['numbers_shape_' + opts.name] = this.getShapeNumbers();
-        // this.data = opts.value || Utils.zeros(num);
-        // // opts.name是tensor的name
-        // this.tensorName = opts.name;
-        // this.textureName = 'texture_' + opts.name;
-        // // 填充材
-        // if (opts.type === 'texture') {
-        //     this.tensor = Utils.buildTensor(shape, this.data);
-        //     // 实际存储的
-        //     this.texture_width = this.tensor.w;
-        //     this.texture_height = this.tensor.h;
-        //     this.data = this.tensor.data;
-        //     delete this.tensor;
-        // } else {
-        //     // test, 计算的shape
-        //     this.texture_width = this.shape[3];
-        //     this.texture_height = this.shape[2];
-        //     this.data = new Float32Array(Utils.tensor2Texture(this.data, this.texture_width * this.texture_height));
-        //     console.dir(['调试数据-图像材质数据', this.data]);
-        // }
-        // this['numbers_shape_out'] = [36, 9, 3, 1];
     }
 
     /**
@@ -134,6 +112,10 @@ export default class Tensor {
         // 和shape长度保持一致
         numbers.push(1);
         return numbers;
+    }
+
+    get total_shape() {
+        return this.total;
     }
 
     dispose() {

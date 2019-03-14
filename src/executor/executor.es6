@@ -13,10 +13,11 @@ export default class GraphExecutor {
         this.type = model.type;
         this.finish = false;
         this.next = null;
-        this.id = +new Date() + model.type + Math.floor(Math.random() * 10 + 1);
+        this.id = +new Date() + model.type + Math.floor(Math.random() * 10 + 1) + model.idx;
     }
 
     get inputsName() {
+
         if (this.type === 'feed') {
             return this.inputs.X;
         }

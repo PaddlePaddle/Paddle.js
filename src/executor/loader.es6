@@ -147,8 +147,8 @@ export default class GraphModel  {
         const outputName = executor.outputsName[0];
         const inputName = executor.inputsName[0]
         const input = executor.inputs;
-
         const output = executor.outputs;
+
         Object.keys(output).forEach(function(key){
             output[key] = that.getTensorAttr(output[key][0]);
         });
@@ -229,6 +229,7 @@ export default class GraphModel  {
      */
     createOpsMap(ops) {
         return ops.map((item, idx) => {
+            item.idx = idx;
             const graphExecutor = new GraphExecutor(item);
             return graphExecutor;
         });

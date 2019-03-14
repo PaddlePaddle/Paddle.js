@@ -1,3 +1,8 @@
+/* eslint-disable */
+/**
+ * @file 顶点文件
+ * @author yangmingming
+ */
 export default `
 attribute vec4 position;
 varying vec2 vCoord;
@@ -9,4 +14,4 @@ void main() {
     sCoord.xy = position.xy;
     gl_Position = position;
 }
-`
+`;

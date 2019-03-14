@@ -1,3 +1,8 @@
+/* eslint-disable */
+/**
+ * @file softmax主函数
+ * @author yangmingming
+ */
 export default `
 // start函数
 void main(void) {
@@ -47,4 +52,4 @@ void main(void) {
     }
     gl_FragColor = exp(v4 - vec4(maxValue, maxValue, maxValue, maxValue)) / vec4(total, total, total, total) ;
 }
-`
+`;

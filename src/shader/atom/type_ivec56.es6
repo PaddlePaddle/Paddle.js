@@ -1,3 +1,8 @@
+/* eslint-disable */
+/**
+ * @file 新增类型
+ * @author yangmingming
+ */
 // 扩展shader的ivec类型
 export default `
 struct ivec5 {
@@ -15,4 +20,4 @@ struct ivec6 {
     int u;
     int v;
 };
-`
+`;

@@ -1,3 +1,8 @@
+/* eslint-disable */
+/**
+ * @file 公共方法
+ * @author yangmingming
+ */
 export default `
 // 激活函数
 float prelu(float x, float p, float b) {
@@ -22,4 +27,4 @@ float softmax(float x, float p, float b) {
     float result = exp(x) / (10.0 * exp(x));
     return result;
 }
-`
+`;

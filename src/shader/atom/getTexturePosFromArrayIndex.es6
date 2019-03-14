@@ -1,3 +1,8 @@
+/* eslint-disable */
+/**
+ * @file 公共方法
+ * @author yangmingming
+ */
 // TEXTURE_NAME, 材质名称
 // WIDTH_TEXTURE_NAME_VALUE, 材质宽度
 // HEIGHT_TEXTURE_NAME_VALUE, 材质高度
@@ -15,4 +20,4 @@ vec3 getTexturePosFromArrayIndex_TEXTURE_NAME(int n) {
     pos.y = pos.y / float(height_TEXTURE_NAME);
     return pos;
 }
-`
+`;

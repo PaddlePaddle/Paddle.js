@@ -1,3 +1,7 @@
+/* eslint-disable */
+/**
+ * @file pool2d参数文件
+ */
 export default `
 // 常量
 // 池化大小
@@ -35,4 +39,4 @@ uniform int numbers_shape_origin[LENGTH_SHAPE_ORIGIN];
 uniform sampler2D texture_origin;
 // 输出数据
 uniform int numbers_shape_out[LENGTH_SHAPE_OUT];
-`
+`;

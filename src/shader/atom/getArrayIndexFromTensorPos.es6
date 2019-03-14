@@ -1,3 +1,8 @@
+/* eslint-disable */
+/**
+ * @file 公共方法
+ * @author yangmingming
+ */
 export default `
 // TENSOR_TYPE, tensor坐标的类型,ivec4
 // TENSOR_NAME, tensor name
@@ -12,4 +17,4 @@ int getArrayIndexFromTensorPos_TENSOR_NAME(TENSOR_TYPE tensorPos) {
     }
     return index;
 }
-`
+`;

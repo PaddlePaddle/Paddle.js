@@ -1,3 +1,8 @@
+/* eslint-disable */
+/**
+ * @file 公共方法
+ * @author yangmingming
+ */
 // TEXTURE_NAME, texture name
 // WIDTH_TEXTURE_NAME_VALUE, texture的宽度
 
@@ -10,4 +15,4 @@ int getArrayIndexFromTexturePos_TEXTURE_NAME(vec3 pos) {
     int d = int(floor(pos.z));
     return (width_TEXTURE_NAME * y + x) * 4 + d;
 }
-`
+`;

@@ -1,3 +1,8 @@
+/* eslint-disable */
+/**
+ * @file 主函数
+ * @author yangmingming
+ */
 export default `
     // start函数
     void main(void) {
@@ -45,4 +50,4 @@ export default `
         );
         gl_FragColor = v4;
     }
-`
+`;

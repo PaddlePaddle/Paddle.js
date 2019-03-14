@@ -1,3 +1,7 @@
+/* eslint-disable */
+/**
+ * @file mul参数文件
+ */
 export default `
 // mul的input数据
 // 常量
@@ -32,4 +36,4 @@ uniform sampler2D texture_counter;
 uniform sampler2D texture_origin;
 // 输出数据
 uniform int numbers_shape_out[LENGTH_SHAPE_OUT];
-`
+`;

@@ -1,3 +1,8 @@
+/* eslint-disable */
+/**
+ * @file 公共参数
+ * @author yangmingming
+ */
 export default `
 // varying变量
 // 顶点shader透传的材质坐标
@@ -21,4 +26,4 @@ struct ivec6 {
 // dynamic的input数据
 const float multi_value = float(MULTI_VALUE);
 const float bias_value = float(BIAS_VALUE);
-`
+`;

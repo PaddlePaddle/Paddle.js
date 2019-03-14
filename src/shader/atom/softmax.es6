@@ -1,3 +1,8 @@
+/* eslint-disable */
+/**
+ * @file softmax激活函数
+ * @author yangmingming
+ */
 export default `
 float softmax(float x, float p, float b) {
     float result = x;
@@ -6,4 +11,4 @@ float softmax(float x, float p, float b) {
     }
     return result;
 }
-`
+`;

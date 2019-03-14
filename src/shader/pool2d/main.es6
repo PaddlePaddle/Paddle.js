@@ -1,3 +1,7 @@
+/* eslint-disable */
+/**
+ * @file pool2d主函数
+ */
 export default `
 // start函数
 void main(void) {
@@ -45,4 +49,4 @@ void main(void) {
     }
     gl_FragColor = v4;
 }
-`
+`;

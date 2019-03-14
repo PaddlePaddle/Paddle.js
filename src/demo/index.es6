@@ -13,10 +13,10 @@ const model = graphModel.loadGraphModel(MODEL_URL);
 const cat = document.getElementById('pic');
 const io = new IO();
 
-let func = async function () {
-    let inst = await model.execute({input: cat});
+let func = function () {
+    let inst = model.execute({input: cat});
     console.dir(['result', inst.read()]);
 };
 let startTime = Date.now();
 func();
-console.log('运行时间是' + (Date.now() - startTime));
+// console.log('运行时间是' + (Date.now() - startTime));

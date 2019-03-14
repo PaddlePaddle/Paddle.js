@@ -79,7 +79,7 @@ export default class GraphModel  {
         return true;
     }
 
-    async execute_(inputs, executor, outputs) {
+    execute_(inputs, executor, outputs) {
         outputs = outputs || this.outputNodes;
         // if (inputs instanceof Tensor || Array.isArray(inputs)) {
         //     inputs = this.constructTensorMap(inputs);
@@ -92,12 +92,12 @@ export default class GraphModel  {
         const inputsName = this.getTensorAttr(executor.inputsName[0]);
 
         const tensor = this.constructTensor(executor, inputs);
-        await executor.execute(tensor, outputsName, this.inst);
+        executor.execute(tensor, outputsName, this.inst);
 
         if (executor.next) {
             const id = executor.next;
             const next = this.getTensor(id);
-            await this.execute_(inputs, next[0], outputs)
+            this.execute_(inputs, next[0], outputs)
         }
 
         // if (this.executor.isControlFlowModel || this.executor.isDynamicShapeModel) {
@@ -119,14 +119,14 @@ export default class GraphModel  {
      * @param outputs
      * @returns {*}
      */
-    async execute(inputs, outputs) {
+    execute(inputs, outputs) {
         const executor = this.getNetsStart(this.weightMap);
         this.inst = Runtime.init({
             'width_raw_canvas': 512,
             'height_raw_canvas': 512
         });
 
-        await this.execute_(inputs, executor[0], outputs);
+        this.execute_(inputs, executor[0], outputs);
         return this.inst;
     }
 

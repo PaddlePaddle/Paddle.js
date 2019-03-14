@@ -19,7 +19,8 @@ const tensorAttrs = [
     'height_shape',
     'width_texture',
     'height_texture',
-    'channel'
+    'channel',
+    'total_shape'
 ];
 // shader中需要的常量
 const shaderAttrs = {
@@ -33,50 +34,12 @@ const shaderAttrs = {
 };
 // model的名字和paddle web的tensor名字mapping
 const tensorName = {
-    conv2d: {
-        'pixel': 'origin',
-        'conv2d_0.w_0': 'filter',
-        'conv2d_0.tmp_0': 'out',
-        'conv2d_1.w_0': 'filter',
-        'pool2d_0.tmp_0': 'origin',
-        'conv2d_1.tmp_0': 'out'
-    },
-    elementwise_add: {
-        'conv2d_0.tmp_0': 'origin',
-        'conv2d_0.b_0': 'counter',
-        'conv2d_0.tmp_1': 'out',
-        'conv2d_1.tmp_0': 'origin',
-        'conv2d_1.b_0': 'counter',
-        'conv2d_1.tmp_1': 'out',
-        'fc_0.tmp_0': 'origin',
-        'fc_0.b_0': 'counter',
-        'fc_0.tmp_1': 'out'
-    },
-    relu: {
-        'conv2d_0.tmp_1': 'origin',
-        'conv2d_0.tmp_1-1': 'out',
-        'conv2d_1.tmp_1': 'origin',
-        'conv2d_1.tmp_1-1': 'out'
-    },
-    pool2d: {
-        'conv2d_0.tmp_1-1': 'origin',
-        'pool2d_0.tmp_0': 'out',
-        'conv2d_1.tmp_1-1': 'origin',
-        'pool2d_1.tmp_0': 'out'
-    },
-    mul: {
-        'pool2d_1.tmp_0': 'origin',
-        'fc_0.w_0': 'counter',
-        'fc_0.tmp_0': 'out'
-    },
-    softmax: {
-        'fc_0.tmp_1': 'origin',
-        'fc_0.tmp_2': 'out'
-    },
-    scale: {
-        'fc_0.tmp_2': 'origin',
-        'scale_0.tmp_0': 'out'
-    }
+    'input': 'origin',
+    'x': 'origin',
+    'filter': 'filter',
+    'y': 'counter',
+    'output': 'out',
+    'out': 'out'
 };
 // unique behavior
 const opBehavior = {
@@ -92,9 +55,6 @@ const opBehavior = {
     ],
     relu: [
         'transToPrelu'
-    ],
-    softmax: [
-        'setActiveFunc'
     ],
     mul: [
         'reshape',
@@ -122,18 +82,27 @@ export default class OpData {
     buildTensor() {
         // todo: 是否需要形状对齐
         // todo: 是否需要广播tensor
-        const names = tensorName[this.name];
         const tensorData = [];
         for (let key in this.input) {
-            // 默认取第一个数据
-            const data = this.input[key] || [{}];
-            tensorData.push(data[0]);
+            if (this.input.hasOwnProperty(key)) {
+                const data = this.input[key] || [{}];
+                // 默认取第一个数据
+                if (tensorName[key.toLowerCase()]) {
+                    data[0].name = tensorName[key.toLowerCase()];
+                }
+                tensorData.push(data[0]);
+            }
         }
         // 输出tensor
         for (let key in this.output) {
-            // 默认取第一个数据
-            const data = this.output[key] || [{}];
-            tensorData.push(data[0]);
+            if (this.output.hasOwnProperty(key)) {
+                // 默认取第一个数据
+                const data = this.output[key] || [{}];
+                if (tensorName[key.toLowerCase()]) {
+                    data[0].name = tensorName[key.toLowerCase()];
+                }
+                tensorData.push(data[0]);
+            }
         }
         // unique behavior
         const behavior = opBehavior[this.name] || [];
@@ -142,9 +111,8 @@ export default class OpData {
         });
         // 生成tensor对象
         tensorData.forEach(data => {
-            let name = names[data.name];
-            this.tensor[name] = new Tensor({
-                name: name,
+            this.tensor[data.name] = new Tensor({
+                name: data.name,
                 shape: data.shape,
                 data: data.data,
                 needBatch: data.needBatch || false
@@ -183,6 +151,11 @@ export default class OpData {
 
     needBatch(tensorData = []) {
         tensorData.forEach(data => (data.needBatch = true));
+    }
+
+    enlargeValue(tensorData = []) {
+        let filter = tensorData[0] || [];
+        tensorData[0].data = filter.data.map(value => 10000.0 * value);
     }
 
     broadcast(tensorData = []) {

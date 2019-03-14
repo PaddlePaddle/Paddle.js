@@ -4,6 +4,9 @@
  * @author wangqun@baidu.com
  */
 let first = true;
+let start;
+let end;
+let actions = {};
 export default class GraphExecutor {
 
     constructor(model) {
@@ -58,13 +61,24 @@ export default class GraphExecutor {
 
     }
 
-    async execute(inputs, outputs, runtime) {
-        console.log(inputs, outputs);
-        await runtime.run(this.type, inputs);
-        // if (this.type === 'conv2d' && first) {
-        //     first = false;
+    execute(inputs, outputs, runtime) {
+        // console.log(inputs, outputs);
+        if (this.type !== 'feed') {
+            runtime.run(this.type, inputs);
+            if (this.type === 'scale') {
+                console.log('时间是：' + (+Date.now() - start));
+            }
+        } else {
+            start = +Date.now();
+        }
+        // actions[this.type] = actions[this.type] || 0;
+        // if ((this.type === 'conv2d' && actions[this.type] < 3) ||
+        //     (this.type === 'elementwise_add' && actions[this.type] === 0) ||
+        //     (this.type === 'relu' && actions[this.type] === 0) ||
+        //     (this.type === 'pool2d' && actions[this.type] === 0)) {
+        //     actions[this.type] += 1;
         //     console.log(inputs, outputs);
-        //     await runtime.run(this.type, inputs);
+        //     runtime.run(this.type, inputs);
         // }
     }
 

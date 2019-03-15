@@ -15,21 +15,6 @@ const factory = new Factory({});
 const opConfs = factory.getOpConfs();
 export default {
     /**
-     * 引入资源
-     * @param {string} url 图片地址
-     */
-    create(url, shape) {
-        return new Promise(resolve => {
-            const img = new Image();
-            img.onload = function () {
-                console.log('raw width = ' + this.width + ', raw height = ' + this.height);
-                resolve(Utils.imgCompress(img, {w: shape[2], h: shape[3]}));
-            };
-            img.src = url;
-        });
-    },
-
-    /**
      * 初始化, 生成gpu实例
      * @param {Object} opts 运行时参数，包含el：canvas，dim: 256
      * @return {Object} this 实例对象
@@ -98,44 +83,9 @@ export default {
         // return Utils.shapeData(this.gpu.compute(), [4, 1, 3, 3]);
     },
 
-    // 生成feed数据
-    feed(pixelData, size) {
-        return Utils.shapeData(pixelData, size);
-    },
-
-    // mock生成shapeB的数据
-    mockShapeB(shapeA, shapeB) {
-        return Utils.mock(shapeA, shapeB);
-    },
-
-    // mock origin 1 * 4 * 5 * 5
-    mockOrigin() {
-        return new Tensor({
-            shape: [1, 4, 5, 5],
-            name: 'origin'
-        });
-    },
-
-    // mock filter 4 * 4 * 3 * 3
-    mockFilter() {
-        let tensor = new Tensor({
-            shape: [4, 4, 3, 3],
-            type: 'texture',
-            name: 'filter',
-            value: new Float32Array([1.0, 1.0, 0.0, 0.0, -2.0, 0.0, 1.0, -3.0, 1.0])
-        });
-        return tensor;
-    },
-
-
     adaptData(op, data = {}) {
         const opData = new OpData(op, data.inputs, data.outputs, data.attrs);
         return opData;
-    },
-
-    // 更新op
-    updateOp(name) {
-        // this.gpu.updateShader();
     },
 
     // 释放资源

@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "server": "parcel ./src/index.html",
-    "demo": "parcel ./src/demo/index.html",
     "testDemo": "parcel ./demo/index.html",
     "unit": "parcel ./test/unitTest.html",
     "test": "echo \"Error: no test specified\" && exit 1"

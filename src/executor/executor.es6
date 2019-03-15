@@ -62,7 +62,7 @@ export default class GraphExecutor {
     }
 
     execute(inputs, outputs, runtime) {
-        // console.log(inputs, outputs);
+        console.log(inputs, outputs);
         if (this.type !== 'feed') {
             runtime.run(this.type, inputs);
             if (this.type === 'scale') {

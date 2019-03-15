@@ -8,7 +8,7 @@ import IO from './executor/io';
  */
 // 'http://mms-xr.cdn.bcebos.com/paddle/mnist/model.json'
 const MODEL_URL = '../demo/model/model.json';
-const graphModel= new Graph();
+const graphModel = new Graph();
 const model = graphModel.loadGraphModel(MODEL_URL);
 const cat = document.getElementById('pic');
 const io = new IO();

@@ -229,6 +229,7 @@ export default class GraphModel  {
      */
     createOpsMap(ops) {
         return ops.map((item, idx) => {
+            item.idx = idx;
             const graphExecutor = new GraphExecutor(item);
             return graphExecutor;
         });

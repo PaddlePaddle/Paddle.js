@@ -88,7 +88,7 @@ export default class OpData {
                 const data = this.input[key] || [{}];
                 // 默认取第一个数据
                 if (tensorName[key.toLowerCase()]) {
-                    data[0].name = tensorName[key.toLowerCase()];
+                    data[0].tensorName = tensorName[key.toLowerCase()];
                 }
                 tensorData.push(data[0]);
             }
@@ -99,7 +99,7 @@ export default class OpData {
                 // 默认取第一个数据
                 const data = this.output[key] || [{}];
                 if (tensorName[key.toLowerCase()]) {
-                    data[0].name = tensorName[key.toLowerCase()];
+                    data[0].tensorName = tensorName[key.toLowerCase()];
                 }
                 tensorData.push(data[0]);
             }
@@ -111,8 +111,8 @@ export default class OpData {
         });
         // 生成tensor对象
         tensorData.forEach(data => {
-            this.tensor[data.name] = new Tensor({
-                name: data.name,
+            this.tensor[data.tensorName] = new Tensor({
+                name: data.tensorName,
                 shape: data.shape,
                 data: data.data,
                 needBatch: data.needBatch || false

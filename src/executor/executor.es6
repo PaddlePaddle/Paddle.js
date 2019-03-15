@@ -16,7 +16,7 @@ export default class GraphExecutor {
         this.type = model.type;
         this.finish = false;
         this.next = null;
-        this.id = +new Date() + model.type + Math.floor(Math.random() * 10 + 1);
+        this.id = +new Date() + model.type + Math.floor(Math.random() * 10 + 1) + model.idx;
     }
 
     get inputsName() {
@@ -61,7 +61,7 @@ export default class GraphExecutor {
     }
 
     execute(inputs, outputs, runtime) {
-        // console.log(inputs, outputs);
+        console.log(inputs, outputs);
         if (this.type !== 'feed') {
             runtime.run(this.type, inputs);
             if (this.type === 'scale') {

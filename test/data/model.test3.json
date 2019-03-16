@@ -49,7 +49,7 @@
                     "conv2d_0.tmp_0"
                 ]
             },
-            "type": "conv2d"
+            "type": "batchnorm"
         }
     ],
     "vars": [

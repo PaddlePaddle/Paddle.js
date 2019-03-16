@@ -5,7 +5,6 @@
                 "Scale_in": 1.0,
                 "Scale_in_eltwise": 1.0,
                 "Scale_out": 1.0,
-                "group":
                 "Scale_weights": [
                     1.0
                 ],
@@ -124,9 +123,10 @@
           "name": "conv2d_0.tmp_0",
           "persistable": 0,
           "shape": [
-              20,
-              24,
-              24
+              1,
+              4,
+              2,
+              2
           ]
         },
 

@@ -92,6 +92,7 @@ export default {
         'PAD_TOP',
         'DILATION_HORIZONTAL',
         'DILATION_VERTICAL',
+        'GROUPS',
         'MULTI_VALUE',
         'BIAS_VALUE',
         'ACTIVE_FUNCTION'

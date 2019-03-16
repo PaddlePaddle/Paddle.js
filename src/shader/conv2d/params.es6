@@ -41,6 +41,8 @@ export default `
     // dilation膨胀系数
     const int dilation_h = DILATIONS_X;
     const int dilation_v = DILATIONS_Y;
+    // groups
+    const int groups = GROUPS;
     
     // uniform变量
     // 卷积核

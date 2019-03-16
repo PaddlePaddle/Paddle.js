@@ -22,6 +22,9 @@ import mul_conf from '../../shader/mul/conf';
 import softmax_params from '../../shader/softmax/params';
 import softmax_func from '../../shader/softmax/main';
 import softmax_conf from '../../shader/softmax/conf';
+import batchnorm_params from '../../shader/batchnorm/params';
+import batchnorm_func from '../../shader/batchnorm/main';
+import batchnorm_conf from '../../shader/batchnorm/conf';
 
 import getArrayIndexFromTensorPos from '../../shader/atom/getArrayIndexFromTensorPos';
 import getArrayIndexFromTexturePos from '../../shader/atom/getArrayIndexFromTexturePos';
@@ -30,6 +33,8 @@ import getTexturePosFromArrayIndex from '../../shader/atom/getTexturePosFromArra
 import getValueFromTexturePos from '../../shader/atom/getValueFromTexturePos';
 import moveTexture2PosToReal from '../../shader/atom/moveTexture2PosToReal';
 import getPixelsFromTexturePos from '../../shader/atom/getPixelsFromTexturePos';
+import getRangePowSumFromArrayIndex from '../../shader/atom/getRangePowSumFromArrayIndex';
+import getRangeSumFromArrayIndex from '../../shader/atom/getRangeSumFromArrayIndex';
 import sigmoid from '../../shader/atom/sigmoid';
 import prelu from '../../shader/atom/prelu';
 import scale from '../../shader/atom/scale';
@@ -86,6 +91,11 @@ export default {
             params: softmax_params,
             func: softmax_func,
             confs: softmax_conf
+        },
+        batchnorm: {
+            params: batchnorm_params,
+            func: batchnorm_func,
+            confs: batchnorm_conf
         }
     },
     atoms: {
@@ -96,6 +106,8 @@ export default {
         getValueFromTexturePos,
         moveTexture2PosToReal,
         getPixelsFromTexturePos,
+        getRangeSumFromArrayIndex,
+        getRangePowSumFromArrayIndex,
         sigmoid,
         prelu,
         scale,

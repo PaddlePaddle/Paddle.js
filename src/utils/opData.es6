@@ -39,11 +39,16 @@ const tensorName = {
     'filter': 'filter',
     'y': 'counter',
     'output': 'out',
-    'out': 'out'
+    'out': 'out',
+    'scale': 'scale',
+    'bias': 'bias'
 };
 // unique behavior
 const opBehavior = {
     conv2d: [
+        'needBatch'
+    ],
+    batchnorm: [
         'needBatch'
     ],
     elementwise_add: [

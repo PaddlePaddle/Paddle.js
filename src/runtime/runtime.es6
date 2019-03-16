@@ -28,15 +28,19 @@ export default {
         }
     },
 
-    run(op, data) {
+    run(opName, data) {
         // 生成op的数据
-        const  opData = this.adaptData(op, data);
+        const  opData = this.adaptData(opName, data);
+        if (!opData.isPass) {
+            console.log('跳过当前op：' + opName);
+            return this;
+        }
         // 设置gpu参数
         const gpu = this.gpu;
         gpu.setOutProps(opData.tensor['out']);
         // 生成shader
-        const fsCode = factory.buildShader(op, opData.data);
-        console.dir([op + ', shaderCode shader', fsCode]);
+        const fsCode = factory.buildShader(opData.name, opData.data);
+        console.dir([opData.name + ', shaderCode shader', fsCode]);
         // 生成帧缓存材质
         const texture = gpu.makeTexure(WebGLRenderingContext.FLOAT, null);
         gpu.attachFrameBuffer(texture, opData.data);
@@ -46,7 +50,7 @@ export default {
             gpu.create(VSHADER, fsCode);
             // console.dir(['测试数据---输入参数', data]);
             // 开始计算
-            this.compute(op, opData);
+            this.compute(opData.name, opData);
             return this;
         } else {
             return bufferStatus.message;
@@ -58,9 +62,9 @@ export default {
      *
      * @param {Object} opts 输入数据
      */
-    compute(op, opts = {}) {
+    compute(opName, opts = {}) {
         // 配置op的输入数据
-        const data = opConfs[op].map(item => {
+        const data = opConfs[opName].map(item => {
             const tensor = opts.tensor[item.tensor];
             if (item.type === 'texture') {
                 item.data = tensor.data;
@@ -83,8 +87,8 @@ export default {
         // return Utils.shapeData(this.gpu.compute(), [4, 1, 3, 3]);
     },
 
-    adaptData(op, data = {}) {
-        const opData = new OpData(op, data.inputs, data.outputs, data.attrs);
+    adaptData(opName, data = {}) {
+        const opData = new OpData(opName, data.inputs, data.outputs, data.attrs);
         return opData;
     },
 

@@ -69,19 +69,23 @@ const opBehavior = {
 export default class OpData {
     constructor(name, input = {}, output = {}, attrs = {}) {
         this.name = name;
-        this.input = input;
-        this.output = output;
-        this.attrs = attrs;
-        // op数据, 当前不扩展
-        this.data = {
-            'active_function': 'scale',
-            'multi_value': '1.0',
-            'bias_value': '0.0'
-        };
-        // tensor数据
-        this.tensor = {};
-        this.buildTensor();
-        this.buildAttrs();
+        // 是否忽略当前当前op, 使用dropout
+        this.isPass = this.checkIsPass();
+        if (this.isPass) {
+            this.input = input;
+            this.output = output;
+            this.attrs = attrs;
+            // op数据, 当前不扩展
+            this.data = {
+                'active_function': 'scale',
+                'multi_value': '1.0',
+                'bias_value': '0.0'
+            };
+            // tensor数据
+            this.tensor = {};
+            this.buildTensor();
+            this.buildAttrs();
+        }
     }
 
     buildTensor() {
@@ -215,6 +219,19 @@ export default class OpData {
             input.shape = shape;
         }
 
+    }
+
+    checkIsPass() {
+        if (this.name === 'dropout') {
+            if (this.attrs['dropout_implementation'] === 'downgrade_in_infer') {
+                this.name = 'scale';
+                this.attrs['scale'] = this.attrs['dropout_prob'];
+                this.attrs['bias'] = 0.0;
+                return true;
+            }
+            return false;
+        }
+        return true;
     }
 
     dispose() {

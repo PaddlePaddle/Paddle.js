@@ -31,8 +31,8 @@ export default `
                             // filter数据
                             int fIndex = getArrayIndexFromTensorPos_filter(ivec4(outPos[1], j, fy, fx));
                             vec3 fPos = getTexturePosFromArrayIndex_texture_filter(fIndex);
-                            // origin数据
-                            int oIndex = getArrayIndexFromTensorPos_origin(ivec4(outPos[0], j, oy, ox));
+                            // origin数据, channel需要和groups适配
+                            int oIndex = getArrayIndexFromTensorPos_origin(ivec4(outPos[0], int(floor(float(outPos[1]) / float(channel_out / groups))) * channel_filter + j, oy, ox));
                             vec3 oPos = getTexturePosFromArrayIndex_texture_origin(oIndex);
                             v4[i] += (getValueFromTexturePos_texture_filter(fPos) *
                                 getValueFromTexturePos_texture_origin(oPos));

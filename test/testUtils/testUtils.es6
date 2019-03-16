@@ -1,5 +1,5 @@
 import 'babel-polyfill';
-import model from '../data/model.test';
+import model from '../data/model.test2';
 import GraphExecutor from '../../src/executor/executor';
 import Runtime from '../../src/runtime/runtime';
 

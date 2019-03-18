@@ -35,10 +35,10 @@
             },
             "inputs": {
                 "Scale": [
-                    "conv2d_0.w_0"
+                    "batchnorm_0.w_0"
                 ],
                 "Bias": [
-                    "conv2d_0.w_1"
+                    "batchnorm_0.w_1"
                 ],
                 "Input": [
                     "pixel"
@@ -46,7 +46,7 @@
             },
             "outputs": {
                 "Output": [
-                    "conv2d_0.tmp_0"
+                    "batchnorm_0.tmp_0"
                 ]
             },
             "type": "batchnorm"
@@ -73,7 +73,7 @@
                 2, 2
 
             ],
-            "name": "conv2d_0.w_0",
+            "name": "batchnorm_0.w_0",
             "persistable": 1,
             "shape": [
                 2
@@ -84,7 +84,7 @@
                 3, 3
 
             ],
-            "name": "conv2d_0.w_1",
+            "name": "batchnorm_0.w_1",
             "persistable": 1,
             "shape": [
                 2
@@ -94,7 +94,7 @@
             "data": [
 
             ],
-            "name": "conv2d_1.b_0",
+            "name": "batchnorm_1.b_0",
             "persistable": 1,
             "shape": [
                 50
@@ -107,7 +107,7 @@
               1, 1, 5, 5,
               -0.46410155, 4.1547003, 4.1547003, 4.1547003
           ],
-          "name": "conv2d_0.tmp_0",
+          "name": "batchnorm_0.tmp_0",
           "persistable": 0,
           "shape": [
               2,

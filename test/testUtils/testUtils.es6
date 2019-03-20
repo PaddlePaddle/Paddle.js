@@ -1,5 +1,6 @@
 import 'babel-polyfill';
-import model from '../data/model.test3';
+// import model from '../data/model.test2';
+import model from '../data/model.test.conv2d';
 import GraphExecutor from '../../src/executor/executor';
 import Runtime from '../../src/runtime/runtime';
 
@@ -64,10 +65,8 @@ let getValue = function(name, datas) {
         }
     });
 };
-
-let item = getTensor('batchnorm');
-
-
+// 测试单元
+let item = getTensor('conv2d');
 
 let func = function () {
     let inst = Runtime.init({

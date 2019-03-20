@@ -65,10 +65,8 @@ let getValue = function(name, datas) {
         }
     });
 };
-
+// 测试单元
 let item = getTensor('conv2d');
-
-
 
 let func = function () {
     let inst = Runtime.init({

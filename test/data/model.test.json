@@ -19,6 +19,7 @@
                 "Scale_in": 1.0,
                 "Scale_in_eltwise": 1.0,
                 "Scale_out": 1.0,
+                "group":
                 "Scale_weights": [
                     1.0
                 ],

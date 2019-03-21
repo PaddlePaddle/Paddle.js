@@ -1,17 +1,33 @@
 import 'babel-polyfill';
 // import model from '../data/model.test2';
-import model from '../data/model.test.conv2d';
+// import model from '../data/model.test.conv2d';
 import GraphExecutor from '../../src/executor/executor';
+import Loader from '../../src/executor/loader';
 import Runtime from '../../src/runtime/runtime';
 
 let Diff = require('./diff');
-let datas = model;
+let datas;
+let otherResult;
+let output
+async function run() {
+    const MODEL_URL = '/test/unitData/model.test.conv2d.json';
+    const graphModel= new Loader();
+    const model = await graphModel.loadGraphModel(MODEL_URL);
+    datas = model.handler;
+    output = deepCopy(model.handler);
+    // 测试单元
+    let item = getTensor('conv2d');
+    func(item);
+    // let inst = model.execute({input: cat});
+    // console.dir(['result', inst.read()]);
+}
+run();
 
 function deepCopy (data) {
     return JSON.parse(JSON.stringify(data));
 }
-let otherResult;
-let output = deepCopy(datas);
+
+// let output = deepCopy(datas);
 let getTensor = function(id, times = 1) {
     let find = 0;
     let data = datas.ops.filter((item, idx) => {
@@ -65,10 +81,10 @@ let getValue = function(name, datas) {
         }
     });
 };
-// 测试单元
-let item = getTensor('conv2d');
+// // 测试单元
+// let item = getTensor('conv2d');
 
-let func = function () {
+let func = function (item) {
     let inst = Runtime.init({
         'width_raw_canvas': 512,
         'height_raw_canvas': 512
@@ -102,4 +118,4 @@ let func = function () {
     // display.appendChild(fragment);
 
 };
-func();
+

@@ -67,7 +67,7 @@ export default class GraphModel  {
 
     }
     async load() {
-         const artifacts = this.handler =  await this.fetchModel();
+        const artifacts = this.handler =  await this.fetchModel();
         // const artifacts = this.handler;
         // const artifacts =  this.handler;
         console.log(artifacts);

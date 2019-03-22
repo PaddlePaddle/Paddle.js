@@ -231,6 +231,9 @@ export default class OpData {
             }
             return false;
         }
+        if (this.name === 'depthwise_conv2d') {
+            this.name = 'conv2d';
+        }
         return true;
     }
 

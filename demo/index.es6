@@ -7,11 +7,14 @@ import IO from '../src/executor/io';
  *
  */
 // 'http://mms-xr.cdn.bcebos.com/paddle/mnist/model.json'
-const MODEL_URL = '/model/model.json';
-const graphModel= new Graph();
-const model = graphModel.loadGraphModel(MODEL_URL);
-const cat = document.getElementById('pic');
-const io = new IO();
+async function run() {
+    const MODEL_URL = '/mnist/model.json';
+    const graphModel= new Graph();
+    const model = await graphModel.loadGraphModel(MODEL_URL);
+    const cat = document.getElementById('pic');
+    const io = new IO();
 
-let inst = model.execute({input: cat});
-console.dir(['result', inst.read()]);
+    let inst = model.execute({input: cat});
+    console.dir(['result', inst.read()]);
+}
+run();

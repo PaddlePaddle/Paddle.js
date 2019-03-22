@@ -1,5 +1,4 @@
 /* eslint-disable */
-import model from '../../demo/model/model';
 import GraphExecutor from './executor';
 import IO from './io';
 import Runtime from '../../src/runtime/runtime';
@@ -23,53 +22,54 @@ export default class GraphModel  {
     }
 
 
-    fetchModel() {
+     fetchModel(type) {
         const path = this.modelUrl;
         let URL_SCHEME_REGEX = /^https?:\/\//;
+        // path.match(URL_SCHEME_REGEX) != null
         let load = null;
-        let method = 'post';
-        // if (path.match(URL_SCHEME_REGEX) != null) {
-        //     let myHeaders = new Headers();
-        //     load = new Promise((resolve, reject) => {
-        //         fetch(path, {method: method, mode: 'cors', credentials: "include", headers: myHeaders})
-        //             .then(response => response.json())
-        //             .then(responseData => resolve(responseData))
-        //             .then(err => reject(err))
-        //     })
-        //
-        //     this.handler = load;
-        // }
-        // else {
-        //     let json;
-        //     let s = document.createElement('script');
-        //     s.src = path + '&jsonpCallback=fn';
-        //
-        //     window.fn = function(data) {
-        //         json = data;
-        //         console.log(json);
-        //     }
-        //     //当script被插入文档中时，src中的资源就会开始加载
-        //     document.body.appendChild(s);
-        //
-        //     load = new Promise((resolve, reject) => {
-        //
-        //         s.onload = function(e) {
-        //             resolve(json);
-        //         }
-        //         s.onerror = function() {
-        //             reject(json);
-        //         }
-        //     });
-        //     this.handler = load;
-        //
-        // }
-        this.handler = model;
+        let method = 'get';
+        if (!type) {
+            let myHeaders = new Headers();
+            load = new Promise((resolve, reject) => {
+                fetch(path, {method: method, mode: 'cors', credentials: "include", headers: myHeaders})
+                    .then(response => response.json())
+                    .then(responseData => resolve(responseData))
+                    .then(err => reject(err))
+            })
+
+            this.handler = load;
+        }
+        else if (type === 'jsonp') {
+            let json;
+            let s = document.createElement('script');
+            s.src = path + '&jsonpCallback=fn';
+
+            window.fn = function(data) {
+                json = data;
+                console.log(json);
+            }
+            //当script被插入文档中时，src中的资源就会开始加载
+            document.body.appendChild(s);
+
+            load = new Promise((resolve, reject) => {
+
+                s.onload = function(e) {
+                    resolve(json);
+                }
+                s.onerror = function() {
+                    reject(json);
+                }
+            });
+            this.handler = load;
+
+        }
+        return load;
 
     }
-     load() {
-        this.fetchModel();
-        // const artifacts = await this.handler.load();
-        const artifacts =  this.handler;
+    async load() {
+        const artifacts = this.handler =  await this.fetchModel();
+        // const artifacts = this.handler;
+        // const artifacts =  this.handler;
         console.log(artifacts);
         const opsMap = this.createOpsMap(artifacts.ops, artifacts.vars);
         console.log(opsMap);
@@ -256,7 +256,7 @@ export default class GraphModel  {
      * @param options
      * @returns {Promise<void>}
      */
-    loadGraphModel(modelUrl, options) {
+    async loadGraphModel(modelUrl, options) {
         if (modelUrl == null) {
             throw new Error(
                 'modelUrl in loadGraphModel() cannot be null. Please provide a url ' +
@@ -267,7 +267,7 @@ export default class GraphModel  {
         }
 
         const model = new GraphModel(modelUrl, options);
-        model.load();
+        await model.load();
         return model;
     }
 

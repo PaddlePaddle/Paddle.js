@@ -27,6 +27,9 @@ export default class GraphExecutor {
         else if (this.type === 'conv2d') {
             return this.inputs.Input;
         }
+        else if (this.type === 'depthwise_conv2d') {
+            return this.inputs.Input;
+        }
         else if (this.type === 'elementwise_add') {
             return this.inputs.X;
         }
@@ -53,6 +56,9 @@ export default class GraphExecutor {
 
     get outputsName() {
         if (this.type === 'conv2d') {
+            return this.outputs.Output;
+        }
+        else if (this.type === 'depthwise_conv2d') {
             return this.outputs.Output;
         }
         else {

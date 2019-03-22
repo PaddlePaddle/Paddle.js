@@ -14,6 +14,11 @@ export default class GraphModel  {
         this.handler = 'io.IOHandler';
         this.modelUrl = modelUrl;
         this.loadOptions = loadOptions;
+        this.multipart = false;
+        // 设置分片加载model
+        if (this.loadOptions) {
+            this.multipart = this.loadOptions.multipart;
+        }
         // op runner
         this.inst = null;
         if (this.loadOptions == null) {
@@ -21,8 +26,45 @@ export default class GraphModel  {
         }
     }
 
+    fetchData(name, model) {
+        const path = '/mobileNet/' + name;
+        let load = new Promise((resolve, reject) => {
+            fetch(path, {
+                method: 'get', mode: 'cors', credentials: "include",
+                headers: { 'Content-Type': 'application/json;charset=utf-8'}})
+                .then(response => response.json())
+                .then(responseData => resolve(responseData))
+                .then(err => reject(err))
+        })
+        return load;
+    }
 
-     fetchModel(type) {
+    async traverse (arr, idx) {
+        let len = arr.length;
+        let that = this;
+        console.log(idx);
+        if (arr.length <= idx) {
+            return arr;
+        }
+        else {
+            if (arr[idx] && arr[idx].name) {
+                let TMP_SCHEME_REGEX = /\.tmp/;
+                let TMP_REGEX = /\-/;
+                // path.match(URL_SCHEME_REGEX) != null
+                if ( /* arr[idx].name.match(TMP_SCHEME_REGEX) !== null
+                && */arr[idx].name.match(TMP_REGEX) === null
+                ) {
+                    arr[idx].data = await this.fetchData(arr[idx].name);
+                }
+                await this.traverse (arr, ++idx);
+
+            }
+
+        }
+
+    }
+
+    fetchModel(type) {
         const path = this.modelUrl;
         let URL_SCHEME_REGEX = /^https?:\/\//;
         // path.match(URL_SCHEME_REGEX) != null
@@ -67,12 +109,23 @@ export default class GraphModel  {
 
     }
     async load() {
+        let that = this;
         const artifacts = this.handler =  await this.fetchModel();
-        // const artifacts = this.handler;
         // const artifacts =  this.handler;
         console.log(artifacts);
+        if (this.multipart === true) {
+            let idx = 0;
+            let arti = await that.traverse(artifacts.vars, idx);
+
+            console.log('arti', arti);
+        }
         const opsMap = this.createOpsMap(artifacts.ops, artifacts.vars);
         console.log(opsMap);
+        // if (this.multipart === true) {
+        //         let arti = await that.traverse(artifacts.vars, 0);
+        //
+        //          console.log('arti', arti);
+        // }
         this.weightMap = this.constructOpsMap(opsMap);
         console.log(this.weightMap);
         // this.weightMap = this.convertTensorMapToTensorsMap(weightMap);
@@ -84,7 +137,7 @@ export default class GraphModel  {
         // if (inputs instanceof Tensor || Array.isArray(inputs)) {
         //     inputs = this.constructTensorMap(inputs);
         // }
-        if (executor.type === 'fetch'){
+        if (executor.type === 'fetch') {
             return;
         }
         const name = executor.outputsName[0];

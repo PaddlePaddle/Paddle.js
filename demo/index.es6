@@ -8,9 +8,9 @@ import IO from '../src/executor/io';
  */
 // 'http://mms-xr.cdn.bcebos.com/paddle/mnist/model.json'
 async function run() {
-    const MODEL_URL = '/mnist/model.json';
+    const MODEL_URL = '/mobileNet/model.json';
     const graphModel= new Graph();
-    const model = await graphModel.loadGraphModel(MODEL_URL);
+    const model = await graphModel.loadGraphModel(MODEL_URL, {multipart: true});
     const cat = document.getElementById('pic');
     const io = new IO();
 

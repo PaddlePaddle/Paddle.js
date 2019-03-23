@@ -64,7 +64,7 @@ export default class GraphExecutor {
         else if (this.type === 'depthwise_conv2d') {
             return this.outputs.Output;
         }
-        else if (this.type === 'batch_norm') {
+        else if (this.type === 'batchnorm') {
             this.outputs.out = this.outputs.Y;
             return this.outputs.Y;
         }

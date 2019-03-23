@@ -24,7 +24,7 @@ export default class GraphExecutor {
         if (this.type === 'feed') {
             return this.inputs.X;
         }
-        else if (this.type === 'batch_norm') {
+        else if (this.type === 'batchnorm') {
             return this.inputs.X;
         }
         else if (this.type === 'conv2d') {

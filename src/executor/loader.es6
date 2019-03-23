@@ -51,8 +51,8 @@ export default class GraphModel  {
                 let TMP_SCHEME_REGEX = /\.tmp/;
                 let TMP_REGEX = /\-/;
                 // path.match(URL_SCHEME_REGEX) != null
-                if ( /* arr[idx].name.match(TMP_SCHEME_REGEX) !== null
-                && */arr[idx].name.match(TMP_REGEX) === null
+                if ( arr[idx].name.match(TMP_SCHEME_REGEX) === null
+                && arr[idx].name.match(TMP_REGEX) === null
                 ) {
                     arr[idx].data = await this.fetchData(arr[idx].name);
                 }

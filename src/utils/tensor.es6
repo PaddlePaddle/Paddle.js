@@ -27,7 +27,7 @@ export default class Tensor {
         this.shape_texture = shape_texture;
 
         // tensor数据
-        if (opts.data) {
+        if (opts.data && opts.data.length) {
             // 补充0, 生成数据
             if (zeroNumber > 0) {
                 for (let i = 0; i < zeroNumber; i++) {

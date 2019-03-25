@@ -15,6 +15,7 @@ export default class GraphModel  {
         this.modelUrl = modelUrl;
         this.loadOptions = loadOptions;
         this.multipart = false;
+        this.index = 0;
         // 设置分片加载model
         if (this.loadOptions) {
             this.multipart = this.loadOptions.multipart;
@@ -147,7 +148,8 @@ export default class GraphModel  {
         const tensor = this.constructTensor(executor, inputs);
         executor.execute(tensor, outputsName, this.inst);
 
-        if (executor.next) {
+        if (executor.next && this.index < 2) {
+            ++this.index;
             const id = executor.next;
             const next = this.getTensor(id);
             this.execute_(inputs, next[0], outputs)

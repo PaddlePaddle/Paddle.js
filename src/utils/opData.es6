@@ -69,12 +69,12 @@ const opBehavior = {
 export default class OpData {
     constructor(name, input = {}, output = {}, attrs = {}) {
         this.name = name;
+        this.attrs = attrs;
         // 是否忽略当前当前op, 使用dropout
         this.isPass = this.checkIsPass();
         if (this.isPass) {
             this.input = input;
             this.output = output;
-            this.attrs = attrs;
             // op数据, 当前不扩展
             this.data = {
                 'active_function': 'scale',
@@ -98,10 +98,13 @@ export default class OpData {
                 // 默认取第一个数据
                 if (tensorName[key.toLowerCase()]) {
                     data[0].tensorName = tensorName[key.toLowerCase()];
+                    tensorData.push(data[0]);
                 }
-                tensorData.push(data[0]);
             }
         }
+        // debugger
+        // todo: 临时删除output里的Y
+        delete this.output.Y;
         // 输出tensor
         for (let key in this.output) {
             if (this.output.hasOwnProperty(key)) {
@@ -109,8 +112,8 @@ export default class OpData {
                 const data = this.output[key] || [{}];
                 if (tensorName[key.toLowerCase()]) {
                     data[0].tensorName = tensorName[key.toLowerCase()];
+                    tensorData.push(data[0]);
                 }
-                tensorData.push(data[0]);
             }
         }
         // unique behavior
@@ -127,6 +130,7 @@ export default class OpData {
                 needBatch: data.needBatch || false
             });
         });
+        console.dir(['tensors', this.tensor]);
     }
 
     buildAttrs() {
@@ -233,6 +237,12 @@ export default class OpData {
         }
         if (this.name === 'depthwise_conv2d') {
             this.name = 'conv2d';
+        }
+        if (this.name === 'pool2d') {
+            const ksize = this.attrs['ksize'];
+            if (!ksize || Number(ksize[0]) === 0 || Number(ksize[1]) === 0) {
+                return false;
+            }
         }
         return true;
     }

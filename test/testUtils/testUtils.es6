@@ -10,13 +10,13 @@ let datas;
 let otherResult;
 let output
 async function run() {
-    const MODEL_URL = '/test/unitData/model.test.conv2d.json';
+    const MODEL_URL = '/test/unitData/model.test.depthwise_conv2d.json';
     const graphModel= new Loader();
     const model = await graphModel.loadGraphModel(MODEL_URL);
     datas = model.handler;
     output = deepCopy(model.handler);
     // 测试单元
-    let item = getTensor('conv2d');
+    let item = getTensor('depthwise_conv2d');
     func(item);
     // let inst = model.execute({input: cat});
     // console.dir(['result', inst.read()]);

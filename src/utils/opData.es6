@@ -56,7 +56,8 @@ const opBehavior = {
     ],
     pool2d: [
         'isMax',
-        'needBatch'
+        'needBatch',
+        'isGlobalPooling'
     ],
     relu: [
         'transToPrelu'
@@ -164,6 +165,10 @@ export default class OpData {
 
     needBatch(tensorData = []) {
         tensorData.forEach(data => (data.needBatch = true));
+    }
+
+    isGlobalPooling(tensorData = []) {
+
     }
 
     enlargeValue(tensorData = []) {

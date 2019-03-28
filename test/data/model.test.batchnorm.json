@@ -2,54 +2,49 @@
   "ops": [
     {
       "attrs": {
-        "Scale_in": 1.0,
-        "Scale_in_eltwise": 1.0,
-        "Scale_out": 1.0,
-        "Scale_weights": [
-          1.0
-        ],
-        "data_format": "AnyLayout",
-        "dilations": [
-          1,
-          1
-        ],
-        "exhaustive_search": false,
-        "force_fp32_output": false,
-        "fuse_relu": false,
-        "fuse_relu_before_depthwise_conv": false,
-        "fuse_residual_connection": false,
-        "groups": 2,
-        "epsilon": 0.0,
+        "data_layout": "NCHW",
+        "epsilon": 9.999999747378752e-06,
+        "fuse_with_relu": false,
         "is_test": 1,
-        "paddings": [
-          0,
-          0
-        ],
-        "strides": [
-          1,
-          1
-        ],
-        "use_cudnn": true,
-        "use_mkldnn": false,
-        "workspace_size_MB": 4096
+        "momentum": 0.8999999761581421,
+        "use_global_stats": false,
+        "use_mkldnn": false
       },
       "inputs": {
-        "Scale": [
-          "batchnorm_0.w_0"
-        ],
         "Bias": [
-          "batchnorm_0.w_1"
+          "conv1_bn_offset"
         ],
-        "Input": [
-          "pixel"
+        "Mean": [
+          "conv1_bn_mean"
+        ],
+        "Scale": [
+          "conv1_bn_scale"
+        ],
+        "Variance": [
+          "conv1_bn_variance"
+        ],
+        "X": [
+          "conv2d_0.tmp_0"
         ]
       },
       "outputs": {
-        "Output": [
-          "batchnorm_0.tmp_0"
+        "MeanOut": [
+          "conv1_bn_mean"
+        ],
+        "SavedMean": [
+          "batch_norm_0.tmp_0"
+        ],
+        "SavedVariance": [
+          "batch_norm_0.tmp_1"
+        ],
+        "VarianceOut": [
+          "conv1_bn_variance"
+        ],
+        "Y": [
+          "batch_norm_0.tmp_2"
         ]
       },
-      "type": "batchnorm"
+      "type": "batch_norm"
     }
   ],
   "vars": [

@@ -68,7 +68,6 @@ export default class GraphModel  {
     fetchModel(type) {
         const path = this.modelUrl;
         let URL_SCHEME_REGEX = /^https?:\/\//;
-        // path.match(URL_SCHEME_REGEX) != null
         let load = null;
         let method = 'get';
         if (!type) {
@@ -112,21 +111,13 @@ export default class GraphModel  {
     async load() {
         let that = this;
         const artifacts = this.handler =  await this.fetchModel();
-        // const artifacts =  this.handler;
         console.log(artifacts);
         if (this.multipart === true) {
             let idx = 0;
             let arti = await that.traverse(artifacts.vars, idx);
-
-            console.log('arti', arti);
         }
         const opsMap = this.createOpsMap(artifacts.ops, artifacts.vars);
-        console.log(opsMap);
-        // if (this.multipart === true) {
-        //         let arti = await that.traverse(artifacts.vars, 0);
-        //
-        //          console.log('arti', arti);
-        // }
+
         this.weightMap = this.constructOpsMap(opsMap);
         console.log(this.weightMap);
         // this.weightMap = this.convertTensorMapToTensorsMap(weightMap);
@@ -135,9 +126,6 @@ export default class GraphModel  {
 
     execute_(inputs, executor, outputs) {
         outputs = outputs || this.outputNodes;
-        // if (inputs instanceof Tensor || Array.isArray(inputs)) {
-        //     inputs = this.constructTensorMap(inputs);
-        // }
         if (executor.type === 'fetch') {
             return;
         }
@@ -154,18 +142,6 @@ export default class GraphModel  {
             const next = this.getTensor(id);
             this.execute_(inputs, next[0], outputs)
         }
-
-        // if (this.executor.isControlFlowModel || this.executor.isDynamicShapeModel) {
-        //     throw new Error(
-        //         'The model contains control flow or dynamic shape ops, ' +
-        //         'please use executeAsync method');
-        // }
-        // const result = this.execute(
-        //     this.convertTensorMapToTensorsMap(inputs), strictInputCheck, outputs);
-        // const keys = Object.keys(result);
-        // return (Array.isArray(outputs) && outputs.length > 1) ?
-        //     outputs.map(node => result[node]) :
-        //     result[keys[0]];
     }
 
     /**
@@ -219,13 +195,15 @@ export default class GraphModel  {
             }
 
         });
+
         const tensor = {
             inputs: input,
             outputs: output,
             attrs: executor.attrs,
             type: executor.type,
             next: executor.next
-        }
+        };
+
         return tensor;
     }
 

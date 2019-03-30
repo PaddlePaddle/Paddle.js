@@ -41,7 +41,9 @@ const tensorName = {
     'output': 'out',
     'out': 'out',
     'scale': 'scale',
-    'bias': 'bias'
+    'bias': 'bias',
+    'mean': 'mean',
+    'variance': 'variance'
 };
 // unique behavior
 const opBehavior = {
@@ -131,7 +133,7 @@ export default class OpData {
                 needBatch: data.needBatch || false
             });
         });
-        console.dir(['tensors', this.tensor]);
+        // console.dir(['tensors', this.tensor]);
     }
 
     buildAttrs() {
@@ -168,7 +170,7 @@ export default class OpData {
     }
 
     isGlobalPooling(tensorData = []) {
-        let counter = tensorData.filter(tensor => (tensor.name === 'counter'))[0] || {};
+        let counter = tensorData.filter(tensor => (tensor.tensorName === 'origin'))[0] || {};
         let length = counter.shape && counter.shape.length || 0;
         if (length > 2 && this.attrs['global_pooling']) {
             this.attrs.ksize = [counter.shape[length - 2], counter.shape[length - 1]];

@@ -56,7 +56,8 @@ const opBehavior = {
     ],
     pool2d: [
         'isMax',
-        'needBatch'
+        'needBatch',
+        'isGlobalPooling'
     ],
     relu: [
         'transToPrelu'
@@ -166,9 +167,12 @@ export default class OpData {
         tensorData.forEach(data => (data.needBatch = true));
     }
 
-    enlargeValue(tensorData = []) {
-        let filter = tensorData[0] || [];
-        tensorData[0].data = filter.data.map(value => 10000.0 * value);
+    isGlobalPooling(tensorData = []) {
+        let counter = tensorData.filter(tensor => (tensor.name === 'counter'))[0] || {};
+        let length = counter.shape && counter.shape.length || 0;
+        if (length > 2 && this.attrs['global_pooling']) {
+            this.attrs.ksize = [counter.shape[length - 2], counter.shape[length - 1]];
+        }
     }
 
     broadcast(tensorData = []) {
@@ -237,12 +241,6 @@ export default class OpData {
         }
         if (this.name === 'depthwise_conv2d') {
             this.name = 'conv2d';
-        }
-        if (this.name === 'pool2d') {
-            const ksize = this.attrs['ksize'];
-            if (!ksize || Number(ksize[0]) === 0 || Number(ksize[1]) === 0) {
-                return false;
-            }
         }
         return true;
     }

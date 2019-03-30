@@ -28,12 +28,18 @@ const int height_texture_scale = HEIGHT_TEXTURE_SCALE;
 const int width_texture_bias = WIDTH_TEXTURE_BIAS;
 const int height_texture_bias = HEIGHT_TEXTURE_BIAS;
 
+const int width_texture_mean = WIDTH_TEXTURE_MEAN;
+const int height_texture_mean = HEIGHT_TEXTURE_MEAN;
+const int width_texture_variance = WIDTH_TEXTURE_VARIANCE;
+const int height_texture_variance = HEIGHT_TEXTURE_VARIANCE;
+
 // uniform变量
-uniform int numbers_shape_origin[LENGTH_SHAPE_ORIGIN];
 uniform int numbers_shape_out[LENGTH_SHAPE_OUT];
 
 // 输入数据
 uniform sampler2D texture_origin;
 uniform sampler2D texture_scale;
 uniform sampler2D texture_bias;
+uniform sampler2D texture_mean;
+uniform sampler2D texture_variance;
 `;

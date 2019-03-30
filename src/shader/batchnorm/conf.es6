@@ -44,29 +44,6 @@ export default {
             }
         },
         {
-            func: 'getArrayIndexFromTensorPos',
-            conf: {
-                TENSOR_NAME: 'origin',
-                TENSOR_TYPE: 'ivec4'
-            }
-        },
-        {
-            func: 'getRangeSumFromArrayIndex',
-            conf: {
-                TEXTURE_NAME: 'texture_origin',
-                TENSOR_NAME: 'origin'
-            }
-        },
-
-        {
-            func: 'getRangePowSumFromArrayIndex',
-            conf: {
-                TEXTURE_NAME: 'texture_origin',
-                TENSOR_NAME: 'origin'
-            }
-        },
-
-        {
             func: 'getTexturePosFromArrayIndex',
             conf: {
                 TEXTURE_NAME: 'texture_scale',
@@ -83,6 +60,18 @@ export default {
             func: 'getValueFromTexturePos',
             conf: {
                 TEXTURE_NAME: 'texture_bias'
+            }
+        },
+        {
+            func: 'getValueFromTexturePos',
+            conf: {
+                TEXTURE_NAME: 'texture_mean'
+            }
+        },
+        {
+            func: 'getValueFromTexturePos',
+            conf: {
+                TEXTURE_NAME: 'texture_variance'
             }
         }
     ],
@@ -107,6 +96,10 @@ export default {
         'HEIGHT_TEXTURE_SCALE',
         'WIDTH_TEXTURE_BIAS',
         'HEIGHT_TEXTURE_BIAS',
+        'WIDTH_TEXTURE_MEAN',
+        'HEIGHT_TEXTURE_MEAN',
+        'WIDTH_TEXTURE_VARIANCE',
+        'HEIGHT_TEXTURE_VARIANCE',
         'MULTI_VALUE',
         'BIAS_VALUE',
         'ACTIVE_FUNCTION'
@@ -125,16 +118,22 @@ export default {
             type: 'texture'
         },
         {
-            tensor: 'origin',
+            tensor: 'mean',
+            variable: 'texture',
+            setter: 'initTexture',
+            type: 'texture'
+        },
+        {
+            tensor: 'variance',
             variable: 'texture',
             setter: 'initTexture',
             type: 'texture'
         },
         {
             tensor: 'origin',
-            variable: 'numbers_shape',
-            setter: 'uniform1iv',
-            type: 'uniform'
+            variable: 'texture',
+            setter: 'initTexture',
+            type: 'texture'
         },
         {
             tensor: 'out',

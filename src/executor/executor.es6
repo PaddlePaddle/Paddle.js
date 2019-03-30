@@ -13,6 +13,12 @@ export default class GraphExecutor {
         this.inputs = model.inputs;
         this.outputs  = model.outputs;
         this.attrs = model.attrs;
+        if (this.type === 'batchnorm') {
+            this.attrs.Bias = model.inputs.Bias;
+            this.attrs.Mean = model.inputs.Mean;
+            this.attrs.Scale = model.inputs.Scale;
+            this.attrs.Variance = model.inputs.Variance;
+        }
         this.type = model.type;
         this.finish = false;
         this.next = null;
@@ -25,7 +31,7 @@ export default class GraphExecutor {
             return this.inputs.X;
         }
         else if (this.type === 'batchnorm') {
-            return this.inputs;
+            return this.inputs.X;
         }
         else if (this.type === 'conv2d') {
             return this.inputs.Input;

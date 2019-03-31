@@ -13,6 +13,12 @@ export default class GraphExecutor {
         this.inputs = model.inputs;
         this.outputs  = model.outputs;
         this.attrs = model.attrs;
+        if (this.type === 'batchnorm') {
+            this.attrs.Bias = model.inputs.Bias;
+            this.attrs.Mean = model.inputs.Mean;
+            this.attrs.Scale = model.inputs.Scale;
+            this.attrs.Variance = model.inputs.Variance;
+        }
         this.type = model.type;
         this.finish = false;
         this.next = null;

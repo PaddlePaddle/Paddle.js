@@ -80,8 +80,13 @@ export default class GraphExecutor {
 
     }
 
+    /**
+     * 将输入数据和具体op进行关联，触发执行具体每一个op
+     * @param inputs
+     * @param outputs
+     * @param runtime
+     */
     execute(inputs, outputs, runtime) {
-        console.log(inputs, outputs);
         if (this.type !== 'feed') {
             runtime.run(this.type, inputs);
             if (this.type === 'scale') {

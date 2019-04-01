@@ -95,15 +95,6 @@ export default class GraphExecutor {
         } else {
             start = +Date.now();
         }
-        // actions[this.type] = actions[this.type] || 0;
-        // if ((this.type === 'conv2d' && actions[this.type] < 3) ||
-        //     (this.type === 'elementwise_add' && actions[this.type] === 0) ||
-        //     (this.type === 'relu' && actions[this.type] === 0) ||
-        //     (this.type === 'pool2d' && actions[this.type] === 0)) {
-        //     actions[this.type] += 1;
-        //     console.log(inputs, outputs);
-        //     runtime.run(this.type, inputs);
-        // }
     }
 
 }

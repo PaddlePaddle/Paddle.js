@@ -20,7 +20,7 @@ export default class imageFeed {
 
     };
 
-    fromPixels(pixels, opt) {
+    fromPixels(image, opt) {
 
         return [{data: values, shape: shape, name: 'pixel'}];
     }

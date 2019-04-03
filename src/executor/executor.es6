@@ -96,7 +96,6 @@ export default class GraphExecutor {
             start = +Date.now();
         }
     }
-
 }
 
 /* eslint-enable */

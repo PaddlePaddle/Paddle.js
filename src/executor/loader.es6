@@ -1,6 +1,6 @@
 /* eslint-disable */
 import GraphExecutor from './executor';
-import IO from './io';
+import IO from '../feed/imageFeed';
 import Runtime from '../../src/runtime/runtime';
 /**
  * @file GraphModel，绘制生成model网络

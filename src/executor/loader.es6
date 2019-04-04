@@ -81,6 +81,7 @@ export default class GraphModel  {
 
             this.handler = load;
         }
+        // jsonp请求方式
         else if (type === 'jsonp') {
             let json;
             let s = document.createElement('script');

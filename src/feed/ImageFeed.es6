@@ -8,6 +8,10 @@ export default class imageFeed {
         this.fromPixels2DContext = document.createElement('canvas').getContext('2d');
     };
 
+    /**
+     * 处理图像方法
+     * @param inputs
+     */
     process(inputs) {
         const path = inputs.path;
         const mode = inputs.mode;
@@ -16,6 +20,10 @@ export default class imageFeed {
         this.fromPixels(path);
     };
 
+    /**
+     * 重新设定图片tensor形状
+     * @param shape
+     */
     reshape(shape) {
 
     };

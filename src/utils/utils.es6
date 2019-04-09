@@ -91,6 +91,13 @@ export default {
         };
     },
 
+    // 获取数组中的最大值和索引
+    getMaxItem(datas = []) {
+        let max = Math.max.apply(null, datas);
+        let index = datas.indexOf(max);
+        return {value: max, index};
+    },
+
     // 压缩
     async loadShader(name) {
         let shader = await fetch(this.getShaderFile(name));

@@ -8,7 +8,8 @@ export default class imageFeed {
         this.fromPixels2DContext = document.createElement('canvas').getContext('2d');
         this.defaultWidth = 224;
         this.defaultHeight = 224;
-        this.minPixs = 225;
+        this.minPixels = 225;
+        this.pixels = '';
     };
 
     /**
@@ -16,11 +17,14 @@ export default class imageFeed {
      * @param inputs
      */
     process(inputs) {
-        const path = inputs.path;
+        const input = inputs.input;
         const mode = inputs.mode;
         const channel = inputs.channel;
         const rotate = inputs.rotate;
-        this.fromPixels(path);
+        let output = [];
+
+        output = this.fromPixels(input);
+        return output;
     };
 
     /**
@@ -37,9 +41,11 @@ export default class imageFeed {
      * @param params
      */
     reSize(data, params) {
+        params.width = params.width || this.defaultWidth;
+        params.height = params.height || this.defaultHeight;
         if (data && params.width && params.height) {
-            this.fromPixels2DContext.canvas.width = pixels.width;
-            this.fromPixels2DContext.canvas.height = pixels.height;
+            this.fromPixels2DContext.canvas.width = params.width || this.defaultWidth;
+            this.fromPixels2DContext.canvas.height = params.height || this.defaultHeight;
             this.fromPixels2DContext.drawImage(
                 data, 0, 0, params.width, params.height);
         }
@@ -52,8 +58,7 @@ export default class imageFeed {
      */
     getImageData(pixels) {
         let vals = this.fromPixels2DContext
-            .getImageData(0, 0, pixels.width, pixels.height)
-            .data;
+            .getImageData(0, 0, pixels.width, pixels.height);
         return vals;
     };
 
@@ -73,8 +78,20 @@ export default class imageFeed {
         return data;
     };
 
-    fromPixels(image, opt) {
+    fromPixels(pixels, opt) {
+        let data;
+        if (pixels instanceof HTMLImageElement || pixels instanceof HTMLVideoElement) {
+            this.reSize(pixels, params);
+            data = this.getImageData(pixels);
+        }
 
+        if (opt.gray) {
+            data = grayscale (data);
+        }
+
+        if (opt.shape) {
+
+        }
         return [{data: values, shape: shape, name: 'pixel'}];
     }
 }

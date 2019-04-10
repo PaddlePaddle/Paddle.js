@@ -21,9 +21,10 @@ export default class imageFeed {
         const mode = inputs.mode;
         const channel = inputs.channel;
         const rotate = inputs.rotate;
+        const params = inputs.params;
         let output = [];
 
-        output = this.fromPixels(input);
+        output = this.fromPixels(input, params);
         return output;
     };
 
@@ -31,8 +32,22 @@ export default class imageFeed {
      * 重新设定图片tensor形状
      * @param shape
      */
-    reshape(shape) {
-
+    reshape(imageData, opt) {
+        let data = imageData.data;
+        let red = [];
+        let green = [];
+        let blue = [];
+        let mean = opt.mean;
+        let std = opt.std;
+        for (let i = 0; i < data.length; i += 4) {
+            // img_mean 0.485, 0.456, 0.406
+            //img_std 0.229, 0.224, 0.225
+            red.push(((data[i] / 255) - mean[0]) / std[0]); // red
+            green.push(((data[i + 1] / 255) - mean[1]) / std[1]); // green
+            blue.push(((data[i + 2] / 255) - mean[2]) / std[2]); // blue
+        }
+        let tmp = green.concat(blue);
+        return red.concat(tmp);
     };
 
     /**
@@ -69,6 +84,7 @@ export default class imageFeed {
      */
     grayscale (imageData) {
         let data = imageData.data;
+
         for (let i = 0; i < data.length; i += 4) {
             let avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
             data[i] = avg; // red
@@ -81,8 +97,8 @@ export default class imageFeed {
     fromPixels(pixels, opt) {
         let data;
         if (pixels instanceof HTMLImageElement || pixels instanceof HTMLVideoElement) {
-            this.reSize(pixels, params);
-            data = this.getImageData(pixels);
+            this.reSize(pixels, opt);
+            data = this.getImageData(opt);
         }
 
         if (opt.gray) {
@@ -90,9 +106,9 @@ export default class imageFeed {
         }
 
         if (opt.shape) {
-
+            data = this.reshape(data, opt);
         }
-        return [{data: values, shape: shape, name: 'pixel'}];
+        return [{data: data, shape: opt.shape, name: 'pixel'}];
     }
 }
 /* eslint-enable */

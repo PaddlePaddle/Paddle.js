@@ -30,7 +30,7 @@ export default class GraphExecutor {
         if (this.type === 'feed') {
             return this.inputs.X;
         }
-        else if (this.type === 'batchnorm') {
+        else if (this.type === 'batchnorm' || this.type === 'batch_norm') {
             return this.inputs.X;
         }
         else if (this.type === 'conv2d') {
@@ -70,7 +70,7 @@ export default class GraphExecutor {
         else if (this.type === 'depthwise_conv2d') {
             return this.outputs.Output;
         }
-        else if (this.type === 'batchnorm') {
+        else if (this.type === 'batchnorm' || this.type === 'batch_norm') {
             this.outputs.out = this.outputs.Y;
             return this.outputs.Y;
         }

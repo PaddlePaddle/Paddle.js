@@ -1,6 +1,6 @@
 /* eslint-disable */
 import GraphExecutor from './executor';
-import IO from './io';
+import IO from '../feed/imageFeed';
 import Runtime from '../../src/runtime/runtime';
 /**
  * @file GraphModel，绘制生成model网络
@@ -81,6 +81,7 @@ export default class GraphModel  {
 
             this.handler = load;
         }
+        // jsonp请求方式
         else if (type === 'jsonp') {
             let json;
             let s = document.createElement('script');

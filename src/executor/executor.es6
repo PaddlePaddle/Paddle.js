@@ -13,6 +13,12 @@ export default class GraphExecutor {
         this.inputs = model.inputs;
         this.outputs  = model.outputs;
         this.attrs = model.attrs;
+        if (this.type === 'batchnorm') {
+            this.attrs.Bias = model.inputs.Bias;
+            this.attrs.Mean = model.inputs.Mean;
+            this.attrs.Scale = model.inputs.Scale;
+            this.attrs.Variance = model.inputs.Variance;
+        }
         this.type = model.type;
         this.finish = false;
         this.next = null;
@@ -24,7 +30,7 @@ export default class GraphExecutor {
         if (this.type === 'feed') {
             return this.inputs.X;
         }
-        else if (this.type === 'batchnorm') {
+        else if (this.type === 'batchnorm' || this.type === 'batch_norm') {
             return this.inputs.X;
         }
         else if (this.type === 'conv2d') {
@@ -64,7 +70,7 @@ export default class GraphExecutor {
         else if (this.type === 'depthwise_conv2d') {
             return this.outputs.Output;
         }
-        else if (this.type === 'batchnorm') {
+        else if (this.type === 'batchnorm' || this.type === 'batch_norm') {
             this.outputs.out = this.outputs.Y;
             return this.outputs.Y;
         }
@@ -74,8 +80,13 @@ export default class GraphExecutor {
 
     }
 
+    /**
+     * 将输入数据和具体op进行关联，触发执行具体每一个op
+     * @param inputs
+     * @param outputs
+     * @param runtime
+     */
     execute(inputs, outputs, runtime) {
-        console.log(inputs, outputs);
         if (this.type !== 'feed') {
             runtime.run(this.type, inputs);
             if (this.type === 'scale') {
@@ -84,17 +95,7 @@ export default class GraphExecutor {
         } else {
             start = +Date.now();
         }
-        // actions[this.type] = actions[this.type] || 0;
-        // if ((this.type === 'conv2d' && actions[this.type] < 3) ||
-        //     (this.type === 'elementwise_add' && actions[this.type] === 0) ||
-        //     (this.type === 'relu' && actions[this.type] === 0) ||
-        //     (this.type === 'pool2d' && actions[this.type] === 0)) {
-        //     actions[this.type] += 1;
-        //     console.log(inputs, outputs);
-        //     runtime.run(this.type, inputs);
-        // }
     }
-
 }
 
 /* eslint-enable */

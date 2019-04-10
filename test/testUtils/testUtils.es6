@@ -4,19 +4,22 @@ import 'babel-polyfill';
 import GraphExecutor from '../../src/executor/executor';
 import Loader from '../../src/executor/loader';
 import Runtime from '../../src/runtime/runtime';
+// 获取map表
+import Map from '../data/map';
+console.dir(['map', Map]);
 
 let Diff = require('./diff');
 let datas;
 let otherResult;
 let output
 async function run() {
-    const MODEL_URL = '/test/unitData/model.test.depthwise_conv2d.json';
+    const MODEL_URL = '/test/unitData/model.test.batchnorm.json';
     const graphModel= new Loader();
     const model = await graphModel.loadGraphModel(MODEL_URL);
     datas = model.handler;
     output = deepCopy(model.handler);
     // 测试单元
-    let item = getTensor('depthwise_conv2d');
+    let item = getTensor('batchnorm');
     func(item);
     // let inst = model.execute({input: cat});
     // console.dir(['result', inst.read()]);

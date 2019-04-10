@@ -50,6 +50,7 @@ export default class gpu {
         this.height_shape_out = opts.height_shape || 1;
         this.width_texture_out = opts.width_texture || 1;
         this.height_texture_out = opts.height_texture || 1;
+        this.total_shape = opts.total_shape || 0;
     }
 
     isFloatingTexture() {
@@ -310,7 +311,7 @@ export default class gpu {
         // console.dir(['framebuffer状态', this.frameBufferIsComplete()]);
         gl.readPixels(0, 0, this.width_texture_out, this.height_texture_out, gl.RGBA, gl.FLOAT, pixels, 0);
 
-        return pixels;
+        return pixels.slice(0, this.total_shape);
     }
 
     dispose() {

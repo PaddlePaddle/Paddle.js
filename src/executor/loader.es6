@@ -137,8 +137,8 @@ export default class GraphModel  {
         const tensor = this.constructTensor(executor, inputs);
         executor.execute(tensor, outputsName, this.inst);
 
-        if (executor.next && this.index < 2) {
-            ++this.index;
+        if (executor.next) {
+            // ++this.index;
             const id = executor.next;
             const next = this.getTensor(id);
             this.execute_(inputs, next[0], outputs)
@@ -157,8 +157,9 @@ export default class GraphModel  {
             'width_raw_canvas': 512,
             'height_raw_canvas': 512
         });
-
+        let start = +Date.now();
         this.execute_(inputs, executor[0], outputs);
+        console.log('总的执行时间是' + (+Date.now() - start));
         return this.inst;
     }
 

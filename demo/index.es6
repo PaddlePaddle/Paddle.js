@@ -22,6 +22,7 @@ async function run() {
             std: [0.229, 0.224, 0.225]  // 预设方差
         }});
     let inst = model.execute({input: feed});
-    // console.dir(['result', inst.read()]);
+    // 其实这里应该有个fetch的执行调用或者fetch的输出
+    console.dir(['result', inst.read()]);
 }
 run();

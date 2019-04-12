@@ -50,7 +50,7 @@ export default class io {
             values = new Array(vals);
         } else {
             const numPixels = (shape[1] || pixels.width) * (shape[2] ||pixels.height);
-            console.log(numPixels, numPixels * numChannels);
+            // console.log(numPixels, numPixels * numChannels);
             values = new Array(numPixels * numChannels);
             for (let i = 0; i < numPixels; i++) {
                 for (let channel = 0; channel < numChannels; ++channel) {
@@ -58,7 +58,7 @@ export default class io {
                 }
             }
         }
-        console.log(pixels.height, pixels.width, numChannels, values);
+        // console.log(pixels.height, pixels.width, numChannels, values);
         // const outShape: [number, number, number] =
         //     [pixels.height, pixels.width, numChannels];
         values = [

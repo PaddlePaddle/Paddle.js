@@ -1,6 +1,9 @@
 import 'babel-polyfill';
 import Graph from '../src/executor/loader';
 import IO from '../src/feed/imageFeed';
+import Utils from '../src/utils/utils';
+// 获取map表
+import Map from '../test/data/map';
 /**
  * @file model demo 入口文件
  * @author wangqun@baidu.com
@@ -21,8 +24,13 @@ async function run() {
             mean: [0.485, 0.456, 0.406], // 预设期望
             std: [0.229, 0.224, 0.225]  // 预设方差
         }});
+<<<<<<< HEAD
     let inst = model.execute({input: feed});
     // 其实这里应该有个fetch的执行调用或者fetch的输出
     console.dir(['result', inst.read()]);
+
+    let maxItem = Utils.getMaxItem(result);
+    console.log('识别出的结果是' + Map['' + maxItem.index]);
+
 }
 run();

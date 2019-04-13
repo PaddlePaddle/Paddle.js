@@ -10,11 +10,11 @@ import Map from '../test/data/map';
  *
  */
 // 'http://mms-xr.cdn.bcebos.com/paddle/mnist/model.json'
-async function run() {
+async function run(input) {
     const MODEL_URL = '/mobileNet/model.json';
     const graphModel= new Graph();
     const model = await graphModel.loadGraphModel(MODEL_URL, {multipart: true});
-    const input = document.getElementById('mobilenet');
+    // const input = document.getElementById('mobilenet');
     const io = new IO();
     let feed = io.process({
         input: input,
@@ -31,5 +31,26 @@ async function run() {
     let maxItem = Utils.getMaxItem(result);
     console.log('识别出的结果是' + Map['' + maxItem.index]);
 
+};
+
+var image = '';
+function selectImage(file) {
+    if (!file.files || !file.files[0]) {
+        return;
+    }
+    var reader = new FileReader();
+    reader.onload = function (evt) {
+        let img = document.getElementById('image');
+        img.src = evt.target.result;
+        img.onload = function() {
+            alert(1);
+            run(img);
+        }
+        image = evt.target.result;
+    }
+    reader.readAsDataURL(file.files[0]);
 }
-run();
+// selectImage
+document.getElementById ("uploadImg").onchange = function () {
+    selectImage(this);
+};

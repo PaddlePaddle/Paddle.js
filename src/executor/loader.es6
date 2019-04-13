@@ -192,6 +192,9 @@ export default class GraphModel  {
                 const io = new IO();
                 input[key] = io.fromPixels(data, pixel);
             }
+            else if ((key === 'Input') && (inputName === 'image')) {
+                input[key] = data.input;
+            }
             else {
                 input[key] = that.getTensorAttr(input[key][0]);
             }

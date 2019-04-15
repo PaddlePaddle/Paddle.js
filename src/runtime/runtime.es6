@@ -29,8 +29,13 @@ export default {
     },
 
     run(opName, data) {
+        let time = +Date.now();
+        let start = time;
+        let timeObj = {};
         // 生成op的数据
         const  opData = this.adaptData(opName, data);
+        let end = +Date.now();
+        timeObj['opData-time'] = end - start;
         if (!opData.isPass) {
             console.log('跳过当前op：' + opName);
             return this;
@@ -38,23 +43,37 @@ export default {
         // 设置gpu参数
         const gpu = this.gpu;
         gpu.setOutProps(opData.tensor['out']);
+        start = +Date.now();
+        timeObj['setOutProps-time'] = start - end;
         // 生成shader
         const fsCode = factory.buildShader(opData.name, opData.data);
-        console.dir([opData.name + ', shaderCode shader', fsCode]);
+        end = +Date.now();
+        timeObj['fsCode-time'] = end - start;
+        // console.dir([opData.name + ', shaderCode shader', fsCode]);
         // 生成帧缓存材质
         const texture = gpu.makeTexure(WebGLRenderingContext.FLOAT, null);
+        start = +Date.now();
+        timeObj['maketexture-time'] = start - end;
         gpu.attachFrameBuffer(texture, opData.data);
-        let bufferStatus = gpu.frameBufferIsComplete();
-        if (bufferStatus.isComplete) {
+        end = +Date.now();
+        timeObj['attachFrameBuffer-time'] = end - start;
+        // let bufferStatus = gpu.frameBufferIsComplete();
+        // if (bufferStatus.isComplete) {
+            start = +Date.now();
+            timeObj['buferstatus-time'] = start - end;
             // console.log(bufferStatus.isComplete);
             gpu.create(VSHADER, fsCode);
+            end = +Date.now();
+            timeObj['createshader-time'] = end - start;
+            timeObj['jsTime'] = end - time;
             // console.dir(['测试数据---输入参数', data]);
+            statistic.push(timeObj);
             // 开始计算
             this.compute(opData.name, opData);
             return this;
-        } else {
-            return bufferStatus.message;
-        }
+        // } else {
+        //     return bufferStatus.message;
+        // }
     },
 
     /**
@@ -75,8 +94,8 @@ export default {
             }
             return item;
         });
-
         this.gpu.render(data);
+
     },
 
     /**

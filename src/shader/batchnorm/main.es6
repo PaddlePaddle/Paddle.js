@@ -10,9 +10,10 @@ void main(void) {
     vec4 v4 = getPixelsFromTexturePos_texture_origin(vCoord);
     // 获取原始长度
     vec2 outCoord = moveTexture2PosToReal_texture_out(vCoord);
+    int n = getArrayIndexFromTexturePos_texture_out(vec3(outCoord.x, outCoord.y, 0.0));
     for (int i = 0; i < 4; i++) {
-        int n = getArrayIndexFromTexturePos_texture_out(vec3(outCoord.x, outCoord.y, float(i)));
-        if (n < total_shape_origin) {
+        n += i;
+        // if (n < total_shape_origin) {
             // 获取output的坐标
             ivec4 outPos = getTensorPosFromArrayIndex_out(n);
             // int start = getArrayIndexFromTensorPos_origin(ivec4(outPos[0], outPos[1], 0, 0));
@@ -31,7 +32,7 @@ void main(void) {
             // 归一化
             float x = (v4[i] - mean) / sqrt(std + epsilon);
             v4[i] = scale * x + bias;
-        }
+        // }
     }
 
     gl_FragColor = v4;

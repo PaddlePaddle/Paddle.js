@@ -10,6 +10,8 @@ import Map from '../test/data/map';
  *
  */
 // 'http://mms-xr.cdn.bcebos.com/paddle/mnist/model.json'
+// 统计参数
+window.statistic = [];
 async function run() {
     const MODEL_URL = '/mobileNet/model.json';
     const graphModel= new Graph();
@@ -33,6 +35,10 @@ async function run() {
 
     let maxItem = Utils.getMaxItem(result);
     console.log('识别出的结果是' + Map['' + maxItem.index]);
-
+    console.dir(['每个op耗时', window.statistic]);
+    let total = statistic.reduce((all, cur) => {
+        return all + cur.runTime;
+    }, 0);
+    console.log('op total = ' + total);
 }
 run();

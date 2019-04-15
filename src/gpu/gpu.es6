@@ -67,7 +67,8 @@ export default class gpu {
         // 创建&绑定vertex&frament shader
         this.initShader(vshaderCode);
         this.fragmentShader = this.initShader(fshaderCode, 'fragment');
-
+        this.gl.attachShader(program, this.vertexShader);
+        this.gl.attachShader(program, this.fragmentShader);
         gl.linkProgram(program);
         gl.useProgram(program);
 
@@ -97,13 +98,14 @@ export default class gpu {
             } else {
                 this.fragmentShader = shader;
             }
+            this.gl.shaderSource(shader, code);
+            this.gl.compileShader(shader);
+            if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
+                throw new Error("compile: " + this.gl.getShaderInfoLog(shader));
+            }
         }
-        this.gl.shaderSource(shader, code);
-        this.gl.compileShader(shader);
-        if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
-            throw new Error("compile: " + this.gl.getShaderInfoLog(shader));
-        }
-        this.gl.attachShader(this.program, shader);
+
+        // this.gl.attachShader(this.program, shader);
         return shader;
     }
 

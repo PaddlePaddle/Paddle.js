@@ -3,10 +3,7 @@
  * @file GraphExecutor，封装可执行单元
  * @author wangqun@baidu.com
  */
-let first = true;
 let start;
-let end;
-let actions = {};
 export default class GraphExecutor {
 
     constructor(model) {
@@ -83,7 +80,11 @@ export default class GraphExecutor {
     execute(inputs, outputs, runtime) {
         // console.log(inputs, outputs);
         if (this.type !== 'feed') {
+            let time = +Date.now();
             runtime.run(this.type, inputs);
+            let length = statistic.length;
+            statistic[length - 1].type = this.type;
+            statistic[length - 1].runTime = +Date.now() - time;
             // if (this.type === 'scale') {
             //     console.log('时间是：' + (+Date.now() - start));
             // }

@@ -43,7 +43,6 @@ function selectImage(file) {
         let img = document.getElementById('image');
         img.src = evt.target.result;
         img.onload = function() {
-            alert(1);
             run(img);
         }
         image = evt.target.result;

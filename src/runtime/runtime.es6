@@ -1,7 +1,5 @@
 /* eslint-disable */
-import Utils from '../utils/utils';
 import Gpu from '../gpu/gpu';
-import Tensor from '../utils/tensor';
 import OpData from '../utils/opData';
 import Factory from '../factory/fshader/factory';
 import VSHADER from '../shader/v_shader';
@@ -29,14 +27,14 @@ export default {
         }
     },
 
-    run(opName, data) {
+    run(opName, opData) {
         let time = +Date.now();
         let start = time;
         let timeObj = {};
         // 生成op的数据
-        const  opData = this.adaptData(opName, data);
+        // const  opData = this.adaptData(opName, data);
         let end = +Date.now();
-        timeObj['opData-time'] = end - start;
+        // timeObj['opData-time'] = end - start;
         if (!opData.isPass) {
             console.log('跳过当前op：' + opName);
             return this;
@@ -45,25 +43,25 @@ export default {
         const gpu = this.gpu;
         gpu.setOutProps(opData.tensor['out']);
         start = +Date.now();
-        timeObj['setOutProps-time'] = start - end;
+        // timeObj['setOutProps-time'] = start - end;
         // 生成shader
-        const fsCode = factory.buildShader(opData.name, opData.data);
+        // const fsCode = factory.buildShader(opData.name, opData.data);
         end = +Date.now();
-        timeObj['fsCode-time'] = end - start;
+        // timeObj['fsCode-time'] = end - start;
         // console.dir([opData.name + ', shaderCode shader', fsCode]);
         // 生成帧缓存材质
-        const texture = gpu.makeTexure(WebGLRenderingContext.FLOAT, null);
+        gpu.makeTexure(WebGLRenderingContext.FLOAT, null);
         start = +Date.now();
-        timeObj['maketexture-time'] = start - end;
-        gpu.attachFrameBuffer(texture, opData.data);
+        // timeObj['maketexture-time'] = start - end;
+        // gpu.attachFrameBuffer();
         end = +Date.now();
-        timeObj['attachFrameBuffer-time'] = end - start;
+        // timeObj['attachFrameBuffer-time'] = end - start;
         let bufferStatus = gpu.frameBufferIsComplete();
         if (bufferStatus.isComplete) {
             start = +Date.now();
             timeObj['buferstatus-time'] = start - end;
             // console.log(bufferStatus.isComplete);
-            gpu.create(VSHADER, fsCode);
+            gpu.create(VSHADER, opData.fsCode);
             end = +Date.now();
             timeObj['createshader-time'] = end - start;
             timeObj['jsTime'] = end - time;

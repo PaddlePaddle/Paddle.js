@@ -13,9 +13,6 @@ import Map from '../test/data/map';
 // 统计参数
 window.statistic = [];
 async function run() {
-    const MODEL_URL = '/mobileNet/model.json';
-    const graphModel= new Graph();
-    const model = await graphModel.loadGraphModel(MODEL_URL, {multipart: true});
     const input = document.getElementById('mobilenet');
     const io = new IO();
     let feed = io.process({
@@ -28,6 +25,10 @@ async function run() {
             std: [0.229, 0.224, 0.225]  // 预设方差
         }});
     console.dir(['feed', feed]);
+    const MODEL_URL = '/mobileNet/model.json';
+    const graphModel= new Graph();
+    const model = await graphModel.loadGraphModel(MODEL_URL, {multipart: true, feed});
+
     let inst = model.execute({input: feed});
     // 其实这里应该有个fetch的执行调用或者fetch的输出
     let result = inst.read();

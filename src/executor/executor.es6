@@ -13,6 +13,7 @@ export default class GraphExecutor {
         this.type = model.type;
         this.finish = false;
         this.next = null;
+        this.opData = null;
         this.id = +new Date() + model.type + Math.floor(Math.random() * 10 + 1) + model.idx;
     }
 
@@ -74,14 +75,13 @@ export default class GraphExecutor {
     /**
      * 将输入数据和具体op进行关联，触发执行具体每一个op
      * @param inputs
-     * @param outputs
      * @param runtime
      */
-    execute(inputs, outputs, runtime) {
+    execute(runtime) {
         // console.log(inputs, outputs);
         if (this.type !== 'feed') {
             let time = +Date.now();
-            runtime.run(this.type, inputs);
+            runtime.run(this.type, this.opData);
             let length = statistic.length;
             statistic[length - 1].type = this.type;
             statistic[length - 1].runTime = +Date.now() - time;

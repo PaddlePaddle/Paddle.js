@@ -30,6 +30,7 @@ async function run(input) {
 
     let maxItem = Utils.getMaxItem(result);
     console.log('识别出的结果是' + Map['' + maxItem.index]);
+    document.getElementById ("txt").innerHTML = maxItem.index;
 
 };
 

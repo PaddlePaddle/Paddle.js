@@ -1,4 +1,4 @@
-/* global statistic */
+/* eslint-disable */
 import Utils from '../utils/utils';
 import Gpu from '../gpu/gpu';
 import Tensor from '../utils/tensor';

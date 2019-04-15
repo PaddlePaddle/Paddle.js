@@ -1,3 +1,4 @@
+/* global statistic */
 import Utils from '../utils/utils';
 import Gpu from '../gpu/gpu';
 import Tensor from '../utils/tensor';
@@ -57,8 +58,8 @@ export default {
         gpu.attachFrameBuffer(texture, opData.data);
         end = +Date.now();
         timeObj['attachFrameBuffer-time'] = end - start;
-        // let bufferStatus = gpu.frameBufferIsComplete();
-        // if (bufferStatus.isComplete) {
+        let bufferStatus = gpu.frameBufferIsComplete();
+        if (bufferStatus.isComplete) {
             start = +Date.now();
             timeObj['buferstatus-time'] = start - end;
             // console.log(bufferStatus.isComplete);
@@ -71,9 +72,9 @@ export default {
             // 开始计算
             this.compute(opData.name, opData);
             return this;
-        // } else {
-        //     return bufferStatus.message;
-        // }
+        } else {
+            return bufferStatus.message;
+        }
     },
 
     /**

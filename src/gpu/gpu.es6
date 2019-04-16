@@ -23,6 +23,8 @@ export default class gpu {
     }
 
     initCache() {
+        // 运行次数
+        this.times = 0;
         const gl = this.gl;
         // 缓存每个op的texture
         this.textures = [];
@@ -61,18 +63,27 @@ export default class gpu {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
             gl.bindTexture(gl.TEXTURE_2D, null);
 
-            gl.attachShader(this.programs[i], this.vertexShader);
-            gl.linkProgram(this.programs[i]);
-            gl.useProgram(this.programs[i]);
-
-            let aPosition = gl.getAttribLocation(this.programs[i], 'position');
-            // Turn on the position attribute
-            gl.enableVertexAttribArray(aPosition);
-            // Bind the position buffer.
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
-            gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 16, 0);
+            // gl.attachShader(this.programs[i], this.vertexShader);
+            // /*gl.linkProgram(this.programs[i]);
+            // gl.useProgram(this.programs[i]);*/
+            //
+            // let aPosition = gl.getAttribLocation(this.programs[i], 'position');
+            // // Turn on the position attribute
+            // gl.enableVertexAttribArray(aPosition);
+            // // Bind the position buffer.
+            // gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+            // gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 16, 0);
         }
+    }
 
+    runVertexShader() {
+        const gl = this.gl;
+        let aPosition = gl.getAttribLocation(this.program, 'position');
+        // Turn on the position attribute
+        gl.enableVertexAttribArray(aPosition);
+        // Bind the position buffer.
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+        gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 16, 0);
     }
 
     setOutProps(opts) {
@@ -96,10 +107,16 @@ export default class gpu {
         let index = this.textureBufferIndex % 2;
         const program = this.programs[index];
         this.program = program;
+        if (this.times < 2) {
+            gl.attachShader(program, this.vertexShader);
+        }
         this.textureBufferIndex = (this.textureBufferIndex + 1) >= 2 ? 0 : 1;
         this.gl.attachShader(program, fshader);
         gl.linkProgram(program);
         gl.useProgram(program);
+        if (this.times++ < 2) {
+            this.runVertexShader();
+        }
         if (!!this.fragmentShader) {
             const cache = this.programs[(index + 1) % 2];
             gl.detachShader(cache, this.fragmentShader);

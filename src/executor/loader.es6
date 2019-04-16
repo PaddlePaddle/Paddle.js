@@ -135,8 +135,22 @@ export default class GraphModel  {
             const type = op.type;
             if (type !== 'feed' && type !== 'fetch') {
                 const tensor = this.constructTensor(op);
-                op.opData = new OpData(type, tensor.inputs, tensor.outputs, tensor.attrs);
-                op.opData.fsCode = factory.buildShader(op.opData.name, op.opData.data);
+                const opData = new OpData(type, tensor.inputs, tensor.outputs, tensor.attrs);
+                const name = opData.name;
+                opData.fsCode = factory.buildShader(name, opData.data);
+                opData.renderData = opConfs[name].map(elem => {
+                    let item = Object.assign({}, elem);
+                    const tensorData = opData.tensor[item.tensor];
+                    if (item.type === 'texture') {
+                        item.data = tensorData.data;
+                        item['width_texture'] = tensorData['width_texture'];
+                        item['height_texture'] = tensorData['height_texture'];
+                    } else if (item.type === 'uniform') {
+                        item.data = tensorData[item.variable];
+                    }
+                    return item;
+                });
+                op.opData = opData;
                 delete op.inputs;
                 delete op.outputs;
                 delete op.attrs;

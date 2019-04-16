@@ -1,17 +1,11 @@
 /* eslint-disable */
 import Gpu from '../gpu/gpu';
-import OpData from '../utils/opData';
-import Factory from '../factory/fshader/factory';
 import VSHADER from '../shader/v_shader';
 /**
  * @file gpu运行时
  * @author yangmingming
  *
  */
-// 生成factory实例
-const factory = new Factory({});
-// 获取op的输入配置
-const opConfs = factory.getOpConfs();
 export default {
     /**
      * 初始化, 生成gpu实例
@@ -68,33 +62,11 @@ export default {
             // console.dir(['测试数据---输入参数', data]);
             statistic.push(timeObj);
             // 开始计算
-            this.compute(opData.name, opData);
+            this.gpu.render(opData.renderData);
             return this;
         } else {
             return bufferStatus.message;
         }
-    },
-
-    /**
-     * 计算op
-     *
-     * @param {Object} opts 输入数据
-     */
-    compute(opName, opts = {}) {
-        // 配置op的输入数据
-        const data = opConfs[opName].map(item => {
-            const tensor = opts.tensor[item.tensor];
-            if (item.type === 'texture') {
-                item.data = tensor.data;
-                item['width_texture'] = tensor['width_texture'];
-                item['height_texture'] = tensor['height_texture'];
-            } else if (item.type === 'uniform') {
-                item.data = tensor[item.variable];
-            }
-            return item;
-        });
-        this.gpu.render(data);
-
     },
 
     /**

@@ -33,7 +33,7 @@ export default {
         let timeObj = {};
         // 生成op的数据
         // const  opData = this.adaptData(opName, data);
-        let end = +Date.now();
+        // let end = +Date.now();
         // timeObj['opData-time'] = end - start;
         if (!opData.isPass) {
             console.log('跳过当前op：' + opName);
@@ -42,19 +42,19 @@ export default {
         // 设置gpu参数
         const gpu = this.gpu;
         gpu.setOutProps(opData.tensor['out']);
-        start = +Date.now();
+        // start = +Date.now();
         // timeObj['setOutProps-time'] = start - end;
         // 生成shader
         // const fsCode = factory.buildShader(opData.name, opData.data);
-        end = +Date.now();
+        // end = +Date.now();
         // timeObj['fsCode-time'] = end - start;
         // console.dir([opData.name + ', shaderCode shader', fsCode]);
         // 生成帧缓存材质
         gpu.makeTexure(WebGLRenderingContext.FLOAT, null);
-        start = +Date.now();
+        // start = +Date.now();
         // timeObj['maketexture-time'] = start - end;
         // gpu.attachFrameBuffer();
-        end = +Date.now();
+        let end = +Date.now();
         // timeObj['attachFrameBuffer-time'] = end - start;
         let bufferStatus = gpu.frameBufferIsComplete();
         if (bufferStatus.isComplete) {

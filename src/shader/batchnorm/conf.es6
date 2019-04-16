@@ -6,19 +6,6 @@
 export default {
     dep: [
         {
-            func: 'getTexturePosFromArrayIndex',
-            conf: {
-                TEXTURE_NAME: 'texture_origin',
-                TENSOR_TYPE: 'vec4'
-            }
-        },
-        {
-            func: 'getValueFromTexturePos',
-            conf: {
-                TEXTURE_NAME: 'texture_origin'
-            }
-        },
-        {
             func: 'getPixelsFromTexturePos',
             conf: {
                 TEXTURE_NAME: 'texture_origin'
@@ -51,27 +38,9 @@ export default {
             }
         },
         {
-            func: 'getValueFromTexturePos',
+            func: 'getPixelsFromTexturePos',
             conf: {
                 TEXTURE_NAME: 'texture_scale'
-            }
-        },
-        {
-            func: 'getValueFromTexturePos',
-            conf: {
-                TEXTURE_NAME: 'texture_bias'
-            }
-        },
-        {
-            func: 'getValueFromTexturePos',
-            conf: {
-                TEXTURE_NAME: 'texture_mean'
-            }
-        },
-        {
-            func: 'getValueFromTexturePos',
-            conf: {
-                TEXTURE_NAME: 'texture_variance'
             }
         }
     ],
@@ -94,12 +63,6 @@ export default {
         'EPSILON',
         'WIDTH_TEXTURE_SCALE',
         'HEIGHT_TEXTURE_SCALE',
-        'WIDTH_TEXTURE_BIAS',
-        'HEIGHT_TEXTURE_BIAS',
-        'WIDTH_TEXTURE_MEAN',
-        'HEIGHT_TEXTURE_MEAN',
-        'WIDTH_TEXTURE_VARIANCE',
-        'HEIGHT_TEXTURE_VARIANCE',
         'MULTI_VALUE',
         'BIAS_VALUE',
         'ACTIVE_FUNCTION'
@@ -107,24 +70,6 @@ export default {
     input: [
         {
             tensor: 'scale',
-            variable: 'texture',
-            setter: 'initTexture',
-            type: 'texture'
-        },
-        {
-            tensor: 'bias',
-            variable: 'texture',
-            setter: 'initTexture',
-            type: 'texture'
-        },
-        {
-            tensor: 'mean',
-            variable: 'texture',
-            setter: 'initTexture',
-            type: 'texture'
-        },
-        {
-            tensor: 'variance',
             variable: 'texture',
             setter: 'initTexture',
             type: 'texture'

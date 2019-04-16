@@ -42,10 +42,19 @@ export default class gpu {
         // 当前op输出texture
         this.currentTexture = null;
         // 帧缓存
-        this.frameBuffer = null;
+        this.frameBuffer = gl.createFramebuffer();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this.frameBuffer);
         // texture buffer
-        this.textureBuffer = [];
+        this.textureBuffer = [gl.createTexture(), gl.createTexture()];
         this.textureBufferIndex = 0;
+        for (let i = 0; i < 2; i++) {
+            gl.bindTexture(gl.TEXTURE_2D, this.textureBuffer[i]);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            gl.bindTexture(gl.TEXTURE_2D, null);
+        }
     }
 
     setOutProps(opts) {
@@ -141,12 +150,6 @@ export default class gpu {
         this.currentTexture = this.textureBuffer[this.textureBufferIndex % 2];
         this.textureBufferIndex = (this.textureBufferIndex + 1) >= 2 ? 0 : 1;
         const gl = this.gl;
-        let frameBuffer = this.frameBuffer;
-        if (!frameBuffer) {
-            frameBuffer = gl.createFramebuffer();
-            this.frameBuffer = frameBuffer;
-            gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
-        }
         gl.framebufferTexture2D(gl.FRAMEBUFFER, // The target is always a FRAMEBUFFER.
             gl.COLOR_ATTACHMENT0, // We are providing the color buffer.
             gl.TEXTURE_2D, // This is a 2D image texture.
@@ -159,7 +162,7 @@ export default class gpu {
             opts.width_texture_out || this.width_texture_out,
             opts.height_texture_out || this.height_texture_out
         );
-        return frameBuffer;
+        return this.frameBuffer;
     }
 
     /**
@@ -271,18 +274,10 @@ export default class gpu {
     // 生成帧缓存的texture
     makeTexure(type, data, opts = {}) {
         const gl = this.gl;
-        let texture;
-        if (this.textureBuffer.length === 0) {
-            this.textureBuffer = [gl.createTexture(), gl.createTexture()];
-        }
         let index = this.textureBufferIndex % 2;
-        texture = this.textureBuffer[index];
+        let texture = this.textureBuffer[index];
         gl.bindTexture(gl.TEXTURE_2D, texture);
 
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         // Pixel format and data for the texture
         gl.texImage2D(gl.TEXTURE_2D, // Target, matches bind above.
             0,             // Level of detail.
@@ -294,7 +289,7 @@ export default class gpu {
             type,          // Data type for each chanel.
             data);         // Image data in the described format, or null.
         // Unbind the texture.
-        gl.bindTexture(gl.TEXTURE_2D, null);
+        // gl.bindTexture(gl.TEXTURE_2D, null);
         this.attachFrameBuffer();
 
         return texture;

@@ -1,4 +1,5 @@
 /* eslint-disable */
+import VSHADER from '../shader/v_shader';
 /**
  * @file gpu运算
  * @author yangmingming
@@ -36,6 +37,8 @@ export default class gpu {
         gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
         // shader
         this.vertexShader = null;
+        // 生成vertextShader
+        this.initShader(VSHADER);
         this.fragmentShader = null;
         // 上一个texture
         this.prevTexture = null;
@@ -46,6 +49,9 @@ export default class gpu {
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.frameBuffer);
         // texture buffer
         this.textureBuffer = [gl.createTexture(), gl.createTexture()];
+        // program
+        this.programs = [gl.createProgram(), gl.createProgram()];
+        this.program = this.programs[0];
         this.textureBufferIndex = 0;
         for (let i = 0; i < 2; i++) {
             gl.bindTexture(gl.TEXTURE_2D, this.textureBuffer[i]);
@@ -54,7 +60,19 @@ export default class gpu {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
             gl.bindTexture(gl.TEXTURE_2D, null);
+
+            gl.attachShader(this.programs[i], this.vertexShader);
+            gl.linkProgram(this.programs[i]);
+            gl.useProgram(this.programs[i]);
+
+            let aPosition = gl.getAttribLocation(this.programs[i], 'position');
+            // Turn on the position attribute
+            gl.enableVertexAttribArray(aPosition);
+            // Bind the position buffer.
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+            gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 16, 0);
         }
+
     }
 
     setOutProps(opts) {
@@ -67,6 +85,27 @@ export default class gpu {
 
     isFloatingTexture() {
         return (this.textureFloat !== null);
+    }
+
+    attachShader(fshader) {
+        const gl = this.gl;
+        this.textures.forEach(texture => {
+            gl.deleteTexture(texture);
+        });
+        this.textures = [];
+        let index = this.textureBufferIndex % 2;
+        const program = this.programs[index];
+        this.program = program;
+        this.textureBufferIndex = (this.textureBufferIndex + 1) >= 2 ? 0 : 1;
+        this.gl.attachShader(program, fshader);
+        gl.linkProgram(program);
+        gl.useProgram(program);
+        if (!!this.fragmentShader) {
+            const cache = this.programs[(index + 1) % 2];
+            gl.detachShader(cache, this.fragmentShader);
+            gl.deleteShader(this.fragmentShader);
+        }
+        this.fragmentShader = fshader;
     }
 
     create(vshaderCode, fshaderCode) {
@@ -107,8 +146,6 @@ export default class gpu {
             shader = this.gl.createShader(shaderType);
             if (type === 'vertex') {
                 this.vertexShader = shader;
-            } else {
-                this.fragmentShader = shader;
             }
             this.gl.shaderSource(shader, code);
             this.gl.compileShader(shader);
@@ -148,7 +185,7 @@ export default class gpu {
     attachFrameBuffer(opts = {}) {
         this.prevTexture = this.currentTexture;
         this.currentTexture = this.textureBuffer[this.textureBufferIndex % 2];
-        this.textureBufferIndex = (this.textureBufferIndex + 1) >= 2 ? 0 : 1;
+        // this.textureBufferIndex = (this.textureBufferIndex + 1) >= 2 ? 0 : 1;
         const gl = this.gl;
         gl.framebufferTexture2D(gl.FRAMEBUFFER, // The target is always a FRAMEBUFFER.
             gl.COLOR_ATTACHMENT0, // We are providing the color buffer.

@@ -1,6 +1,5 @@
 /* eslint-disable */
 import Gpu from '../gpu/gpu';
-import VSHADER from '../shader/v_shader';
 /**
  * @file gpu运行时
  * @author yangmingming
@@ -55,7 +54,8 @@ export default {
             start = +Date.now();
             timeObj['buferstatus-time'] = start - end;
             // console.log(bufferStatus.isComplete);
-            gpu.create(VSHADER, opData.fsCode);
+            // gpu.create(VSHADER, opData.fsCode);
+            gpu.attachShader(opData.fshader);
             end = +Date.now();
             timeObj['createshader-time'] = end - start;
             timeObj['jsTime'] = end - time;
@@ -77,9 +77,8 @@ export default {
         // return Utils.shapeData(this.gpu.compute(), [4, 1, 3, 3]);
     },
 
-    adaptData(opName, data = {}) {
-        const opData = new OpData(opName, data.inputs, data.outputs, data.attrs);
-        return opData;
+    createFragmentShader(fsCode) {
+        return this.gpu.initShader(fsCode, 'fragment');
     },
 
     // 释放资源

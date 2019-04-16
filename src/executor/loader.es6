@@ -31,7 +31,10 @@ export default class GraphModel  {
             this.feed = {input: this.loadOptions.feed};
         }
         // op runner
-        this.inst = null;
+        this.inst = Runtime.init({
+            'width_raw_canvas': 512,
+            'height_raw_canvas': 512
+        });
         if (this.loadOptions == null) {
             this.loadOptions = {};
         }
@@ -137,7 +140,8 @@ export default class GraphModel  {
                 const tensor = this.constructTensor(op);
                 const opData = new OpData(type, tensor.inputs, tensor.outputs, tensor.attrs);
                 const name = opData.name;
-                opData.fsCode = factory.buildShader(name, opData.data);
+                const fsCode = factory.buildShader(name, opData.data);
+                opData.fshader = that.inst.createFragmentShader(fsCode);
                 opData.renderData = opConfs[name].map(elem => {
                     let item = Object.assign({}, elem);
                     const tensorData = opData.tensor[item.tensor];
@@ -183,10 +187,12 @@ export default class GraphModel  {
     execute(inputs) {
         this.feed = inputs;
         const executor = this.getNetsStart(this.weightMap);
-        this.inst = Runtime.init({
-            'width_raw_canvas': 512,
-            'height_raw_canvas': 512
-        });
+        if (!this.inst) {
+            this.inst = Runtime.init({
+                'width_raw_canvas': 512,
+                'height_raw_canvas': 512
+            });
+        }
         let start = +Date.now();
         this.execute_(executor[0]);
         console.log('总的执行时间是' + (+Date.now() - start));

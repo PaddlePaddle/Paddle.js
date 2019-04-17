@@ -12,8 +12,8 @@ import Map from '../test/data/map';
 // 'http://mms-xr.cdn.bcebos.com/paddle/mnist/model.json'
 // 统计参数
 window.statistic = [];
-async function run() {
-    const input = document.getElementById('mobilenet');
+async function run(input) {
+    // const input = document.getElementById('mobilenet');
     const io = new IO();
     let feed = io.process({
         input: input,
@@ -35,11 +35,33 @@ async function run() {
     console.dir(['result', result]);
 
     let maxItem = Utils.getMaxItem(result);
+    document.getElementById ("txt").innerHTML = Map['' + maxItem.index];
     console.log('识别出的结果是' + Map['' + maxItem.index]);
     console.dir(['每个op耗时', window.statistic]);
     let total = statistic.reduce((all, cur) => {
         return all + cur.runTime;
     }, 0);
     console.log('op total = ' + total);
+
+};
+
+var image = '';
+function selectImage(file) {
+    if (!file.files || !file.files[0]) {
+        return;
+    }
+    var reader = new FileReader();
+    reader.onload = function (evt) {
+        let img = document.getElementById('image');
+        img.src = evt.target.result;
+        img.onload = function() {
+            run(img);
+        }
+        image = evt.target.result;
+    }
+    reader.readAsDataURL(file.files[0]);
 }
-run();
+// selectImage
+document.getElementById ("uploadImg").onchange = function () {
+    selectImage(this);
+};

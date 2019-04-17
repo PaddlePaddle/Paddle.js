@@ -29,10 +29,15 @@ export default class imageFeed {
     };
 
     /**
-     * 重新设定图片tensor形状
+     * crop图像&重新设定图片tensor形状
      * @param shape
      */
-    reshape(imageData, opt) {
+    reshape(imageData, opt, scaleSize) {
+        const {sw, sh} = scaleSize;
+        const {width, height} = opt;
+        const hPadding = Math.ceil((sw - width) / 2);
+        const vPadding = Math.ceil((sh - height) / 2);
+
         let data = imageData.data;
         let red = [];
         let green = [];
@@ -42,28 +47,46 @@ export default class imageFeed {
         for (let i = 0; i < data.length; i += 4) {
             // img_mean 0.485, 0.456, 0.406
             //img_std 0.229, 0.224, 0.225
-            red.push(((data[i] / 255) - mean[0]) / std[0]); // red
-            green.push(((data[i + 1] / 255) - mean[1]) / std[1]); // green
-            blue.push(((data[i + 2] / 255) - mean[2]) / std[2]); // blue
+            let index = i / 4;
+            let vIndex = Math.floor(index / sw);
+            let hIndex = index - (vIndex * sw) - 1;
+            if (hIndex >= hPadding && hIndex < (hPadding + width) &&
+                vIndex >= vPadding && vIndex < (vPadding + height)) {
+                red.push(((data[i] / 255) - mean[0]) / std[0]); // red
+                green.push(((data[i + 1] / 255) - mean[1]) / std[1]); // green
+                blue.push(((data[i + 2] / 255) - mean[2]) / std[2]); // blue
+            }
         }
         let tmp = green.concat(blue);
         return red.concat(tmp);
     };
 
     /**
-     * 重新设定图像大小
-     * @param data
+     * 根据scale缩放图像
+     * @param image
      * @param params
+     * @return {Object} 缩放后的尺寸
      */
-    reSize(data, params) {
-        params.width = params.width || this.defaultWidth;
-        params.height = params.height || this.defaultHeight;
-        if (data && params.width && params.height) {
-            this.fromPixels2DContext.canvas.width = params.width || this.defaultWidth;
-            this.fromPixels2DContext.canvas.height = params.height || this.defaultHeight;
-            this.fromPixels2DContext.drawImage(
-                data, 0, 0, params.width, params.height);
+    reSize(image, params) {
+        // 原始图片宽高
+        const width = image.naturalWidth || image.width;
+        const height = image.naturalHeight || image.height;
+        // 缩放后的宽高
+        let sw = width;
+        let sh = height;
+        // 最小边缩放到scale
+        if (width < height) {
+            sw = params.scale;
+            sh = Math.round(sw * height / width);
+        } else {
+            sh = params.scale;
+            sw = Math.round(sh * width / height);
         }
+        this.fromPixels2DContext.canvas.width = sw;
+        this.fromPixels2DContext.canvas.height = sh;
+        this.fromPixels2DContext.drawImage(
+            image, 0, 0, sw, sh);
+        return {sw, sh};
     };
 
     /**
@@ -71,9 +94,13 @@ export default class imageFeed {
      * @param pixels
      * @returns {Uint8ClampedArray}
      */
-    getImageData(pixels) {
+    getImageData(pixels, scaleSize) {
+        const {sw, sh} = scaleSize;
         let vals = this.fromPixels2DContext
-            .getImageData(0, 0, pixels.width, pixels.height);
+            .getImageData(0, 0, sw, sh);
+        // crop图像
+        const width = pixels.width;
+        const height = pixels.height;
         return vals;
     };
 
@@ -96,9 +123,10 @@ export default class imageFeed {
 
     fromPixels(pixels, opt) {
         let data;
+        let scaleSize;
         if (pixels instanceof HTMLImageElement || pixels instanceof HTMLVideoElement) {
-            this.reSize(pixels, opt);
-            data = this.getImageData(opt);
+            scaleSize = this.reSize(pixels, opt);
+            data = this.getImageData(opt, scaleSize);
         }
 
         if (opt.gray) {
@@ -106,9 +134,9 @@ export default class imageFeed {
         }
 
         if (opt.shape) {
-            data = this.reshape(data, opt);
+            data = this.reshape(data, opt, scaleSize);
         }
-        return [{data: data, shape: opt.shape, name: 'pixel'}];
+        return [{data: data, shape: opt.shape, name: 'image'}];
     }
 }
 /* eslint-enable */

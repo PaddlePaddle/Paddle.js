@@ -12,10 +12,10 @@ void main(void) {
     vec2 out_coord = moveTexture2PosToReal_texture_out(v2);
     // 输出数据
     vec4 v4;
+    int n = getArrayIndexFromTexturePos_texture_out(vec3(out_coord.x, out_coord.y, 0.0));
     for (int i = 0; i < 4; i++) {
-        int n = getArrayIndexFromTexturePos_texture_out(vec3(out_coord.x, out_coord.y, float(i)));
         // 获取output的坐标
-        ivec4 out_pos = getTensorPosFromArrayIndex_out(n);
+        ivec4 out_pos = getTensorPosFromArrayIndex_out(n + i);
         for (int j = 0; j < width_shape_origin; j++) {
             // counter数据
             int f_index = getArrayIndexFromTensorPos_counter(ivec4(out_pos[0], out_pos[1], j, out_pos[3]));

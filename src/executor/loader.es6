@@ -2,10 +2,17 @@
 import GraphExecutor from './executor';
 import IO from '../feed/imageFeed';
 import Runtime from '../../src/runtime/runtime';
+import OpData from '../utils/opData';
+import Factory from '../factory/fshader/factory';
 /**
  * @file GraphModel，绘制生成model网络
  * @author wangqun@baidu.com
  */
+
+// 生成factory实例
+const factory = new Factory({});
+// 获取op的输入配置
+const opConfs = factory.getOpConfs();
 export default class GraphModel  {
 
     constructor(modelUrl, loadOptions) {
@@ -15,13 +22,19 @@ export default class GraphModel  {
         this.modelUrl = modelUrl;
         this.loadOptions = loadOptions;
         this.multipart = false;
+        // feed数据
+        this.feed = null;
         this.index = 0;
         // 设置分片加载model
         if (this.loadOptions) {
             this.multipart = this.loadOptions.multipart;
+            this.feed = {input: this.loadOptions.feed};
         }
         // op runner
-        this.inst = null;
+        this.inst = Runtime.init({
+            'width_raw_canvas': 512,
+            'height_raw_canvas': 512
+        });
         if (this.loadOptions == null) {
             this.loadOptions = {};
         }
@@ -120,28 +133,48 @@ export default class GraphModel  {
         const opsMap = this.createOpsMap(artifacts.ops, artifacts.vars);
 
         this.weightMap = this.constructOpsMap(opsMap);
+        // 生成op数据
+        this.weightMap.forEach(op => {
+            const type = op.type;
+            if (type !== 'feed' && type !== 'fetch') {
+                const tensor = this.constructTensor(op);
+                const opData = new OpData(type, tensor.inputs, tensor.outputs, tensor.attrs);
+                const name = opData.name;
+                const fsCode = factory.buildShader(name, opData.data);
+                opData.fshader = that.inst.createFragmentShader(fsCode);
+                opData.renderData = opConfs[name].map(elem => {
+                    let item = Object.assign({}, elem);
+                    const tensorData = opData.tensor[item.tensor];
+                    if (item.type === 'texture') {
+                        item.data = tensorData.data;
+                        item['width_texture'] = tensorData['width_texture'];
+                        item['height_texture'] = tensorData['height_texture'];
+                    } else if (item.type === 'uniform') {
+                        item.data = tensorData[item.variable];
+                    }
+                    return item;
+                });
+                op.opData = opData;
+                delete op.inputs;
+                delete op.outputs;
+                delete op.attrs;
+            }
+        });
         console.log(this.weightMap);
         // this.weightMap = this.convertTensorMapToTensorsMap(weightMap);
         return true;
     }
 
-    execute_(inputs, executor, outputs) {
-        outputs = outputs || this.outputNodes;
+    execute_(executor) {
         if (executor.type === 'fetch') {
             return;
         }
-        const name = executor.outputsName[0];
-        const outputsName = this.getTensorAttr(executor.outputsName[0]);
-        const inputsName = this.getTensorAttr(executor.inputsName[0]);
-
-        const tensor = this.constructTensor(executor, inputs);
-        executor.execute(tensor, outputsName, this.inst);
+        executor.execute(this.inst);
 
         if (executor.next) {
-            // ++this.index;
             const id = executor.next;
             const next = this.getTensor(id);
-            this.execute_(inputs, next[0], outputs)
+            this.execute_(next[0])
         }
     }
 
@@ -151,14 +184,17 @@ export default class GraphModel  {
      * @param outputs
      * @returns {*}
      */
-    execute(inputs, outputs) {
+    execute(inputs) {
+        this.feed = inputs;
         const executor = this.getNetsStart(this.weightMap);
-        this.inst = Runtime.init({
-            'width_raw_canvas': 512,
-            'height_raw_canvas': 512
-        });
+        if (!this.inst) {
+            this.inst = Runtime.init({
+                'width_raw_canvas': 512,
+                'height_raw_canvas': 512
+            });
+        }
         let start = +Date.now();
-        this.execute_(inputs, executor[0], outputs);
+        this.execute_(executor[0]);
         console.log('总的执行时间是' + (+Date.now() - start));
         return this.inst;
     }
@@ -175,7 +211,7 @@ export default class GraphModel  {
         });
     }
 
-    constructTensor(executor, data) {
+    constructTensor(executor) {
         const that = this;
         const outputName = executor.outputsName[0];
         const inputName = executor.inputsName[0]
@@ -191,6 +227,9 @@ export default class GraphModel  {
                 const pixel = that.getTensorAttr(inputName);
                 const io = new IO();
                 input[key] = io.fromPixels(data, pixel);
+            }
+            else if ((key === 'Input') && (inputName === 'image')) {
+                input[key] = that.feed.input;
             }
             else {
                 input[key] = that.getTensorAttr(input[key][0]);

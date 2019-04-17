@@ -42,12 +42,12 @@ export default `
             }
         }
         // 激活函数
-        v4 = vec4(
-            ACTIVE_FUNCTION(v4.r, multi_value, bias_value),
-            ACTIVE_FUNCTION(v4.g, multi_value, bias_value),
-            ACTIVE_FUNCTION(v4.b, multi_value, bias_value),
-            ACTIVE_FUNCTION(v4.a, multi_value, bias_value)
-        );
+        // v4 = vec4(
+        //     ACTIVE_FUNCTION(v4.r, multi_value, bias_value),
+        //     ACTIVE_FUNCTION(v4.g, multi_value, bias_value),
+        //     ACTIVE_FUNCTION(v4.b, multi_value, bias_value),
+        //     ACTIVE_FUNCTION(v4.a, multi_value, bias_value)
+        // );
         gl_FragColor = v4;
     }
 `;

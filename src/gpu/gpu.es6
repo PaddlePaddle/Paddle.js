@@ -1,4 +1,5 @@
 /* eslint-disable */
+import VSHADER from '../shader/v_shader';
 /**
  * @file gpu运算
  * @author yangmingming
@@ -22,6 +23,8 @@ export default class gpu {
     }
 
     initCache() {
+        // 运行次数
+        this.times = 0;
         const gl = this.gl;
         // 缓存每个op的texture
         this.textures = [];
@@ -36,13 +39,51 @@ export default class gpu {
         gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
         // shader
         this.vertexShader = null;
+        // 生成vertextShader
+        this.initShader(VSHADER);
         this.fragmentShader = null;
         // 上一个texture
         this.prevTexture = null;
         // 当前op输出texture
         this.currentTexture = null;
         // 帧缓存
-        this.frameBuffer = null;
+        this.frameBuffer = gl.createFramebuffer();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this.frameBuffer);
+        // texture buffer
+        this.textureBuffer = [gl.createTexture(), gl.createTexture()];
+        // program
+        this.programs = [gl.createProgram(), gl.createProgram()];
+        this.program = this.programs[0];
+        this.textureBufferIndex = 0;
+        for (let i = 0; i < 2; i++) {
+            gl.bindTexture(gl.TEXTURE_2D, this.textureBuffer[i]);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            gl.bindTexture(gl.TEXTURE_2D, null);
+
+            // gl.attachShader(this.programs[i], this.vertexShader);
+            // /*gl.linkProgram(this.programs[i]);
+            // gl.useProgram(this.programs[i]);*/
+            //
+            // let aPosition = gl.getAttribLocation(this.programs[i], 'position');
+            // // Turn on the position attribute
+            // gl.enableVertexAttribArray(aPosition);
+            // // Bind the position buffer.
+            // gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+            // gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 16, 0);
+        }
+    }
+
+    runVertexShader() {
+        const gl = this.gl;
+        let aPosition = gl.getAttribLocation(this.program, 'position');
+        // Turn on the position attribute
+        gl.enableVertexAttribArray(aPosition);
+        // Bind the position buffer.
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+        gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 16, 0);
     }
 
     setOutProps(opts) {
@@ -57,6 +98,33 @@ export default class gpu {
         return (this.textureFloat !== null);
     }
 
+    attachShader(fshader) {
+        const gl = this.gl;
+        this.textures.forEach(texture => {
+            gl.deleteTexture(texture);
+        });
+        this.textures = [];
+        let index = this.textureBufferIndex % 2;
+        const program = this.programs[index];
+        this.program = program;
+        if (this.times < 2) {
+            gl.attachShader(program, this.vertexShader);
+        }
+        this.textureBufferIndex = (this.textureBufferIndex + 1) >= 2 ? 0 : 1;
+        this.gl.attachShader(program, fshader);
+        gl.linkProgram(program);
+        gl.useProgram(program);
+        if (this.times++ < 2) {
+            this.runVertexShader();
+        }
+        if (!!this.fragmentShader) {
+            const cache = this.programs[(index + 1) % 2];
+            gl.detachShader(cache, this.fragmentShader);
+            gl.deleteShader(this.fragmentShader);
+        }
+        this.fragmentShader = fshader;
+    }
+
     create(vshaderCode, fshaderCode) {
         let gl = this.gl;
         if (this.program) {
@@ -67,7 +135,8 @@ export default class gpu {
         // 创建&绑定vertex&frament shader
         this.initShader(vshaderCode);
         this.fragmentShader = this.initShader(fshaderCode, 'fragment');
-
+        this.gl.attachShader(program, this.vertexShader);
+        this.gl.attachShader(program, this.fragmentShader);
         gl.linkProgram(program);
         gl.useProgram(program);
 
@@ -94,16 +163,15 @@ export default class gpu {
             shader = this.gl.createShader(shaderType);
             if (type === 'vertex') {
                 this.vertexShader = shader;
-            } else {
-                this.fragmentShader = shader;
+            }
+            this.gl.shaderSource(shader, code);
+            this.gl.compileShader(shader);
+            if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
+                throw new Error("compile: " + this.gl.getShaderInfoLog(shader));
             }
         }
-        this.gl.shaderSource(shader, code);
-        this.gl.compileShader(shader);
-        if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
-            throw new Error("compile: " + this.gl.getShaderInfoLog(shader));
-        }
-        this.gl.attachShader(this.program, shader);
+
+        // this.gl.attachShader(this.program, shader);
         return shader;
     }
 
@@ -131,17 +199,15 @@ export default class gpu {
      * @param {WebGLTexture} texture 材质
      * @returns {WebGLFramebuffer} The framebuffer
      */
-    attachFrameBuffer(texture, opts = {}) {
+    attachFrameBuffer(opts = {}) {
+        this.prevTexture = this.currentTexture;
+        this.currentTexture = this.textureBuffer[this.textureBufferIndex % 2];
+        // this.textureBufferIndex = (this.textureBufferIndex + 1) >= 2 ? 0 : 1;
         const gl = this.gl;
-        let frameBuffer = this.frameBuffer;
-        if (!frameBuffer) {
-            frameBuffer = gl.createFramebuffer();
-        }
-        gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
         gl.framebufferTexture2D(gl.FRAMEBUFFER, // The target is always a FRAMEBUFFER.
             gl.COLOR_ATTACHMENT0, // We are providing the color buffer.
             gl.TEXTURE_2D, // This is a 2D image texture.
-            texture, // The texture.
+            this.currentTexture, // The texture.
             0 // 0, we aren't using MIPMAPs
         );
         gl.viewport(
@@ -150,9 +216,7 @@ export default class gpu {
             opts.width_texture_out || this.width_texture_out,
             opts.height_texture_out || this.height_texture_out
         );
-        this.prevTexture = this.currentTexture;
-        this.currentTexture = texture;
-        return frameBuffer;
+        return this.frameBuffer;
     }
 
     /**
@@ -240,8 +304,8 @@ export default class gpu {
             texture = this.prevTexture;
         } else {
             texture = gl.createTexture();
+            this.textures.push(texture);
         }
-        this.textures.push(texture);
         gl.activeTexture(gl[`TEXTURE${index}`]);
         gl.bindTexture(gl.TEXTURE_2D, texture);
         if (item.data) {
@@ -264,13 +328,10 @@ export default class gpu {
     // 生成帧缓存的texture
     makeTexure(type, data, opts = {}) {
         const gl = this.gl;
-        let texture = gl.createTexture();
+        let index = this.textureBufferIndex % 2;
+        let texture = this.textureBuffer[index];
         gl.bindTexture(gl.TEXTURE_2D, texture);
 
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         // Pixel format and data for the texture
         gl.texImage2D(gl.TEXTURE_2D, // Target, matches bind above.
             0,             // Level of detail.
@@ -282,7 +343,8 @@ export default class gpu {
             type,          // Data type for each chanel.
             data);         // Image data in the described format, or null.
         // Unbind the texture.
-        gl.bindTexture(gl.TEXTURE_2D, null);
+        // gl.bindTexture(gl.TEXTURE_2D, null);
+        this.attachFrameBuffer();
 
         return texture;
     }

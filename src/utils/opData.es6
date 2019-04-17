@@ -51,7 +51,8 @@ const opBehavior = {
         'needBatch'
     ],
     batchnorm: [
-        'needBatch'
+        'needBatch',
+        'mergeTensor'
     ],
     elementwise_add: [
         'broadcast'
@@ -126,12 +127,14 @@ export default class OpData {
         });
         // 生成tensor对象
         tensorData.forEach(data => {
-            this.tensor[data.tensorName] = new Tensor({
-                name: data.tensorName,
-                shape: data.shape,
-                data: data.data,
-                needBatch: data.needBatch || false
-            });
+            if (data) {
+                this.tensor[data.tensorName] = new Tensor({
+                    name: data.tensorName,
+                    shape: data.shape,
+                    data: data.data,
+                    needBatch: data.needBatch || false
+                });
+            }
         });
         // console.dir(['tensors', this.tensor]);
     }
@@ -229,6 +232,28 @@ export default class OpData {
             input.shape = shape;
         }
 
+    }
+
+    mergeTensor(tensorData = []) {
+        // 融合scale、bias、variance、mean
+        let constants = ['scale', 'bias', 'variance', 'mean'];
+        let result = {};
+        let data = [];
+        tensorData.forEach((tensor, index) => {
+            result[tensor.tensorName] = tensor;
+            result[tensor.tensorName + 'Index'] = index;
+        });
+        for (let i = 0; i < result[constants[0]].shape[0]; i++) {
+            data.push(result[constants[0]].data[i]);
+            data.push(result[constants[1]].data[i]);
+            data.push(result[constants[2]].data[i]);
+            data.push(result[constants[3]].data[i]);
+        }
+        tensorData[result[constants[0] + 'Index']].data = data;
+        tensorData[result[constants[0] + 'Index']].shape[0] *= 4;
+        tensorData.splice(result[constants[1] + 'Index'], 1, 0);
+        tensorData.splice(result[constants[2] + 'Index'], 1, 0);
+        tensorData.splice(result[constants[3] + 'Index'], 1, 0);
     }
 
     checkIsPass() {

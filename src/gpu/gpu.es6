@@ -361,8 +361,8 @@ export default class gpu {
                 gl[item.setter](this.getUniformLoc(item.variable + '_' + item.tensor), item.data);
             }
         });
-        gl.clearColor(.0, .0, .0, 1);
-        gl.clear(gl.COLOR_BUFFER_BIT);
+        // gl.clearColor(.0, .0, .0, 1);
+        // gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 

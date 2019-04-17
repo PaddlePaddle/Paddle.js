@@ -39,13 +39,13 @@ function selectImage(file) {
     if (!file.files || !file.files[0]) {
         return;
     }
-    var reader = new FileReader();
+    let reader = new FileReader();
     reader.onload = function (evt) {
         let img = document.getElementById('image');
         img.src = evt.target.result;
         img.onload = function() {
             run(img);
-        }
+        };
         image = evt.target.result;
     }
     reader.readAsDataURL(file.files[0]);

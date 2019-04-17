@@ -11,6 +11,7 @@ import Map from '../test/data/map';
  */
 // 'http://mms-xr.cdn.bcebos.com/paddle/mnist/model.json'
 // 统计参数
+let loaded = false;
 window.statistic = [];
 async function run(input) {
     // const input = document.getElementById('mobilenet');
@@ -26,8 +27,12 @@ async function run(input) {
         }});
     console.dir(['feed', feed]);
     const MODEL_URL = '/mobileNet/model.json';
-    const graphModel= new Graph();
-    const model = await graphModel.loadGraphModel(MODEL_URL, {multipart: true, feed});
+    let model = {};
+    if (!loaded) {
+        const graphModel= new Graph();
+        model = await graphModel.loadGraphModel(MODEL_URL, {multipart: true, feed});
+    }
+
 
     let inst = model.execute({input: feed});
     // 其实这里应该有个fetch的执行调用或者fetch的输出
@@ -46,17 +51,18 @@ async function run(input) {
 };
 
 var image = '';
+
 function selectImage(file) {
     if (!file.files || !file.files[0]) {
         return;
     }
-    var reader = new FileReader();
+    let reader = new FileReader();
     reader.onload = function (evt) {
         let img = document.getElementById('image');
         img.src = evt.target.result;
         img.onload = function() {
             run(img);
-        }
+        };
         image = evt.target.result;
     }
     reader.readAsDataURL(file.files[0]);

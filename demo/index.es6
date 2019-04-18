@@ -12,6 +12,7 @@ import Map from '../test/data/map';
 // 'http://mms-xr.cdn.bcebos.com/paddle/mnist/model.json'
 // 统计参数
 let loaded = false;
+let model = {};
 window.statistic = [];
 async function run(input) {
     // const input = document.getElementById('mobilenet');
@@ -27,8 +28,8 @@ async function run(input) {
         }});
     console.dir(['feed', feed]);
     const MODEL_URL = '/mobileNet/model.json';
-    let model = {};
     if (!loaded) {
+        loaded = true;
         const graphModel= new Graph();
         model = await graphModel.loadGraphModel(MODEL_URL, {multipart: true, feed});
     }

@@ -120,7 +120,7 @@ export default class gpu {
         if (!!this.fragmentShader) {
             const cache = this.programs[(index + 1) % 2];
             gl.detachShader(cache, this.fragmentShader);
-            gl.deleteShader(this.fragmentShader);
+            // gl.deleteShader(this.fragmentShader);
         }
         this.fragmentShader = fshader;
     }

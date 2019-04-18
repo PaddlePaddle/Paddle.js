@@ -12,15 +12,11 @@ float getValueFromTexturePos_TEXTURE_NAME(vec3 pos) {
     int d = int(pos.z);
     if (d == 0) {
         return pixels.r;
-    }
-    else if (d == 1) {
+    } else if (d == 1) {
         return pixels.g;
-    }
-    else if (d == 2) {
+    } else if (d == 2) {
         return pixels.b;
     }
-    else {
-        return pixels.a;
-    }
+    return pixels.a;
 }
 `;

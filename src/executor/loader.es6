@@ -25,6 +25,9 @@ export default class GraphModel  {
         // feed数据
         this.feed = null;
         this.index = 0;
+        this.feedOp = null;
+        this.feedItem = null;
+        this.isExecuted = false;
         // 设置分片加载model
         if (this.loadOptions) {
             this.multipart = this.loadOptions.multipart;
@@ -137,32 +140,39 @@ export default class GraphModel  {
         this.weightMap.forEach(op => {
             const type = op.type;
             if (type !== 'feed' && type !== 'fetch') {
-                const tensor = this.constructTensor(op);
-                const opData = new OpData(type, tensor.inputs, tensor.outputs, tensor.attrs);
-                const name = opData.name;
-                const fsCode = factory.buildShader(name, opData.data);
-                opData.fshader = that.inst.createFragmentShader(fsCode);
-                opData.renderData = opConfs[name].map(elem => {
-                    let item = Object.assign({}, elem);
-                    const tensorData = opData.tensor[item.tensor];
-                    if (item.type === 'texture') {
-                        item.data = tensorData.data;
-                        item['width_texture'] = tensorData['width_texture'];
-                        item['height_texture'] = tensorData['height_texture'];
-                    } else if (item.type === 'uniform') {
-                        item.data = tensorData[item.variable];
-                    }
-                    return item;
-                });
-                op.opData = opData;
-                delete op.inputs;
-                delete op.outputs;
-                delete op.attrs;
+                that.buildOpData(op);
             }
         });
         console.log(this.weightMap);
         // this.weightMap = this.convertTensorMapToTensorsMap(weightMap);
         return true;
+    }
+
+    buildOpData(op) {
+        const tensor = this.constructTensor(op);
+        const opData = new OpData(op.type, tensor.inputs, tensor.outputs, tensor.attrs);
+        const name = opData.name;
+        const fsCode = factory.buildShader(name, opData.data);
+        opData.fshader = this.inst.createFragmentShader(fsCode);
+        opData.renderData = opConfs[name].map(elem => {
+            let item = Object.assign({}, elem);
+            const tensorData = opData.tensor[item.tensor];
+            if (item.type === 'texture') {
+                item.data = tensorData.data;
+                if (this.feedOp.id === op.id) {
+                    this.feedItem = item;
+                }
+                item['width_texture'] = tensorData['width_texture'];
+                item['height_texture'] = tensorData['height_texture'];
+            } else if (item.type === 'uniform') {
+                item.data = tensorData[item.variable];
+            }
+            return item;
+        });
+        op.opData = opData;
+        // delete op.inputs;
+        // delete op.outputs;
+        // delete op.attrs;
     }
 
     execute_(executor) {
@@ -193,12 +203,19 @@ export default class GraphModel  {
                 'height_raw_canvas': 512
             });
         }
+        if (this.isExecuted) {
+            this.updateFeed();
+        }
         let start = +Date.now();
         this.execute_(executor[0]);
         console.log('总的执行时间是' + (+Date.now() - start));
+        this.isExecuted = true;
         return this.inst;
     }
 
+    updateFeed() {
+        this.feedItem.data = new Float32Array(this.feed.input[0].data);
+    }
 
     predict(inputs, config) {
         return this.execute_(inputs, true, this.outputNodes);
@@ -213,7 +230,6 @@ export default class GraphModel  {
 
     constructTensor(executor) {
         const that = this;
-        const outputName = executor.outputsName[0];
         const inputName = executor.inputsName[0]
         const input = executor.inputs;
         const output = executor.outputs;
@@ -230,6 +246,7 @@ export default class GraphModel  {
             }
             else if ((key === 'Input') && (inputName === 'image')) {
                 input[key] = that.feed.input;
+                that.feedOp = executor;
             }
             else {
                 input[key] = that.getTensorAttr(input[key][0]);

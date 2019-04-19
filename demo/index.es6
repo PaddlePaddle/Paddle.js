@@ -20,7 +20,7 @@ async function run(input) {
     let feed = io.process({
         input: input,
         params: {
-            scale: 256,
+            scale: 256, // 缩放尺寸
             width: 224, height: 224, // 压缩宽高
             shape: [3, 224, 224], // 预设tensor形状
             mean: [0.485, 0.456, 0.406], // 预设期望
@@ -69,6 +69,6 @@ function selectImage(file) {
     reader.readAsDataURL(file.files[0]);
 }
 // selectImage
-document.getElementById ("uploadImg").onchange = function () {
+document.getElementById("uploadImg").onchange = function () {
     selectImage(this);
 };

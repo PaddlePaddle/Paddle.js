@@ -59,7 +59,6 @@ export default class GraphModel  {
     async traverse (arr, idx) {
         let len = arr.length;
         let that = this;
-        console.log(idx);
         if (arr.length <= idx) {
             return arr;
         }
@@ -128,7 +127,6 @@ export default class GraphModel  {
     async load() {
         let that = this;
         const artifacts = this.handler =  await this.fetchModel();
-        console.log(artifacts);
         if (this.multipart === true) {
             let idx = 0;
             let arti = await that.traverse(artifacts.vars, idx);
@@ -143,8 +141,6 @@ export default class GraphModel  {
                 that.buildOpData(op);
             }
         });
-        console.log(this.weightMap);
-        // this.weightMap = this.convertTensorMapToTensorsMap(weightMap);
         return true;
     }
 

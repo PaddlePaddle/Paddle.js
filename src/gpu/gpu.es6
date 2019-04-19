@@ -27,7 +27,7 @@ export default class gpu {
         this.times = 0;
         const gl = this.gl;
         // 缓存每个op的texture
-        this.textures = [];
+        // this.textures = [];
         // 顶点数据
         let vertices = new Float32Array([
             -1.0,  1.0, 0.0, 1.0,
@@ -49,6 +49,8 @@ export default class gpu {
         // 帧缓存
         this.frameBuffer = gl.createFramebuffer();
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.frameBuffer);
+        // 计算texture cache, 最多3个
+        this.cacheTextures = [gl.createTexture(), gl.createTexture(), gl.createTexture()];
         // texture buffer
         this.textureBuffer = [gl.createTexture(), gl.createTexture()];
         // program
@@ -62,17 +64,6 @@ export default class gpu {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
             gl.bindTexture(gl.TEXTURE_2D, null);
-
-            // gl.attachShader(this.programs[i], this.vertexShader);
-            // /*gl.linkProgram(this.programs[i]);
-            // gl.useProgram(this.programs[i]);*/
-            //
-            // let aPosition = gl.getAttribLocation(this.programs[i], 'position');
-            // // Turn on the position attribute
-            // gl.enableVertexAttribArray(aPosition);
-            // // Bind the position buffer.
-            // gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
-            // gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 16, 0);
         }
     }
 
@@ -100,10 +91,10 @@ export default class gpu {
 
     attachShader(fshader) {
         const gl = this.gl;
-        this.textures.forEach(texture => {
-            gl.deleteTexture(texture);
-        });
-        this.textures = [];
+        // this.textures.forEach(texture => {
+        //     gl.deleteTexture(texture);
+        // });
+        // this.textures = [];
         let index = this.textureBufferIndex % 2;
         const program = this.programs[index];
         this.program = program;
@@ -303,8 +294,9 @@ export default class gpu {
         if (!item.data) {
             texture = this.prevTexture;
         } else {
-            texture = gl.createTexture();
-            this.textures.push(texture);
+            // texture = gl.createTexture();
+            texture = this.cacheTextures[index];
+            // this.textures.push(texture);
         }
         gl.activeTexture(gl[`TEXTURE${index}`]);
         gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -378,13 +370,15 @@ export default class gpu {
 
     dispose() {
         const gl = this.gl;
-        this.textures.forEach(texture => {
+        this.cacheTextures.forEach(texture => {
             gl.deleteTexture(texture);
         });
-        this.textures = [];
-        gl.detachShader(this.program, this.vertexShader);
-        gl.detachShader(this.program, this.fragmentShader);
-        gl.deleteShader(this.fragmentShader);
-        gl.deleteProgram(this.program);
+        this.cacheTextures = [];
+        this.programs.forEach(program => {
+            gl.detachShader(program, this.vertexShader);
+            gl.deleteShader(this.vertexShader);
+            gl.deleteProgram(program);
+        });
+        this.programs = [];
     }
 }

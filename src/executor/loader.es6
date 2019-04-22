@@ -72,11 +72,9 @@ export default class GraphModel  {
                     arr[idx].data = await this.fetchData(arr[idx].name);
                 }
                 await this.traverse (arr, ++idx);
-
             }
 
         }
-
     }
 
     fetchModel(type) {

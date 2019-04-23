@@ -13,6 +13,7 @@ import Factory from '../factory/fshader/factory';
 const factory = new Factory({});
 // 获取op的输入配置
 const opConfs = factory.getOpConfs();
+
 export default class GraphModel  {
 
     constructor(modelUrl, loadOptions) {
@@ -85,12 +86,16 @@ export default class GraphModel  {
         if (!type) {
             let myHeaders = new Headers();
             load = new Promise((resolve, reject) => {
-                fetch(path, {method: method, mode: 'cors', credentials: "include", headers: myHeaders})
+                fetch(path, {
+                    method: method,
+                    mode: 'cors',
+                    credentials: "include",
+                    headers: myHeaders
+                })
                     .then(response => response.json())
                     .then(responseData => resolve(responseData))
                     .then(err => reject(err))
-            })
-
+            });
             this.handler = load;
         }
         // jsonp请求方式
@@ -102,7 +107,7 @@ export default class GraphModel  {
             window.fn = function(data) {
                 json = data;
                 console.log(json);
-            }
+            };
             //当script被插入文档中时，src中的资源就会开始加载
             document.body.appendChild(s);
 
@@ -332,7 +337,6 @@ export default class GraphModel  {
             }
         });
     }
-
 
     /**
      * Load a graph model given a URL to the model definition.

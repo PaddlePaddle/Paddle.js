@@ -19,7 +19,7 @@ export default class GraphModel  {
     constructor(modelUrl, loadOptions) {
 
         this.version  = '0.0.1';
-        this.handler = 'io.IOHandler';
+        this.handler = '';
         this.modelUrl = modelUrl;
         this.loadOptions = loadOptions;
         this.multipart = false;

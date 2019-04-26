@@ -29,6 +29,7 @@ export default class GraphModel  {
         this.feedOp = null;
         this.feedItem = null;
         this.isExecuted = false;
+        this.params = {type:'xhr'};
         // 设置分片加载model
         if (this.loadOptions) {
             this.multipart = this.loadOptions.multipart;
@@ -78,28 +79,14 @@ export default class GraphModel  {
         }
     }
 
-    fetchModel(type) {
+    fetchModel(params) {
+        params = params || this.params;
         const path = this.modelUrl;
         let URL_SCHEME_REGEX = /^https?:\/\//;
         let load = null;
         let method = 'get';
-        if (!type) {
-            let myHeaders = new Headers();
-            load = new Promise((resolve, reject) => {
-                fetch(path, {
-                    method: method,
-                    mode: 'cors',
-                    credentials: "include",
-                    headers: myHeaders
-                })
-                    .then(response => response.json())
-                    .then(responseData => resolve(responseData))
-                    .then(err => reject(err))
-            });
-            this.handler = load;
-        }
         // jsonp请求方式
-        else if (type === 'jsonp') {
+        if (params && params.type === 'jsonp') {
             let json;
             let s = document.createElement('script');
             s.src = path + '&jsonpCallback=fn';
@@ -123,6 +110,22 @@ export default class GraphModel  {
             this.handler = load;
 
         }
+        else if (params.type === 'xhr') {
+            let myHeaders = new Headers();
+            load = new Promise((resolve, reject) => {
+                fetch(path, {
+                    method: method,
+                    mode: 'cors',
+                    credentials: "include",
+                    headers: myHeaders
+                })
+                .then(response => response.json())
+                .then(responseData => resolve(responseData))
+                .then(err => reject(err))
+            });
+            this.handler = load;
+        }
+
         return load;
 
     }

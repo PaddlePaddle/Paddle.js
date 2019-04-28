@@ -84,7 +84,8 @@ export default class GraphModel  {
         const path = this.modelUrl;
         let URL_SCHEME_REGEX = /^https?:\/\//;
         let load = null;
-        let method = 'get';
+        let method = params.method || 'get';
+        let mode = params.mode || 'cors';
         // jsonp请求方式
         if (params && params.type === 'jsonp') {
             let json;
@@ -115,7 +116,7 @@ export default class GraphModel  {
             load = new Promise((resolve, reject) => {
                 fetch(path, {
                     method: method,
-                    mode: 'cors',
+                    mode: mode,
                     credentials: "include",
                     headers: myHeaders
                 })

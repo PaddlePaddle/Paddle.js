@@ -29,7 +29,7 @@ export default class GraphModel  {
         this.feedOp = null;
         this.feedItem = null;
         this.isExecuted = false;
-        this.params = {type:'xhr'};
+        this.params = {type: 'xhr'};
         // 设置分片加载model
         if (this.loadOptions) {
             this.multipart = this.loadOptions.multipart;
@@ -40,7 +40,7 @@ export default class GraphModel  {
             'width_raw_canvas': 512,
             'height_raw_canvas': 512
         });
-        if (this.loadOptions == null) {
+        if (this.loadOptions === null) {
             this.loadOptions = {};
         }
     }

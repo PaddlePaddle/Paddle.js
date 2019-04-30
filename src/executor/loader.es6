@@ -29,7 +29,8 @@ export default class GraphModel  {
         this.feedOp = null;
         this.feedItem = null;
         this.isExecuted = false;
-        this.params = {type: 'xhr'};
+        // fetch xhr jsonp
+        this.params = {type: 'fetch'};
         // 设置分片加载model
         if (this.loadOptions) {
             this.multipart = this.loadOptions.multipart;
@@ -111,7 +112,7 @@ export default class GraphModel  {
             this.handler = load;
 
         }
-        else if (params.type === 'xhr') {
+        else if (params.type === 'fetch') {
             let myHeaders = new Headers();
             load = new Promise((resolve, reject) => {
                 fetch(path, {
@@ -124,6 +125,9 @@ export default class GraphModel  {
                 .then(responseData => resolve(responseData))
                 .then(err => reject(err))
             });
+            this.handler = load;
+        }
+        else if (params.type === 'xhr') {
             this.handler = load;
         }
 
@@ -349,12 +353,12 @@ export default class GraphModel  {
      * @returns {Promise<void>}
      */
     async loadGraphModel(modelUrl, options) {
-        if (modelUrl == null) {
+        if (modelUrl === null) {
             throw new Error(
                 'modelUrl in loadGraphModel() cannot be null. Please provide a url ' +
                 'or an IOHandler that loads the model');
         }
-        if (options == null) {
+        if (options === null) {
             options = {};
         }
 

@@ -112,6 +112,7 @@ export default class GraphModel  {
             this.handler = load;
 
         }
+        // 原生fetch
         else if (params.type === 'fetch') {
             let myHeaders = new Headers();
             load = new Promise((resolve, reject) => {
@@ -127,6 +128,7 @@ export default class GraphModel  {
             });
             this.handler = load;
         }
+        // ajax
         else if (params.type === 'xhr') {
             this.handler = load;
         }

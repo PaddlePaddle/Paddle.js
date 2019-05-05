@@ -226,7 +226,7 @@ export default class GraphModel  {
     }
 
     predict(inputs, config) {
-        return this.execute_(inputs, true, this.outputNodes);
+        this.execute(inputs, config);
     }
 
     getTensorAttr(name) {

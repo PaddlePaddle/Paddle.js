@@ -225,6 +225,11 @@ export default class GraphModel  {
         this.feedItem.data = new Float32Array(this.feed.input[0].data);
     }
 
+    /**
+     * predict enter
+     * @param inputs
+     * @param config
+     */
     predict(inputs, config) {
         this.execute(inputs, config);
     }

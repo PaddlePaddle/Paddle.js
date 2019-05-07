@@ -319,6 +319,12 @@ export default class GraphModel  {
             }
         });
     }
+
+    /**
+     * get tensor by id
+     * @param id
+     * @returns {*}
+     */
     getTensor(id) {
         return this.weightMap.filter((item, i) => {
             if (id === item.id)

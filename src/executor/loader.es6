@@ -243,7 +243,7 @@ export default class GraphModel  {
 
     constructTensor(executor) {
         const that = this;
-        const inputName = executor.inputsName[0]
+        const inputName = executor.inputsName[0];
         const input = executor.inputs;
         const output = executor.outputs;
 

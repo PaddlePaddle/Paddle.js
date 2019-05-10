@@ -121,6 +121,12 @@ export default class imageFeed {
         return data;
     };
 
+    /**
+     * 图像转换成像素
+     * @param pixels
+     * @param opt
+     * @returns {{data: *, shape: *, name: string}[]}
+     */
     fromPixels(pixels, opt) {
         let data;
         let scaleSize;

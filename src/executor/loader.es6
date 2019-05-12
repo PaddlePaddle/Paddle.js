@@ -59,25 +59,18 @@ export default class GraphModel  {
         return load;
     }
 
-    async traverse (arr, idx) {
-        let len = arr.length;
-        let that = this;
-        if (arr.length <= idx) {
-            return arr;
-        }
-        else {
-            if (arr[idx] && arr[idx].name) {
-                let TMP_SCHEME_REGEX = /\.tmp/;
-                let TMP_REGEX = /\-/;
-                if ( arr[idx].name.match(TMP_SCHEME_REGEX) === null
-                && arr[idx].name.match(TMP_REGEX) === null
-                ) {
-                    arr[idx].data = await this.fetchData(arr[idx].name);
+    async traverse (arr) {
+        const TMP_SCHEME_REGEX = /\.tmp/;
+        const TMP_REGEX = /\-/;
+        let requesterArr = arr.map(item => {
+                if (item.name 
+                    && item.name.match(TMP_SCHEME_REGEX) === null
+                    && item.name.match(TMP_REGEX) === null) {
+                    return this.fetchData(item.name).then(data => item.data = data);
                 }
-                await this.traverse (arr, ++idx);
-            }
-
-        }
+                return Promise.resolve();
+            });
+        return Promise.all(requesterArr);
     }
 
     fetchModel(params) {
@@ -140,8 +133,7 @@ export default class GraphModel  {
         let that = this;
         const artifacts = this.handler =  await this.fetchModel();
         if (this.multipart === true) {
-            let idx = 0;
-            let arti = await that.traverse(artifacts.vars, idx);
+            await that.traverse(artifacts.vars);
         }
         const opsMap = this.createOpsMap(artifacts.ops, artifacts.vars);
 

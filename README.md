@@ -13,4 +13,8 @@
 npm i
 # 本地编译部署
 npm run server
+# 本地单元测试部署
+npm run unit
+# 本地集成测试部署
+npm run demo
 ```

@@ -170,9 +170,6 @@ export default class GraphModel  {
             return item;
         });
         op.opData = opData;
-        // delete op.inputs;
-        // delete op.outputs;
-        // delete op.attrs;
     }
 
     execute_(executor) {

@@ -125,7 +125,6 @@ export default class GraphModel  {
         else if (params.type === 'xhr') {
             this.handler = load;
         }
-
         return load;
 
     }

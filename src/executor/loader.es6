@@ -126,8 +126,8 @@ export default class GraphModel  {
             this.handler = load;
         }
         return load;
-
     }
+
     async load() {
         let that = this;
         const artifacts = this.handler =  await this.fetchModel();

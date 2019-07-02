@@ -46,7 +46,7 @@ export default class GraphModel  {
         }
     }
 
-    fetchData(name, model) {
+    fetchData(name) {
         const path = '/mobileNet/' + name + '.json';
         let load = new Promise((resolve, reject) => {
             fetch(path, {

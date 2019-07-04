@@ -209,6 +209,9 @@ export default class GraphModel {
         return this.inst;
     }
 
+    /**
+     * updateFeed
+     */
     updateFeed() {
         this.feedItem.data = new Float32Array(this.feed.input[0].data);
     }

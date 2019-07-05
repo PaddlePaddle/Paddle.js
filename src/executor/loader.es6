@@ -232,6 +232,11 @@ export default class GraphModel {
         });
     }
 
+    /**
+     *
+     * @param executor
+     * @returns {{inputs: *, outputs: *, attrs: (*|attrs|{rel, href}|{src}|null|{}), type: *, next: *}}
+     */
     constructTensor(executor) {
         const that = this;
         const inputName = executor.inputsName[0];

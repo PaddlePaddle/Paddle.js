@@ -225,6 +225,11 @@ export default class GraphModel {
         this.execute(inputs, config);
     }
 
+    /**
+     * getTensorAttrbute
+     * @param name
+     * @returns {*}
+     */
     getTensorAttr(name) {
         return this.handler.vars.filter((item, i) => {
             if (name === item.name)

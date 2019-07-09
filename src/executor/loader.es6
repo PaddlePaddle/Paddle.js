@@ -267,7 +267,7 @@ export default class GraphModel {
             }
 
         });
-
+        // tensor 结构
         const tensor = {
             inputs: input,
             outputs: output,
@@ -382,7 +382,7 @@ export default class GraphModel {
     }
 
     /**
-     * dispose
+     * dispose 函数
      */
     dispose() {
         this.executor.dispose();

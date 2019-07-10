@@ -388,5 +388,4 @@ export default class GraphModel {
         this.executor.dispose();
     }
 }
-
 /* eslint-enable */

@@ -17,4 +17,4 @@ let inst = model.execute({input: cat});
 let res = inst.read();
 console.dir(['result', res]);
 var fileDownload = require('js-file-download');
-fileDownload(res, "result.csv");
+fileDownload(res, 'result.csv');

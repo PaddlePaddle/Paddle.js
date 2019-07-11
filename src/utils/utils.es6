@@ -70,24 +70,13 @@ export default {
      * @return {{shape: *[], zeroNumber: number}} {Object} texture信息
      */
     getTextureInfoFromTensorShape(shape = []) {
-        let total = shape.reduce((total, num) => total * num);
-        // 需要补0的个数
-        let zeroNumber = (total % 4 === 0) ? 0 : (4 - (total % 4));
-        // 对齐材质channel 4
-        // 材质宽高
-        let width = 1;
-        let height = (total + zeroNumber) / 4;
-        while (Math.abs(width - height) > 2 && width < height) {
-            if (height % 2 === 0) {
-                width = width * 2;
-                height = height / 2;
-            } else {
-                height += 1;
-            }
-        }
+        let b = shape[0];
+        let c = shape[1];
+        let h = shape[2];
+        let w = shape[3];
         return {
-            shape: [4, height, width],
-            zeroNumber: 4 * height * width - total
+            shape: [4, b * h, c * w],
+            zeroNumber: 0
         };
     },
 
@@ -109,6 +98,33 @@ export default {
         const aa = url.split('/');
         let length = aa.length;
         return '/' + aa[length - 1];
+    },
+
+    img2texture(renderData = {}) {
+        const {height_texture, width_texture, shape} = renderData;
+        const total = height_texture * width_texture * 4;
+        const b = shape[0];
+        const c = shape[1];
+        const h = shape[2];
+        const w = shape[3];
+        let data = new Float32Array(b * c * h * w * 4);
+        let offset = 0;
+        for (let i = 0; i < total; i++) {
+            let j = (i / (c * w)) | 0;
+            let k = i % (c * w);
+            let b1 = j / h | 0;
+            let h1 = j % h;
+            let c1 = k % c;
+            let w1 = k / c | 0;
+            let l = b1 * (c * h * w) + c1 * (h * w) + h1 * (w) + w1;
+            data[offset] = renderData.data[l];
+            offset += 4;
+            // data.push(renderData.data[l]);
+            // data.push(0);
+            // data.push(0);
+            // data.push(0);
+        }
+        renderData.data = data;
     }
 };
 /* eslint-enable */

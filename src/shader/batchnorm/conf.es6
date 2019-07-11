@@ -6,35 +6,9 @@
 export default {
     dep: [
         {
-            func: 'getPixelsFromTexturePos',
+            func: 'getValueFromTensorPos',
             conf: {
-                TEXTURE_NAME: 'texture_origin'
-            }
-        },
-        {
-            func: 'moveTexture2PosToReal',
-            conf: {
-                TEXTURE_NAME: 'texture_out'
-            }
-        },
-        {
-            func: 'getArrayIndexFromTexturePos',
-            conf: {
-                TEXTURE_NAME: 'texture_out'
-            }
-        },
-        {
-            func: 'getTensorPosFromArrayIndex',
-            conf: {
-                TENSOR_NAME: 'out',
-                TENSOR_TYPE: 'vec4'
-            }
-        },
-        {
-            func: 'getTexturePosFromArrayIndex',
-            conf: {
-                TEXTURE_NAME: 'texture_scale',
-                TENSOR_TYPE: 'vec4'
+                TENSOR_NAME: 'origin'
             }
         },
         {
@@ -55,7 +29,6 @@ export default {
 
         'WIDTH_SHAPE_OUT',
         'HEIGHT_SHAPE_OUT',
-        'LENGTH_SHAPE_OUT',
         'WIDTH_TEXTURE_OUT',
         'HEIGHT_TEXTURE_OUT',
         'CHANNEL_OUT',
@@ -79,12 +52,6 @@ export default {
             variable: 'texture',
             setter: 'initTexture',
             type: 'texture'
-        },
-        {
-            tensor: 'out',
-            variable: 'numbers_shape',
-            setter: 'uniform1iv',
-            type: 'uniform'
         }
     ]
 };

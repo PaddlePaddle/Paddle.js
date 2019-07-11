@@ -20,14 +20,10 @@ export default {
         }
     },
 
-    run(opName, opData) {
-        let time = +Date.now();
-        let start = time;
-        let timeObj = {};
-        // 生成op的数据
-        // const  opData = this.adaptData(opName, data);
-        // let end = +Date.now();
-        // timeObj['opData-time'] = end - start;
+    run(opName, opData, isRendered) {
+        // let time = +Date.now();
+        // let start = time;
+        // let timeObj = {};
         if (!opData.isPass) {
             console.log('跳过当前op：' + opName);
             return this;
@@ -35,34 +31,21 @@ export default {
         // 设置gpu参数
         const gpu = this.gpu;
         gpu.setOutProps(opData.tensor['out']);
-        // start = +Date.now();
-        // timeObj['setOutProps-time'] = start - end;
-        // 生成shader
-        // const fsCode = factory.buildShader(opData.name, opData.data);
-        // end = +Date.now();
-        // timeObj['fsCode-time'] = end - start;
-        // console.dir([opData.name + ', shaderCode shader', fsCode]);
         // 生成帧缓存材质
-        gpu.makeTexure(WebGLRenderingContext.FLOAT, null);
-        // start = +Date.now();
-        // timeObj['maketexture-time'] = start - end;
-        // gpu.attachFrameBuffer();
-        let end = +Date.now();
-        // timeObj['attachFrameBuffer-time'] = end - start;
+        gpu.attachFrameBuffer(opData.iLayer);
+        // let end = +Date.now();
         let bufferStatus = gpu.frameBufferIsComplete();
         if (bufferStatus.isComplete) {
-            start = +Date.now();
-            timeObj['buferstatus-time'] = start - end;
-            // console.log(bufferStatus.isComplete);
-            // gpu.create(VSHADER, opData.fsCode);
-            gpu.attachShader(opData.fshader);
-            end = +Date.now();
-            timeObj['createshader-time'] = end - start;
-            timeObj['jsTime'] = end - time;
-            // console.dir(['测试数据---输入参数', data]);
-            statistic.push(timeObj);
+            // start = +Date.now();
+            // timeObj['buferstatus-time'] = start - end;
+            // gpu.attachShader(opData.fshader);
+            gpu.setProgram(opData.program, isRendered);
+            // end = +Date.now();
+            // timeObj['createshader-time'] = end - start;
+            // timeObj['jsTime'] = end - time;
+            // statistic.push(timeObj);
             // 开始计算
-            this.gpu.render(opData.renderData);
+            this.gpu.render(opData.renderData, opData.iLayer, isRendered);
             return this;
         } else {
             return bufferStatus.message;
@@ -74,11 +57,12 @@ export default {
      */
     read() {
         return this.gpu.compute();
-        // return Utils.shapeData(this.gpu.compute(), [4, 1, 3, 3]);
     },
 
-    createFragmentShader(fsCode) {
-        return this.gpu.initShader(fsCode, 'fragment');
+    createProgram(fsCode, outTensor) {
+        const fshader = this.gpu.initShader(fsCode, 'fragment');
+        const program = this.gpu.createProgram(fshader, outTensor);
+        return program;
     },
 
     // 释放资源

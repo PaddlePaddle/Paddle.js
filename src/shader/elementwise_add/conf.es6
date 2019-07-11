@@ -19,6 +19,22 @@ export default {
         }
     ],
     conf: [
+        'WIDTH_SHAPE_ORIGIN',
+        'HEIGHT_SHAPE_ORIGIN',
+        'LENGTH_SHAPE_ORIGIN',
+        'WIDTH_TEXTURE_ORIGIN',
+        'HEIGHT_TEXTURE_ORIGIN',
+        'CHANNEL_ORIGIN',
+
+        'TOTAL_SHAPE_COUNTER',
+
+        'WIDTH_SHAPE_OUT',
+        'HEIGHT_SHAPE_OUT',
+        'WIDTH_TEXTURE_OUT',
+        'HEIGHT_TEXTURE_OUT',
+        'CHANNEL_OUT',
+
+        'AXIS',
         'MULTI_VALUE',
         'BIAS_VALUE',
         'ACTIVE_FUNCTION'
@@ -32,9 +48,9 @@ export default {
         },
         {
             tensor: 'counter',
-            variable: 'texture',
-            setter: 'initTexture',
-            type: 'texture'
+            variable: 'data',
+            setter: 'uniform1fv',
+            type: 'uniform'
         }
     ]
 };

@@ -13,6 +13,12 @@ export default {
         }
     ],
     conf: [
+        'WIDTH_SHAPE_OUT',
+        'HEIGHT_SHAPE_OUT',
+        'WIDTH_TEXTURE_OUT',
+        'HEIGHT_TEXTURE_OUT',
+        'CHANNEL_OUT',
+
         'MULTI_VALUE',
         'BIAS_VALUE',
         'ACTIVE_FUNCTION'

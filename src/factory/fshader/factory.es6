@@ -37,9 +37,15 @@ export default class Factory {
             let snippet = atoms[func];
             code += this.populateData(snippet, data);
         });
+        // suffix
+        code += this.buildSuffix(opName);
         // main方法
         code += ops.ops[opName].func;
         return code;
+    }
+
+    buildSuffix(opName) {
+        return ops.common.suffix;
     }
 
     populateData(result, data) {

@@ -55,7 +55,14 @@ const opBehavior = {
         'mergeTensor'
     ],
     elementwise_add: [
-        'broadcast'
+        'broadcast',
+        'needBatch'
+    ],
+    conv2d_elementwise_add: [
+        'broadcast',
+        'mergeAttrs',
+        'setActiveFunc',
+        'needBatch'
     ],
     pool2d: [
         'isMax',
@@ -63,17 +70,26 @@ const opBehavior = {
         'isGlobalPooling'
     ],
     relu: [
-        'transToPrelu'
+        'transToPrelu',
+        'needBatch'
+    ],
+    leaky_relu: [
+        'transToLeakyrelu',
+        'needBatch'
     ],
     mul: [
         'reshape',
         'needBatch'
     ]
 };
+const mergeType = 'conv2d-elementwise_add';
 export default class OpData {
     constructor(name, input = {}, output = {}, attrs = {}) {
+        this.realName = name;
         this.name = name;
         this.attrs = attrs;
+        // 检查是否是融合op
+        this.checkIsMerge();
         // 是否忽略当前当前op, 使用dropout
         this.isPass = this.checkIsPass();
         if (this.isPass) {
@@ -127,13 +143,24 @@ export default class OpData {
         });
         // 生成tensor对象
         tensorData.forEach(data => {
+            // console.log(data);
             if (data) {
-                this.tensor[data.tensorName] = new Tensor({
-                    name: data.tensorName,
-                    shape: data.shape,
-                    data: data.data,
-                    needBatch: data.needBatch || false
-                });
+                if (data.notTensor) {
+                    this.tensor[data.tensorName] = {
+                        name: data.tensorName,
+                        data: new Float32Array(data.data),
+                        total_shape: data.data.length
+                    };
+                } else {
+                    this.tensor[data.tensorName] = new Tensor({
+                        type: data.name,
+                        name: data.tensorName,
+                        shape: data.shape,
+                        data: data.data,
+                        needBatch: data.needBatch || false,
+                        notCompressed: data.notCompressed || false
+                    });
+                }
             }
         });
         // console.dir(['tensors', this.tensor]);
@@ -180,13 +207,21 @@ export default class OpData {
         }
     }
 
+    mergeAttrs() {
+        this.attrs = this.attrs.reduce((attrs, item) => {
+            return Object.assign(attrs, item);
+        }, {});
+    }
+
     broadcast(tensorData = []) {
-        const x = tensorData[0];
-        const y = tensorData[1];
-        let small = y;
-        if (x.shape.length - y.shape.length < 0) {
-            small = x;
-        }
+        tensorData.forEach(item => {
+            if (item.tensorName === 'counter') {
+                item.notTensor = true;
+            }
+        });
+        return;
+
+        // mobilenet model
         // todo: 默认y的shape length是1, 以后需要实现通用版本
         let shape = Utils.getBroadcastShapeInPaddle(x.shape, y.shape, this.attrs['axis']);
         // 填充shape数据
@@ -214,10 +249,19 @@ export default class OpData {
         this.data['active_function'] = 'prelu';
     }
 
-    setActiveFunc(tensorData = []) {
-        this.data['multi_value'] = '0.0';
-        this.data['active_function'] = 'softmax';
+    transToLeakyrelu(tensorData = []) {
+        this.data['multi_value'] = this.attrs.alpha;
+        this.data['active_function'] = 'leakyRelu';
+        this.name = 'relu';
+    }
 
+    setActiveFunc() {
+        // 用于融合op
+        const suffix = this.realName.replace(mergeType + '-', '');
+        if (suffix === 'leaky_relu') {
+            this.data['multi_value'] = this.attrs.alpha;
+            this.data['active_function'] = 'leakyRelu';
+        }
     }
 
     reshape(tensorData = []) {
@@ -250,10 +294,22 @@ export default class OpData {
             data.push(result[constants[3]].data[i]);
         }
         tensorData[result[constants[0] + 'Index']].data = data;
+        // 充分利用shader空间
+        tensorData[result[constants[0] + 'Index']].notCompressed = true;
         tensorData[result[constants[0] + 'Index']].shape[0] *= 4;
         tensorData.splice(result[constants[1] + 'Index'], 1, 0);
         tensorData.splice(result[constants[2] + 'Index'], 1, 0);
         tensorData.splice(result[constants[3] + 'Index'], 1, 0);
+    }
+
+    checkIsMerge() {
+        if (this.name.indexOf(mergeType) > -1
+            && Object.prototype.toString.apply(this.attrs) === '[object Array]') {
+            // 第一个融合op
+            this.name  = 'conv2d_elementwise_add';
+            return true;
+        }
+        return false;
     }
 
     checkIsPass() {

@@ -2,6 +2,7 @@
 import common_params from '../../shader/atom/common_params';
 import common_func from '../../shader/atom/common_func';
 import prefix from '../../shader/atom/prefix';
+import suffix from '../../shader/atom/suffix';
 import ivec56 from '../../shader/atom/type_ivec56';
 
 import conv2d_params from '../../shader/conv2d/params';
@@ -26,11 +27,16 @@ import batchnorm_params from '../../shader/batchnorm/params';
 import batchnorm_func from '../../shader/batchnorm/main';
 import batchnorm_conf from '../../shader/batchnorm/conf';
 
+import conv2d_elementwise_add_params from '../../shader/conv2d_elementwise_add/params';
+import conv2d_elementwise_add_func from '../../shader/conv2d_elementwise_add/main';
+import conv2d_elementwise_add_conf from '../../shader/conv2d_elementwise_add/conf';
+
 import getArrayIndexFromTensorPos from '../../shader/atom/getArrayIndexFromTensorPos';
 import getArrayIndexFromTexturePos from '../../shader/atom/getArrayIndexFromTexturePos';
 import getTensorPosFromArrayIndex from '../../shader/atom/getTensorPosFromArrayIndex';
 import getTexturePosFromArrayIndex from '../../shader/atom/getTexturePosFromArrayIndex';
 import getValueFromTexturePos from '../../shader/atom/getValueFromTexturePos';
+import getValueFromTensorPos from '../../shader/atom/getValueFromTensorPos';
 import moveTexture2PosToReal from '../../shader/atom/moveTexture2PosToReal';
 import getPixelsFromTexturePos from '../../shader/atom/getPixelsFromTexturePos';
 import getRangePowSumFromArrayIndex from '../../shader/atom/getRangePowSumFromArrayIndex';
@@ -49,6 +55,7 @@ export default {
         params: common_params,
         func: common_func,
         prefix,
+        suffix,
         ivec56
     },
     ops: {
@@ -56,6 +63,11 @@ export default {
             params: conv2d_params,
             func: conv2d_func,
             confs: conv2d_conf
+        },
+        conv2d_elementwise_add: {
+            params: conv2d_elementwise_add_params,
+            func: conv2d_elementwise_add_func,
+            confs: conv2d_elementwise_add_conf
         },
         dynamic: {
             params: dynamic_params,
@@ -104,6 +116,7 @@ export default {
         getTensorPosFromArrayIndex,
         getTexturePosFromArrayIndex,
         getValueFromTexturePos,
+        getValueFromTensorPos,
         moveTexture2PosToReal,
         getPixelsFromTexturePos,
         getRangeSumFromArrayIndex,

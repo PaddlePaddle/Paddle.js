@@ -10,6 +10,10 @@ export default class imageFeed {
         this.defaultHeight = 224;
         this.minPixels = 225;
         this.pixels = '';
+        this.defaultParams = {
+            gapFillWith: '#000',
+            std: [1, 1, 1]
+        };
     };
 
     /**
@@ -21,7 +25,10 @@ export default class imageFeed {
         const mode = inputs.mode;
         const channel = inputs.channel;
         const rotate = inputs.rotate;
-        const params = inputs.params;
+        const params = {
+            ...this.defaultParams,
+            ...inputs.params
+        };
         let output = [];
 
         output = this.fromPixels(input, params);
@@ -62,6 +69,50 @@ export default class imageFeed {
     };
 
     /**
+     * 全部转rgb * H * W
+     * @param shape
+     */
+    allReshapeToRGB(imageData, opt, scaleSize) {
+        const {sw, sh} = scaleSize;
+        const [b, c, h, w] = opt.targetShape;
+        let data = imageData.data;
+        let mean = opt.mean;
+        let dataLength = data.length;
+        let result = new Float32Array(dataLength * 3);
+        // let offsetR = 0;
+        // let offsetG = dataLength / 4;
+        // let offsetB = dataLength / 2;
+        let offset = 0;
+        for (let i = 0; i < (dataLength * 3 / 4); i++) {
+            let j = i / (c * w) | 0;
+            let k = i % (c * w);
+            let b1 = j / h | 0;
+            let h1 = j % h;
+            let c1 = k % c;
+            let w1 = k / c | 0;
+            let l = b1 * (c * h * w) + c1 * (h * w) + h1 * (w) + w1;
+            let a = (l % (h * w)) * 4 + (l / (h * w) | 0);
+            result[offset] = (data[a] - mean[l / (h * w) | 0]) / 256;
+            offset += 4;
+            // data.push(opts.data[l]);
+            // data.push(0);
+            // data.push(0);
+            // data.push(0);
+        }
+        // for (let i = 0; i < data.length; i += 4) {
+            
+        //     result[offsetR++] = (data[i] - mean[0]) / 256;
+        //     result[offsetG++] = (data[i + 1] - mean[1]) / 256;
+        //     result[offsetB++] = (data[i + 2] - mean[2]) / 256;
+        //     // result.push((data[i] - mean[0]) / 256); // red
+        //     // result.push((data[i + 1] - mean[1]) / 256); // green
+        //     // result.push((data[i + 2] - mean[2]) / 256); // blue
+        // }
+        // console.log('result', result);
+        return result;
+    };
+
+    /**
      * 根据scale缩放图像
      * @param image
      * @param params
@@ -69,8 +120,8 @@ export default class imageFeed {
      */
     reSize(image, params) {
         // 原始图片宽高
-        const width = image.naturalWidth || image.width;
-        const height = image.naturalHeight || image.height;
+        const width = this.pixelWidth;
+        const height = this.pixelHeight;
         // 缩放后的宽高
         let sw = width;
         let sh = height;
@@ -88,6 +139,48 @@ export default class imageFeed {
             image, 0, 0, sw, sh);
         return {sw, sh};
     };
+
+
+    /**
+     * 缩放成目标尺寸并居中
+     */
+    fitToTargetSize(image, params, center) {
+        // 目标尺寸
+        const targetWidth = params.targetSize.width;
+        const targetHeight = params.targetSize.height;
+        this.fromPixels2DContext.canvas.width = targetWidth;
+        this.fromPixels2DContext.canvas.height = targetHeight;
+        this.fromPixels2DContext.fillStyle = params.gapFillWith;
+        this.fromPixels2DContext.fillRect(0, 0, targetHeight, targetWidth);
+        // 缩放后的宽高
+        let sw = targetWidth;
+        let sh = targetHeight;
+        let x = 0;
+        let y = 0;
+        // target的长宽比大些 就把原图的高变成target那么高
+        if (targetWidth / targetHeight * this.pixelHeight / this.pixelWidth >= 1) {
+            sw = Math.round(sh * this.pixelWidth / this.pixelHeight);
+            x = Math.floor((targetWidth - sw) / 2);
+        }
+        // target的长宽比小些 就把原图的宽变成target那么宽
+        else {
+            sh = Math.round(sw * this.pixelHeight / this.pixelWidth);
+            y = Math.floor((targetHeight - sh) / 2);
+        }
+        // console.log(x, y, sw, sh);
+        if (center) {
+            this.fromPixels2DContext.drawImage(
+                image, x, y, sw, sh);
+        }
+        else {
+            this.fromPixels2DContext.drawImage(
+                image, 0, 0, sw, sh);
+            // currentPic = this.fromPixels2DContext.canvas.toDataURL();
+        }
+        window.currentPic = this.fromPixels2DContext.canvas;// test only, demele me
+        // document.getElementById('p-c').appendChild(this.fromPixels2DContext.canvas);// test only, demele me
+        return {sw: targetWidth, sh: targetHeight};
+    }
 
     /**
      * 获取图像内容
@@ -121,28 +214,34 @@ export default class imageFeed {
         return data;
     };
 
-    /**
-     * 图像转换成像素
-     * @param pixels
-     * @param opt
-     * @returns {{data: *, shape: *, name: string}[]}
-     */
     fromPixels(pixels, opt) {
         let data;
         let scaleSize;
         if (pixels instanceof HTMLImageElement || pixels instanceof HTMLVideoElement) {
-            scaleSize = this.reSize(pixels, opt);
-            data = this.getImageData(opt, scaleSize);
+            this.pixelWidth = pixels.naturalWidth || pixels.width;
+            this.pixelHeight = pixels.naturalHeight || pixels.height;
+            if (opt.scale) { // 兼容以前的，如果有scale就是短边缩放到scale模式
+                scaleSize = this.reSize(pixels, opt);
+                data = this.getImageData(opt, scaleSize);
+            }
+            else if (opt.targetSize) { // 如果有targetSize，就是装在目标宽高里的模式
+                scaleSize = this.fitToTargetSize(pixels, opt);
+                data = this.getImageData(opt, scaleSize);
+            }
         }
 
         if (opt.gray) {
-            data = grayscale (data);
+            data = grayscale(data);
         }
 
         if (opt.shape) {
             data = this.reshape(data, opt, scaleSize);
         }
-        return [{data: data, shape: opt.shape, name: 'image'}];
+
+        if (opt.targetShape) {
+            data = this.allReshapeToRGB(data, opt, scaleSize);
+        }
+        return [{data: data, shape: opt.shape || opt.targetShape, name: 'image'}];
     }
 }
 /* eslint-enable */

@@ -13,6 +13,11 @@ float prelu(float x, float p, float b) {
     return result;
 }
 
+float leakyRelu(float x, float p, float b) {
+    float result = max(x, x * p);
+    return result;
+}
+
 float scale(float x, float p, float b) {
     float result = p * x + b;
     return result;

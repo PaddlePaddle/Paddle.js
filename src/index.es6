@@ -14,4 +14,7 @@ const cat = document.getElementById('pic');
 const io = new IO();
 
 let inst = model.execute({input: cat});
-console.dir(['result', inst.read()]);
+let res = inst.read();
+console.dir(['result', res]);
+var fileDownload = require('js-file-download');
+fileDownload(res, "result.csv");

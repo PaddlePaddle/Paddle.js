@@ -25,24 +25,47 @@ export default class Tensor {
         // 获取转换到texture后的信息
         let {zeroNumber, shape: shape_texture} = Utils.getTextureInfoFromTensorShape(shape);
         this.shape_texture = shape_texture;
-
         // tensor数据
-        if (opts.data && opts.data.length) {
-            // 补充0, 生成数据
-            if (zeroNumber > 0) {
-                for (let i = 0; i < zeroNumber; i++) {
-                    opts.data.push(0);
+        let data;
+        if (opts.type === 'image') {
+            this.data = opts.data;
+        }
+        else if (opts.data && opts.data.length) {
+            data = new Float32Array(opts.data.length * 4);
+            let offset = 0;
+            if (!opts.notCompressed) {
+                let b = shape[0];
+                let c = shape[1];
+                let h = shape[2];
+                let w = shape[3];
+                
+                for (let i = 0; i < opts.data.length; i++) {
+                    let j = i / (c * w) | 0;
+                    let k = i % (c * w);
+                    let b1 = j / h | 0;
+                    let h1 = j % h;
+                    let c1 = k % c;
+                    let w1 = k / c | 0;
+                    let l = b1 * (c * h * w) + c1 * (h * w) + h1 * (w) + w1;
+                    data[offset] = opts.data[l];
+                    offset += 4;
+                    // data.push(opts.data[l]);
+                    // data.push(0);
+                    // data.push(0);
+                    // data.push(0);
                 }
+                this.data = data;
+            } else {
+                // batchnorm的scale
+                this.shape_texture = [4, 1, this.total / 4];
+                // data = [].concat(opts.data);
+                this.data = new Float32Array(opts.data); 
+            }
 
-            }
-            // todo: 需要在外层保证data的长度和shape一致
-            let total = shape_texture.reduce((all, num) => all * num);
-            if (opts.data.length > total) {
-                opts.data = opts.data.slice(0, total);
-            }
-            this.data = new Float32Array(opts.data);
+            // this.data = new Float32Array(data);
+            // console.log('this.data.length', this.data.length);
             // 清理缓存
-            opts.data.length = 0;
+            opts.data = null;
         }
     }
 

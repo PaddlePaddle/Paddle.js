@@ -49,27 +49,29 @@ export default class gpu {
         // 帧缓存
         this.frameBuffer = gl.createFramebuffer();
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.frameBuffer);
-        // 计算texture cache, 最多3个
-        this.cacheTextures = [gl.createTexture(), gl.createTexture(), gl.createTexture()];
+        // 计算texture cache
+        this.cacheTextures = {};
         // texture buffer
-        this.textureBuffer = [gl.createTexture(), gl.createTexture()];
+        // this.textureBuffer = [gl.createTexture(), gl.createTexture()];
+        this.outTextures = [];
         // program
-        this.programs = [gl.createProgram(), gl.createProgram()];
-        this.program = this.programs[0];
-        this.textureBufferIndex = 0;
-        for (let i = 0; i < 2; i++) {
-            gl.bindTexture(gl.TEXTURE_2D, this.textureBuffer[i]);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-            gl.bindTexture(gl.TEXTURE_2D, null);
-        }
+        // this.programs = [gl.createProgram(), gl.createProgram()];
+        // this.program = this.programs[0];
+        // gl.attachShader(this.program, this.vertexShader);
+        // this.textureBufferIndex = 0;
+        // for (let i = 0; i < 2; i++) {
+        //     gl.bindTexture(gl.TEXTURE_2D, this.textureBuffer[i]);
+        //     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        //     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        //     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        //     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        //     gl.bindTexture(gl.TEXTURE_2D, null);
+        // }
     }
 
-    runVertexShader() {
+    runVertexShader(program) {
         const gl = this.gl;
-        let aPosition = gl.getAttribLocation(this.program, 'position');
+        let aPosition = gl.getAttribLocation(program, 'position');
         // Turn on the position attribute
         gl.enableVertexAttribArray(aPosition);
         // Bind the position buffer.
@@ -89,31 +91,72 @@ export default class gpu {
         return (this.textureFloat !== null);
     }
 
+    createProgram(fshader, out) {
+        const gl = this.gl;
+        const program = gl.createProgram();
+        gl.attachShader(program, this.vertexShader);
+        gl.attachShader(program, fshader);
+        gl.linkProgram(program);
+        // 生成output的texture缓存
+        const texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+        gl.texImage2D(gl.TEXTURE_2D, // Target, matches bind above.
+            0,             // Level of detail.
+            gl.RGBA,       // Internal format.
+            out.width_texture,
+            out.height_texture,
+            0,             // Always 0 in OpenGL ES.
+            gl.RGBA,       // Format for each pixel.
+            WebGLRenderingContext.FLOAT,          // Data type for each chanel.
+            null);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+        this.outTextures.push(texture);
+        return program;
+    }
+
+    setProgram(program, isRendered) {
+        const gl = this.gl;
+        gl.useProgram(program);
+        this.program = program;
+        if (!isRendered) {
+            this.runVertexShader(program);
+        }
+    }
+
     attachShader(fshader) {
         const gl = this.gl;
-        // this.textures.forEach(texture => {
-        //     gl.deleteTexture(texture);
-        // });
-        // this.textures = [];
-        let index = this.textureBufferIndex % 2;
-        const program = this.programs[index];
-        this.program = program;
-        if (this.times < 2) {
-            gl.attachShader(program, this.vertexShader);
-        }
+        // let index = this.textureBufferIndex % 2;
+        // const program = this.programs[index];
+        // this.program = program;
+        const program = this.program;
+        // if (this.times < 2) {
+        //     gl.attachShader(program, this.vertexShader);
+        // }
         this.textureBufferIndex = (this.textureBufferIndex + 1) >= 2 ? 0 : 1;
+        if (!!this.fragmentShader) {
+            gl.detachShader(program, this.fragmentShader);
+        }
         this.gl.attachShader(program, fshader);
+        this.fragmentShader = fshader;
         gl.linkProgram(program);
-        gl.useProgram(program);
-        if (this.times++ < 2) {
+        if (this.times++ === 0) {
+            gl.useProgram(program);
             this.runVertexShader();
         }
-        if (!!this.fragmentShader) {
-            const cache = this.programs[(index + 1) % 2];
-            gl.detachShader(cache, this.fragmentShader);
-            // gl.deleteShader(this.fragmentShader);
-        }
-        this.fragmentShader = fshader;
+        // if (this.times++ < 2) {
+        //     this.runVertexShader();
+        // }
+        // if (!!this.fragmentShader) {
+        //     const cache = this.programs[(index + 1) % 2];
+        //     gl.detachShader(cache, this.fragmentShader);
+        //     // gl.deleteShader(this.fragmentShader);
+        // }
+        // this.fragmentShader = fshader;
     }
 
     create(vshaderCode, fshaderCode) {
@@ -162,7 +205,6 @@ export default class gpu {
             }
         }
 
-        // this.gl.attachShader(this.program, shader);
         return shader;
     }
 
@@ -190,10 +232,11 @@ export default class gpu {
      * @param {WebGLTexture} texture 材质
      * @returns {WebGLFramebuffer} The framebuffer
      */
-    attachFrameBuffer(opts = {}) {
+    attachFrameBuffer(iLayer) {
         this.prevTexture = this.currentTexture;
-        this.currentTexture = this.textureBuffer[this.textureBufferIndex % 2];
+        // this.currentTexture = this.textureBuffer[this.textureBufferIndex % 2];
         // this.textureBufferIndex = (this.textureBufferIndex + 1) >= 2 ? 0 : 1;
+        this.currentTexture = this.outTextures[iLayer];
         const gl = this.gl;
         gl.framebufferTexture2D(gl.FRAMEBUFFER, // The target is always a FRAMEBUFFER.
             gl.COLOR_ATTACHMENT0, // We are providing the color buffer.
@@ -204,19 +247,13 @@ export default class gpu {
         gl.viewport(
             0,
             0,
-            opts.width_texture_out || this.width_texture_out,
-            opts.height_texture_out || this.height_texture_out
+            this.width_texture_out,
+            this.height_texture_out
         );
         return this.frameBuffer;
     }
 
-    /**
-     * Check the framebuffer status. Return false if the framebuffer is not complete,
-     * That is if it is not fully and correctly configured as required by the current
-     * hardware. True indicates that the framebuffer is ready to be rendered to.
-     *
-     * @returns {boolean} True if the framebuffer is ready to be rendered to. False if not.
-     */
+    // 帧缓存检测
     frameBufferIsComplete() {
         let gl = this.gl;
         let message;
@@ -287,20 +324,30 @@ export default class gpu {
      * @param {int} index 材质索引
      * @param {string} tSampler 材质名称
      * @param {Object} bufferData 数据
+     * @param {boolean} isRendered 是否已运行过
      */
-    initTexture(index, item) {
+    initTexture(index, item, iLayer, isRendered) {
         const gl = this.gl;
         let texture;
         if (!item.data) {
             texture = this.prevTexture;
         } else {
             // texture = gl.createTexture();
-            texture = this.cacheTextures[index];
+            if (isRendered && (iLayer > 0 || (iLayer === 0 && item.tensor !== 'origin'))) {
+                const tData = this.cacheTextures['' + iLayer];
+                texture = tData[item.variable + '_' + item.tensor];
+            } else {
+                texture = gl.createTexture();
+                if (index === 0) {
+                    this.cacheTextures['' + iLayer] = this.cacheTextures['' + iLayer] || {};
+                }
+                this.cacheTextures['' + iLayer][item.variable + '_' + item.tensor] = texture;
+            }
             // this.textures.push(texture);
         }
         gl.activeTexture(gl[`TEXTURE${index}`]);
         gl.bindTexture(gl.TEXTURE_2D, texture);
-        if (item.data) {
+        if (item.data && (!isRendered || (isRendered && iLayer === 0 && item.tensor === 'origin'))) {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -341,38 +388,57 @@ export default class gpu {
         return texture;
     }
 
-    render(data = []) {
+    render(data = [], iLayer = 0, isRendered = false) {
         const gl = this.gl;
         let textureIndex = 0;
-        // 输入数据
-        data.forEach(item => {
-            if (item.type === 'texture') {
-                this.initTexture(textureIndex, item);
-                gl.uniform1i(this.getUniformLoc(item.variable + '_' + item.tensor), textureIndex++);
-            } else if (item.type === 'uniform') {
-                gl[item.setter](this.getUniformLoc(item.variable + '_' + item.tensor), item.data);
-            }
-        });
+        if (isRendered) {
+            data.forEach(item => {
+                if (item.type === 'texture') {
+                    this.initTexture(textureIndex, item, iLayer, isRendered);
+                    gl.uniform1i(this.getUniformLoc(item.variable + '_' + item.tensor), textureIndex++);
+                }
+                else if (item.type === 'uniform') {
+                    gl[item.setter](this.getUniformLoc(item.variable + '_' + item.tensor), item.data);
+                }
+            });
+        }
+        else {
+            // 输入数据
+            data.forEach(item => {
+                if (item.type === 'texture') {
+                    this.initTexture(textureIndex, item, iLayer, isRendered);
+                    gl.uniform1i(this.getUniformLoc(item.variable + '_' + item.tensor), textureIndex++);
+                } else if (item.type === 'uniform') {
+                    gl[item.setter](this.getUniformLoc(item.variable + '_' + item.tensor), item.data);
+                }
+            });
+        }
         // gl.clearColor(.0, .0, .0, 1);
         // gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
     compute() {
+        log.start('后处理-readinside');
         let gl = this.gl;
         let pixels = new Float32Array(this.width_texture_out * this.height_texture_out * 4);
         // gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-        // console.dir(['framebuffer状态', this.frameBufferIsComplete()]);
         gl.readPixels(0, 0, this.width_texture_out, this.height_texture_out, gl.RGBA, gl.FLOAT, pixels, 0);
-
-        return pixels.slice(0, this.total_shape);
+        log.end('后处理-readinside');
+        log.start('后处理-readloop');
+        let result = [];
+        for (let i = 0; i < this.width_texture_out * this.height_texture_out; i++) {
+            result.push(pixels[4 * i]);
+        }
+        log.end('后处理-readloop');
+        return result;
     }
 
     dispose() {
         const gl = this.gl;
-        this.cacheTextures.forEach(texture => {
-            gl.deleteTexture(texture);
-        });
+        // this.cacheTextures.forEach(texture => {
+        //     gl.deleteTexture(texture);
+        // });
         this.cacheTextures = [];
         this.programs.forEach(program => {
             gl.detachShader(program, this.vertexShader);

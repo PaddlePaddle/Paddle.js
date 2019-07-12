@@ -30,7 +30,10 @@ export default class imageFeed {
             ...inputs.params
         };
         let output = [];
-
+        if (!this.result) {
+            const [b, c, h, w] = params.targetShape;
+            this.result = new Float32Array(h * w * 4 * 3);
+        }
         output = this.fromPixels(input, params);
         return output;
     };
@@ -78,37 +81,25 @@ export default class imageFeed {
         let data = imageData.data;
         let mean = opt.mean;
         let dataLength = data.length;
-        let result = new Float32Array(dataLength * 3);
+        // let result = new Float32Array(dataLength * 3);
+        let result = this.result;
         // let offsetR = 0;
         // let offsetG = dataLength / 4;
         // let offsetB = dataLength / 2;
         let offset = 0;
-        for (let i = 0; i < (dataLength * 3 / 4); i++) {
-            let j = i / (c * w) | 0;
-            let k = i % (c * w);
-            let b1 = j / h | 0;
-            let h1 = j % h;
-            let c1 = k % c;
-            let w1 = k / c | 0;
-            let l = b1 * (c * h * w) + c1 * (h * w) + h1 * (w) + w1;
-            let a = (l % (h * w)) * 4 + (l / (h * w) | 0);
-            result[offset] = (data[a] - mean[l / (h * w) | 0]) / 256;
-            offset += 4;
-            // data.push(opts.data[l]);
-            // data.push(0);
-            // data.push(0);
-            // data.push(0);
+        let size = h * w;
+        // h w c
+        for (let i = 0; i < h; ++i) {
+            let iw = i * w;
+            for (let j = 0; j < w; ++j) {
+                let iwj = iw + j;
+                for (let k = 0; k < c; ++k) {
+                    let a = iwj * 4 + k;
+                    result[offset] = (data[a] - mean[k]) / 256;
+                    offset += 4;                    
+                }
+            }
         }
-        // for (let i = 0; i < data.length; i += 4) {
-            
-        //     result[offsetR++] = (data[i] - mean[0]) / 256;
-        //     result[offsetG++] = (data[i + 1] - mean[1]) / 256;
-        //     result[offsetB++] = (data[i + 2] - mean[2]) / 256;
-        //     // result.push((data[i] - mean[0]) / 256); // red
-        //     // result.push((data[i + 1] - mean[1]) / 256); // green
-        //     // result.push((data[i + 2] - mean[2]) / 256); // blue
-        // }
-        // console.log('result', result);
         return result;
     };
 
@@ -177,7 +168,7 @@ export default class imageFeed {
                 image, 0, 0, sw, sh);
             // currentPic = this.fromPixels2DContext.canvas.toDataURL();
         }
-        window.currentPic = this.fromPixels2DContext.canvas;// test only, demele me
+        // window.currentPic = this.fromPixels2DContext.canvas;// test only, demele me
         // document.getElementById('p-c').appendChild(this.fromPixels2DContext.canvas);// test only, demele me
         return {sw: targetWidth, sh: targetHeight};
     }
@@ -221,12 +212,17 @@ export default class imageFeed {
             this.pixelWidth = pixels.naturalWidth || pixels.width;
             this.pixelHeight = pixels.naturalHeight || pixels.height;
             if (opt.scale) { // 兼容以前的，如果有scale就是短边缩放到scale模式
+                console.log('sssss');
                 scaleSize = this.reSize(pixels, opt);
                 data = this.getImageData(opt, scaleSize);
             }
             else if (opt.targetSize) { // 如果有targetSize，就是装在目标宽高里的模式
+                log.start('预处理-调整尺寸');
                 scaleSize = this.fitToTargetSize(pixels, opt);
+                log.end('预处理-调整尺寸');
+                log.start('预处理-获得数据');           
                 data = this.getImageData(opt, scaleSize);
+                log.end('预处理-获得数据');
             }
         }
 
@@ -239,7 +235,9 @@ export default class imageFeed {
         }
 
         if (opt.targetShape) {
+            log.start('预处理-转换数据');
             data = this.allReshapeToRGB(data, opt, scaleSize);
+            log.end('预处理-转换数据');
         }
         return [{data: data, shape: opt.shape || opt.targetShape, name: 'image'}];
     }

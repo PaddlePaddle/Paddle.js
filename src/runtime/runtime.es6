@@ -56,7 +56,14 @@ export default {
      * 读取op计算结果, 并返回数据
      */
     read() {
-        return this.gpu.compute();
+        let bufferStatus = this.gpu.frameBufferIsComplete();
+        if (bufferStatus.isComplete) {
+            log.end('运行耗时');
+            log.start('后处理');
+            log.start('后处理-读取数据');
+            return this.gpu.compute();
+        }
+        return null;
     },
 
     createProgram(fsCode, outTensor) {

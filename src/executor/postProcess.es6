@@ -229,14 +229,22 @@ let handleCanvas = (finalData, img) => {
     // });
 };
 
+const isSimilar = (r1, r2, threshold = 5) => {
+    return Math.max(Math.abs(r1[0] - r2[0]), Math.abs(r1[1] - r2[1])) < threshold;
+    // return Math.abs((r1[0] + r1[1] + r1[2] + r1[3]) - (r2[0] + r2[1] + r2[2] + r2[3])) < threshold;
+}
+
 let handleDiv = (finalData, img) => {
     let myCanvas = document.getElementById('myDiv');
     if (finalData.length < 1) {
-        myCanvas.style.opacity = 0;
-        document.getElementById('p-c').appendChild(currentPic);
+        if (count++ > 1) {
+            myCanvas.style.opacity = 0;
+        }
+        // window.currentPic && document.getElementById('p-c').appendChild(currentPic);
         return false;
     }
 
+    count = 0;
     myCanvas.style.opacity = 1;
     let maxIndex = 0;
     if (finalData.length > 1) {
@@ -249,9 +257,12 @@ let handleDiv = (finalData, img) => {
         }
     }
 
-    let [demoLeft, demoTop, demoWidth, demoHeight, prob] = finalData[maxIndex];
-    myCanvas.style.width = demoWidth + 'px';
-    myCanvas.style.height = demoHeight + 'px';
-    myCanvas.style.left = demoLeft + 'px';
-    myCanvas.style.top = demoTop + 'px';
+    let [demoLeft, demoTop, demoWidth, demoHeight] = finalData[maxIndex];
+    if (!isSimilar(lastRect, [demoLeft, demoTop, demoWidth, demoHeight])) {
+        myCanvas.style.width = demoWidth + 'px';
+        myCanvas.style.height = demoHeight + 'px';
+        myCanvas.style.left = demoLeft + 'px';
+        myCanvas.style.top = demoTop + 'px';
+    };
+    lastRect = [demoLeft, demoTop, demoWidth, demoHeight];
 };

@@ -10,10 +10,10 @@ export default class gpu {
         opts.width_raw_canvas = Number(opts.width_raw_canvas) || 512;
         opts.height_raw_canvas = Number(opts.height_raw_canvas) || 512;
         let canvas = opts.el ? opts.el : document.createElement('canvas');
-        canvas.width = opts.width_raw_canvas;
-        canvas.height = opts.height_raw_canvas;
+        // canvas.width = opts.width_raw_canvas;
+        // canvas.height = opts.height_raw_canvas;
         this.gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-        this.gl.viewport(0, 0, canvas.width, canvas.height);
+        // this.gl.viewport(0, 0, canvas.width, canvas.height);
         // Attempt to activate the extension, returns null if unavailable
         this.textureFloat  = this.gl.getExtension('OES_texture_float');
         // this.setOutProps();
@@ -51,6 +51,7 @@ export default class gpu {
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.frameBuffer);
         // 计算texture cache
         this.cacheTextures = {};
+        this.uniformLocations = {};
         // texture buffer
         // this.textureBuffer = [gl.createTexture(), gl.createTexture()];
         this.outTextures = [];
@@ -250,6 +251,12 @@ export default class gpu {
             this.width_texture_out,
             this.height_texture_out
         );
+        gl.scissor(
+            0,
+            0,
+            this.width_texture_out,
+            this.height_texture_out
+        );
         return this.frameBuffer;
     }
 
@@ -352,15 +359,21 @@ export default class gpu {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, item.width_texture || this.opts.width_raw_canvas,
-                item.height_texture || this.opts.height_raw_canvas, 0,
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, item.width_texture,
+                item.height_texture, 0,
                 gl.RGBA, gl.FLOAT, item.data, 0);
         }
     }
 
-    getUniformLoc(name) {
+    getUniformLoc(name, ilayer, isRendered) {
+        if (isRendered) {
+            return this.uniformLocations['' + ilayer][name];
+        }
         let loc = this.gl.getUniformLocation(this.program, name);
         if (loc === null) throw `getUniformLoc ${name} err`;
+        // 缓存
+        this.uniformLocations['' + ilayer] = this.uniformLocations['' + ilayer] || {};
+        this.uniformLocations['' + ilayer][name] = loc;
         return loc;
     }
 
@@ -391,28 +404,15 @@ export default class gpu {
     render(data = [], iLayer = 0, isRendered = false) {
         const gl = this.gl;
         let textureIndex = 0;
-        if (isRendered) {
-            data.forEach(item => {
-                if (item.type === 'texture') {
-                    this.initTexture(textureIndex, item, iLayer, isRendered);
-                    gl.uniform1i(this.getUniformLoc(item.variable + '_' + item.tensor), textureIndex++);
-                }
-                else if (item.type === 'uniform') {
-                    gl[item.setter](this.getUniformLoc(item.variable + '_' + item.tensor), item.data);
-                }
-            });
-        }
-        else {
-            // 输入数据
-            data.forEach(item => {
-                if (item.type === 'texture') {
-                    this.initTexture(textureIndex, item, iLayer, isRendered);
-                    gl.uniform1i(this.getUniformLoc(item.variable + '_' + item.tensor), textureIndex++);
-                } else if (item.type === 'uniform') {
-                    gl[item.setter](this.getUniformLoc(item.variable + '_' + item.tensor), item.data);
-                }
-            });
-        }
+        data.forEach(item => {
+            if (item.type === 'texture') {
+                this.initTexture(textureIndex, item, iLayer, isRendered);
+                gl.uniform1i(this.getUniformLoc(item.variable + '_' + item.tensor, iLayer, isRendered), textureIndex++);
+            }
+            else if (item.type === 'uniform') {
+                gl[item.setter](this.getUniformLoc(item.variable + '_' + item.tensor, iLayer, isRendered), item.data);
+            }
+        });
         // gl.clearColor(.0, .0, .0, 1);
         // gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -439,7 +439,7 @@ export default class gpu {
         // this.cacheTextures.forEach(texture => {
         //     gl.deleteTexture(texture);
         // });
-        this.cacheTextures = [];
+        this.cacheTextures = {};
         this.programs.forEach(program => {
             gl.detachShader(program, this.vertexShader);
             gl.deleteShader(this.vertexShader);

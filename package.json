@@ -6,7 +6,7 @@
   "scripts": {
     "server": "parcel ./src/index.html",
     "testDemo": "parcel ./demo/index.html",
-    "testVideoDemo": "parcel ./demo/videoDemo.html --port 8123 --https",
+    "videoDemo": "parcel ./demo/videoDemo.html --port 8123 --https",
     "unit": "parcel ./test/unitTest.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

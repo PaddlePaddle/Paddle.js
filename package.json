@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "server": "parcel ./src/index.html",
-    "testDemo": "parcel ./demo/index.html",
+    "classDemo": "parcel ./demo/index.html",
     "videoDemo": "parcel ./demo/videoDemo.html --port 8123 --https",
     "unit": "parcel ./test/unitTest.html",
     "test": "echo \"Error: no test specified\" && exit 1"

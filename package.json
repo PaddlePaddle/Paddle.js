@@ -7,7 +7,7 @@
     "server": "parcel ./src/index.html",
     "classDemo": "parcel ./demo/index.html",
     "videoDemo": "parcel ./demo/videoDemo.html --port 8123 --https",
-    "unit": "parcel ./test/unitTest.html",
+    "unitTest": "parcel ./test/unitTest.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

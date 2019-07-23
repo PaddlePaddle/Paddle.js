@@ -2,7 +2,7 @@ import 'babel-polyfill';
 import Graph from '../src/executor/loader';
 import IO from '../src/feed/imageFeed';
 // import Utils from '../src/utils/utils';
-// 获取map表
+// 获取分类map表
 // import Map from '../test/data/map';
 
 // import demoPic from './bbt1.jpg';

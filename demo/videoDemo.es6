@@ -12,7 +12,9 @@ let loaded = false;
 let model = {};
 window.statistic = [];
 window.badCases = [];
-window.currentPic = '';
+// window.currentPic = '';
+window.count = 0;
+window.lastRect = [0, 0, 0, 0];
 
 let runFlag = true;
 
@@ -60,7 +62,7 @@ window.conf = {
     fw,
     from,
     to
-}
+};
 // =====
 
 
@@ -162,10 +164,12 @@ async function preheat() {
     document.getElementById('start').disabled = false;
 }
 
+window.io = new IO();
+
 async function run(input) {
     // const input = document.getElementById('mobilenet');
     log.start('总耗时');
-    const io = new IO();
+    // const io = io;
     log.start('预处理');
     let feed = io.process({
         input: input,
@@ -187,11 +191,9 @@ async function run(input) {
     let inst = model.execute({
         input: feed
     });
-    log.end('运行耗时');
-    log.start('后处理');
-    log.start('后处理-读取数据');
+
     // 其实这里应该有个fetch的执行调用或者fetch的输出
-    let result = inst.read();
+    let result = await inst.read();
     log.end('后处理-读取数据');
     // console.dir(['result', result]);
     log.start('后处理-形状调整');

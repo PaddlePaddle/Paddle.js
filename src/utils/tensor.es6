@@ -31,14 +31,13 @@ export default class Tensor {
             this.data = opts.data;
         }
         else if (opts.data && opts.data.length) {
-            data = new Float32Array(opts.data.length * 4);
-            let offset = 0;
+            data = new Float32Array(opts.data.length);
             if (!opts.notCompressed) {
                 let b = shape[0];
                 let c = shape[1];
                 let h = shape[2];
                 let w = shape[3];
-                
+
                 for (let i = 0; i < opts.data.length; i++) {
                     let j = i / (c * w) | 0;
                     let k = i % (c * w);
@@ -47,19 +46,14 @@ export default class Tensor {
                     let c1 = k % c;
                     let w1 = k / c | 0;
                     let l = b1 * (c * h * w) + c1 * (h * w) + h1 * (w) + w1;
-                    data[offset] = opts.data[l];
-                    offset += 4;
-                    // data.push(opts.data[l]);
-                    // data.push(0);
-                    // data.push(0);
-                    // data.push(0);
+                    data[i] = opts.data[l];
                 }
                 this.data = data;
             } else {
                 // batchnorm的scale
                 this.shape_texture = [4, 1, this.total / 4];
                 // data = [].concat(opts.data);
-                this.data = new Float32Array(opts.data); 
+                this.data = new Float32Array(opts.data);
             }
 
             // this.data = new Float32Array(data);

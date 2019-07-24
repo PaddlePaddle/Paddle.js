@@ -43,6 +43,6 @@ export default `
             }
             oy += dilation_v;
         }
-        gl_FragColor.r = res;
+        setOutput(res);
     }
 `;

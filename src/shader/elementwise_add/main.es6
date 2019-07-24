@@ -12,6 +12,6 @@ void main(void) {
     float o = getPixelsFromTexturePos_texture_origin(vCoord).r;
     float c = getValueFromCounter(index);
     float res = ACTIVE_FUNCTION(o + c, multi_value, bias_value);
-    gl_FragColor.r = res;
+    setOutput(res);
 }
 `;

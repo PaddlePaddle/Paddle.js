@@ -14,4 +14,14 @@ ivec4 getOutputTensorPos() {
     int b = int(outCoord.y / float(height_shape_out));
     return ivec4(b, c, y, x);
 }
+
+ivec4 getOutputPackedTensorPos() {
+    // 获取原始长度
+    vec2 outCoord = vCoord.xy * _2d_shape_texture_out;
+    int x = int(outCoord.x);
+    int c = int(outCoord.y / float(height_shape_out));
+    int y = int(mod(outCoord.y, float(height_shape_out)));
+    int b = 0;
+    return ivec4(b, c, y, x);
+}
 `;

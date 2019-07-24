@@ -43,10 +43,8 @@ export default class GraphModel  {
             this.loadOptions = {};
         } else {
             // op runner
-            this.inst = Runtime.init({
-                'width_raw_canvas': 512,
-                'height_raw_canvas': 512
-            });
+            this.inst = Runtime.init();
+            factory.setWebglVersion(this.inst.getWebglVersion());
         }
     }
     fetchOneChunk(path) {

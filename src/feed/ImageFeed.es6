@@ -95,8 +95,7 @@ export default class imageFeed {
                 let iwj = iw + j;
                 for (let k = 0; k < c; ++k) {
                     let a = iwj * 4 + k;
-                    result[offset] = (data[a] - mean[k]) / 256;
-                    offset += 4;                    
+                    result[offset++] = (data[a] - mean[k]) / 256;
                 }
             }
         }
@@ -220,7 +219,7 @@ export default class imageFeed {
                 log.start('预处理-调整尺寸');
                 scaleSize = this.fitToTargetSize(pixels, opt);
                 log.end('预处理-调整尺寸');
-                log.start('预处理-获得数据');           
+                log.start('预处理-获得数据');
                 data = this.getImageData(opt, scaleSize);
                 log.end('预处理-获得数据');
             }

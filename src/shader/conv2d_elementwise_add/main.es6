@@ -44,6 +44,6 @@ export default `
             }
             oy += dilation_v;
         }
-        gl_FragColor.r = ACTIVE_FUNCTION(res, multi_value, bias_value);;
+        setOutput(ACTIVE_FUNCTION(res, multi_value, bias_value));
     }
 `;

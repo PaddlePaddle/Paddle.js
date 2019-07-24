@@ -44,6 +44,6 @@ void main(void) {
     if (type_pool != 1) {
         res = res / float(count_pool);
     }
-    gl_FragColor.r = res;
+    setOutput(res);
 }
 `;

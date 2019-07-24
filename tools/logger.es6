@@ -56,7 +56,6 @@ export default class Logger {
     get time() {
         return +new Date().getTime();
     }
-
     get statistics() {
         // time
         let timeResult = [];

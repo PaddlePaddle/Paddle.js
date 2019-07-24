@@ -20,6 +20,10 @@ export default {
         }
     },
 
+    getWebglVersion() {
+        return this.gpu.getWebglVersion();
+    },
+
     run(opName, opData, isRendered) {
         // let time = +Date.now();
         // let start = time;
@@ -55,15 +59,21 @@ export default {
     /**
      * 读取op计算结果, 并返回数据
      */
-    read() {
+    read2() {
         let bufferStatus = this.gpu.frameBufferIsComplete();
         if (bufferStatus.isComplete) {
-            log.end('运行耗时');
-            log.start('后处理');
-            log.start('后处理-读取数据');
+
             return this.gpu.compute();
         }
         return null;
+    },
+
+    async read() {
+        const pbo = this.gpu.createPBO();
+        await this.gpu.createAndWaitForFence();
+        log.end('运行耗时');
+        // 开始读数据
+        return this.gpu.downloadFoat32TensorFromBuffer(pbo);
     },
 
     createProgram(fsCode, outTensor) {

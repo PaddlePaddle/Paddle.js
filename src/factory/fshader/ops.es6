@@ -2,6 +2,7 @@
 import common_params from '../../shader/atom/common_params';
 import common_func from '../../shader/atom/common_func';
 import prefix from '../../shader/atom/prefix';
+import prefix2 from '../../shader/atom/prefix2';
 import suffix from '../../shader/atom/suffix';
 import ivec56 from '../../shader/atom/type_ivec56';
 
@@ -55,6 +56,7 @@ export default {
         params: common_params,
         func: common_func,
         prefix,
+        prefix2,
         suffix,
         ivec56
     },

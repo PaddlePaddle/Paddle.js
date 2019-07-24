@@ -64,6 +64,43 @@ export default {
         return result;
     },
 
+    applyFilterWinograd(data, shape) {
+        const [b, c, h, w] = shape;
+        let offset = 0;
+        const result = new Float32Array(b * c * 16);
+        // h和w是3、3
+        const size2D = h * w;
+        for (let i = 0; i < b; i++) {
+            let index = i * c * size2D;
+            for (let j = 0; j < c; j++) {
+                index += j * size2D;
+                const filter = data.subarray(index, index + size2D);
+                const [f11, f12, f13, f21, f22, f23, f31, f32, f33] = filter;
+                const square = [
+                    f11,
+                    (f11 + f12 + f13) / 2,
+                    (f11 - f12 + f13) / 2,
+                    f13,
+                    (f11 + f21 + f31) / 2,
+                    (f11 + f21 + f31 + f12 + f22 + f32 + f13 + f23 + f33) / 4,
+                    (f11 + f21 + f31 - f12 - f22 - f32 + f13 + f23 + f33) /4,
+                    (f13 + f23 + f33) / 2,
+                    (f11 - f21 + f31) / 2,
+                    (f11 - f21 + f31 + f12 - f22 + f32 + f13 - f23 + f33) / 4,
+                    (f11 - f21 + f31 - f12 + f22 - f32 + f13 - f23 + f33) /4,
+                    (f13 - f23 + f33) / 2,
+                    f31,
+                    (f31 + f32 + f33) / 2,
+                    (f31 - f32 + f33) / 2,
+                    f33
+                ];
+                result.set(square, offset);
+                offset += 16;
+            }
+        }
+        return result;
+    },
+
     /**
      * 获取texture形状和补0个数
      * @param shape {Array} tensor的形状

@@ -24,7 +24,6 @@ window.badCases = [];
  * @author wangqun@baidu.com
  *
  */
-// 'http://mms-xr.cdn.bcebos.com/paddle/mnist/model.json'
 // 模型输出shape
 const outputShapes = {
     '608': {

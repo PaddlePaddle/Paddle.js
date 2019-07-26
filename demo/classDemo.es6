@@ -15,7 +15,6 @@ window.badCases = [];
 // import demoPic3 from './bbt3.jpg';
 // import demoPic4 from './bbt4.jpg';
 // import demoPic5 from './bbt5.jpg';
-// import testOutput from './data.json';
 
 // 后处理测试用例
 // let tempPic = [demoPic, demoPic2, demoPic3, demoPic4, demoPic5];

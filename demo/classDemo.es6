@@ -106,7 +106,7 @@ async function preheat() {
     let inst = model.execute({
         input: feed
     });
-}
+};
 async function run(input) {
     // const input = document.getElementById('mobilenet');
     log.start('总耗时');
@@ -182,7 +182,8 @@ async function run(input) {
     log.end('后处理-画框');
     log.end('后处理');
     log.end('总耗时');
-}
+};
+
 var image = '';
 
 function selectImage(file) {
@@ -200,7 +201,8 @@ function selectImage(file) {
         image = evt.target.result;
     }
     reader.readAsDataURL(file.files[0]);
-}
+};
+
 // selectImage
 document.getElementById("uploadImg").onchange = function () {
     selectImage(this);
@@ -214,6 +216,7 @@ let preTestRun = (index) => {
         testRun(testOutput.data[index], img);
     };
 };
+
 let testRun = (data, img) => {
     // console.log('ori', data);
     const {from, to} = outputShapes[modelType];
@@ -253,7 +256,7 @@ let sigmoid = (x) => {
         return 0.0;
     }
     return 1 / (1 + Math.exp(-x));
-}
+};
 
 // transpose
 let transpose = (data) => {

@@ -443,6 +443,7 @@ let handleDiv = (finalData, img) => {
     myCanvas.style.left = demoLeft;
     myCanvas.style.top = demoTop;
 };
+
 // preTestRun(0);
 
 // run(document.getElementById('pic'));

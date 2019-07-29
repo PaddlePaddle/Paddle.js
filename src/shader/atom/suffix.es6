@@ -19,8 +19,8 @@ ivec4 getOutputPackedTensorPos() {
     // 获取原始长度
     vec2 outCoord = vCoord.xy * _2d_shape_texture_out;
     int x = int(outCoord.x);
-    int c = int(outCoord.y / float(height_shape_out));
-    int y = int(mod(outCoord.y, float(height_shape_out)));
+    int c = int(outCoord.y / float(height_shape_out / 2));
+    int y = int(mod(outCoord.y, float(height_shape_out / 2)));
     int b = 0;
     return ivec4(b, c, y, x);
 }

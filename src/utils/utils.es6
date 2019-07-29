@@ -67,35 +67,37 @@ export default {
     applyFilterWinograd(data, shape) {
         const [b, c, h, w] = shape;
         let offset = 0;
+        let index = 0;
         const result = new Float32Array(b * c * 16);
         // h和w是3、3
-        const size2D = h * w;
+        const size2D = 9;
         for (let i = 0; i < b; i++) {
-            let index = i * c * size2D;
+            // let index = i * c * size2D;
             for (let j = 0; j < c; j++) {
-                index += j * size2D;
+                // index += j * size2D;
                 const filter = data.subarray(index, index + size2D);
                 const [f11, f12, f13, f21, f22, f23, f31, f32, f33] = filter;
                 const square = [
                     f11,
-                    (f11 + f12 + f13) / 2,
-                    (f11 - f12 + f13) / 2,
+                    0.5 * f11 + 0.5 * f12 + 0.5 * f13,
+                    0.5 * f11 - 0.5 * f12 + 0.5 * f13,
                     f13,
-                    (f11 + f21 + f31) / 2,
-                    (f11 + f21 + f31 + f12 + f22 + f32 + f13 + f23 + f33) / 4,
-                    (f11 + f21 + f31 - f12 - f22 - f32 + f13 + f23 + f33) /4,
-                    (f13 + f23 + f33) / 2,
-                    (f11 - f21 + f31) / 2,
-                    (f11 - f21 + f31 + f12 - f22 + f32 + f13 - f23 + f33) / 4,
-                    (f11 - f21 + f31 - f12 + f22 - f32 + f13 - f23 + f33) /4,
-                    (f13 - f23 + f33) / 2,
+                    0.5 * f11 + 0.5 * f21 + 0.5 * f31,
+                    0.25 * f11 + 0.25 * f12 + 0.25 * f13 + 0.25 * f21 + 0.25 * f22 + 0.25 * f23 + 0.25 * f31 + 0.25 * f32 + 0.25 * f33,
+                    0.25 * f11 - 0.25 * f12 + 0.25 * f13 + 0.25 * f21 - 0.25 * f22 + 0.25 * f23 + 0.25 * f31 - 0.25 * f32 + 0.25 * f33,
+                    0.5 * f13 + 0.5 * f23 + 0.5 * f33,
+                    0.5 * f11 - 0.5 * f21 + 0.5 * f31,
+                    0.25 * f11 + 0.25 * f12 + 0.25 * f13 - 0.25 * f21 - 0.25 * f22 - 0.25 * f23 + 0.25 * f31 + 0.25 * f32 + 0.25 * f33,
+                    0.25 * f11 - 0.25 * f12 + 0.25 * f13 - 0.25 * f21 + 0.25 * f22 - 0.25 * f23 + 0.25 * f31 - 0.25 * f32 + 0.25 * f33,
+                    0.5 * f13 - 0.5 * f23 + 0.5 * f33,
                     f31,
-                    (f31 + f32 + f33) / 2,
-                    (f31 - f32 + f33) / 2,
+                    0.5 * f31 + 0.5 * f32 + 0.5 * f33,
+                    0.5 * f31 - 0.5 * f32 + 0.5 * f33,
                     f33
                 ];
                 result.set(square, offset);
                 offset += 16;
+                index += size2D;
             }
         }
         return result;
@@ -106,13 +108,19 @@ export default {
      * @param shape {Array} tensor的形状
      * @return {{shape: *[], zeroNumber: number}} {Object} texture信息
      */
-    getTextureInfoFromTensorShape(shape = []) {
+    getTextureInfoFromTensorShape(shape = [], isPacked = false) {
         let b = shape[0];
         let c = shape[1];
         let h = shape[2];
         let w = shape[3];
+        let height = b * h;
+        let width = c * w;
+        if (isPacked) {
+            height = Math.ceil(b * c * h / 2);
+            width = Math.ceil(w / 2);
+        }
         return {
-            shape: [4, b * h, c * w],
+            shape: [4, height, width],
             zeroNumber: 0
         };
     },

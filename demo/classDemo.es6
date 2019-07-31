@@ -445,5 +445,4 @@ let handleDiv = (finalData, img) => {
 };
 
 // preTestRun(0);
-
 // run(document.getElementById('pic'));

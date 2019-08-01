@@ -116,6 +116,7 @@ export default class gpu {
         this.height_shape_out = opts.height_shape || 1;
         this.width_texture_out = opts.width_texture || 1;
         this.height_texture_out = opts.height_texture || 1;
+        this.channel = opts.channel || 0;
         this.total_shape = opts.total_shape || 0;
     }
 
@@ -425,17 +426,33 @@ export default class gpu {
     downloadFoat32TensorFromBuffer(buffer) {
         const gl2 = this.gl;
         const size = 4 * this.width_texture_out * this.height_texture_out;
-        log.start('后处理');
-        log.start('后处理-读取数据');
         const pixels = new Float32Array(size);
         gl2.bindBuffer(gl2.PIXEL_PACK_BUFFER, buffer);
         gl2.getBufferSubData(gl2.PIXEL_PACK_BUFFER, 0, pixels);
         gl2.bindBuffer(gl2.PIXEL_PACK_BUFFER, null);
         log.start('后处理-readloop');
+        // let result = [];
+        // let offset = 0;
+        // for (let h = 0; h < this.height_texture_out; h++) {
+        //     // 纪录第1和2行数据
+        //     let temp1 = [];
+        //     let temp2 = [];
+        //     for (let w = 0; w < this.width_texture_out; w++) {
+        //         temp1.push(pixels[offset]);
+        //         temp1.push(pixels[offset + 1]);
+        //         temp2.push(pixels[offset + 2]);
+        //         temp2.push(pixels[offset + 3]);
+        //         offset += 4;
+        //     }
+        //     result = result.concat(temp1);
+        //     result = result.concat(temp2);
+        // }
         let result = [];
         for (let i = 0; i < this.width_texture_out * this.height_texture_out; i++) {
             result.push(pixels[4 * i]);
         }
+        // const result = Array.prototype.slice.call(pixels);
+        // console.dir(['result', result]);
         log.end('后处理-readloop');
         return result;
     }
@@ -471,9 +488,6 @@ export default class gpu {
 
     compute() {
         let gl = this.gl;
-        log.end('运行耗时');
-        log.start('后处理');
-        log.start('后处理-读取数据');
         log.start('后处理-readinside');
         const tt = +Date.now();
         let pixels = new Float32Array(this.width_texture_out * this.height_texture_out * 4);

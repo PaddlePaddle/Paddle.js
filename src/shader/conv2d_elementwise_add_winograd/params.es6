@@ -11,7 +11,7 @@ export default `
     const int width_texture_filter = WIDTH_TEXTURE_FILTER;
     const int height_texture_filter = HEIGHT_TEXTURE_FILTER;
     const int channel_filter = CHANNEL_FILTER;
-    
+
     // 输入数据
     const int width_shape_origin = WIDTH_SHAPE_ORIGIN;
     const int height_shape_origin = HEIGHT_SHAPE_ORIGIN;

@@ -1,6 +1,7 @@
 import 'babel-polyfill';
 import Graph from '../src/executor/loader';
 import IO from '../src/feed/ImageFeed';
+import dataFeed from '../src/feed/dataFeed';
 // import Utils from '../src/utils/utils';
 import {testRun} from '../src/executor/postProcess';
 // import Map from '../test/data/map';
@@ -54,7 +55,7 @@ const modelPath = {
     '320': 'facemodel320',
     '320fused': 'facemodelfused'
 };
-const modelType = '320';
+const modelType = '320fused';
 const path = modelPath[modelType];
 const {fw, fh} = feedShape[modelType];
 const {from, to} = outputShapes[modelType];
@@ -138,6 +139,12 @@ async function preheat() {
             // std: [0.229, 0.224, 0.225]  // 预设方差
         }
     });
+    // 从x.json读数据
+    // const dfIO = new dataFeed();
+    // let dFeed = await dfIO.process({
+    //     input: `/${path}/x.json`,
+    //     shape: [1, 3, fh, fw]
+    // });
     const MODEL_URL = `/${path}/model.json`;
     const MODEL_CONFIG = {
         dir: `/${path}/`, // 存放模型的文件夹
@@ -145,7 +152,6 @@ async function preheat() {
     };
     loaded = true;
     const graphModel = new Graph();
-    log.start('加载模型');
     model = await graphModel.loadGraphModel(MODEL_CONFIG, {
         multipart: true,
         dataType: 'binary',
@@ -155,9 +161,8 @@ async function preheat() {
                 return 'chunk_0.dat';
             }
         },
-        feed
+        feed: feed
     });
-    log.end('加载模型');
     let inst = model.execute({
         input: feed
     });
@@ -191,8 +196,6 @@ async function run(input) {
     let inst = model.execute({
         input: feed
     });
-
-    // 其实这里应该有个fetch的执行调用或者fetch的输出
     let result = await inst.read();
     log.end('后处理-读取数据');
     // console.dir(['result', result]);

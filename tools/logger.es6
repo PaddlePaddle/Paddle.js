@@ -12,18 +12,34 @@ export default class Logger {
     }
 
     start(key) {
-        if (!this.timeTable[key]) {
-            this.timeTable[key] = [{}];
+        let arr = this.timeTable[key];
+        if (!arr) {
+            arr = [{}];
         }
         else {
-            this.timeTable[key].push({});
+            if (!arr[arr.length - 1].endTime) {
+                console.error('[logger] key:' + key + ' duplicate start logger');
+                return;
+            }
+            arr.push({});
         }
-        this.timeTable[key][this.timeTable[key].length - 1].startTime = this.time;
+        arr[arr.length - 1].startTime = this.time;
+        this.timeTable[key] = arr;
         return this;
     }
 
     end(key) {
+        // console.log(this.timeTable[key]);
+        if (!this.timeTable[key]) {
+            console.log(this.timeTable[key]);
+            console.error('[logger] key:' + key + ' no matching start logger');
+            return;
+        }
         let currentObj = this.timeTable[key][this.timeTable[key].length - 1];
+        if (currentObj.endTime) {
+            console.error('[logger] key:' + key + ' duplicate end logger');
+            return;
+        }
         currentObj.endTime = this.time;
         currentObj.during = currentObj.endTime - currentObj.startTime;
         return this;

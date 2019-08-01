@@ -19,6 +19,8 @@ const tensorAttrs = [
     'height_shape',
     'width_texture',
     'height_texture',
+    'offset_x',
+    'offset_y',
     'channel',
     'total_shape'
 ];
@@ -29,6 +31,9 @@ const shaderAttrs = {
         'scale': 'multi_value'
     },
     pool2d: {
+        'pooling_type': 'type_pool'
+    },
+    pool2d_winograd: {
         'pooling_type': 'type_pool'
     }
 };
@@ -62,11 +67,13 @@ const opBehavior = {
         'broadcast',
         'mergeAttrs',
         'setActiveFunc',
+        'isApplyWinoGrad',
         'needBatch'
     ],
     pool2d: [
         'isMax',
         'needBatch',
+        'setPacked',
         'isGlobalPooling'
     ],
     relu: [
@@ -158,7 +165,8 @@ export default class OpData {
                         shape: data.shape,
                         data: data.data,
                         needBatch: data.needBatch || false,
-                        notCompressed: data.notCompressed || false
+                        notCompressed: data.notCompressed || false,
+                        isPacked: data.isPacked || false
                     });
                 }
             }
@@ -211,6 +219,50 @@ export default class OpData {
         this.attrs = this.attrs.reduce((attrs, item) => {
             return Object.assign(attrs, item);
         }, {});
+    }
+
+    isApplyWinoGrad(tensorData = []) {
+        const filter = tensorData.filter(item => {
+            const [b, c, h, w] = item.shape;
+            return (h === 3) && (w === 3) && (item.tensorName === 'filter');
+        });
+        // 使用winograd算法
+        if (filter && filter.length) {
+            this.setPacked(tensorData);
+            this.applyWinograd(tensorData);
+            this.setOutputPacked(tensorData);
+            this.name += '_winograd';
+        }
+    }
+
+    setPacked(tensorData = []) {
+        const isPacked = this.attrs.ispacked;
+        tensorData.forEach(item => {
+            if (item.tensorName === 'origin' && isPacked) {
+                item.isPacked = true;
+                if (this.name.indexOf('pool') > -1) {
+                    this.name += '_winograd';
+                }
+            }
+        });
+    }
+
+    applyWinograd(tensorData = []) {
+        tensorData.forEach(item => {
+            if (item.tensorName === 'filter') {
+                const [b, c, h, w] = item.shape;
+                item.shape = [b, c, 4, 4];
+                item.data = Utils.applyFilterWinograd(item.data, item.shape);
+            }
+        });
+    }
+
+    setOutputPacked(tensorData = []) {
+        tensorData.forEach(item => {
+            if (item.tensorName === 'out') {
+                item.isPacked = true;
+            }
+        });
     }
 
     broadcast(tensorData = []) {

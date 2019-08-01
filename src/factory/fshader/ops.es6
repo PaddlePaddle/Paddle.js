@@ -15,6 +15,9 @@ import dynamic_conf from '../../shader/dynamic/conf';
 import pool2d_params from '../../shader/pool2d/params';
 import pool2d_func from '../../shader/pool2d/main';
 import pool2d_conf from '../../shader/pool2d/conf';
+import pool2d_winograd_params from '../../shader/pool2d_winograd/params';
+import pool2d_winograd_func from '../../shader/pool2d_winograd/main';
+import pool2d_winograd_conf from '../../shader/pool2d_winograd/conf';
 import elementwise_add_params from '../../shader/elementwise_add/params';
 import elementwise_add_func from '../../shader/elementwise_add/main';
 import elementwise_add_conf from '../../shader/elementwise_add/conf';
@@ -32,12 +35,17 @@ import conv2d_elementwise_add_params from '../../shader/conv2d_elementwise_add/p
 import conv2d_elementwise_add_func from '../../shader/conv2d_elementwise_add/main';
 import conv2d_elementwise_add_conf from '../../shader/conv2d_elementwise_add/conf';
 
+import conv2d_elementwise_add_winograd_params from '../../shader/conv2d_elementwise_add_winograd/params';
+import conv2d_elementwise_add_winograd_func from '../../shader/conv2d_elementwise_add_winograd/main';
+import conv2d_elementwise_add_winograd_conf from '../../shader/conv2d_elementwise_add_winograd/conf';
+
 import getArrayIndexFromTensorPos from '../../shader/atom/getArrayIndexFromTensorPos';
 import getArrayIndexFromTexturePos from '../../shader/atom/getArrayIndexFromTexturePos';
 import getTensorPosFromArrayIndex from '../../shader/atom/getTensorPosFromArrayIndex';
 import getTexturePosFromArrayIndex from '../../shader/atom/getTexturePosFromArrayIndex';
 import getValueFromTexturePos from '../../shader/atom/getValueFromTexturePos';
 import getValueFromTensorPos from '../../shader/atom/getValueFromTensorPos';
+import getValueFromTensorPosPacked from '../../shader/atom/getValueFromTensorPosPacked';
 import moveTexture2PosToReal from '../../shader/atom/moveTexture2PosToReal';
 import getPixelsFromTexturePos from '../../shader/atom/getPixelsFromTexturePos';
 import getRangePowSumFromArrayIndex from '../../shader/atom/getRangePowSumFromArrayIndex';
@@ -71,6 +79,11 @@ export default {
             func: conv2d_elementwise_add_func,
             confs: conv2d_elementwise_add_conf
         },
+        conv2d_elementwise_add_winograd: {
+            params: conv2d_elementwise_add_winograd_params,
+            func: conv2d_elementwise_add_winograd_func,
+            confs: conv2d_elementwise_add_winograd_conf
+        },
         dynamic: {
             params: dynamic_params,
             func: dynamic_func,
@@ -80,6 +93,11 @@ export default {
             params: pool2d_params,
             func: pool2d_func,
             confs: pool2d_conf
+        },
+        pool2d_winograd: {
+            params: pool2d_winograd_params,
+            func: pool2d_winograd_func,
+            confs: pool2d_winograd_conf
         },
         elementwise_add: {
             params: elementwise_add_params,
@@ -119,6 +137,7 @@ export default {
         getTexturePosFromArrayIndex,
         getValueFromTexturePos,
         getValueFromTensorPos,
+        getValueFromTensorPosPacked,
         moveTexture2PosToReal,
         getPixelsFromTexturePos,
         getRangeSumFromArrayIndex,

@@ -115,11 +115,17 @@ export default {
         let w = shape[3];
         let height = b * h;
         let width = c * w;
+        let offsetX = 0;
+        let offsetY = 0;
         if (isPacked) {
-            height = Math.ceil(b * c * h / 2);
+            height = b * c * Math.ceil(h / 2);
             width = Math.ceil(w / 2);
+            offsetX = w % 2;
+            offsetY = h % 2;
         }
         return {
+            offsetX,
+            offsetY,
             shape: [4, height, width],
             zeroNumber: 0
         };

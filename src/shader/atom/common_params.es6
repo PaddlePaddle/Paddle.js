@@ -14,4 +14,5 @@ export default `
     const int width_texture_out = WIDTH_TEXTURE_OUT;
     const int height_texture_out = HEIGHT_TEXTURE_OUT;
     const int channel_out = CHANNEL_OUT;
+    const int offset_y_out = OFFSET_Y_OUT;
 `;

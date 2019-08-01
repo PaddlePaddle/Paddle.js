@@ -11,6 +11,10 @@ export default `
         int c = oPos.g;
         int y = oPos.b;
         int b = oPos.r;
+        // b = 0;
+        // c = 1;
+        // y = 0;
+        // x = 0;
         int addAxis = oPos[axis];
         float res = getValueFromCounter(addAxis);
         // 输出结果
@@ -81,5 +85,14 @@ export default `
         outColor.g = ACTIVE_FUNCTION(v4[1], multi_value, bias_value);
         outColor.b = ACTIVE_FUNCTION(v4[2], multi_value, bias_value);
         outColor.a = ACTIVE_FUNCTION(v4[3], multi_value, bias_value);
+        // outColor = v4;
+        // outColor.r = I[0];
+        // outColor.g = I[1];
+        // outColor.b = I[2];
+        // outColor.a = I[3];
+        // outColor.r = float(b);
+        // outColor.g = float(c);
+        // outColor.b = float(y);
+        // outColor.a = float(x);
     }
 `;

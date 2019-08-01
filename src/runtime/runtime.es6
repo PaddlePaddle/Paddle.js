@@ -25,6 +25,7 @@ export default {
     },
 
     run(opName, opData, isRendered) {
+        // console.dir(['fscode', opData.fsCode]);
         // let time = +Date.now();
         // let start = time;
         // let timeObj = {};
@@ -72,6 +73,9 @@ export default {
         const pbo = this.gpu.createPBO();
         await this.gpu.createAndWaitForFence();
         log.end('运行耗时');
+        log.start('后处理');
+        // 其实这里应该有个fetch的执行调用或者fetch的输出
+        log.start('后处理-读取数据');
         // 开始读数据
         return this.gpu.downloadFoat32TensorFromBuffer(pbo);
     },

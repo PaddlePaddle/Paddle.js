@@ -7,6 +7,8 @@ import Utils from './utils';
 export default class Tensor {
     constructor(opts = {}) {
         this.opts = opts;
+        // 数据存储方式
+        this.isPacked = this.isPacked || false;
         // 设置tensor名字
         this.name = opts.name;
         // tensor的形状
@@ -23,11 +25,13 @@ export default class Tensor {
             this.shape = shape;
         }
         // 获取转换到texture后的信息
-        let {zeroNumber, shape: shape_texture} = Utils.getTextureInfoFromTensorShape(shape);
+        let {offsetX, offsetY, zeroNumber, shape: shape_texture} = Utils.getTextureInfoFromTensorShape(shape, opts.isPacked);
         this.shape_texture = shape_texture;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
         // tensor数据
         let data;
-        if (opts.type === 'image') {
+        if (opts.type === 'image' || opts.type === 'x') {
             this.data = opts.data;
         }
         else if (opts.data && opts.data.length) {
@@ -109,6 +113,14 @@ export default class Tensor {
             return this.shape[length - 3];
         }
         return 0;
+    }
+
+    get offset_x() {
+        return this.offsetX;
+    }
+
+    get offset_y() {
+        return this.offsetY;
     }
 
     get length_shape() {

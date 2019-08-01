@@ -32,7 +32,7 @@ export default class imageFeed {
         let output = [];
         if (!this.result) {
             const [b, c, h, w] = params.targetShape;
-            this.result = new Float32Array(h * w * 4 * 3);
+            this.result = new Float32Array(h * w * 3);
         }
         output = this.fromPixels(input, params);
         return output;
@@ -211,17 +211,12 @@ export default class imageFeed {
             this.pixelWidth = pixels.naturalWidth || pixels.width;
             this.pixelHeight = pixels.naturalHeight || pixels.height;
             if (opt.scale) { // 兼容以前的，如果有scale就是短边缩放到scale模式
-                console.log('sssss');
                 scaleSize = this.reSize(pixels, opt);
                 data = this.getImageData(opt, scaleSize);
             }
             else if (opt.targetSize) { // 如果有targetSize，就是装在目标宽高里的模式
-                log.start('预处理-调整尺寸');
                 scaleSize = this.fitToTargetSize(pixels, opt);
-                log.end('预处理-调整尺寸');
-                log.start('预处理-获得数据');
                 data = this.getImageData(opt, scaleSize);
-                log.end('预处理-获得数据');
             }
         }
 
@@ -234,9 +229,7 @@ export default class imageFeed {
         }
 
         if (opt.targetShape) {
-            log.start('预处理-转换数据');
             data = this.allReshapeToRGB(data, opt, scaleSize);
-            log.end('预处理-转换数据');
         }
         return [{data: data, shape: opt.shape || opt.targetShape, name: 'image'}];
     }

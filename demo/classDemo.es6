@@ -425,9 +425,11 @@ let handleCanvas = (finalData, img) => {
     });
 };
 let handleDiv = (finalData, img) => {
+
     if (finalData.length < 1) {
         return false;
     }
+
     let myCanvas = document.getElementById('myDiv');
     let maxIndex = 0;
     if (finalData.length > 1) {

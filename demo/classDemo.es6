@@ -434,11 +434,13 @@ let handleDiv = (finalData, img) => {
     let maxIndex = 0;
 
     if (finalData.length > 1) {
+
         for(let i = 1; i < finalData.length; i++) {
             if (finalData[i].prob > finalData[maxIndex].prob) {
                 maxIndex = i;
             }
         }
+
     }
 
     let [demoLeft, demoTop, demoWidth, demoHeight, prob] = finalData[maxIndex];

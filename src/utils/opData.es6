@@ -53,7 +53,8 @@ const tensorName = {
 // unique behavior
 const opBehavior = {
     conv2d: [
-        'needBatch'
+        'needBatch',
+        'isApplySeparableConv'
     ],
     batchnorm: [
         'needBatch',
@@ -64,10 +65,8 @@ const opBehavior = {
         'needBatch'
     ],
     conv2d_elementwise_add: [
-        'broadcast',
         'mergeAttrs',
         'setActiveFunc',
-        'isApplyWinoGrad',
         'needBatch'
     ],
     pool2d: [
@@ -235,6 +234,18 @@ export default class OpData {
         }
     }
 
+    isApplySeparableConv(tensorData = []) {
+        const groups = this.attrs.groups;
+        const filter = tensorData.filter(item => {
+            const [b, c, h, w] = item.shape;
+            return (b === groups) && (c === 1) && (item.tensorName === 'filter');
+        });
+        if (filter && filter.length) {
+            // 可以执行separable conv
+            this.name += '_depthwise';
+        }
+    }
+
     setPacked(tensorData = []) {
         const isPacked = this.attrs.ispacked;
         tensorData.forEach(item => {
@@ -294,6 +305,9 @@ export default class OpData {
     isMax(tensorData = []) {
         const type = this.attrs['pooling_type'] === 'max' ? 1 : 0;
         this.attrs['pooling_type'] = type;
+        if (type === 1) {
+            this.name += '_max';
+        }
     }
 
     transToPrelu(tensorData = []) {

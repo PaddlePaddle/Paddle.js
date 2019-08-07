@@ -229,7 +229,7 @@ export default class GraphModel  {
             const tensorData = opData.tensor[item.tensor];
             if (item.type === 'texture') {
                 item.data = tensorData.data;
-                if (this.feedOp.id === op.id) {
+                if (this.feedOp.id === op.id && item.tensor === 'origin') {
                     item.shape = tensorData.shape;
                     this.feedItem = item;
                 }

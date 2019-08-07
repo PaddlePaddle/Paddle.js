@@ -9,12 +9,18 @@ import ivec56 from '../../shader/atom/type_ivec56';
 import conv2d_params from '../../shader/conv2d/params';
 import conv2d_func from '../../shader/conv2d/main';
 import conv2d_conf from '../../shader/conv2d/conf';
+import conv2d_depthwise_params from '../../shader/conv2d_depthwise/params';
+import conv2d_depthwise_func from '../../shader/conv2d_depthwise/main';
+import conv2d_depthwise_conf from '../../shader/conv2d_depthwise/conf';
 import dynamic_params from '../../shader/dynamic/params';
 import dynamic_func from '../../shader/dynamic/main';
 import dynamic_conf from '../../shader/dynamic/conf';
 import pool2d_params from '../../shader/pool2d/params';
 import pool2d_func from '../../shader/pool2d/main';
 import pool2d_conf from '../../shader/pool2d/conf';
+import pool2d_max_params from '../../shader/pool2d_max/params';
+import pool2d_max_func from '../../shader/pool2d_max/main';
+import pool2d_max_conf from '../../shader/pool2d_max/conf';
 import pool2d_winograd_params from '../../shader/pool2d_winograd/params';
 import pool2d_winograd_func from '../../shader/pool2d_winograd/main';
 import pool2d_winograd_conf from '../../shader/pool2d_winograd/conf';
@@ -74,6 +80,11 @@ export default {
             func: conv2d_func,
             confs: conv2d_conf
         },
+        conv2d_depthwise: {
+            params: conv2d_depthwise_params,
+            func: conv2d_depthwise_func,
+            confs: conv2d_depthwise_conf
+        },
         conv2d_elementwise_add: {
             params: conv2d_elementwise_add_params,
             func: conv2d_elementwise_add_func,
@@ -93,6 +104,11 @@ export default {
             params: pool2d_params,
             func: pool2d_func,
             confs: pool2d_conf
+        },
+        pool2d_max: {
+            params: pool2d_max_params,
+            func: pool2d_max_func,
+            confs: pool2d_max_conf
         },
         pool2d_winograd: {
             params: pool2d_winograd_params,

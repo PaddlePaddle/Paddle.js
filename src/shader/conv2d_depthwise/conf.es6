@@ -1,6 +1,6 @@
 /* eslint-disable */
 /**
- * @file conv2d-elementwise_add的配置文件
+ * @file conv2d的配置文件
  * @author yangmingming
  */
 export default {
@@ -40,16 +40,12 @@ export default {
         'CHANNEL_OUT',
         'OFFSET_Y_OUT',
 
-        'WIDTH_SHAPE_COUNTER',
-
         'STRIDE_HORIZONTAL',
         'STRIDE_VERTICAL',
         'PAD_LEFT',
         'PAD_TOP',
         'DILATION_HORIZONTAL',
         'DILATION_VERTICAL',
-        'GROUPS',
-        'AXIS',
         'MULTI_VALUE',
         'BIAS_VALUE',
         'ACTIVE_FUNCTION'
@@ -57,12 +53,6 @@ export default {
     input: [
         {
             tensor: 'filter',
-            variable: 'texture',
-            setter: 'initTexture',
-            type: 'texture'
-        },
-        {
-            tensor: 'counter',
             variable: 'texture',
             setter: 'initTexture',
             type: 'texture'

@@ -4,6 +4,9 @@
  * @author yangmingming
  */
 export default `
+    // conv2d的input数据
+    
+    // 常量
     // 卷积核
     const int length_shape_filter = LENGTH_SHAPE_FILTER;
     const int width_shape_filter = WIDTH_SHAPE_FILTER;
@@ -30,25 +33,11 @@ export default `
     // dilation膨胀系数
     const int dilation_h = DILATIONS_X;
     const int dilation_v = DILATIONS_Y;
-    // groups
-    const int groups = GROUPS;
-   
-    // 加法
-    const int axis = AXIS;
-     
+    
     // uniform变量
     // 卷积核
     uniform sampler2D texture_filter;
     
     // 输入数据
     uniform sampler2D texture_origin;
-    
-    // 加法
-    uniform sampler2D texture_counter;
-    // 加法用到的函数
-    float getValueFromCounter(int index) {
-        float xPos = float(index) / float(WIDTH_SHAPE_COUNTER);
-        vec4 pixels = TEXTURE2D(texture_counter, vec2(xPos, 0.5));
-        return pixels.r;
-    }
 `;

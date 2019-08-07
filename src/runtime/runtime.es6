@@ -1,5 +1,6 @@
 /* eslint-disable */
 import Gpu from '../gpu/gpu';
+import getMaxUniforms from '../test/getMaxUniforms';
 /**
  * @file gpu运行时
  * @author yangmingming
@@ -83,6 +84,10 @@ export default {
     createProgram(fsCode, outTensor) {
         const fshader = this.gpu.initShader(fsCode, 'fragment');
         const program = this.gpu.createProgram(fshader, outTensor);
+        // test uniforms的个数
+        // const maxUniforms = getMaxUniforms(this.gpu.gl, program);
+        // alert(maxUniforms.maxFragmentShader);
+        // console.table(maxUniforms.uniforms);
         return program;
     },
 

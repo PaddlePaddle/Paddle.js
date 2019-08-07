@@ -429,7 +429,7 @@ let handleDiv = (finalData, img) => {
     if (finalData.length < 1) {
         return false;
     }
-
+    hsl.js
     let myCanvas = document.getElementById('myDiv');
     let maxIndex = 0;
 

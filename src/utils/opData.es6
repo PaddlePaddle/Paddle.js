@@ -21,6 +21,7 @@ const tensorAttrs = [
     'height_texture',
     'offset_x',
     'offset_y',
+    'limit',
     'channel',
     'total_shape'
 ];

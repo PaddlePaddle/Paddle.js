@@ -117,7 +117,15 @@ export default {
         let width = c * w;
         let offsetX = 0;
         let offsetY = 0;
+        // 安卓和ios的max texture size是4096, 改造存储空间(2bh, cw / 2)
+        let exceedMax = false;
+        if (height > 4096 || width > 4096) {
+            height *= 2;
+            width = c * (Math.ceil(w / 2));
+            exceedMax = true;
+        }
         if (isPacked) {
+            // 紧凑布局
             height = b * c * Math.ceil(h / 2);
             width = Math.ceil(w / 2);
             offsetX = w % 2;
@@ -126,6 +134,7 @@ export default {
         return {
             offsetX,
             offsetY,
+            exceedMax,
             shape: [4, height, width],
             zeroNumber: 0
         };

@@ -25,8 +25,9 @@ export default class Tensor {
             this.shape = shape;
         }
         // 获取转换到texture后的信息
-        let {offsetX, offsetY, zeroNumber, shape: shape_texture} = Utils.getTextureInfoFromTensorShape(shape, opts.isPacked);
+        let {offsetX, offsetY, exceedMax, zeroNumber, shape: shape_texture} = Utils.getTextureInfoFromTensorShape(shape, opts.isPacked);
         this.shape_texture = shape_texture;
+        this.exceedMax = exceedMax;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
         // tensor数据
@@ -121,6 +122,10 @@ export default class Tensor {
 
     get offset_y() {
         return this.offsetY;
+    }
+
+    get limit() {
+        return this.exceedMax ? 'Limit' : '';
     }
 
     get length_shape() {

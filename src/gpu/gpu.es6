@@ -23,6 +23,10 @@ export default class gpu {
         opts.width_raw_canvas = Number(opts.width_raw_canvas) || 512;
         opts.height_raw_canvas = Number(opts.height_raw_canvas) || 512;
         const canvas = opts.el ? opts.el : document.createElement('canvas');
+        canvas.addEventListener('webglcontextlost', evt => {
+            evt.preventDefault();
+            console.log('webgl context is lost~');
+        }, false);
         let gl = canvas.getContext('webgl2', CONF);
         if (!!gl) {
             // 开启float32
@@ -60,7 +64,10 @@ export default class gpu {
         this.initCache();
         // 同步查看次数
         this.waits = 0;
+
         console.log('WebGl版本是 ' + this.version);
+        console.log('MAX_TEXTURE_SIZE is ' + gl.getParameter(gl.MAX_TEXTURE_SIZE));
+        console.log('MAX_TEXTURE_IMAGE_UNITS is ' + gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS));
     }
 
     getWebglVersion() {
@@ -145,7 +152,7 @@ export default class gpu {
             out.height_texture,
             0,             // Always 0 in OpenGL ES.
             gl.RGBA,       // Format for each pixel.
-            WebGLRenderingContext.FLOAT,          // Data type for each chanel.
+            gl.FLOAT,          // Data type for each chanel.
             null);
         gl.bindTexture(gl.TEXTURE_2D, null);
         this.outTextures.push(texture);
@@ -455,6 +462,28 @@ export default class gpu {
         // console.dir(['result', result]);
         log.end('后处理-readloop');
         return result;
+    }
+
+    getWebglError(status) {
+        const gl2 = this.gl;
+        switch (status) {
+            case gl2.NO_ERROR:
+                return 'NO_ERROR';
+            case gl2.INVALID_ENUM:
+                return 'INVALID_ENUM';
+            case gl2.INVALID_VALUE:
+                return 'INVALID_VALUE';
+            case gl2.INVALID_OPERATION:
+                return 'INVALID_OPERATION';
+            case gl2.INVALID_FRAMEBUFFER_OPERATION:
+                return 'INVALID_FRAMEBUFFER_OPERATION';
+            case gl2.OUT_OF_MEMORY:
+                return 'OUT_OF_MEMORY';
+            case gl2.CONTEXT_LOST_WEBGL:
+                return 'CONTEXT_LOST_WEBGL';
+            default:
+                return `Unknown error code ${status}`;
+        }
     }
 
     createAndWaitForFence() {

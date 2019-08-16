@@ -11,6 +11,7 @@
  */
 
 import IO from '../feed/ImageFeed';
+import DataFeed from '../feed/dataFeed';
 import Graph from './loader';
 import PostProcess from './postProcess';
 import models from '../utils/models';
@@ -69,26 +70,37 @@ export default class Runner {
     async run(input) {
         this.flags.isRunning = true;
         let {fh, fw} = this.modelConfig.feedShape;
+        let path = this.modelConfig.modelPath;
         if (!this.model) {
             console.warn('It\'s better to preheat the model before running.');
             await this.preheat();
         }
         log.start('总耗时'); // eslint-disable-line
         log.start('预处理'); // eslint-disable-line
-        let feed = this.io.process({
-            input: input,
-            params: {
-                gapFillWith: '#000', // 缩放后用什么填充不足方形部分
-                targetSize: {
-                    height: fw,
-                    width: fh
-                },
-                targetShape: [1, 3, fh, fw], // 目标形状 为了兼容之前的逻辑所以改个名
-                // shape: [3, 608, 608], // 预设tensor形状
-                mean: [117.001, 114.697, 97.404] // 预设期望
-                // std: [0.229, 0.224, 0.225]  // 预设方差
-            }
-        });
+        let feed;
+        if (typeof input === 'string') {
+            const dfIO = new DataFeed();
+            feed = await dfIO.process({
+                input: `/${path}/${input}`,
+                shape: [1, 3, fh, fw]
+            });
+        }
+        else {
+            feed = this.io.process({
+                input: input,
+                params: {
+                    gapFillWith: '#000', // 缩放后用什么填充不足方形部分
+                    targetSize: {
+                        height: fw,
+                        width: fh
+                    },
+                    targetShape: [1, 3, fh, fw], // 目标形状 为了兼容之前的逻辑所以改个名
+                    // shape: [3, 608, 608], // 预设tensor形状
+                    mean: [117.001, 114.697, 97.404] // 预设期望
+                    // std: [0.229, 0.224, 0.225]  // 预设方差
+                }
+            });
+        }
         log.end('预处理'); // eslint-disable-line
         log.start('运行耗时'); // eslint-disable-line
         let inst = this.model.execute({

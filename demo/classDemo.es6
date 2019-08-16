@@ -443,8 +443,7 @@ let handleDiv = (finalData, img) => {
 
     }
 
-    // let [demoLeft, demoTop, demoWidth, demoHeight, prob] = finalData[maxIndex];
-    let [demoLeft, demoTop, demoWidth, demoHeight] = finalData[maxIndex];
+    let [demoLeft, demoTop, demoWidth, demoHeight, prob] = finalData[maxIndex];
     myCanvas.style.width = demoWidth;
     myCanvas.style.height = demoHeight;
     myCanvas.style.left = demoLeft;

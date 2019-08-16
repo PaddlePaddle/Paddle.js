@@ -7,7 +7,7 @@ export default `
 // start函数
 void main(void) {
     // 输出数据
-    ivec4 oPos = getOutputTensorPos();
+    ivec4 oPos = getOutputTensorPosLIMIT_OUT();
     int index = oPos[axis];
     float o = getPixelsFromTexturePos_texture_origin(vCoord).r;
     float c = getValueFromCounter(index);

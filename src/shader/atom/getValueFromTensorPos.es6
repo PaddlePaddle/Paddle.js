@@ -18,7 +18,7 @@ float getValueFromTensorPosLimit_TENSOR_NAME(int r, int g, int b, int a) {
     float halfW = ceil(float(width_shape_TENSOR_NAME) / 2.0);
     int x = int(mod(float(a), halfW));
     int offsetY = 0;
-    if (a > int(halfW)) {
+    if (a > x) {
         offsetY = height_shape_TENSOR_NAME;
     }
     vec4 pixels = TEXTURE2D(texture_TENSOR_NAME, 

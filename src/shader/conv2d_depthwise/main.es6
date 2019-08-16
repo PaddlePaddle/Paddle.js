@@ -6,7 +6,7 @@
 export default `
     // start函数
     void main(void) {
-        ivec4 oPos = getOutputTensorPos();
+        ivec4 oPos = getOutputTensorPosLIMIT_OUT();
         int x = oPos.a;
         int c = oPos.g;
         int y = oPos.b;
@@ -32,8 +32,8 @@ export default `
                 continue;
             }
             // b默认是0
-            float f = getValueFromTensorPos_filter(c, 0, fy, fx);
-            float o = getValueFromTensorPos_origin(b, c, oy, ox);
+            float f = getValueFromTensorPosLIMIT_FILTER_filter(c, 0, fy, fx);
+            float o = getValueFromTensorPosLIMIT_ORIGIN_origin(b, c, oy, ox);
             res += f * o;
           }
         }

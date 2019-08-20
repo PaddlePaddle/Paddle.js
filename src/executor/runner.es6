@@ -45,6 +45,8 @@ export default class Runner {
         const MODEL_URL = `/${path}/model.json`;
         const MODEL_CONFIG = {
             dir: `/${path}/`, // 存放模型的文件夹
+            // dir: `https://graph.baidu.com/mms/graph/static/asset/dll/${path}/`, // rd测试地址
+            // dir: `/src/view/common/lib/paddle/dist/${path}/`, // 本地测试地址
             main: 'model.json' // 主文件
         };
         const graphModel = new Graph();
@@ -67,7 +69,7 @@ export default class Runner {
     }
 
     // 跑一遍
-    async run(input) {
+    async run(input, callback) {
         this.flags.isRunning = true;
         let {fh, fw} = this.modelConfig.feedShape;
         let path = this.modelConfig.modelPath;
@@ -124,18 +126,18 @@ export default class Runner {
                 }
             }
         }
-        this.postProcess.run(newData, input);
+        this.postProcess.run(newData, input, callback);
         log.end('后处理'); // eslint-disable-line
         this.flags.isRunning = false;
         log.end('总耗时'); // eslint-disable-line
     }
 
     // 传入获取图片的function
-    async runStream(getMedia) {
-        await this.run(getMedia());
+    async runStream(getMedia, callback) {
+        await this.run(getMedia(), callback);
         if (!this.flags.runVideoPaused) {
             setTimeout(async () => {
-                await this.runStream(getMedia);
+                await this.runStream(getMedia, callback);
             }, 0);
         }
     }
@@ -144,8 +146,8 @@ export default class Runner {
         this.flags.runVideoPaused = true;
     }
 
-    startStream(getMedia) {
+    startStream(getMedia, callback) {
         this.flags.runVideoPaused = false;
-        this.runStream(getMedia);
+        this.runStream(getMedia, callback);
     }
 }

@@ -9,12 +9,14 @@
     "videoDemo": "parcel ./demo/videoDemo.html --port 8123 --https",
     "unitTest": "parcel ./test/unitTest.html",
     "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "webpack -w"
   },
   "repository": {
     "type": "git",
     "url": "ssh://yangmingming@icode.baidu.com:8235/baidu/mms/paddle-web-demo"
   },
   "devDependencies": {
+    "axios": "^0.17.1",
     "babel-core": "^6.26.3",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-decorators-legacy": "^1.3.5",
@@ -25,12 +27,16 @@
     "babel-preset-stage-0": "^6.24.1",
     "babel-runtime": "^6.26.0",
     "parcel-bundler": "^1.10.3",
-    "axios": "^0.17.1"
+    "webpack-cli": "^3.3.6"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "js-file-download": "^0.4.5"
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "js-file-download": "^0.4.5",
+    "vconsole": "^3.3.2",
+    "webpack": "^4.39.2",
+    "webpack-zepto": "0.0.1"
   }
 }

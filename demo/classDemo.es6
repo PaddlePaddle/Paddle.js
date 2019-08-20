@@ -415,7 +415,7 @@ let handleCanvas = (finalData, img) => {
     finalData.forEach((demoArr,index) => {
         let [demoLeft, demoTop, demoWidth, demoHeight, prob] = demoArr;
         ctx.beginPath();
-        ctx.strokeStyle='red';
+        ctx.strokeStyle = 'red';
         ctx.moveTo(demoLeft, demoTop);
         ctx.lineTo(demoLeft + demoWidth, demoTop);
         ctx.lineTo(demoLeft + demoWidth, demoTop + demoHeight);

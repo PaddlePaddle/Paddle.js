@@ -409,7 +409,7 @@ let handleCanvas = (finalData, img) => {
     let [w1, h1, width, height] = calSize(img);
     myCanvas.width = w1;
     myCanvas.height = h1;
-    let ctx = myCanvas.getContext("2d");
+    let ctx = myCanvas.getContext('2d');
     ctx.drawImage(img, 0, 0, w1, h1);
 
     finalData.forEach((demoArr,index) => {

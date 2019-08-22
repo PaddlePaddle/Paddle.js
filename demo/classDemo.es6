@@ -6,6 +6,7 @@ window.log = new Logger();
 
 // 统计参数
 window.badCases = [];
+
 // import Utils from '../src/utils/utils';
 // 获取map表
 // import Map from '../test/data/map';

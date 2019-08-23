@@ -18,6 +18,7 @@ window.badCases = [];
 // import demoPic5 from './bbt5.jpg';
 
 // 后处理测试用例
+
 // let tempPic = [demoPic, demoPic2, demoPic3, demoPic4, demoPic5];
 /**
  * @file model demo 入口文件

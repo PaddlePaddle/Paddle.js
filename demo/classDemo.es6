@@ -5,6 +5,7 @@ import Logger from '../tools/logger';
 window.log = new Logger();
 
 // 统计参数
+
 window.badCases = [];
 
 // import Utils from '../src/utils/utils';

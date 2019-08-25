@@ -9,7 +9,9 @@ window.log = new Logger();
 window.badCases = [];
 
 // import Utils from '../src/utils/utils';
+
 // 获取map表
+
 // import Map from '../test/data/map';
 
 // import demoPic from './bbt1.jpg';

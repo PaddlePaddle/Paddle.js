@@ -126,7 +126,7 @@ export default class Runner {
                 }
             }
         }
-        this.postProcess.run(newData, input, callback);
+        this.postProcess.run(newData, input, callback, feed[0].canvas);
         log.end('后处理'); // eslint-disable-line
         this.flags.isRunning = false;
         log.end('总耗时'); // eslint-disable-line

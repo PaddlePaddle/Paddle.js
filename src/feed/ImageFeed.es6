@@ -6,6 +6,7 @@
 export default class imageFeed {
     constructor() {
         this.fromPixels2DContext = document.createElement('canvas').getContext('2d');
+        this.fromPixels2DContext2 = document.createElement('canvas').getContext('2d');
         this.defaultWidth = 224;
         this.defaultHeight = 224;
         this.minPixels = 225;
@@ -127,6 +128,7 @@ export default class imageFeed {
         this.fromPixels2DContext.canvas.height = sh;
         this.fromPixels2DContext.drawImage(
             image, 0, 0, sw, sh);
+        this.setInputCanvas(image);
         return {sw, sh};
     };
 
@@ -167,9 +169,23 @@ export default class imageFeed {
                 image, 0, 0, sw, sh);
             // currentPic = this.fromPixels2DContext.canvas.toDataURL();
         }
+        this.setInputCanvas(image);
         // window.currentPic = this.fromPixels2DContext.canvas;// test only, demele me
         // document.getElementById('p-c').appendChild(this.fromPixels2DContext.canvas);// test only, demele me
         return {sw: targetWidth, sh: targetHeight};
+    }
+
+    /**
+     * 设置原始video画布
+     * @param image 原始video
+     */
+    setInputCanvas(image) {
+        // 原始图片宽高
+        const width = this.pixelWidth;
+        const height = this.pixelHeight;
+        this.fromPixels2DContext2.canvas.width = width;
+        this.fromPixels2DContext2.canvas.height = height;
+        this.fromPixels2DContext2.drawImage(image, 0, 0, width, height);
     }
 
     /**
@@ -206,6 +222,8 @@ export default class imageFeed {
 
     fromPixels(pixels, opt) {
         let data;
+        // 原始video画布数据
+        let data2;
         let scaleSize;
         if (pixels instanceof HTMLImageElement || pixels instanceof HTMLVideoElement) {
             this.pixelWidth = pixels.naturalWidth || pixels.width;
@@ -213,10 +231,12 @@ export default class imageFeed {
             if (opt.scale) { // 兼容以前的，如果有scale就是短边缩放到scale模式
                 scaleSize = this.reSize(pixels, opt);
                 data = this.getImageData(opt, scaleSize);
+                data2 = this.fromPixels2DContext2.getImageData(0, 0, this.pixelWidth, this.pixelHeight);
             }
             else if (opt.targetSize) { // 如果有targetSize，就是装在目标宽高里的模式
                 scaleSize = this.fitToTargetSize(pixels, opt);
                 data = this.getImageData(opt, scaleSize);
+                data2 = this.fromPixels2DContext2.getImageData(0, 0, this.pixelWidth, this.pixelHeight);
             }
         }
 
@@ -231,7 +251,7 @@ export default class imageFeed {
         if (opt.targetShape) {
             data = this.allReshapeToRGB(data, opt, scaleSize);
         }
-        return [{data: data, shape: opt.shape || opt.targetShape, name: 'image'}];
+        return [{data: data, shape: opt.shape || opt.targetShape, name: 'image', canvas: data2}];
     }
 }
 /* eslint-enable */

@@ -19,7 +19,7 @@ export default class GraphExecutor {
     }
 
     get inputsName() {
-
+        // todo can set input list rule
         if (this.type === 'feed') {
             return this.inputs.X;
         }

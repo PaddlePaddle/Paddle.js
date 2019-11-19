@@ -19,7 +19,7 @@ export default class GraphExecutor {
     }
 
     get inputsName() {
-        // todo can set input list rule
+
         if (this.type === 'feed') {
             return this.inputs.X;
         }
@@ -82,9 +82,9 @@ export default class GraphExecutor {
         // console.log(inputs, outputs);
         if (this.type !== 'feed') {
             // let time = +Date.now();
-            log.start(this.opData.iLayer + '-' + this.type);
+            // log.start(this.opData.iLayer + '-' + this.type);
             runtime.run(this.type, this.opData, isRendered);
-            log.end(this.opData.iLayer + '-' + this.type);
+            // log.end(this.opData.iLayer + '-' + this.type);
             // if (runtime.gpu.frameBufferIsComplete().isComplete) {
             //     var result = runtime.read();
             //     let res = Array.prototype.slice.call(result);

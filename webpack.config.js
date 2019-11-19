@@ -10,17 +10,17 @@ const extractLess = new ExtractTextPlugin({
 });
 
 module.exports = {
-    mode: 'development',
+    // mode: 'development',
+    mode: 'production',
     devtool: 'none',
     optimization: {
-        minimize: false
+        minimize: true
     },
     entry: {
-        camera: './src/executor/camera',
-        index: './src/executor/runner'
+        index: ['./src/executor/runner']
     },
     output: {
-        filename: '../graphfe/src/view/common/lib/paddle/[name].min.js',
+        filename: '../graphfe/dep/paddleweb/index.min.js',
         path: path.resolve(__dirname, './'),
         library: 'panorama',
         libraryTarget: 'umd',
@@ -28,6 +28,16 @@ module.exports = {
     },
     module: {
         rules: [{
+            test: /\.(es6|js)$/,
+            exclude: /node_modules/,
+            use: {
+                loader: 'babel-loader',
+                options: {
+                    presets: ['@babel/preset-env'],
+                    plugins: ['@babel/transform-runtime']
+                }
+            }
+        },{
             test: /\.(eot|woff|woff2|ttf|svg|png|jpg)$/,
             loader: 'url-loader?limit=30000&name=[name].[ext]'
         }, {

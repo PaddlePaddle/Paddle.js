@@ -132,12 +132,12 @@ export default class GraphModel  {
     fetch(path, params) {
         params = params || this.params;
         let method = params.method || 'get';
-        let mode = params.mode || 'cors';
+        let mode = params.mode || 'no-cors';
         let myHeaders = new Headers();
         return fetch(path, {
             method: method,
-            mode: mode,
-            credentials: 'include',
+            // mode: mode,
+            // credentials: 'include',
             headers: myHeaders
         });
     }

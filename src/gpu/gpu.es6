@@ -437,7 +437,7 @@ export default class gpu {
         gl2.bindBuffer(gl2.PIXEL_PACK_BUFFER, buffer);
         gl2.getBufferSubData(gl2.PIXEL_PACK_BUFFER, 0, pixels);
         gl2.bindBuffer(gl2.PIXEL_PACK_BUFFER, null);
-        log.start('后处理-readloop');
+        // log.start('后处理-readloop');
         // let result = [];
         // let offset = 0;
         // for (let h = 0; h < this.height_texture_out; h++) {
@@ -460,7 +460,7 @@ export default class gpu {
         }
         // const result = Array.prototype.slice.call(pixels);
         // console.dir(['result', result]);
-        log.end('后处理-readloop');
+        // log.end('后处理-readloop');
         return result;
     }
 
@@ -517,20 +517,20 @@ export default class gpu {
 
     compute() {
         let gl = this.gl;
-        log.start('后处理-readinside');
+        // log.start('后处理-readinside');
         const tt = +Date.now();
         let pixels = new Float32Array(this.width_texture_out * this.height_texture_out * 4);
         // gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
         const tt2 = +Date.now();
         gl.readPixels(0, 0, this.width_texture_out, this.height_texture_out, gl.RGBA, gl.FLOAT, pixels, 0);
         // console.log('本次读取数据时间是' + (+Date.now() - tt2)+ ',' + (tt2 - tt));
-        log.end('后处理-readinside');
-        log.start('后处理-readloop');
+        // log.end('后处理-readinside');
+        // log.start('后处理-readloop');
         let result = [];
         for (let i = 0; i < this.width_texture_out * this.height_texture_out; i++) {
             result.push(pixels[4 * i]);
         }
-        log.end('后处理-readloop');
+        // log.end('后处理-readloop');
         return result;
     }
 

@@ -99,7 +99,7 @@ export default class OpData {
         this.checkIsMerge();
         // 是否忽略当前当前op, 使用dropout
         this.isPass = this.checkIsPass();
-        if (this.isPass) {
+        if (true || this.isPass) {
             this.input = input;
             this.output = output;
             // op数据, 当前不扩展

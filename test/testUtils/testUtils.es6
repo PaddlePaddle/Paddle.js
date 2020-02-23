@@ -13,14 +13,20 @@ let datas;
 let otherResult;
 let output
 async function run() {
-    const MODEL_URL = '/test/unitData/model.test.batchnorm.json';
+    const path = 'test/unitData';
+
+    const MODEL_CONFIG = {
+        dir: `/${path}/`, // 存放模型的文件夹
+        main: 'model.test.conv2d.json', // 主文件
+    };
+
     const graphModel= new Loader();
-    const model = await graphModel.loadGraphModel(MODEL_URL);
+    const model = await graphModel.loadGraphModel(MODEL_CONFIG, {test: true});
     datas = model.handler;
     output = deepCopy(model.handler);
     // 测试单元
-    let item = getTensor('batchnorm');
-    func(item);
+   // let item = getTensor('conv2d');
+    func(model);
     // let inst = model.execute({input: cat});
     // console.dir(['result', inst.read()]);
 }
@@ -87,14 +93,24 @@ let getValue = function(name, datas) {
 // // 测试单元
 // let item = getTensor('conv2d');
 
-let func = function (item) {
-    let inst = Runtime.init({
-        'width_raw_canvas': 512,
-        'height_raw_canvas': 512
-    });
-    const executor = new GraphExecutor(item);
-    executor.execute(executor, {}, inst);
-    console.dir(['result', inst.read()]);
+let func = function (model) {
+    if (!model.inst) {
+        model.inst = Runtime.init({
+            'width_raw_canvas': 512,
+            'height_raw_canvas': 512
+        });
+    }
+
+    const executor = model.weightMap;
+    model.execute_(executor[0]);
+    console.dir(['result', model.inst.read()]);
+    var one = model.inst.read();
+    // var other = getResult('conv2d');
+
+    console.log('one');
+    console.log(one);
+    console.log('other');
+  //  console.log(other);
 
 
     // var one = inst.read();

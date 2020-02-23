@@ -25,6 +25,7 @@ export default class GraphModel  {
         this.index = 0;
         this.feedOp = null;
         this.feedItem = null;
+        this.test = false;
         this.isExecuted = false;
         // 网络层数
         this.iLayer = 0;
@@ -36,6 +37,9 @@ export default class GraphModel  {
             this.feed = {input: this.loadOptions.feed};
             if (loadOptions.dataType === 'binary') {
                 this.binaryOption = loadOptions.binaryOption;
+            }
+            if (loadOptions.test) {
+                this.test = true;
             }
         }
 
@@ -193,11 +197,13 @@ export default class GraphModel  {
         const opsMap = this.createOpsMap(artifacts.ops, artifacts.vars);
         this.weightMap = this.constructOpsMap(opsMap);
         // 生成op数据
+        debugger;
         this.weightMap.forEach(op => {
             const type = op.type;
             if (type !== 'feed' && type !== 'fetch') {
                 that.buildOpData(op);
             }
+
         });
         return true;
     }
@@ -285,7 +291,7 @@ export default class GraphModel  {
         });
     }
     constructTensor(executor) {
-        const that = this;
+        let that = this;
         const inputName = executor.inputsName[0];
         const input = executor.inputs;
         const output = executor.outputs;
@@ -294,13 +300,22 @@ export default class GraphModel  {
         });
         Object.keys(input).forEach(function(key){
             if ((key === 'Input') && (inputName === 'pixel')) {
-                const pixel = that.getTensorAttr(inputName);
-                const io = new IO();
-                input[key] = io.fromPixels(data, pixel);
+                if (that.test) {
+                    input[key] = that.getTensorAttr(input[key][0]);
+                    that.feedOp = executor;
+                }
+                else {
+                    const pixel = that.getTensorAttr(inputName);
+                    const io = new IO();
+                    input[key] = io.fromPixels(that.feed, pixel);
+                }
             }
             else if ((key === 'Input') && (inputName === 'image' || inputName === 'x')) {
                 // that.feed.input[0].data = that.testData;
                 input[key] = that.feed.input;
+                if (that.test) {
+                    input[key] = that.getTensorAttr(input[key][0]);
+                }
                 that.feedOp = executor;
             }
             else {

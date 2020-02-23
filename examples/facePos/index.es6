@@ -1,35 +1,33 @@
 import 'babel-polyfill';
-import Graph from '../src/executor/loader';
-import IO from '../src/feed/imageFeed';
-import Logger from '../tools/logger';
+// import VConsole from 'vconsole';
+import 'babel-polyfill';
+import Graph from '../../src/executor/loader';
+import IO from '../../src/feed/imageFeed';
+import Logger from '../../tools/logger';
 window.log = new Logger();
-
+// var vConsole = new VConsole();
 // 统计参数
-
 window.badCases = [];
-
 // import Utils from '../src/utils/utils';
-
 // 获取map表
-
-// import Map from '../test/data/map';
+// import Map from '../../test/data/map';
 
 // import demoPic from './bbt1.jpg';
 // import demoPic2 from './bbt2.jpg';
 // import demoPic3 from './bbt3.jpg';
 // import demoPic4 from './bbt4.jpg';
 // import demoPic5 from './bbt5.jpg';
+// import testOutput from './data.json';
 
 // 后处理测试用例
-
 // let tempPic = [demoPic, demoPic2, demoPic3, demoPic4, demoPic5];
 /**
  * @file model demo 入口文件
  * @author wangqun@baidu.com
  *
  */
+// 'http://mms-xr.cdn.bcebos.com/paddle/mnist/model.json'
 // 模型输出shape
-
 const outputShapes = {
     '608': {
         from: [19, 19, 25, 1],
@@ -40,6 +38,10 @@ const outputShapes = {
         to: [10, 10, 5, 5]
     },
     '320fused': {
+        from: [10, 10, 25, 1],
+        to: [10, 10, 5, 5]
+    },
+    'separate': {
         from: [10, 10, 25, 1],
         to: [10, 10, 5, 5]
     }
@@ -57,15 +59,20 @@ const feedShape = {
     '320fused': {
         fw: 320,
         fh: 320
+    },
+    'separate': {
+        fw: 320,
+        fh: 320
     }
 };
 // 模型路径
 const modelPath = {
-    '608': 'faceModel',
-    '320': 'facemodel320',
-    '320fused': 'facemodelfused'
+    '608': 'model/faceModel',
+    '320': 'model/facemodel320',
+    '320fused': 'model/facemodelfused',
+    'separate': 'model/facePos'
 };
-const modelType = '320fused';
+const modelType = 'separate';
 const path = modelPath[modelType];
 // 统计参数
 let loaded = false;
@@ -96,7 +103,7 @@ async function preheat() {
     };
     loaded = true;
     const graphModel = new Graph();
-    log.start('加载模型');
+    // log.start('加载模型');
     model = await graphModel.loadGraphModel(MODEL_CONFIG, {
         multipart: true,
         dataType: 'binary',
@@ -108,14 +115,14 @@ async function preheat() {
         },
         feed
     });
-    log.end('加载模型');
+    // log.end('加载模型');
     let inst = model.execute({
         input: feed
     });
-};
+}
 async function run(input) {
     // const input = document.getElementById('mobilenet');
-    log.start('总耗时');
+    //log.start('总耗时');
     const io = new IO();
     log.start('预处理');
     let feed = io.process({
@@ -141,7 +148,7 @@ async function run(input) {
         };
         loaded = true;
         const graphModel = new Graph();
-        log.start('加载模型');
+      log.start('加载模型');
         model = await graphModel.loadGraphModel(MODEL_CONFIG, {
             multipart: true,
             dataType: 'binary',
@@ -153,7 +160,7 @@ async function run(input) {
             },
             feed
         });
-        log.end('加载模型');
+      log.end('加载模型');
     }
 
     log.start('运行耗时');
@@ -163,9 +170,10 @@ async function run(input) {
 
     // 其实这里应该有个fetch的执行调用或者fetch的输出
     let result = await inst.read();
-    log.end('后处理-读取数据');
-    // console.dir(['result', result]);
-    log.start('后处理-形状调整');
+    log.end('运行耗时');
+    // log.end('后处理-读取数据');
+    console.dir(['result', result]);
+    //log.start('后处理-形状调整');
     const newData = [];
     let newIndex = -1;
     const [w, h, c, b] = outputShapes[modelType].from;
@@ -182,14 +190,13 @@ async function run(input) {
             }
         }
     }
-    log.end('后处理-形状调整');
-    log.start('后处理-画框');
+   // log.end('后处理-形状调整');
+   // log.start('后处理-画框');
     testRun(newData, input);
-    log.end('后处理-画框');
-    log.end('后处理');
-    log.end('总耗时');
-};
-
+   // log.end('后处理-画框');
+   // log.end('后处理');
+   // log.end('总耗时');
+}
 var image = '';
 
 function selectImage(file) {
@@ -201,14 +208,13 @@ function selectImage(file) {
         let img = document.getElementById('image');
         img.src = evt.target.result;
         img.onload = function() {
-            log.during('每次执行的时间间隔');
+            //log.during('每次执行的时间间隔');
             run(img);
         };
         image = evt.target.result;
     }
     reader.readAsDataURL(file.files[0]);
-};
-
+}
 // selectImage
 document.getElementById("uploadImg").onchange = function () {
     selectImage(this);
@@ -222,7 +228,6 @@ let preTestRun = (index) => {
         testRun(testOutput.data[index], img);
     };
 };
-
 let testRun = (data, img) => {
     // console.log('ori', data);
     const {from, to} = outputShapes[modelType];
@@ -262,7 +267,7 @@ let sigmoid = (x) => {
         return 0.0;
     }
     return 1 / (1 + Math.exp(-x));
-};
+}
 
 // transpose
 let transpose = (data) => {
@@ -415,13 +420,13 @@ let handleCanvas = (finalData, img) => {
     let [w1, h1, width, height] = calSize(img);
     myCanvas.width = w1;
     myCanvas.height = h1;
-    let ctx = myCanvas.getContext('2d');
+    let ctx = myCanvas.getContext("2d");
     ctx.drawImage(img, 0, 0, w1, h1);
 
     finalData.forEach((demoArr,index) => {
         let [demoLeft, demoTop, demoWidth, demoHeight, prob] = demoArr;
         ctx.beginPath();
-        ctx.strokeStyle = 'red';
+        ctx.strokeStyle="red";
         ctx.moveTo(demoLeft, demoTop);
         ctx.lineTo(demoLeft + demoWidth, demoTop);
         ctx.lineTo(demoLeft + demoWidth, demoTop + demoHeight);
@@ -431,24 +436,18 @@ let handleCanvas = (finalData, img) => {
     });
 };
 let handleDiv = (finalData, img) => {
-
     if (finalData.length < 1) {
         return false;
     }
-
     let myCanvas = document.getElementById('myDiv');
     let maxIndex = 0;
-
     if (finalData.length > 1) {
-
         for(let i = 1; i < finalData.length; i++) {
             if (finalData[i].prob > finalData[maxIndex].prob) {
                 maxIndex = i;
             }
         }
-
     }
-
     let [demoLeft, demoTop, demoWidth, demoHeight, prob] = finalData[maxIndex];
     myCanvas.style.width = demoWidth;
     myCanvas.style.height = demoHeight;
@@ -456,4 +455,5 @@ let handleDiv = (finalData, img) => {
     myCanvas.style.top = demoTop;
 };
 // preTestRun(0);
+
 // run(document.getElementById('pic'));

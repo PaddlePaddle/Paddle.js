@@ -1,0 +1,4986 @@
+{
+    "ops": [
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 1, 
+                "is_test": 1, 
+                "paddings": [
+                    1, 
+                    1
+                ], 
+                "strides": [
+                    2, 
+                    2
+                ], 
+                "use_cudnn": true, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv1_weights"
+                ], 
+                "Input": [
+                    "image"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "conv2d_0.tmp_0"
+                ]
+            }, 
+            "type": "conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv1_bn_offset"
+                ], 
+                "Mean": [
+                    "conv1_bn_mean"
+                ], 
+                "Scale": [
+                    "conv1_bn_scale"
+                ], 
+                "Variance": [
+                    "conv1_bn_variance"
+                ], 
+                "X": [
+                    "conv2d_0.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv1_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_0.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_0.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv1_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_0.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_0.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_0.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 32, 
+                "is_test": 1, 
+                "paddings": [
+                    1, 
+                    1
+                ], 
+                "strides": [
+                    1, 
+                    1
+                ], 
+                "use_cudnn": false, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv2_1_dw_weights"
+                ], 
+                "Input": [
+                    "batch_norm_0.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "depthwise_conv2d_0.tmp_0"
+                ]
+            }, 
+            "type": "depthwise_conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv2_1_dw_bn_offset"
+                ], 
+                "Mean": [
+                    "conv2_1_dw_bn_mean"
+                ], 
+                "Scale": [
+                    "conv2_1_dw_bn_scale"
+                ], 
+                "Variance": [
+                    "conv2_1_dw_bn_variance"
+                ], 
+                "X": [
+                    "depthwise_conv2d_0.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv2_1_dw_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_1.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_1.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv2_1_dw_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_1.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_1.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_1.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 1, 
+                "is_test": 1, 
+                "paddings": [
+                    0, 
+                    0
+                ], 
+                "strides": [
+                    1, 
+                    1
+                ], 
+                "use_cudnn": true, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv2_1_sep_weights"
+                ], 
+                "Input": [
+                    "batch_norm_1.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "conv2d_1.tmp_0"
+                ]
+            }, 
+            "type": "conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv2_1_sep_bn_offset"
+                ], 
+                "Mean": [
+                    "conv2_1_sep_bn_mean"
+                ], 
+                "Scale": [
+                    "conv2_1_sep_bn_scale"
+                ], 
+                "Variance": [
+                    "conv2_1_sep_bn_variance"
+                ], 
+                "X": [
+                    "conv2d_1.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv2_1_sep_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_2.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_2.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv2_1_sep_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_2.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_2.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_2.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 64, 
+                "is_test": 1, 
+                "paddings": [
+                    1, 
+                    1
+                ], 
+                "strides": [
+                    2, 
+                    2
+                ], 
+                "use_cudnn": false, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv2_2_dw_weights"
+                ], 
+                "Input": [
+                    "batch_norm_2.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "depthwise_conv2d_1.tmp_0"
+                ]
+            }, 
+            "type": "depthwise_conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv2_2_dw_bn_offset"
+                ], 
+                "Mean": [
+                    "conv2_2_dw_bn_mean"
+                ], 
+                "Scale": [
+                    "conv2_2_dw_bn_scale"
+                ], 
+                "Variance": [
+                    "conv2_2_dw_bn_variance"
+                ], 
+                "X": [
+                    "depthwise_conv2d_1.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv2_2_dw_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_3.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_3.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv2_2_dw_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_3.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_3.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_3.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 1, 
+                "is_test": 1, 
+                "paddings": [
+                    0, 
+                    0
+                ], 
+                "strides": [
+                    1, 
+                    1
+                ], 
+                "use_cudnn": true, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv2_2_sep_weights"
+                ], 
+                "Input": [
+                    "batch_norm_3.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "conv2d_2.tmp_0"
+                ]
+            }, 
+            "type": "conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv2_2_sep_bn_offset"
+                ], 
+                "Mean": [
+                    "conv2_2_sep_bn_mean"
+                ], 
+                "Scale": [
+                    "conv2_2_sep_bn_scale"
+                ], 
+                "Variance": [
+                    "conv2_2_sep_bn_variance"
+                ], 
+                "X": [
+                    "conv2d_2.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv2_2_sep_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_4.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_4.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv2_2_sep_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_4.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_4.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_4.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 128, 
+                "is_test": 1, 
+                "paddings": [
+                    1, 
+                    1
+                ], 
+                "strides": [
+                    1, 
+                    1
+                ], 
+                "use_cudnn": false, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv3_1_dw_weights"
+                ], 
+                "Input": [
+                    "batch_norm_4.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "depthwise_conv2d_2.tmp_0"
+                ]
+            }, 
+            "type": "depthwise_conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv3_1_dw_bn_offset"
+                ], 
+                "Mean": [
+                    "conv3_1_dw_bn_mean"
+                ], 
+                "Scale": [
+                    "conv3_1_dw_bn_scale"
+                ], 
+                "Variance": [
+                    "conv3_1_dw_bn_variance"
+                ], 
+                "X": [
+                    "depthwise_conv2d_2.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv3_1_dw_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_5.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_5.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv3_1_dw_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_5.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_5.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_5.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 1, 
+                "is_test": 1, 
+                "paddings": [
+                    0, 
+                    0
+                ], 
+                "strides": [
+                    1, 
+                    1
+                ], 
+                "use_cudnn": true, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv3_1_sep_weights"
+                ], 
+                "Input": [
+                    "batch_norm_5.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "conv2d_3.tmp_0"
+                ]
+            }, 
+            "type": "conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv3_1_sep_bn_offset"
+                ], 
+                "Mean": [
+                    "conv3_1_sep_bn_mean"
+                ], 
+                "Scale": [
+                    "conv3_1_sep_bn_scale"
+                ], 
+                "Variance": [
+                    "conv3_1_sep_bn_variance"
+                ], 
+                "X": [
+                    "conv2d_3.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv3_1_sep_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_6.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_6.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv3_1_sep_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_6.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_6.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_6.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 128, 
+                "is_test": 1, 
+                "paddings": [
+                    1, 
+                    1
+                ], 
+                "strides": [
+                    2, 
+                    2
+                ], 
+                "use_cudnn": false, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv3_2_dw_weights"
+                ], 
+                "Input": [
+                    "batch_norm_6.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "depthwise_conv2d_3.tmp_0"
+                ]
+            }, 
+            "type": "depthwise_conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv3_2_dw_bn_offset"
+                ], 
+                "Mean": [
+                    "conv3_2_dw_bn_mean"
+                ], 
+                "Scale": [
+                    "conv3_2_dw_bn_scale"
+                ], 
+                "Variance": [
+                    "conv3_2_dw_bn_variance"
+                ], 
+                "X": [
+                    "depthwise_conv2d_3.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv3_2_dw_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_7.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_7.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv3_2_dw_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_7.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_7.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_7.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 1, 
+                "is_test": 1, 
+                "paddings": [
+                    0, 
+                    0
+                ], 
+                "strides": [
+                    1, 
+                    1
+                ], 
+                "use_cudnn": true, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv3_2_sep_weights"
+                ], 
+                "Input": [
+                    "batch_norm_7.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "conv2d_4.tmp_0"
+                ]
+            }, 
+            "type": "conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv3_2_sep_bn_offset"
+                ], 
+                "Mean": [
+                    "conv3_2_sep_bn_mean"
+                ], 
+                "Scale": [
+                    "conv3_2_sep_bn_scale"
+                ], 
+                "Variance": [
+                    "conv3_2_sep_bn_variance"
+                ], 
+                "X": [
+                    "conv2d_4.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv3_2_sep_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_8.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_8.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv3_2_sep_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_8.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_8.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_8.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 256, 
+                "is_test": 1, 
+                "paddings": [
+                    1, 
+                    1
+                ], 
+                "strides": [
+                    1, 
+                    1
+                ], 
+                "use_cudnn": false, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv4_1_dw_weights"
+                ], 
+                "Input": [
+                    "batch_norm_8.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "depthwise_conv2d_4.tmp_0"
+                ]
+            }, 
+            "type": "depthwise_conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv4_1_dw_bn_offset"
+                ], 
+                "Mean": [
+                    "conv4_1_dw_bn_mean"
+                ], 
+                "Scale": [
+                    "conv4_1_dw_bn_scale"
+                ], 
+                "Variance": [
+                    "conv4_1_dw_bn_variance"
+                ], 
+                "X": [
+                    "depthwise_conv2d_4.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv4_1_dw_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_9.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_9.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv4_1_dw_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_9.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_9.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_9.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 1, 
+                "is_test": 1, 
+                "paddings": [
+                    0, 
+                    0
+                ], 
+                "strides": [
+                    1, 
+                    1
+                ], 
+                "use_cudnn": true, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv4_1_sep_weights"
+                ], 
+                "Input": [
+                    "batch_norm_9.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "conv2d_5.tmp_0"
+                ]
+            }, 
+            "type": "conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv4_1_sep_bn_offset"
+                ], 
+                "Mean": [
+                    "conv4_1_sep_bn_mean"
+                ], 
+                "Scale": [
+                    "conv4_1_sep_bn_scale"
+                ], 
+                "Variance": [
+                    "conv4_1_sep_bn_variance"
+                ], 
+                "X": [
+                    "conv2d_5.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv4_1_sep_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_10.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_10.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv4_1_sep_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_10.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_10.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_10.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 256, 
+                "is_test": 1, 
+                "paddings": [
+                    1, 
+                    1
+                ], 
+                "strides": [
+                    2, 
+                    2
+                ], 
+                "use_cudnn": false, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv4_2_dw_weights"
+                ], 
+                "Input": [
+                    "batch_norm_10.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "depthwise_conv2d_5.tmp_0"
+                ]
+            }, 
+            "type": "depthwise_conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv4_2_dw_bn_offset"
+                ], 
+                "Mean": [
+                    "conv4_2_dw_bn_mean"
+                ], 
+                "Scale": [
+                    "conv4_2_dw_bn_scale"
+                ], 
+                "Variance": [
+                    "conv4_2_dw_bn_variance"
+                ], 
+                "X": [
+                    "depthwise_conv2d_5.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv4_2_dw_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_11.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_11.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv4_2_dw_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_11.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_11.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_11.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 1, 
+                "is_test": 1, 
+                "paddings": [
+                    0, 
+                    0
+                ], 
+                "strides": [
+                    1, 
+                    1
+                ], 
+                "use_cudnn": true, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv4_2_sep_weights"
+                ], 
+                "Input": [
+                    "batch_norm_11.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "conv2d_6.tmp_0"
+                ]
+            }, 
+            "type": "conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv4_2_sep_bn_offset"
+                ], 
+                "Mean": [
+                    "conv4_2_sep_bn_mean"
+                ], 
+                "Scale": [
+                    "conv4_2_sep_bn_scale"
+                ], 
+                "Variance": [
+                    "conv4_2_sep_bn_variance"
+                ], 
+                "X": [
+                    "conv2d_6.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv4_2_sep_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_12.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_12.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv4_2_sep_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_12.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_12.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_12.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 512, 
+                "is_test": 1, 
+                "paddings": [
+                    1, 
+                    1
+                ], 
+                "strides": [
+                    1, 
+                    1
+                ], 
+                "use_cudnn": false, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv5_1_dw_weights"
+                ], 
+                "Input": [
+                    "batch_norm_12.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "depthwise_conv2d_6.tmp_0"
+                ]
+            }, 
+            "type": "depthwise_conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv5_1_dw_bn_offset"
+                ], 
+                "Mean": [
+                    "conv5_1_dw_bn_mean"
+                ], 
+                "Scale": [
+                    "conv5_1_dw_bn_scale"
+                ], 
+                "Variance": [
+                    "conv5_1_dw_bn_variance"
+                ], 
+                "X": [
+                    "depthwise_conv2d_6.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv5_1_dw_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_13.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_13.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv5_1_dw_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_13.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_13.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_13.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 1, 
+                "is_test": 1, 
+                "paddings": [
+                    0, 
+                    0
+                ], 
+                "strides": [
+                    1, 
+                    1
+                ], 
+                "use_cudnn": true, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv5_1_sep_weights"
+                ], 
+                "Input": [
+                    "batch_norm_13.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "conv2d_7.tmp_0"
+                ]
+            }, 
+            "type": "conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv5_1_sep_bn_offset"
+                ], 
+                "Mean": [
+                    "conv5_1_sep_bn_mean"
+                ], 
+                "Scale": [
+                    "conv5_1_sep_bn_scale"
+                ], 
+                "Variance": [
+                    "conv5_1_sep_bn_variance"
+                ], 
+                "X": [
+                    "conv2d_7.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv5_1_sep_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_14.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_14.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv5_1_sep_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_14.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_14.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_14.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 512, 
+                "is_test": 1, 
+                "paddings": [
+                    1, 
+                    1
+                ], 
+                "strides": [
+                    1, 
+                    1
+                ], 
+                "use_cudnn": false, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv5_2_dw_weights"
+                ], 
+                "Input": [
+                    "batch_norm_14.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "depthwise_conv2d_7.tmp_0"
+                ]
+            }, 
+            "type": "depthwise_conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv5_2_dw_bn_offset"
+                ], 
+                "Mean": [
+                    "conv5_2_dw_bn_mean"
+                ], 
+                "Scale": [
+                    "conv5_2_dw_bn_scale"
+                ], 
+                "Variance": [
+                    "conv5_2_dw_bn_variance"
+                ], 
+                "X": [
+                    "depthwise_conv2d_7.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv5_2_dw_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_15.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_15.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv5_2_dw_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_15.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_15.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_15.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 1, 
+                "is_test": 1, 
+                "paddings": [
+                    0, 
+                    0
+                ], 
+                "strides": [
+                    1, 
+                    1
+                ], 
+                "use_cudnn": true, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv5_2_sep_weights"
+                ], 
+                "Input": [
+                    "batch_norm_15.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "conv2d_8.tmp_0"
+                ]
+            }, 
+            "type": "conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv5_2_sep_bn_offset"
+                ], 
+                "Mean": [
+                    "conv5_2_sep_bn_mean"
+                ], 
+                "Scale": [
+                    "conv5_2_sep_bn_scale"
+                ], 
+                "Variance": [
+                    "conv5_2_sep_bn_variance"
+                ], 
+                "X": [
+                    "conv2d_8.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv5_2_sep_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_16.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_16.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv5_2_sep_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_16.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_16.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_16.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 512, 
+                "is_test": 1, 
+                "paddings": [
+                    1, 
+                    1
+                ], 
+                "strides": [
+                    1, 
+                    1
+                ], 
+                "use_cudnn": false, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv5_3_dw_weights"
+                ], 
+                "Input": [
+                    "batch_norm_16.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "depthwise_conv2d_8.tmp_0"
+                ]
+            }, 
+            "type": "depthwise_conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv5_3_dw_bn_offset"
+                ], 
+                "Mean": [
+                    "conv5_3_dw_bn_mean"
+                ], 
+                "Scale": [
+                    "conv5_3_dw_bn_scale"
+                ], 
+                "Variance": [
+                    "conv5_3_dw_bn_variance"
+                ], 
+                "X": [
+                    "depthwise_conv2d_8.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv5_3_dw_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_17.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_17.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv5_3_dw_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_17.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_17.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_17.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 1, 
+                "is_test": 1, 
+                "paddings": [
+                    0, 
+                    0
+                ], 
+                "strides": [
+                    1, 
+                    1
+                ], 
+                "use_cudnn": true, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv5_3_sep_weights"
+                ], 
+                "Input": [
+                    "batch_norm_17.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "conv2d_9.tmp_0"
+                ]
+            }, 
+            "type": "conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv5_3_sep_bn_offset"
+                ], 
+                "Mean": [
+                    "conv5_3_sep_bn_mean"
+                ], 
+                "Scale": [
+                    "conv5_3_sep_bn_scale"
+                ], 
+                "Variance": [
+                    "conv5_3_sep_bn_variance"
+                ], 
+                "X": [
+                    "conv2d_9.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv5_3_sep_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_18.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_18.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv5_3_sep_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_18.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_18.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_18.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 512, 
+                "is_test": 1, 
+                "paddings": [
+                    1, 
+                    1
+                ], 
+                "strides": [
+                    1, 
+                    1
+                ], 
+                "use_cudnn": false, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv5_4_dw_weights"
+                ], 
+                "Input": [
+                    "batch_norm_18.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "depthwise_conv2d_9.tmp_0"
+                ]
+            }, 
+            "type": "depthwise_conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv5_4_dw_bn_offset"
+                ], 
+                "Mean": [
+                    "conv5_4_dw_bn_mean"
+                ], 
+                "Scale": [
+                    "conv5_4_dw_bn_scale"
+                ], 
+                "Variance": [
+                    "conv5_4_dw_bn_variance"
+                ], 
+                "X": [
+                    "depthwise_conv2d_9.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv5_4_dw_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_19.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_19.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv5_4_dw_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_19.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_19.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_19.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 1, 
+                "is_test": 1, 
+                "paddings": [
+                    0, 
+                    0
+                ], 
+                "strides": [
+                    1, 
+                    1
+                ], 
+                "use_cudnn": true, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv5_4_sep_weights"
+                ], 
+                "Input": [
+                    "batch_norm_19.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "conv2d_10.tmp_0"
+                ]
+            }, 
+            "type": "conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv5_4_sep_bn_offset"
+                ], 
+                "Mean": [
+                    "conv5_4_sep_bn_mean"
+                ], 
+                "Scale": [
+                    "conv5_4_sep_bn_scale"
+                ], 
+                "Variance": [
+                    "conv5_4_sep_bn_variance"
+                ], 
+                "X": [
+                    "conv2d_10.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv5_4_sep_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_20.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_20.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv5_4_sep_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_20.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_20.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_20.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 512, 
+                "is_test": 1, 
+                "paddings": [
+                    1, 
+                    1
+                ], 
+                "strides": [
+                    1, 
+                    1
+                ], 
+                "use_cudnn": false, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv5_5_dw_weights"
+                ], 
+                "Input": [
+                    "batch_norm_20.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "depthwise_conv2d_10.tmp_0"
+                ]
+            }, 
+            "type": "depthwise_conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv5_5_dw_bn_offset"
+                ], 
+                "Mean": [
+                    "conv5_5_dw_bn_mean"
+                ], 
+                "Scale": [
+                    "conv5_5_dw_bn_scale"
+                ], 
+                "Variance": [
+                    "conv5_5_dw_bn_variance"
+                ], 
+                "X": [
+                    "depthwise_conv2d_10.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv5_5_dw_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_21.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_21.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv5_5_dw_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_21.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_21.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_21.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 1, 
+                "is_test": 1, 
+                "paddings": [
+                    0, 
+                    0
+                ], 
+                "strides": [
+                    1, 
+                    1
+                ], 
+                "use_cudnn": true, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv5_5_sep_weights"
+                ], 
+                "Input": [
+                    "batch_norm_21.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "conv2d_11.tmp_0"
+                ]
+            }, 
+            "type": "conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv5_5_sep_bn_offset"
+                ], 
+                "Mean": [
+                    "conv5_5_sep_bn_mean"
+                ], 
+                "Scale": [
+                    "conv5_5_sep_bn_scale"
+                ], 
+                "Variance": [
+                    "conv5_5_sep_bn_variance"
+                ], 
+                "X": [
+                    "conv2d_11.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv5_5_sep_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_22.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_22.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv5_5_sep_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_22.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_22.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_22.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 512, 
+                "is_test": 1, 
+                "paddings": [
+                    1, 
+                    1
+                ], 
+                "strides": [
+                    2, 
+                    2
+                ], 
+                "use_cudnn": false, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv5_6_dw_weights"
+                ], 
+                "Input": [
+                    "batch_norm_22.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "depthwise_conv2d_11.tmp_0"
+                ]
+            }, 
+            "type": "depthwise_conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv5_6_dw_bn_offset"
+                ], 
+                "Mean": [
+                    "conv5_6_dw_bn_mean"
+                ], 
+                "Scale": [
+                    "conv5_6_dw_bn_scale"
+                ], 
+                "Variance": [
+                    "conv5_6_dw_bn_variance"
+                ], 
+                "X": [
+                    "depthwise_conv2d_11.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv5_6_dw_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_23.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_23.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv5_6_dw_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_23.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_23.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_23.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 1, 
+                "is_test": 1, 
+                "paddings": [
+                    0, 
+                    0
+                ], 
+                "strides": [
+                    1, 
+                    1
+                ], 
+                "use_cudnn": true, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv5_6_sep_weights"
+                ], 
+                "Input": [
+                    "batch_norm_23.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "conv2d_12.tmp_0"
+                ]
+            }, 
+            "type": "conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv5_6_sep_bn_offset"
+                ], 
+                "Mean": [
+                    "conv5_6_sep_bn_mean"
+                ], 
+                "Scale": [
+                    "conv5_6_sep_bn_scale"
+                ], 
+                "Variance": [
+                    "conv5_6_sep_bn_variance"
+                ], 
+                "X": [
+                    "conv2d_12.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv5_6_sep_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_24.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_24.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv5_6_sep_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_24.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_24.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_24.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 1024, 
+                "is_test": 1, 
+                "paddings": [
+                    1, 
+                    1
+                ], 
+                "strides": [
+                    1, 
+                    1
+                ], 
+                "use_cudnn": false, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv6_dw_weights"
+                ], 
+                "Input": [
+                    "batch_norm_24.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "depthwise_conv2d_12.tmp_0"
+                ]
+            }, 
+            "type": "depthwise_conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv6_dw_bn_offset"
+                ], 
+                "Mean": [
+                    "conv6_dw_bn_mean"
+                ], 
+                "Scale": [
+                    "conv6_dw_bn_scale"
+                ], 
+                "Variance": [
+                    "conv6_dw_bn_variance"
+                ], 
+                "X": [
+                    "depthwise_conv2d_12.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv6_dw_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_25.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_25.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv6_dw_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_25.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_25.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_25.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "Scale_in": 1.0, 
+                "Scale_in_eltwise": 1.0, 
+                "Scale_out": 1.0, 
+                "Scale_weights": [
+                    1.0
+                ], 
+                "data_format": "AnyLayout", 
+                "dilations": [
+                    1, 
+                    1
+                ], 
+                "exhaustive_search": false, 
+                "force_fp32_output": false, 
+                "fuse_relu": false, 
+                "fuse_relu_before_depthwise_conv": false, 
+                "fuse_residual_connection": false, 
+                "groups": 1, 
+                "is_test": 1, 
+                "paddings": [
+                    0, 
+                    0
+                ], 
+                "strides": [
+                    1, 
+                    1
+                ], 
+                "use_cudnn": true, 
+                "use_mkldnn": false, 
+                "workspace_size_MB": 4096
+            }, 
+            "inputs": {
+                "Filter": [
+                    "conv6_sep_weights"
+                ], 
+                "Input": [
+                    "batch_norm_25.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Output": [
+                    "conv2d_13.tmp_0"
+                ]
+            }, 
+            "type": "conv2d"
+        }, 
+        {
+            "attrs": {
+                "data_layout": "NCHW", 
+                "epsilon": 9.999999747378752e-06, 
+                "fuse_with_relu": false, 
+                "is_test": 1, 
+                "momentum": 0.8999999761581421, 
+                "use_global_stats": false, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "Bias": [
+                    "conv6_sep_bn_offset"
+                ], 
+                "Mean": [
+                    "conv6_sep_bn_mean"
+                ], 
+                "Scale": [
+                    "conv6_sep_bn_scale"
+                ], 
+                "Variance": [
+                    "conv6_sep_bn_variance"
+                ], 
+                "X": [
+                    "conv2d_13.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "MeanOut": [
+                    "conv6_sep_bn_mean"
+                ], 
+                "SavedMean": [
+                    "batch_norm_26.tmp_0"
+                ], 
+                "SavedVariance": [
+                    "batch_norm_26.tmp_1"
+                ], 
+                "VarianceOut": [
+                    "conv6_sep_bn_variance"
+                ], 
+                "Y": [
+                    "batch_norm_26.tmp_2"
+                ]
+            }, 
+            "type": "batch_norm"
+        }, 
+        {
+            "attrs": {
+                "is_test": 1, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_26.tmp_2"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "batch_norm_26.tmp_2-1"
+                ]
+            }, 
+            "type": "relu"
+        }, 
+        {
+            "attrs": {
+                "adaptive": false, 
+                "ceil_mode": false, 
+                "data_format": "AnyLayout", 
+                "exclusive": true, 
+                "global_pooling": true, 
+                "is_test": 1, 
+                "ksize": [
+                    0, 
+                    0
+                ], 
+                "paddings": [
+                    0, 
+                    0
+                ], 
+                "pooling_type": "avg", 
+                "strides": [
+                    1, 
+                    1
+                ], 
+                "use_cudnn": true, 
+                "use_mkldnn": false
+            }, 
+            "inputs": {
+                "X": [
+                    "batch_norm_26.tmp_2-1"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "pool2d_0.tmp_0"
+                ]
+            }, 
+            "type": "pool2d"
+        }, 
+        {
+            "attrs": {
+                "x_num_col_dims": 1, 
+                "y_num_col_dims": 1
+            }, 
+            "inputs": {
+                "X": [
+                    "pool2d_0.tmp_0"
+                ], 
+                "Y": [
+                    "fc7_weights"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "fc_0.tmp_0"
+                ]
+            }, 
+            "type": "mul"
+        }, 
+        {
+            "attrs": {
+                "axis": 1, 
+                "use_mkldnn": false, 
+                "x_data_format": "", 
+                "y_data_format": ""
+            }, 
+            "inputs": {
+                "X": [
+                    "fc_0.tmp_0"
+                ], 
+                "Y": [
+                    "fc7_offset"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "fc_0.tmp_1"
+                ]
+            }, 
+            "type": "elementwise_add"
+        },
+        {
+            "attrs": {}, 
+            "inputs": {
+                "X": [
+                    "fc_0.tmp_1"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "fetch"
+                ]
+            }, 
+            "type": "fetch"
+        },
+        {
+            "attrs": {}, 
+            "inputs": {
+                "X": [
+                    "feed"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "image"
+                ]
+            }, 
+            "type": "feed"
+        } 
+    ], 
+    "vars": [
+        {
+            "name": "batch_norm_1.tmp_1", 
+            "shape": [
+                32
+            ]
+        }, 
+        {
+            "name": "batch_norm_16.tmp_1", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv5_3_sep_bn_variance", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv1_bn_mean", 
+            "shape": [
+                32
+            ]
+        }, 
+        {
+            "name": "conv1_weights", 
+            "shape": [
+                32, 
+                3, 
+                3, 
+                3
+            ]
+        }, 
+        {
+            "name": "conv3_1_dw_bn_mean", 
+            "shape": [
+                128
+            ]
+        }, 
+        {
+            "name": "conv4_1_sep_bn_scale", 
+            "shape": [
+                256
+            ]
+        }, 
+        {
+            "name": "conv2d_0.tmp_0", 
+            "shape": [
+                32, 
+                112, 
+                112
+            ]
+        }, 
+        {
+            "name": "conv4_1_sep_bn_mean", 
+            "shape": [
+                256
+            ]
+        }, 
+        {
+            "name": "batch_norm_10.tmp_2", 
+            "shape": [
+                256, 
+                28, 
+                28
+            ]
+        }, 
+        {
+            "name": "batch_norm_12.tmp_2", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "depthwise_conv2d_0.tmp_0", 
+            "shape": [
+                32, 
+                112, 
+                112
+            ]
+        }, 
+        {
+            "name": "conv5_4_dw_bn_offset", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv2d_6.tmp_0", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "batch_norm_20.tmp_0", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv5_1_dw_bn_scale", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv2_2_dw_bn_mean", 
+            "shape": [
+                64
+            ]
+        }, 
+        {
+            "name": "batch_norm_22.tmp_2", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "depthwise_conv2d_3.tmp_0", 
+            "shape": [
+                128, 
+                28, 
+                28
+            ]
+        }, 
+        {
+            "name": "conv2_1_sep_bn_variance", 
+            "shape": [
+                64
+            ]
+        }, 
+        {
+            "name": "conv3_2_sep_bn_mean", 
+            "shape": [
+                256
+            ]
+        }, 
+        {
+            "name": "batch_norm_14.tmp_2", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "batch_norm_9.tmp_2", 
+            "shape": [
+                256, 
+                28, 
+                28
+            ]
+        }, 
+        {
+            "name": "conv1_bn_offset", 
+            "shape": [
+                32
+            ]
+        }, 
+        {
+            "name": "conv1_bn_variance", 
+            "shape": [
+                32
+            ]
+        }, 
+        {
+            "name": "batch_norm_12.tmp_1", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv5_3_sep_weights", 
+            "shape": [
+                512, 
+                512, 
+                1, 
+                1
+            ]
+        }, 
+        {
+            "name": "batch_norm_0.tmp_0", 
+            "shape": [
+                32
+            ]
+        }, 
+        {
+            "name": "batch_norm_3.tmp_1", 
+            "shape": [
+                64
+            ]
+        }, 
+        {
+            "name": "conv4_2_sep_bn_offset", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv2_1_dw_bn_scale", 
+            "shape": [
+                32
+            ]
+        }, 
+        {
+            "name": "conv5_4_sep_weights", 
+            "shape": [
+                512, 
+                512, 
+                1, 
+                1
+            ]
+        }, 
+        {
+            "name": "conv3_2_sep_weights", 
+            "shape": [
+                256, 
+                128, 
+                1, 
+                1
+            ]
+        }, 
+        {
+            "name": "batch_norm_8.tmp_0", 
+            "shape": [
+                256
+            ]
+        }, 
+        {
+            "name": "conv6_sep_bn_offset", 
+            "shape": [
+                1024
+            ]
+        }, 
+        {
+            "name": "depthwise_conv2d_1.tmp_0", 
+            "shape": [
+                64, 
+                56, 
+                56
+            ]
+        }, 
+        {
+            "name": "conv2_2_sep_weights", 
+            "shape": [
+                128, 
+                64, 
+                1, 
+                1
+            ]
+        }, 
+        {
+            "name": "batch_norm_26.tmp_0", 
+            "shape": [
+                1024
+            ]
+        }, 
+        {
+            "name": "conv2d_2.tmp_0", 
+            "shape": [
+                128, 
+                56, 
+                56
+            ]
+        }, 
+        {
+            "name": "batch_norm_11.tmp_1", 
+            "shape": [
+                256
+            ]
+        }, 
+        {
+            "name": "conv5_2_sep_bn_scale", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv3_1_dw_bn_variance", 
+            "shape": [
+                128
+            ]
+        }, 
+        {
+            "name": "batch_norm_1.tmp_2", 
+            "shape": [
+                32, 
+                112, 
+                112
+            ]
+        }, 
+        {
+            "name": "batch_norm_0.tmp_1", 
+            "shape": [
+                32
+            ]
+        }, 
+        {
+            "name": "conv2_1_sep_bn_mean", 
+            "shape": [
+                64
+            ]
+        }, 
+        {
+            "name": "batch_norm_4.tmp_0", 
+            "shape": [
+                128
+            ]
+        }, 
+        {
+            "name": "conv2_1_dw_weights", 
+            "shape": [
+                32, 
+                1, 
+                3, 
+                3
+            ]
+        }, 
+        {
+            "name": "batch_norm_7.tmp_2", 
+            "shape": [
+                128, 
+                28, 
+                28
+            ]
+        }, 
+        {
+            "name": "conv5_1_sep_bn_offset", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv2d_1.tmp_0", 
+            "shape": [
+                64, 
+                112, 
+                112
+            ]
+        }, 
+        {
+            "name": "conv2_1_sep_weights", 
+            "shape": [
+                64, 
+                32, 
+                1, 
+                1
+            ]
+        }, 
+        {
+            "name": "batch_norm_10.tmp_0", 
+            "shape": [
+                256
+            ]
+        }, 
+        {
+            "name": "conv2_2_dw_bn_scale", 
+            "shape": [
+                64
+            ]
+        }, 
+        {
+            "name": "batch_norm_2.tmp_1", 
+            "shape": [
+                64
+            ]
+        }, 
+        {
+            "name": "conv5_5_sep_bn_variance", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv2_2_dw_weights", 
+            "shape": [
+                64, 
+                1, 
+                3, 
+                3
+            ]
+        }, 
+        {
+            "name": "conv2_1_dw_bn_offset", 
+            "shape": [
+                32
+            ]
+        }, 
+        {
+            "name": "batch_norm_13.tmp_2", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "conv3_1_sep_bn_variance", 
+            "shape": [
+                128
+            ]
+        }, 
+        {
+            "name": "conv5_4_sep_bn_offset", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv2_2_dw_bn_variance", 
+            "shape": [
+                64
+            ]
+        }, 
+        {
+            "name": "conv5_2_dw_bn_offset", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv2_1_dw_bn_mean", 
+            "shape": [
+                32
+            ]
+        }, 
+        {
+            "name": "batch_norm_3.tmp_0", 
+            "shape": [
+                64
+            ]
+        }, 
+        {
+            "name": "batch_norm_13.tmp_1", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "batch_norm_3.tmp_2", 
+            "shape": [
+                64, 
+                56, 
+                56
+            ]
+        }, 
+        {
+            "name": "batch_norm_19.tmp_2", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "batch_norm_9.tmp_0", 
+            "shape": [
+                256
+            ]
+        }, 
+        {
+            "name": "batch_norm_17.tmp_0", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv5_4_dw_bn_scale", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv2_2_sep_bn_scale", 
+            "shape": [
+                128
+            ]
+        }, 
+        {
+            "name": "batch_norm_4.tmp_2", 
+            "shape": [
+                128, 
+                56, 
+                56
+            ]
+        }, 
+        {
+            "name": "conv2_2_sep_bn_variance", 
+            "shape": [
+                128
+            ]
+        }, 
+        {
+            "name": "batch_norm_25.tmp_1", 
+            "shape": [
+                1024
+            ]
+        }, 
+        {
+            "name": "conv5_1_sep_bn_mean", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv5_2_dw_bn_scale", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "batch_norm_21.tmp_1", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "depthwise_conv2d_2.tmp_0", 
+            "shape": [
+                128, 
+                56, 
+                56
+            ]
+        }, 
+        {
+            "name": "conv2_2_sep_bn_mean", 
+            "shape": [
+                128
+            ]
+        }, 
+        {
+            "name": "conv2d_5.tmp_0", 
+            "shape": [
+                256, 
+                28, 
+                28
+            ]
+        }, 
+        {
+            "name": "batch_norm_5.tmp_0", 
+            "shape": [
+                128
+            ]
+        }, 
+        {
+            "name": "batch_norm_1.tmp_0", 
+            "shape": [
+                32
+            ]
+        }, 
+        {
+            "name": "batch_norm_6.tmp_0", 
+            "shape": [
+                128
+            ]
+        }, 
+        {
+            "name": "conv2_2_dw_bn_offset", 
+            "shape": [
+                64
+            ]
+        }, 
+        {
+            "name": "batch_norm_5.tmp_2", 
+            "shape": [
+                128, 
+                56, 
+                56
+            ]
+        }, 
+        {
+            "name": "conv3_1_sep_bn_mean", 
+            "shape": [
+                128
+            ]
+        }, 
+        {
+            "name": "conv4_1_dw_bn_variance", 
+            "shape": [
+                256
+            ]
+        }, 
+        {
+            "name": "conv2d_8.tmp_0", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "conv3_1_sep_bn_scale", 
+            "shape": [
+                128
+            ]
+        }, 
+        {
+            "name": "conv5_6_dw_weights", 
+            "shape": [
+                512, 
+                1, 
+                3, 
+                3
+            ]
+        }, 
+        {
+            "name": "conv6_sep_bn_mean", 
+            "shape": [
+                1024
+            ]
+        }, 
+        {
+            "name": "batch_norm_6.tmp_2", 
+            "shape": [
+                128, 
+                56, 
+                56
+            ]
+        }, 
+        {
+            "name": "batch_norm_2.tmp_2", 
+            "shape": [
+                64, 
+                112, 
+                112
+            ]
+        }, 
+        {
+            "name": "conv2d_4.tmp_0", 
+            "shape": [
+                256, 
+                28, 
+                28
+            ]
+        }, 
+        {
+            "name": "conv3_2_dw_weights", 
+            "shape": [
+                128, 
+                1, 
+                3, 
+                3
+            ]
+        }, 
+        {
+            "name": "conv5_2_dw_bn_mean", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv3_2_dw_bn_offset", 
+            "shape": [
+                128
+            ]
+        }, 
+        {
+            "name": "depthwise_conv2d_9.tmp_0", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "batch_norm_23.tmp_0", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "batch_norm_7.tmp_0", 
+            "shape": [
+                128
+            ]
+        }, 
+        {
+            "name": "conv5_3_dw_bn_mean", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "batch_norm_19.tmp_0", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "batch_norm_2.tmp_0", 
+            "shape": [
+                64
+            ]
+        }, 
+        {
+            "name": "conv3_2_sep_bn_scale", 
+            "shape": [
+                256
+            ]
+        }, 
+        {
+            "name": "conv3_2_sep_bn_variance", 
+            "shape": [
+                256
+            ]
+        }, 
+        {
+            "name": "batch_norm_20.tmp_1", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv2d_3.tmp_0", 
+            "shape": [
+                128, 
+                56, 
+                56
+            ]
+        }, 
+        {
+            "name": "conv4_1_sep_weights", 
+            "shape": [
+                256, 
+                256, 
+                1, 
+                1
+            ]
+        }, 
+        {
+            "name": "conv3_1_sep_weights", 
+            "shape": [
+                128, 
+                128, 
+                1, 
+                1
+            ]
+        }, 
+        {
+            "name": "conv4_1_dw_bn_mean", 
+            "shape": [
+                256
+            ]
+        }, 
+        {
+            "name": "conv5_1_dw_bn_mean", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv4_1_dw_weights", 
+            "shape": [
+                256, 
+                1, 
+                3, 
+                3
+            ]
+        }, 
+        {
+            "name": "conv5_5_sep_weights", 
+            "shape": [
+                512, 
+                512, 
+                1, 
+                1
+            ]
+        }, 
+        {
+            "name": "conv4_1_dw_bn_offset", 
+            "shape": [
+                256
+            ]
+        }, 
+        {
+            "name": "conv3_1_dw_weights", 
+            "shape": [
+                128, 
+                1, 
+                3, 
+                3
+            ]
+        }, 
+        {
+            "name": "depthwise_conv2d_4.tmp_0", 
+            "shape": [
+                256, 
+                28, 
+                28
+            ]
+        }, 
+        {
+            "name": "batch_norm_21.tmp_0", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv2d_11.tmp_0", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "conv5_5_dw_bn_variance", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "batch_norm_9.tmp_1", 
+            "shape": [
+                256
+            ]
+        }, 
+        {
+            "name": "conv5_5_sep_bn_offset", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv4_1_sep_bn_offset", 
+            "shape": [
+                256
+            ]
+        }, 
+        {
+            "name": "depthwise_conv2d_5.tmp_0", 
+            "shape": [
+                256, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "conv2_1_sep_bn_scale", 
+            "shape": [
+                64
+            ]
+        }, 
+        {
+            "name": "batch_norm_17.tmp_2", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "conv4_1_sep_bn_variance", 
+            "shape": [
+                256
+            ]
+        }, 
+        {
+            "name": "conv4_2_dw_weights", 
+            "shape": [
+                256, 
+                1, 
+                3, 
+                3
+            ]
+        }, 
+        {
+            "name": "conv5_3_dw_bn_variance", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv5_6_dw_bn_mean", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv4_2_dw_bn_mean", 
+            "shape": [
+                256
+            ]
+        }, 
+        {
+            "name": "batch_norm_14.tmp_1", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv3_1_dw_bn_scale", 
+            "shape": [
+                128
+            ]
+        }, 
+        {
+            "name": "conv6_dw_bn_offset", 
+            "shape": [
+                1024
+            ]
+        }, 
+        {
+            "name": "batch_norm_5.tmp_1", 
+            "shape": [
+                128
+            ]
+        }, 
+        {
+            "name": "conv5_1_sep_bn_scale", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "batch_norm_11.tmp_0", 
+            "shape": [
+                256
+            ]
+        }, 
+        {
+            "name": "conv4_2_sep_bn_scale", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv4_2_sep_bn_mean", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv3_1_sep_bn_offset", 
+            "shape": [
+                128
+            ]
+        }, 
+        {
+            "name": "conv4_2_sep_bn_variance", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "batch_norm_0.tmp_2", 
+            "shape": [
+                32, 
+                112, 
+                112
+            ]
+        }, 
+        {
+            "name": "batch_norm_13.tmp_0", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "batch_norm_7.tmp_1", 
+            "shape": [
+                128
+            ]
+        }, 
+        {
+            "name": "conv3_2_dw_bn_mean", 
+            "shape": [
+                128
+            ]
+        }, 
+        {
+            "name": "conv1_bn_scale", 
+            "shape": [
+                32
+            ]
+        }, 
+        {
+            "name": "batch_norm_21.tmp_2", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "batch_norm_10.tmp_1", 
+            "shape": [
+                256
+            ]
+        }, 
+        {
+            "name": "depthwise_conv2d_6.tmp_0", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "conv5_5_dw_weights", 
+            "shape": [
+                512, 
+                1, 
+                3, 
+                3
+            ]
+        }, 
+        {
+            "name": "conv5_1_sep_weights", 
+            "shape": [
+                512, 
+                512, 
+                1, 
+                1
+            ]
+        }, 
+        {
+            "name": "conv2d_7.tmp_0", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "batch_norm_15.tmp_2", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "conv5_2_sep_bn_mean", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv5_4_sep_bn_scale", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv5_2_sep_bn_variance", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv5_2_dw_weights", 
+            "shape": [
+                512, 
+                1, 
+                3, 
+                3
+            ]
+        }, 
+        {
+            "name": "conv4_2_sep_weights", 
+            "shape": [
+                512, 
+                256, 
+                1, 
+                1
+            ]
+        }, 
+        {
+            "name": "depthwise_conv2d_7.tmp_0", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "batch_norm_24.tmp_2", 
+            "shape": [
+                1024, 
+                7, 
+                7
+            ]
+        }, 
+        {
+            "name": "batch_norm_12.tmp_0", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "batch_norm_18.tmp_2", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "conv2d_12.tmp_0", 
+            "shape": [
+                1024, 
+                7, 
+                7
+            ]
+        }, 
+        {
+            "name": "conv5_2_dw_bn_variance", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "batch_norm_8.tmp_2", 
+            "shape": [
+                256, 
+                28, 
+                28
+            ]
+        }, 
+        {
+            "name": "batch_norm_26.tmp_1", 
+            "shape": [
+                1024
+            ]
+        }, 
+        {
+            "name": "conv5_6_sep_bn_mean", 
+            "shape": [
+                1024
+            ]
+        }, 
+        {
+            "name": "conv5_3_dw_bn_scale", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv2d_13.tmp_0", 
+            "shape": [
+                1024, 
+                7, 
+                7
+            ]
+        }, 
+        {
+            "name": "batch_norm_15.tmp_1", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "batch_norm_22.tmp_0", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv5_2_sep_weights", 
+            "shape": [
+                512, 
+                512, 
+                1, 
+                1
+            ]
+        }, 
+        {
+            "name": "conv4_1_dw_bn_scale", 
+            "shape": [
+                256
+            ]
+        }, 
+        {
+            "name": "conv5_2_sep_bn_offset", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv5_4_dw_bn_variance", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv3_2_dw_bn_scale", 
+            "shape": [
+                128
+            ]
+        }, 
+        {
+            "name": "batch_norm_6.tmp_1", 
+            "shape": [
+                128
+            ]
+        }, 
+        {
+            "name": "batch_norm_16.tmp_2", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "conv5_1_dw_bn_variance", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv4_2_dw_bn_variance", 
+            "shape": [
+                256
+            ]
+        }, 
+        {
+            "name": "conv6_dw_weights", 
+            "shape": [
+                1024, 
+                1, 
+                3, 
+                3
+            ]
+        }, 
+        {
+            "name": "depthwise_conv2d_10.tmp_0", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "depthwise_conv2d_8.tmp_0", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "conv6_dw_bn_scale", 
+            "shape": [
+                1024
+            ]
+        }, 
+        {
+            "name": "conv5_3_dw_bn_offset", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv4_2_dw_bn_offset", 
+            "shape": [
+                256
+            ]
+        }, 
+        {
+            "name": "batch_norm_17.tmp_1", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "batch_norm_14.tmp_0", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv5_3_sep_bn_scale", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "fc_0.tmp_1", 
+            "shape": [
+                1000
+            ]
+        }, 
+        {
+            "name": "batch_norm_18.tmp_1", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "batch_norm_8.tmp_1", 
+            "shape": [
+                256
+            ]
+        }, 
+        {
+            "name": "conv5_4_dw_weights", 
+            "shape": [
+                512, 
+                1, 
+                3, 
+                3
+            ]
+        }, 
+        {
+            "name": "conv5_1_dw_weights", 
+            "shape": [
+                512, 
+                1, 
+                3, 
+                3
+            ]
+        }, 
+        {
+            "name": "conv5_3_sep_bn_offset", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv5_4_dw_bn_mean", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "batch_norm_24.tmp_0", 
+            "shape": [
+                1024
+            ]
+        }, 
+        {
+            "name": "conv5_4_sep_bn_mean", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv4_2_dw_bn_scale", 
+            "shape": [
+                256
+            ]
+        }, 
+        {
+            "name": "conv5_5_dw_bn_mean", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv5_1_sep_bn_variance", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv2_1_dw_bn_variance", 
+            "shape": [
+                32
+            ]
+        }, 
+        {
+            "name": "image", 
+            "shape": [
+                3, 
+                224, 
+                224
+            ]
+        }, 
+        {
+            "name": "conv5_4_sep_bn_variance", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv5_6_sep_weights", 
+            "shape": [
+                1024, 
+                512, 
+                1, 
+                1
+            ]
+        }, 
+        {
+            "name": "conv2_1_sep_bn_offset", 
+            "shape": [
+                64
+            ]
+        }, 
+        {
+            "name": "conv2d_9.tmp_0", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "batch_norm_19.tmp_1", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv5_5_sep_bn_scale", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "fc7_weights", 
+            "shape": [
+                1024, 
+                1000
+            ]
+        }, 
+        {
+            "name": "conv5_5_sep_bn_mean", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv5_3_sep_bn_mean", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "batch_norm_18.tmp_0", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv5_5_dw_bn_offset", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv6_dw_bn_mean", 
+            "shape": [
+                1024
+            ]
+        }, 
+        {
+            "name": "conv5_1_dw_bn_offset", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "fc_0.tmp_0", 
+            "shape": [
+                1000
+            ]
+        }, 
+        {
+            "name": "conv6_sep_weights", 
+            "shape": [
+                1024, 
+                1024, 
+                1, 
+                1
+            ]
+        }, 
+        {
+            "name": "conv5_6_dw_bn_scale", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv5_6_sep_bn_scale", 
+            "shape": [
+                1024
+            ]
+        }, 
+        {
+            "name": "batch_norm_25.tmp_0", 
+            "shape": [
+                1024
+            ]
+        }, 
+        {
+            "name": "conv3_2_dw_bn_variance", 
+            "shape": [
+                128
+            ]
+        }, 
+        {
+            "name": "conv2d_10.tmp_0", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "conv5_6_dw_bn_offset", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "batch_norm_4.tmp_1", 
+            "shape": [
+                128
+            ]
+        }, 
+        {
+            "name": "depthwise_conv2d_11.tmp_0", 
+            "shape": [
+                512, 
+                7, 
+                7
+            ]
+        }, 
+        {
+            "name": "conv5_5_dw_bn_scale", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "fc7_offset", 
+            "shape": [
+                1000
+            ]
+        }, 
+        {
+            "name": "pool2d_0.tmp_0", 
+            "shape": [
+                1024, 
+                1, 
+                1
+            ]
+        }, 
+        {
+            "name": "batch_norm_23.tmp_2", 
+            "shape": [
+                512, 
+                7, 
+                7
+            ]
+        }, 
+        {
+            "name": "batch_norm_16.tmp_0", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv5_6_dw_bn_variance", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv3_1_dw_bn_offset", 
+            "shape": [
+                128
+            ]
+        }, 
+        {
+            "name": "conv2_2_sep_bn_offset", 
+            "shape": [
+                128
+            ]
+        }, 
+        {
+            "name": "batch_norm_11.tmp_2", 
+            "shape": [
+                256, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "conv5_6_sep_bn_variance", 
+            "shape": [
+                1024
+            ]
+        }, 
+        {
+            "name": "conv3_2_sep_bn_offset", 
+            "shape": [
+                256
+            ]
+        }, 
+        {
+            "name": "conv5_6_sep_bn_offset", 
+            "shape": [
+                1024
+            ]
+        }, 
+        {
+            "name": "conv6_dw_bn_variance", 
+            "shape": [
+                1024
+            ]
+        }, 
+        {
+            "name": "batch_norm_26.tmp_2", 
+            "shape": [
+                1024, 
+                7, 
+                7
+            ]
+        }, 
+        {
+            "name": "batch_norm_22.tmp_1", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "batch_norm_24.tmp_1", 
+            "shape": [
+                1024
+            ]
+        }, 
+        {
+            "name": "conv5_3_dw_weights", 
+            "shape": [
+                512, 
+                1, 
+                3, 
+                3
+            ]
+        }, 
+        {
+            "name": "batch_norm_20.tmp_2", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "depthwise_conv2d_12.tmp_0", 
+            "shape": [
+                1024, 
+                7, 
+                7
+            ]
+        }, 
+        {
+            "name": "batch_norm_25.tmp_2", 
+            "shape": [
+                1024, 
+                7, 
+                7
+            ]
+        }, 
+        {
+            "name": "batch_norm_15.tmp_0", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv6_sep_bn_variance", 
+            "shape": [
+                1024
+            ]
+        }, 
+        {
+            "name": "batch_norm_23.tmp_1", 
+            "shape": [
+                512
+            ]
+        }, 
+        {
+            "name": "conv6_sep_bn_scale", 
+            "shape": [
+                1024
+            ]
+        }, 
+        {
+            "name": "batch_norm_0.tmp_2-1", 
+            "shape": [
+                32, 
+                112, 
+                112
+            ]
+        }, 
+        {
+            "name": "batch_norm_1.tmp_2-1", 
+            "shape": [
+                32, 
+                112, 
+                112
+            ]
+        }, 
+        {
+            "name": "batch_norm_2.tmp_2-1", 
+            "shape": [
+                64, 
+                112, 
+                112
+            ]
+        }, 
+        {
+            "name": "batch_norm_3.tmp_2-1", 
+            "shape": [
+                64, 
+                56, 
+                56
+            ]
+        }, 
+        {
+            "name": "batch_norm_4.tmp_2-1", 
+            "shape": [
+                128, 
+                56, 
+                56
+            ]
+        }, 
+        {
+            "name": "batch_norm_5.tmp_2-1", 
+            "shape": [
+                128, 
+                56, 
+                56
+            ]
+        }, 
+        {
+            "name": "batch_norm_6.tmp_2-1", 
+            "shape": [
+                128, 
+                56, 
+                56
+            ]
+        }, 
+        {
+            "name": "batch_norm_7.tmp_2-1", 
+            "shape": [
+                128, 
+                28, 
+                28
+            ]
+        }, 
+        {
+            "name": "batch_norm_8.tmp_2-1", 
+            "shape": [
+                256, 
+                28, 
+                28
+            ]
+        }, 
+        {
+            "name": "batch_norm_9.tmp_2-1", 
+            "shape": [
+                256, 
+                28, 
+                28
+            ]
+        }, 
+        {
+            "name": "batch_norm_10.tmp_2-1", 
+            "shape": [
+                256, 
+                28, 
+                28
+            ]
+        }, 
+        {
+            "name": "batch_norm_11.tmp_2-1", 
+            "shape": [
+                256, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "batch_norm_12.tmp_2-1", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "batch_norm_13.tmp_2-1", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "batch_norm_14.tmp_2-1", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "batch_norm_15.tmp_2-1", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "batch_norm_16.tmp_2-1", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "batch_norm_17.tmp_2-1", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "batch_norm_18.tmp_2-1", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "batch_norm_19.tmp_2-1", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "batch_norm_20.tmp_2-1", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "batch_norm_21.tmp_2-1", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "batch_norm_22.tmp_2-1", 
+            "shape": [
+                512, 
+                14, 
+                14
+            ]
+        }, 
+        {
+            "name": "batch_norm_23.tmp_2-1", 
+            "shape": [
+                512, 
+                7, 
+                7
+            ]
+        }, 
+        {
+            "name": "batch_norm_24.tmp_2-1", 
+            "shape": [
+                1024, 
+                7, 
+                7
+            ]
+        }, 
+        {
+            "name": "batch_norm_25.tmp_2-1", 
+            "shape": [
+                1024, 
+                7, 
+                7
+            ]
+        }, 
+        {
+            "name": "batch_norm_26.tmp_2-1", 
+            "shape": [
+                1024, 
+                7, 
+                7
+            ]
+        }
+    ]
+}

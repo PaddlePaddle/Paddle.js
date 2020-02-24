@@ -3,7 +3,7 @@ import VSHADER from '../shader/v_shader';
 import VSHADER2 from '../shader/v_shader2';
 /**
  * @file gpu运算
- * @author yangmingming
+ * @author wangqun@baidu.com, yangmingming@baidu.com
  */
 const CONF = {
     alpha: false,

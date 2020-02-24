@@ -4,7 +4,7 @@
       "attrs": {
         "bias": 0.0,
         "bias_after_scale": true,
-        "scale": 1.0
+        "scale": 2.0
       },
       "inputs": {
         "X": [

@@ -5,6 +5,7 @@ import Runtime from '../../src/runtime/runtime';
 import OpData from '../utils/opData';
 import Factory from '../factory/fshader/factory';
 import Utils from '../utils/utils';
+
 /**
  * @file GraphModel，绘制生成model网络
  * @author wangqun@baidu.com
@@ -197,7 +198,6 @@ export default class GraphModel  {
         const opsMap = this.createOpsMap(artifacts.ops, artifacts.vars);
         this.weightMap = this.constructOpsMap(opsMap);
         // 生成op数据
-        debugger;
         this.weightMap.forEach(op => {
             const type = op.type;
             if (type !== 'feed' && type !== 'fetch') {
@@ -299,23 +299,19 @@ export default class GraphModel  {
             output[key] = that.getTensorAttr(output[key][0]);
         });
         Object.keys(input).forEach(function(key){
-            if ((key === 'Input') && (inputName === 'pixel')) {
-                if (that.test) {
-                    input[key] = that.getTensorAttr(input[key][0]);
-                    that.feedOp = executor;
-                }
-                else {
-                    const pixel = that.getTensorAttr(inputName);
-                    const io = new IO();
-                    input[key] = io.fromPixels(that.feed, pixel);
-                }
+            if (that.test && ((key === 'Input') || (key === 'X'))) {
+                input[key] = that.getTensorAttr(input[key][0]);
+                that.feedOp = executor;
+            }
+            else if ((key === 'Input') && (inputName === 'pixel')) {
+                const pixel = that.getTensorAttr(inputName);
+                const io = new IO();
+                input[key] = io.fromPixels(that.feed, pixel);
             }
             else if ((key === 'Input') && (inputName === 'image' || inputName === 'x')) {
                 // that.feed.input[0].data = that.testData;
                 input[key] = that.feed.input;
-                if (that.test) {
-                    input[key] = that.getTensorAttr(input[key][0]);
-                }
+
                 that.feedOp = executor;
             }
             else {

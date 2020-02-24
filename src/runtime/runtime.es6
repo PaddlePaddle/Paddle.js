@@ -3,7 +3,7 @@ import Gpu from '../gpu/gpu';
 import getMaxUniforms from '../test/getMaxUniforms';
 /**
  * @file gpu运行时
- * @author yangmingming
+ * @author wangqun@baidu.com, yangmingming@baidu.com
  *
  */
 export default {

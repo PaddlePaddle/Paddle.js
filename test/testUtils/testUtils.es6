@@ -8,6 +8,19 @@ import Runtime from '../../src/runtime/runtime';
 import Map from '../data/map';
 console.dir(['map', Map]);
 
+const unitPath = {
+    'conv2d': 'model.test.conv2d.json',
+    'batchnorm': 'model.test.batchnorm.json',
+    'mul': 'model.test.mul.json',
+    'pool2d': 'model.test.pool2d.json',
+    'relu': 'model.test.relu.json',
+    'scale': 'model.test.scale.json',
+    'softmax': 'model.test.softmax.json'
+};
+// 制定运行的 op
+const modelType = 'conv2d';
+const unitData = unitPath[modelType];
+
 let Diff = require('./diff');
 let datas;
 let otherResult;
@@ -17,7 +30,7 @@ async function run() {
 
     const MODEL_CONFIG = {
         dir: `/${path}/`, // 存放模型的文件夹
-        main: 'model.test.conv2d.json', // 主文件
+        main: unitData, // 主文件
     };
 
     const graphModel= new Loader();

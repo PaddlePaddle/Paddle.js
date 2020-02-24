@@ -70,7 +70,7 @@ const modelPath = {
     '608': 'model/faceModel',
     '320': 'model/facemodel320',
     '320fused': 'model/facemodelfused',
-    'separate': 'model/facePos'
+    'separate': 'model/tinyYolo'
 };
 const modelType = 'separate';
 const path = modelPath[modelType];

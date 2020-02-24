@@ -7,7 +7,7 @@
     "server": "parcel ./src/index.html",
     "mnistdemo": "parcel ./examples/mnist/index.html",
     "mobilenet": "parcel ./examples/mobileNet/index.html",
-    "facepos": "parcel ./examples/facePos/index.html",
+    "tinyYolo": "parcel ./examples/tinyYolo/index.html",
     "videoDemo": "parcel ./examples/videoDemo.html --port 8123 --https",
     "unitTest": "parcel ./test/unitTest.html",
     "test": "echo \"Error: no test specified\" && exit 1",

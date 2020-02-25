@@ -18,7 +18,7 @@ const unitPath = {
     'softmax': 'model.test.softmax.json'
 };
 // 制定运行的 op
-const modelType = 'conv2d';
+const modelType = 'relu';
 const unitData = unitPath[modelType];
 
 let Diff = require('./diff');

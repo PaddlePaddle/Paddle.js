@@ -1,7 +1,7 @@
 /* eslint-disable */
 /**
 * @file 激活函数
-* @author yangmingming
+* @author chenhaoze
 */
 // 激活函数
 export default `

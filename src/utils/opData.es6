@@ -83,6 +83,10 @@ const opBehavior = {
         'transToPrelu',
         'needBatch'
     ],
+    relu6: [
+    'transToRelu6',
+    'needBatch'
+    ],
     leaky_relu: [
         'transToLeakyrelu',
         'needBatch'
@@ -317,8 +321,11 @@ export default class OpData {
     transToPrelu(tensorData = []) {
         this.data['multi_value'] = '0.0';
         this.data['active_function'] = 'prelu';
-console.log('execute trans to prelu');
-console.dir(this);
+    }
+
+    transToRelu6(tensorData = []) {
+        this.data['multi_value'] = this.attrs['threshold'];
+        this.data['active_function'] = 'relu6';
     }
 
     transToLeakyrelu(tensorData = []) {

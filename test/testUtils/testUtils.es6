@@ -15,10 +15,11 @@ const unitPath = {
     'pool2d': 'model.test.pool2d.json',
     'relu': 'model.test.relu.json',
     'scale': 'model.test.scale.json',
-    'softmax': 'model.test.softmax.json'
+    'softmax': 'model.test.softmax.json',
+    'relu6' : 'model.test.relu6.json'
 };
 // 制定运行的 op
-const modelType = 'relu';
+const modelType = 'relu6';
 const unitData = unitPath[modelType];
 
 let Diff = require('./diff');

@@ -27,6 +27,9 @@ const tensorAttrs = [
 ];
 // shader中需要的常量
 const shaderAttrs = {
+    relu6: {
+        'threshold':'multi_value'
+},
     scale: {
         'bias': 'bias_value',
         'scale': 'multi_value'
@@ -314,6 +317,8 @@ export default class OpData {
     transToPrelu(tensorData = []) {
         this.data['multi_value'] = '0.0';
         this.data['active_function'] = 'prelu';
+console.log('execute trans to prelu');
+console.dir(this);
     }
 
     transToLeakyrelu(tensorData = []) {

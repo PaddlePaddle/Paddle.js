@@ -58,6 +58,7 @@ import getRangePowSumFromArrayIndex from '../../shader/atom/getRangePowSumFromAr
 import getRangeSumFromArrayIndex from '../../shader/atom/getRangeSumFromArrayIndex';
 import sigmoid from '../../shader/atom/sigmoid';
 import prelu from '../../shader/atom/prelu';
+//import relu6 from '../../shader/atom/relu6';
 import scale from '../../shader/atom/scale';
 import softmax from '../../shader/atom/softmax';
 /**
@@ -130,6 +131,11 @@ export default {
             func: dynamic_func,
             confs: dynamic_conf
         },
+        relu: {
+            params: dynamic_params,
+            func: dynamic_func,
+            confs: dynamic_conf
+        },
         scale: {
             params: dynamic_params,
             func: dynamic_func,
@@ -160,6 +166,7 @@ export default {
         getRangePowSumFromArrayIndex,
         sigmoid,
         prelu,
+        //relu6,
         scale,
         softmax
     }

@@ -27,9 +27,6 @@ const tensorAttrs = [
 ];
 // shader中需要的常量
 const shaderAttrs = {
-    relu6: {
-        'threshold':'multi_value'
-},
     scale: {
         'bias': 'bias_value',
         'scale': 'multi_value'

@@ -1,4 +1,4 @@
-// import VConsole from 'vconsole';
+/* eslint-disable */
 import 'babel-polyfill';
 import Paddle from '../../src/paddle/paddle';
 import IO from '../../src/feed/imageFeed';
@@ -402,3 +402,4 @@ let handleDiv = (finalData, img) => {
 // preTestRun(0);
 
 // run(document.getElementById('pic'));
+/* eslint-enable */

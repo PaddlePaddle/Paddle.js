@@ -1,7 +1,7 @@
 /* eslint-disable */
 /**
  * @file batchnorm的配置文件
- * @author yangmingming
+ * @author wangqun
  */
 export default {
     dep: [

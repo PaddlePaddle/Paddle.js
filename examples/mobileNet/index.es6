@@ -1,15 +1,34 @@
 import 'babel-polyfill';
-import Graph from '../../src/executor/loader';
+import Paddle from '../../src/paddle/paddle';
 import IO from '../../src/feed/imageFeed';
-import Utils from '../../src/utils/utils';
 // 获取map表
-import Map from '../../test/data/map';
+// import Map from '../../test/data/map';
 /**
  * @file model demo 入口文件
  * @author wangqun@baidu.com
  *
  */
-// 'http://mms-xr.cdn.bcebos.com/paddle/mnist/model.json'
+// 模型feed数据
+const feedShape = {
+    '608': {
+        fw: 608,
+        fh: 608
+    },
+    '320': {
+        fw: 320,
+        fh: 320
+    },
+    '320fused': {
+        fw: 320,
+        fh: 320
+    },
+    'separate': {
+        fw: 320,
+        fh: 320
+    }
+};
+const modelType = 'separate';
+const {fw, fh} = feedShape[modelType];
 // 统计参数
 let loaded = false;
 let model = {};
@@ -20,6 +39,7 @@ async function run(input) {
     let feed = io.process({
         input: input,
         params: {
+            targetShape: [1, 3, fh, fw], // 目标形状 为了兼容之前的逻辑所以改个名
             scale: 256, // 缩放尺寸
             width: 224, height: 224, // 压缩宽高
             shape: [3, 224, 224], // 预设tensor形状
@@ -28,27 +48,43 @@ async function run(input) {
         }});
     console.dir(['feed', feed]);
     const path = 'model/mobileNet';
-    const MODEL_CONFIG = {
-        dir: `/${path}/`, // 存放模型的文件夹
-        main: 'model.json', // 主文件
-    };
+
     if (!loaded) {
+        const MODEL_CONFIG = {
+            dir: `/${path}/`, // 存放模型的文件夹
+            main: 'model.json', // 主文件
+        };
+        debugger;
         loaded = true;
-        const graphModel= new Graph();
-        model = await graphModel.loadGraphModel(MODEL_CONFIG, {multipart: true, feed});
+        const paddle = new Paddle({
+            urlConf: MODEL_CONFIG,
+            options: {
+                multipart: true,
+                dataType: 'json'
+            }
+        });
+
+        model = await paddle.load();
+
     }
-    let inst = model.execute({input: feed});
+
+    let inst = model.execute({
+        input: feed
+    });
+
     // 其实这里应该有个fetch的执行调用或者fetch的输出
-    let result = inst.read();
+    let result = await inst.read();
+
     console.dir(['result', result]);
-    let maxItem = Utils.getMaxItem(result);
+    // let maxItem = Utils.getMaxItem(result);
     // document.getElementById ("txt").innerHTML = Map['' + maxItem.index];
     // console.log('识别出的结果是' + Map['' + maxItem.index]);
     // console.dir(['每个op耗时', window.statistic]);
-    let total = statistic.reduce((all, cur) => {
-        return all + cur.runTime;
-    }, 0);
-    console.log('op total = ' + total);
+    // let total = statistic.reduce((all, cur) => {
+    //     return all + cur.runTime;
+    // }, 0);
+    // console.log('op total = ' + total);
+
 };
 var image = '';
 function selectImage(file) {

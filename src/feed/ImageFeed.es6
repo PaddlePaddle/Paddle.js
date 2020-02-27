@@ -79,7 +79,7 @@ export default class imageFeed {
     allReshapeToRGB(imageData, opt, scaleSize) {
         const {sw, sh} = scaleSize;
         const [b, c, h, w] = opt.targetShape;
-        let data = imageData.data;
+        let data = imageData.data || imageData;
         let mean = opt.mean;
         let dataLength = data.length;
         // let result = new Float32Array(dataLength * 3);

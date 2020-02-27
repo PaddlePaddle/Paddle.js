@@ -1,23 +1,11 @@
-import 'babel-polyfill';
 // import VConsole from 'vconsole';
 import 'babel-polyfill';
-import Graph from '../../src/executor/loader';
+import Paddle from '../../src/paddle/paddle';
 import IO from '../../src/feed/imageFeed';
-import Logger from '../../tools/logger';
-window.log = new Logger();
-// var vConsole = new VConsole();
-// 统计参数
-window.badCases = [];
-// import Utils from '../src/utils/utils';
-// 获取map表
-// import Map from '../../test/data/map';
-
-// import demoPic from './bbt1.jpg';
-// import demoPic2 from './bbt2.jpg';
-// import demoPic3 from './bbt3.jpg';
-// import demoPic4 from './bbt4.jpg';
-// import demoPic5 from './bbt5.jpg';
-// import testOutput from './data.json';
+// import Logger from '../../tools/logger';
+// window.log = new Logger();
+// // 统计参数
+// window.badCases = [];
 
 // 后处理测试用例
 // let tempPic = [demoPic, demoPic2, demoPic3, demoPic4, demoPic5];
@@ -26,7 +14,6 @@ window.badCases = [];
  * @author wangqun@baidu.com
  *
  */
-// 'http://mms-xr.cdn.bcebos.com/paddle/mnist/model.json'
 // 模型输出shape
 const outputShapes = {
     '608': {
@@ -67,9 +54,6 @@ const feedShape = {
 };
 // 模型路径
 const modelPath = {
-    '608': 'model/faceModel',
-    '320': 'model/facemodel320',
-    '320fused': 'model/facemodelfused',
     'separate': 'model/tinyYolo'
 };
 const modelType = 'separate';
@@ -80,51 +64,11 @@ let model = {};
 window.statistic = [];
 const {fw, fh} = feedShape[modelType];
 // 第一遍执行比较慢 所以预热一下
-async function preheat() {
-    const io = new IO();
-    let feed = io.process({
-        input: video,
-        params: {
-            gapFillWith: '#000', // 缩放后用什么填充不足方形部分
-            targetSize: {
-                height: fw,
-                width: fh
-            },
-            targetShape: [1, 3, fh, fw], // 目标形状 为了兼容之前的逻辑所以改个名
-            // shape: [3, 608, 608], // 预设tensor形状
-            mean: [117.001, 114.697, 97.404], // 预设期望
-            // std: [0.229, 0.224, 0.225]  // 预设方差
-        }
-    });
-    const MODEL_URL = `/${path}/model.json`;
-    const MODEL_CONFIG = {
-        dir: `/${path}/`, // 存放模型的文件夹
-        main: 'model.json', // 主文件
-    };
-    loaded = true;
-    const graphModel = new Graph();
-    // log.start('加载模型');
-    model = await graphModel.loadGraphModel(MODEL_CONFIG, {
-        multipart: true,
-        dataType: 'binary',
-        binaryOption: {
-            fileCount: 1, // 切成了多少文件
-            getFileName(i) { // 获取第i个文件的名称
-                return 'chunk_0.dat';
-            }
-        },
-        feed
-    });
-    // log.end('加载模型');
-    let inst = model.execute({
-        input: feed
-    });
-}
 async function run(input) {
     // const input = document.getElementById('mobilenet');
     //log.start('总耗时');
     const io = new IO();
-    log.start('预处理');
+    // log.start('预处理');
     let feed = io.process({
         input: input,
         params: {
@@ -139,38 +83,39 @@ async function run(input) {
             // std: [0.229, 0.224, 0.225]  // 预设方差
         }
     });
-    log.end('预处理');
+    // log.end('预处理');
     if (!loaded) {
-        const MODEL_URL = `/${path}/model.json`;
         const MODEL_CONFIG = {
             dir: `/${path}/`, // 存放模型的文件夹
             main: 'model.json', // 主文件
         };
         loaded = true;
-        const graphModel = new Graph();
-      log.start('加载模型');
-        model = await graphModel.loadGraphModel(MODEL_CONFIG, {
-            multipart: true,
-            dataType: 'binary',
-            binaryOption: {
-                fileCount: 1, // 切成了多少文件
-                getFileName(i) { // 获取第i个文件的名称
-                    return 'chunk_0.dat';
-                }
-            },
-            feed
+        const paddle = new Paddle({
+            urlConf: MODEL_CONFIG,
+            options: {
+                multipart: true,
+                dataType: 'binary',
+                options: {
+                    fileCount: 1, // 切成了多少文件
+                    getFileName(i) { // 获取第i个文件的名称
+                        return 'chunk_0.dat';
+                    }
+                },
+                feed
+            }
         });
-      log.end('加载模型');
+
+        model = await paddle.load();
+
     }
 
-    log.start('运行耗时');
     let inst = model.execute({
         input: feed
     });
 
     // 其实这里应该有个fetch的执行调用或者fetch的输出
     let result = await inst.read();
-    log.end('运行耗时');
+    // log.end('运行耗时');
     // log.end('后处理-读取数据');
     console.dir(['result', result]);
     //log.start('后处理-形状调整');
@@ -190,12 +135,12 @@ async function run(input) {
             }
         }
     }
-   // log.end('后处理-形状调整');
-   // log.start('后处理-画框');
+    // log.end('后处理-形状调整');
+    // log.start('后处理-画框');
     testRun(newData, input);
-   // log.end('后处理-画框');
-   // log.end('后处理');
-   // log.end('总耗时');
+    // log.end('后处理-画框');
+    // log.end('后处理');
+    // log.end('总耗时');
 }
 var image = '';
 

@@ -1,7 +1,7 @@
 /* eslint-disable */
 /**
  * @file softmax主函数
- * @author yangmingming
+ * @author wangqun
  */
 export default `
 // start函数

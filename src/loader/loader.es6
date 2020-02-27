@@ -1,55 +1,35 @@
 /* eslint-disable */
-import GraphExecutor from './executor';
-import IO from '../feed/imageFeed';
-import Runtime from '../../src/runtime/runtime';
-import OpData from '../utils/opData';
-import Factory from '../factory/fshader/factory';
-import Utils from '../utils/utils';
-
 /**
- * @file GraphModel，绘制生成model网络
+ * @file loader，model加载器
  * @author wangqun@baidu.com
  */
-// 生成factory实例
-const factory = new Factory({});
-// 获取op的输入配置
-const opConfs = factory.getOpConfs();
-export default class GraphModel  {
-    constructor(modelGonfig, loadOptions) {
+
+export default class Loader  {
+    constructor(modelGonfig, options) {
         this.version  = '0.0.1';
-        this.handler = 'io.IOHandler';
+        this.data = {};
         this.modelGonfig = modelGonfig;
-        this.loadOptions = loadOptions;
+        this.options = options;
         this.multipart = false;
-        // feed数据
-        this.feed = null;
-        this.index = 0;
-        this.feedOp = null;
-        this.feedItem = null;
         this.test = false;
-        this.isExecuted = false;
-        // 网络层数
-        this.iLayer = 0;
         // fetch xhr jsonp
         this.params = {type: 'fetch'};
         // 设置分片加载model
-        if (this.loadOptions) {
-            this.multipart = this.loadOptions.multipart;
-            this.feed = {input: this.loadOptions.feed};
-            if (loadOptions.dataType === 'binary') {
-                this.binaryOption = loadOptions.binaryOption;
+        if (this.options) {
+            this.multipart = this.options.multipart;
+            if (options.dataType === 'binary') {
+                this.binaryOption = options.options;
+                this.dataType = options.dataType;
             }
-            if (loadOptions.test) {
+            if (options.test) {
                 this.test = true;
             }
         }
 
         if (!this.loadOptions) {
             this.loadOptions = {};
-        } else {
-            // op runner
-            this.inst = Runtime.init();
-            factory.setWebglVersion(this.inst.getWebglVersion());
+        }
+        else {
             // this.fetchJson(this.modelGonfig.dir + 'x.json').then(data => {
             //     const [b, c, h, w] = [1, 3, 320, 320];
             //     const size = data.length;
@@ -68,18 +48,20 @@ export default class GraphModel  {
             // });
         }
     }
+
     fetchOneChunk(path) {
         return this.fetch(path).then(request => {
             return request.arrayBuffer();
         })
     }
+
     fetchJson(path) {
         return this.fetch(path).then(request => {
             return request.json();
         })
     }
-    fetchAllData() {
-        // todo 兼容一下json的模式
+
+    fetchChunks() {
         let counts = this.binaryOption.fileCount;
         let chunkArray = [];
         for (let i = 1; i <= counts; i++) {
@@ -87,9 +69,9 @@ export default class GraphModel  {
                 this.fetchOneChunk(this.modelGonfig.dir + this.binaryOption.getFileName(i))
             );
         }
-        console.time('加载时间');
+        // console.time('加载时间');
         return Promise.all(chunkArray).then(chunks => {
-            console.timeEnd('加载时间');
+            // console.timeEnd('加载时间');
             let chunksLength = 0;
             let f32Array = [];
             let float32Chunk;
@@ -108,6 +90,34 @@ export default class GraphModel  {
             });
         });
     }
+
+    fetchData(name) {
+        const path = this.modelGonfig.dir + name + '.json';
+        let load = new Promise((resolve, reject) => {
+            fetch(path, {
+                method: 'get', mode: 'cors', credentials: "include",
+                headers: { 'Content-Type': 'application/json;charset=utf-8'}})
+                .then(response => response.json())
+                .then(responseData => resolve(responseData))
+                .then(err => reject(err))
+        })
+        return load;
+    }
+
+    async fetchAllDate (arr) {
+        const TMP_SCHEME_REGEX = /\.tmp/;
+        const TMP_REGEX = /\-/;
+        let requesterArr = arr.map(item => {
+            if (item.name
+                && item.name.match(TMP_SCHEME_REGEX) === null
+                && item.name.match(TMP_REGEX) === null) {
+                return this.fetchData(item.name).then(data => item.data = data);
+            }
+            return Promise.resolve();
+        });
+        return Promise.all(requesterArr);
+    }
+
     traverse (arr) {
         const TMP_SCHEME_REGEX = /\.tmp/;
         const TMP_REGEX = /\-/;
@@ -170,7 +180,7 @@ export default class GraphModel  {
                     reject(json);
                 }
             });
-            this.handler = load;
+            this.data = load;
         }
         // 原生fetch
         else if (params.type === 'fetch') {
@@ -180,254 +190,29 @@ export default class GraphModel  {
                 .then(responseData => resolve(responseData))
                 .then(err => reject(err))
             });
-            this.handler = load;
+            this.data = load;
         }
         // ajax
         else if (params.type === 'xhr') {
-            this.handler = load;
+            this.data = load;
         }
         return load;
     }
+
     async load() {
         let that = this;
-        const artifacts = this.handler = await this.fetchModel();
+        const artifacts = this.data = await this.fetchModel();
         if (this.multipart === true) {
-            await this.fetchAllData()
-                .then(() => this.traverse(artifacts.vars));
-        }
-        const opsMap = this.createOpsMap(artifacts.ops, artifacts.vars);
-        this.weightMap = this.constructOpsMap(opsMap);
-        // 生成op数据
-        this.weightMap.forEach(op => {
-            const type = op.type;
-            if (type !== 'feed' && type !== 'fetch') {
-                that.buildOpData(op);
-            }
-
-        });
-        return true;
-    }
-    buildOpData(op) {
-        const tensor = this.constructTensor(op);
-        const opData = new OpData(op.type, tensor.inputs, tensor.outputs, tensor.attrs);
-        const name = opData.name;
-        const fsCode = factory.buildShader(name, opData.data);
-        opData.fsCode = fsCode;
-        opData.program = this.inst.createProgram(fsCode, opData.tensor['out']);
-        opData.renderData = opConfs[name].map(elem => {
-            let item = Object.assign({}, elem);
-            const tensorData = opData.tensor[item.tensor];
-            if (item.type === 'texture') {
-                item.data = tensorData.data;
-                if (this.feedOp.id === op.id && item.tensor === 'origin') {
-                    item.shape = tensorData.shape;
-                    this.feedItem = item;
-                }
-                item['width_texture'] = tensorData['width_texture'];
-                item['height_texture'] = tensorData['height_texture'];
-                item['channel'] = tensorData['channel'];
-            } else if (item.type === 'uniform') {
-                item.data = tensorData[item.variable];
-            }
-            return item;
-        });
-        // console.timeEnd('opData.renderData');
-        opData.iLayer = this.iLayer++;
-        op.opData = opData;
-        // delete op.inputs;
-        // delete op.outputs;
-        // delete op.attrs;
-    }
-    execute_(executor) {
-        if (executor.type === 'fetch') {
-            return;
-        }
-        executor.execute(this.inst, this.isExecuted);
-        if (executor.next) {
-            const id = executor.next;
-            const next = this.getTensor(id);
-            this.execute_(next[0])
-        }
-    }
-    /**
-     * Executes inference for the model for given input tensors.
-     * @param inputs
-     * @param outputs
-     * @returns {*}
-     */
-    execute(inputs) {
-        this.feed = inputs;
-        const executor = this.getNetsStart(this.weightMap);
-        if (!this.inst) {
-            this.inst = Runtime.init({
-                'width_raw_canvas': 512,
-                'height_raw_canvas': 512
-            });
-        }
-        if (this.isExecuted) {
-            this.updateFeed();
-        }
-        let start = +Date.now();
-        this.execute_(executor[0]);
-        this.isExecuted = true;
-        return this.inst;
-    }
-    updateFeed() {
-        this.feedItem.data = this.feed.input[0].data;
-        // Utils.img2texture(this.feedItem);
-    }
-    /**
-     * predict enter
-     * @param inputs
-     * @param config
-     */
-    predict(inputs, config) {
-        return this.execute_(inputs, true, this.outputNodes);
-    }
-    getTensorAttr(name) {
-        return this.handler.vars.filter((item, i) => {
-            if (name === item.name)
-            return item;
-        });
-    }
-    constructTensor(executor) {
-        let that = this;
-        const inputName = executor.inputsName[0];
-        const input = executor.inputs;
-        const output = executor.outputs;
-        Object.keys(output).forEach(function(key){
-            output[key] = that.getTensorAttr(output[key][0]);
-        });
-        Object.keys(input).forEach(function(key){
-            if (that.test && ((key === 'Input') || (key === 'X'))) {
-                input[key] = that.getTensorAttr(input[key][0]);
-                that.feedOp = executor;
-            }
-            else if ((key === 'Input') && (inputName === 'pixel')) {
-                const pixel = that.getTensorAttr(inputName);
-                const io = new IO();
-                input[key] = io.fromPixels(that.feed, pixel);
-            }
-            else if ((key === 'Input') && (inputName === 'image' || inputName === 'x')) {
-                // that.feed.input[0].data = that.testData;
-                input[key] = that.feed.input;
-
-                that.feedOp = executor;
+            if (this.dataType === 'binary') {
+                await this.fetchChunks()
+                    .then(() => this.traverse(artifacts.vars));
             }
             else {
-                input[key] = that.getTensorAttr(input[key][0]);
+                await that.fetchAllDate(artifacts.vars);
             }
-        });
-        // console.log(input);
-        const tensor = {
-            inputs: input,
-            outputs: output,
-            attrs: executor.attrs,
-            type: executor.type,
-            next: executor.next
-        };
-        return tensor;
-    }
-    /**
-     * Construct Ops Relationship
-     * @param ops
-     * @returns {*}
-     */
-    constructOpsMap(ops) {
-        return ops.map((item, idx) => {
-            const outputsName = item.outputsName[0];
-            const next = this.getNextExecutor(ops, outputsName);
-            if (next.length > 0) {
-                item.next = next[0].id;
-            }
-            return item;
-        });
-    }
-    /**
-     * Get Ops Nets Start Node
-     * @param ops
-     * @returns {*}
-     */
-    getNetsStart(ops) {
-        return ops.filter((item) => {
-            if (item.type === 'feed') {
-                return true;
-            }
-        });
-    }
-    /**
-     * Get Ops Nets Last Node
-     * @param ops
-     * @returns {*}
-     */
-    getNetsEnd(ops) {
-        return ops.filter((item) => {
-            if (item.type === 'fetch') {
-                return true;
-            }
-        });
-    }
-    /**
-     * get tensor by id
-     * @param id
-     * @returns {*}
-     */
-    getTensor(id) {
-        return this.weightMap.filter((item, i) => {
-            if (id === item.id)
-                return item;
-        });
-    }
-    /**
-     * Create Ops Executor Object Map
-     * @param ops
-     * @returns {*}
-     */
-    createOpsMap(ops) {
-        return ops.map((item, idx) => {
-            item.idx = idx;
-            const graphExecutor = new GraphExecutor(item);
-            return graphExecutor;
-        });
-    }
-    /**
-     * Get The Next Executor need Exec
-     * @param ops
-     * @param id
-     * @returns {*}
-     */
-    getNextExecutor(ops, id) {
-        return ops.filter((item, key) => {
-            if (id === item.inputsName[0]) {
-                return true;
-            }
-        });
-    }
-    /**
-     * Load a graph model given a URL to the model definition.
-     * @param modelGonfig
-     * @param options
-     * @returns {Promise<void>}
-     */
-    async loadGraphModel(modelGonfig, options) {
-        if (modelGonfig === null) {
-            // todo saniac 报错提示修改
-            throw new Error(
-                'modelGonfig in loadGraphModel() cannot be null. Please provide a url ' +
-                'or an IOHandler that loads the model');
         }
-        if (options === null) {
-            options = {};
-        }
-        const model = new GraphModel(modelGonfig, options);
-        await model.load();
-        return model;
+        return artifacts;
     }
-    /**
-     * dispose
-     */
-    dispose() {
-        this.executor.dispose();
-    }
+
 }
 /* eslint-enable */

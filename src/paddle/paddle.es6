@@ -25,7 +25,6 @@ export default class Paddle {
         this.iLayer = 0;
         // fetch xhr jsonp
         this.params = {type: 'fetch'};
-        debugger;
     }
 
     async load() {

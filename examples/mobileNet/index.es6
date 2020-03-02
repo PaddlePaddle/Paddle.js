@@ -55,7 +55,6 @@ async function run(input) {
             dir: `/${path}/`, // 存放模型的文件夹
             main: 'model.json', // 主文件
         };
-        debugger;
         loaded = true;
         const paddle = new Paddle({
             urlConf: MODEL_CONFIG,

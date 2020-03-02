@@ -31,7 +31,7 @@ export default class Graph {
         // 网络层数
         this.iLayer = 0;
 
-        if (this.options.test === true) {
+        if (this.options && this.options.options && this.options.options.test === true) {
             this.test = true;
         }
 

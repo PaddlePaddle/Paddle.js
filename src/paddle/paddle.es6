@@ -49,14 +49,6 @@ export default class Paddle {
         that.graph.data = artifacts.data;
         const opsMap = that.graph.createOpsMap(that.graph.data.ops, that.graph.data.vars);
         that.graph.weightMap = that.graph.constructOpsMap(opsMap);
-        // // 生成op数据
-        // that.graph.weightMap.forEach(op => {
-        //     const type = op.type;
-        //     if (type !== 'feed' && type !== 'fetch') {
-        //         that.graph.buildOpData(op);
-        //     }
-        //
-        // });
     }
     /**
      * Executes inference for the model for given input tensors.
@@ -74,14 +66,13 @@ export default class Paddle {
                 console.log(op.type);
                 that.graph.buildOpData(op);
             }
-
         });
         this.graph.execute(inputs);
         return this.graph.inst;
     }
     updateFeed() {
         this.graph.feedItem.data = this.graph.feed.input[0].data;
-        // Utils.img2texture(this.feedItem);
+        // Utils.img2texture(this.graph.feedItem);
     }
     /**
      * dispose

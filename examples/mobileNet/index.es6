@@ -77,7 +77,7 @@ async function run(input) {
 
     console.dir(['result', result]);
     let maxItem = Utils.getMaxItem(result);
-    document.getElementById ("txt").innerHTML = Map['' + maxItem.index];
+    document.getElementById('txt').innerHTML = Map['' + maxItem.index];
     console.log('识别出的结果是' + Map['' + maxItem.index]);
     // console.dir(['每个op耗时', window.statistic]);
     // let total = statistic.reduce((all, cur) => {

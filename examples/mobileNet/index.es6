@@ -1,8 +1,9 @@
 import 'babel-polyfill';
 import Paddle from '../../src/paddle/paddle';
 import IO from '../../src/feed/imageFeed';
+import Utils from '../../src/utils/utils';
 // 获取map表
-// import Map from '../../test/data/map';
+import Map from '../../test/data/map';
 /**
  * @file model demo 入口文件
  * @author wangqun@baidu.com
@@ -76,9 +77,9 @@ async function run(input) {
     let result = await inst.read();
 
     console.dir(['result', result]);
-    // let maxItem = Utils.getMaxItem(result);
-    // document.getElementById ("txt").innerHTML = Map['' + maxItem.index];
-    // console.log('识别出的结果是' + Map['' + maxItem.index]);
+    let maxItem = Utils.getMaxItem(result);
+    document.getElementById ("txt").innerHTML = Map['' + maxItem.index];
+    console.log('识别出的结果是' + Map['' + maxItem.index]);
     // console.dir(['每个op耗时', window.statistic]);
     // let total = statistic.reduce((all, cur) => {
     //     return all + cur.runTime;

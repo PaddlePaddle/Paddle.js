@@ -4,7 +4,9 @@
  * @author yangmingming
  */
 export default `
+
 float getValueFromTensorPos_TENSOR_NAME(int r, int g, int b, int a) {
+    // 通过GLSL的内建函数texture2D来获取对应位置纹理的颜色RGBA值
     vec4 pixels = TEXTURE2D(texture_TENSOR_NAME, 
         vec2(
             (float(a * channel_TENSOR_NAME + g) + 0.5) / float(width_texture_TENSOR_NAME), 

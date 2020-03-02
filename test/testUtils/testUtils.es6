@@ -19,7 +19,7 @@ const unitPath = {
     'relu6' : 'model.test.relu6.json'
 };
 // 制定运行的 op
-const modelType = 'relu6';
+const modelType = 'batchnorm';
 const unitData = unitPath[modelType];
 
 let Diff = require('./diff');

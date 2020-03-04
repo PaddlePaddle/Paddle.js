@@ -38,7 +38,7 @@ const shaderAttrs = {
         'pooling_type': 'type_pool'
     }
 };
-// model的名字和paddle web的tensor名字mapping
+// model的名字和paddleJS的tensor名字mapping
 const tensorName = {
     'input': 'origin',
     'x': 'origin',
@@ -81,8 +81,8 @@ const opBehavior = {
         'needBatch'
     ],
     relu6: [
-    'transToRelu6',
-    'needBatch'
+        'transToRelu6',
+        'needBatch'
     ],
     leaky_relu: [
         'transToLeakyrelu',
@@ -102,6 +102,7 @@ export default class OpData {
         // 检查是否是融合op
         this.checkIsMerge();
         // 是否忽略当前当前op, 使用dropout
+        // dropout是指在深度学习网络的训练过程中,对于神经网络单元,按照一定的概率将其暂时从网络中丢弃。
         this.isPass = this.checkIsPass();
         if (true || this.isPass) {
             this.input = input;

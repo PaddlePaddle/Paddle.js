@@ -139,9 +139,12 @@ export default class Graph {
                 that.feedOp = executor;
             }
             else if ((key === 'Input') && (inputName === 'pixel')) {
-                const pixel = that.getTensorAttr(inputName);
-                const io = new IO();
-                input[key] = io.fromPixels(that.feed, pixel);
+                // const pixel = that.getTensorAttr(inputName);
+                // const io = new IO();
+                // input[key] = io.fromPixels(that.feed, pixel);
+                input[key] = that.feed.input;
+
+                that.feedOp = executor;
             }
             else if ((key === 'Input') && (inputName === 'image' || inputName === 'x')) {
                 // that.feed.input[0].data = that.testData;

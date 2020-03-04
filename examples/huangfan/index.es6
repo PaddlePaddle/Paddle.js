@@ -86,7 +86,8 @@ async function run(input) {
     // }, 0);
     // console.log('op total = ' + total);
 
-};
+}
+
 var image = '';
 function selectImage(file) {
     if (!file.files || !file.files[0]) {
@@ -96,14 +97,14 @@ function selectImage(file) {
     reader.onload = function (evt) {
         let img = document.getElementById('image');
         img.src = evt.target.result;
-        img.onload = function() {
+        img.onload = function () {
             run(img);
         };
         image = evt.target.result;
-    }
+    };
     reader.readAsDataURL(file.files[0]);
 }
 // selectImage
-document.getElementById("uploadImg").onchange = function () {
+document.getElementById('uploadImg').onchange = function () {
     selectImage(this);
 };

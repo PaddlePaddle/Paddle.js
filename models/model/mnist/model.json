@@ -9,7 +9,7 @@
             }, 
             "outputs": {
                 "Out": [
-                    "pixel"
+                    "image"
                 ]
             }, 
             "type": "feed"
@@ -51,7 +51,7 @@
                     "conv2d_0.w_0"
                 ], 
                 "Input": [
-                    "pixel"
+                    "image"
                 ]
             }, 
             "outputs": {
@@ -363,7 +363,7 @@
             ]
         }, 
         {
-            "name": "pixel", 
+            "name": "image",
             "persistable": 0, 
             "shape": [
                 1, 

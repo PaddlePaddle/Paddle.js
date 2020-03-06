@@ -60,13 +60,15 @@ export default class Paddle {
         let that = this;
         this.feed = this.graph.feed = inputs;
         // 生成op数据
-        this.graph.weightMap.forEach(op => {
-            const type = op.type;
-            if (type !== 'feed' && type !== 'fetch') {
-                console.log(op.type);
-                that.graph.buildOpData(op);
-            }
-        });
+        if (!this.graph.isExecuted) {
+            this.graph.weightMap.forEach(op => {
+                const type = op.type;
+                if (type !== 'feed' && type !== 'fetch') {
+                    console.log(op.type);
+                    that.graph.buildOpData(op);
+                }
+            });
+        }
         this.graph.execute(inputs);
         return this.graph.inst;
     }

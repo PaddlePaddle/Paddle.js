@@ -57,6 +57,9 @@ const opBehavior = {
         'needBatch',
         'isApplySeparableConv'
     ],
+	conv2d_transpose: [
+		'needBatch'
+	],
     batchnorm: [
         'needBatch',
         'mergeTensor'
@@ -91,7 +94,14 @@ const opBehavior = {
     mul: [
         'reshape',
         'needBatch'
-    ]
+    ],
+	reshape: [
+		'needBatch'
+	],
+	transpose: [
+		'needBatch',
+		'setPerm'
+	]
 };
 const mergeType = 'conv2d-elementwise_add';
 export default class OpData {
@@ -118,15 +128,49 @@ export default class OpData {
                 'multi_value': '1.0',
                 'bias_value': '0.0'
             };
+console.log('生成tensor对象');
+console.log('class Opdata');
+console.dir(this);
+
             // tensor数据
             this.tensor = {};
+			this.inferShape();
             this.buildTensor();
             this.buildAttrs();
         }
     }
 
-    buildTensor() {
+    inferShape(){
+		if (this.name == 'reshape'){
+			console.log('inferShape!!');
+			console.dir(this.output.Out[0]);
+			let inputShape = this.input.X[0].shape;
+			let targetShape = this.attrs.new_shape;
+			for (let i = 0; i < targetShape.length; i++){
+				if (targetShape[i] == 0) {
+					targetShape[i] = inputShape[i];
+            	}
+        	}
+			let total_length = 1;
+			for (let j = 0;j < inputShape.length; j++){
+				total_length *= inputShape[j];
+			}
+			let minusPos = -1;
+			for (let i = 0; i < targetShape.length; i++){
+				if (targetShape[i] == -1) {
+					minusPos = i;
+					continue;
+            	}
+            	total_length /= targetShape[i];
+        	}
+        	if (minusPos != -1) {
+				targetShape[minusPos] = total_length;
+			}
+			this.output.Out[0].shape = targetShape;
+		}
+	}
 
+    buildTensor() {
 
         // todo: 是否需要形状对齐
         // todo: 是否需要广播tensor
@@ -161,6 +205,9 @@ export default class OpData {
             this[behavior](tensorData);
         });
         // 生成tensor对象
+
+
+
         tensorData.forEach(data => {
             // console.log(data);
             if (data) {
@@ -183,10 +230,10 @@ export default class OpData {
                 }
             }
         });
-        // console.dir(['tensors', this.tensor]);
-        // console.log('now in buildTensor show this and tensorData');
-        // console.log(this);
-        // console.log(tensorData);
+         console.dir(['tensors', this.tensor]);
+         console.log('now in buildTensor show this and tensorData');
+         console.log(this);
+         console.log(tensorData);
     }
 
     buildAttrs() {
@@ -221,6 +268,49 @@ export default class OpData {
     needBatch(tensorData = []) {
         tensorData.forEach(data => (data.needBatch = true));
     }
+
+	setPerm(tensorData = []){
+		console.log('setPerm!');
+		console.dir(tensorData);
+		console.dir(this);
+		let arrayPerm = this.attrs['perm'];
+		console.dir(arrayPerm);
+		let l = arrayPerm.length;
+		if (l == 3) {
+			if (arrayPerm == [2,0,1]) {
+				arrayPerm = [1,2,0];
+		}
+			else if (arrayPerm == [1,2,0]){
+				arrayPerm = [2,0,1];
+		}
+		}
+		else if (l == 4){
+			let temp = [0,0,0,0];
+			for (let i = 0; i < 4; i++){
+				temp[[arrayPerm[i]]] = i;
+			}
+			arrayPerm = temp;
+		}
+		console.log ('l is '+ l);
+		this.data['perm_0'] = 0;
+		this.data['perm_1'] = 0;
+		this.data['perm_2'] = 0;
+		this.data['perm_3'] = 0;
+		if (l >= 1) {
+			this.data['perm_0'] = arrayPerm[0];
+		}
+		if (l >= 2) {
+			this.data['perm_1'] = arrayPerm[1];
+		}
+		if (l >= 3) {
+			this.data['perm_2'] = arrayPerm[2];
+		}
+		if (l >= 4) {
+			this.data['perm_3'] = arrayPerm[3];
+		}
+		this.data['perm_size'] = l;
+		console.log('setperm end!');
+	}
 
     isGlobalPooling(tensorData = []) {
         let counter = tensorData.filter(tensor => (tensor.tensorName === 'origin'))[0] || {};

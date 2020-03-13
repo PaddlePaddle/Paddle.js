@@ -9,10 +9,15 @@ const unitPath = {
     'relu': 'model.test.relu.json',
     'scale': 'model.test.scale.json',
     'softmax': 'model.test.softmax.json',
-    'relu6' : 'model.test.relu6.json'
+    'relu6' : 'model.test.relu6.json',
+	'elementwise' : 'model.test.elementwise_add.json',
+	'depthwise' : 'model.test.depthwise_conv2d.json',
+	'reshape' : 'model.test.reshape.json',
+	'transpose' : 'model.test.transpose.json',
+	'conv2d_transpose': 'model.test.conv2d_transpose.json'
 };
 // 制定运行的 op
-const modelType = 'batchnorm';
+const modelType = 'conv2d_transpose';
 const unitData = unitPath[modelType];
 
 let Diff = require('./diff');

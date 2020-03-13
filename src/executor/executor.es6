@@ -32,6 +32,9 @@ export default class GraphExecutor {
         else if (this.type === 'depthwise_conv2d') {
             return this.inputs.Input;
         }
+        else if (this.type === 'conv2d_transpose') {
+			return this.inputs.Input;
+		}
         else if (this.type === 'elementwise_add') {
             return this.inputs.X;
         }
@@ -65,8 +68,12 @@ export default class GraphExecutor {
         }
         else if (this.type === 'batchnorm' || this.type === 'batch_norm') {
             this.outputs.out = this.outputs.Y;
-            return this.outputs.Y;
+            return this.outputs.out;
         }
+		else if (this.outputs.Y) {
+			this.outpus.out = this.outputs.Y;
+			return this.outputs.out;
+		}
         else {
             return this.outputs.Out || this.outputs.Output;
         }

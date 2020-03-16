@@ -65,6 +65,7 @@ import moveTexture2PosToReal from '../../shader/atom/moveTexture2PosToReal';
 import getPixelsFromTexturePos from '../../shader/atom/getPixelsFromTexturePos';
 import getRangePowSumFromArrayIndex from '../../shader/atom/getRangePowSumFromArrayIndex';
 import getRangeSumFromArrayIndex from '../../shader/atom/getRangeSumFromArrayIndex';
+import transferFromNHWCtoNCHW from '../../shader/atom/transferFromNHWCtoNCHW';
 import sigmoid from '../../shader/atom/sigmoid';
 import prelu from '../../shader/atom/prelu';
 import scale from '../../shader/atom/scale';
@@ -190,6 +191,7 @@ export default {
         sigmoid,
         prelu,
         scale,
-        softmax
+        softmax,
+        transferFromNHWCtoNCHW
     }
 };

@@ -5,16 +5,22 @@
  */
 export default {
     dep: [
-        {
-            func: 'getPixelsFromTexturePos',
+		{
+            func: 'getValueFromTensorPos',
             conf: {
-                TEXTURE_NAME: 'texture_origin'
+                TENSOR_NAME: 'origin'
             }
         },
         {
+			func: 'transferFromNHWCtoNCHW',
+			conf:{
+
+			}
+		},
+		{
             func: 'getPixelsFromTexturePos',
             conf: {
-                TEXTURE_NAME: 'texture_counter'
+				TEXTURE_NAME: 'texture_counter'
             }
         }
     ],
@@ -26,7 +32,6 @@ export default {
         'HEIGHT_TEXTURE_ORIGIN',
         'CHANNEL_ORIGIN',
 
-        'TOTAL_SHAPE_COUNTER',
 
         'WIDTH_SHAPE_OUT',
         'HEIGHT_SHAPE_OUT',
@@ -35,10 +40,7 @@ export default {
         'CHANNEL_OUT',
         'OFFSET_Y_OUT',
 
-        'AXIS',
-        'MULTI_VALUE',
-        'BIAS_VALUE',
-        'ACTIVE_FUNCTION'
+        'AXIS'
     ],
     input: [
         {
@@ -47,7 +49,7 @@ export default {
             setter: 'initTexture',
             type: 'texture'
         },
-        {
+		{
             tensor: 'counter',
             variable: 'data',
             setter: 'uniform1fv',

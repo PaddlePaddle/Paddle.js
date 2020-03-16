@@ -66,7 +66,8 @@ const opBehavior = {
     ],
     elementwise_add: [
         'broadcast',
-        'needBatch'
+        'needBatch',
+		'processAxis'
     ],
     conv2d_elementwise_add: [
         'mergeAttrs',
@@ -444,6 +445,25 @@ console.log(y);
             this.data['active_function'] = 'leakyRelu';
         }
     }
+
+    processAxis() {
+    	console.log('now in processAxis');
+		console.dir(this);
+		let shape_x = this.input.X[0].shape;
+		let shape_y = this.input.Y[0].shape;
+		let y_length = shape_y.length;
+		for (let i = shape_y.length - 1; i >=0 ;i--){
+			if (shape_y[i] == 1) {
+				y_length -= 1;
+			}
+		}
+		let axis_temp = this.attrs['axis'];
+		if (axis_temp == -1) {
+			this.attrs['axis'] = shape_x.length - y_length;
+		}
+		this.attrs['shape_length_origin'] = shape_x.length;
+		this.attrs['shape_length_counter'] = y_length;
+	}
 
     reshape(tensorData = []) {
         let input = tensorData[0];

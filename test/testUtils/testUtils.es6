@@ -10,6 +10,7 @@ const unitPath = {
     'scale': 'model.test.scale.json',
     'softmax': 'model.test.softmax.json',
     'relu6' : 'model.test.relu6.json',
+<<<<<<< HEAD
 	'elementwise' : 'model.test.elementwise_add.json',
 	'depthwise' : 'model.test.depthwise_conv2d.json',
 	'reshape' : 'model.test.reshape.json',
@@ -18,6 +19,13 @@ const unitPath = {
 };
 // 制定运行的 op
 const modelType = 'conv2d_transpose';
+=======
+    'elementwise_add': 'model.test.elementwise_add.json',
+    'concat': 'model.test.concat.json'
+};
+// 制定运行的 op
+const modelType = 'concat';
+>>>>>>> 0b7e20c25a07391828fdb04b6522e2e0aca187f7
 const unitData = unitPath[modelType];
 
 let Diff = require('./diff');
@@ -40,8 +48,9 @@ async function run() {
 
     let model = await paddle.load();
     datas = model.graph.data;
+
     output = deepCopy(datas);
-    // 测试单元
+
     model.graph.weightMap.forEach(op => {
         const type = op.type;
         if (type !== 'feed' && type !== 'fetch') {
@@ -52,9 +61,9 @@ async function run() {
     const executor = model.graph.weightMap;
     let inst = model.graph.execute_(executor[0]);
 
-    let result = model.graph.inst.read();
+    let result = await model.graph.inst.read();
     console.dir(['result', result]);
-    var one = model.graph.inst.read();
+    var one = await model.graph.inst.read();
 // var other = getResult('conv2d');
 
     console.log('one');
@@ -87,15 +96,14 @@ let getInputs = function(data) {
 
     Object.keys(data.inputs).forEach(function(key){
         data.inputs[key] = getValue(data.inputs[key][0], datas);
-
     });
+
     Object.keys(data.outputs).forEach(function(key){
         let out = getValue(data.outputs[key][0], datas)
         data.outputs[key] = out;
         otherResult = out[0].data;
     });
     return data;
-
 };
 
 let getResult = function(id) {

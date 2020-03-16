@@ -96,6 +96,7 @@ const opBehavior = {
         'reshape',
         'needBatch'
     ],
+<<<<<<< HEAD
 	reshape: [
 		'needBatch'
 	],
@@ -103,6 +104,11 @@ const opBehavior = {
 		'needBatch',
 		'setPerm'
 	]
+=======
+    concat: [
+        'needBatch'
+    ]
+>>>>>>> 0b7e20c25a07391828fdb04b6522e2e0aca187f7
 };
 const mergeType = 'conv2d-elementwise_add';
 export default class OpData {

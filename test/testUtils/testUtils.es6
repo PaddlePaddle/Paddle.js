@@ -10,22 +10,18 @@ const unitPath = {
     'scale': 'model.test.scale.json',
     'softmax': 'model.test.softmax.json',
     'relu6' : 'model.test.relu6.json',
-<<<<<<< HEAD
 	'elementwise' : 'model.test.elementwise_add.json',
 	'depthwise' : 'model.test.depthwise_conv2d.json',
 	'reshape' : 'model.test.reshape.json',
 	'transpose' : 'model.test.transpose.json',
-	'conv2d_transpose': 'model.test.conv2d_transpose.json'
-};
-// 制定运行的 op
-const modelType = 'conv2d_transpose';
-=======
-    'elementwise_add': 'model.test.elementwise_add.json',
+	'conv2d_transpose': 'model.test.conv2d_transpose.json',
+	'elementwise_add': 'model.test.elementwise_add.json',
     'concat': 'model.test.concat.json'
+
 };
 // 制定运行的 op
-const modelType = 'concat';
->>>>>>> 0b7e20c25a07391828fdb04b6522e2e0aca187f7
+const modelType = 'elementwise_add';
+// 制定运行的 op
 const unitData = unitPath[modelType];
 
 let Diff = require('./diff');

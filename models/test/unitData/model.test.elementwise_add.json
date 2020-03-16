@@ -2,7 +2,7 @@
   "ops": [
     {
       "attrs": {
-        "axis": 1,
+        "axis": 0,
         "use_mkldnn": false,
         "x_data_format": "",
         "y_data_format": ""
@@ -1052,7 +1052,7 @@
 ],
       "name": "fc_0.tmp_0",
       "shape": [
-        1000
+        10,100
       ]
     },
     {
@@ -2060,7 +2060,7 @@
 ],
       "name": "fc7_offset",
       "shape": [
-        1000
+        10,100
       ]
       
     },
@@ -3069,9 +3069,9 @@
 ],
       "name": "fc_0.tmp_1",
       "shape": [
-          1000
+          10,100
       ]
-    },
+    }
 
   ]
 }

@@ -10,6 +10,12 @@ export default {
 			conf: {
 				TENSOR_NAME: 'origin'
 			}
+		},
+		{
+			func: 'transferFromNHWCtoNCHW',
+			conf:{
+
+			}
 		}
     ],
     conf: [

@@ -96,19 +96,17 @@ const opBehavior = {
         'reshape',
         'needBatch'
     ],
-<<<<<<< HEAD
 	reshape: [
-		'needBatch'
+		'needBatch',
+		'inferShape'
 	],
 	transpose: [
 		'needBatch',
 		'setPerm'
-	]
-=======
+	],
     concat: [
         'needBatch'
     ]
->>>>>>> 0b7e20c25a07391828fdb04b6522e2e0aca187f7
 };
 const mergeType = 'conv2d-elementwise_add';
 export default class OpData {
@@ -135,13 +133,9 @@ export default class OpData {
                 'multi_value': '1.0',
                 'bias_value': '0.0'
             };
-console.log('生成tensor对象');
-console.log('class Opdata');
-console.dir(this);
 
             // tensor数据
             this.tensor = {};
-			this.inferShape();
             this.buildTensor();
             this.buildAttrs();
         }
@@ -149,8 +143,6 @@ console.dir(this);
 
     inferShape(){
 		if (this.name == 'reshape'){
-			console.log('inferShape!!');
-			console.dir(this.output.Out[0]);
 			let inputShape = this.input.X[0].shape;
 			let targetShape = this.attrs.new_shape;
 			for (let i = 0; i < targetShape.length; i++){
@@ -332,6 +324,7 @@ console.dir(this);
             return Object.assign(attrs, item);
         }, {});
     }
+
 
     isApplyWinoGrad(tensorData = []) {
         const filter = tensorData.filter(item => {

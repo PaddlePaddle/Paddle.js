@@ -91,6 +91,9 @@ const opBehavior = {
     mul: [
         'reshape',
         'needBatch'
+    ],
+    concat: [
+        'needBatch'
     ]
 };
 const mergeType = 'conv2d-elementwise_add';

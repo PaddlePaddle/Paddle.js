@@ -45,6 +45,10 @@ import conv2d_elementwise_add_winograd_params from '../../shader/conv2d_elementw
 import conv2d_elementwise_add_winograd_func from '../../shader/conv2d_elementwise_add_winograd/main';
 import conv2d_elementwise_add_winograd_conf from '../../shader/conv2d_elementwise_add_winograd/conf';
 
+import concat_params from '../../shader/concat/params';
+import concat_func from '../../shader/concat/main';
+import concat_conf from '../../shader/concat/conf';
+
 import getArrayIndexFromTensorPos from '../../shader/atom/getArrayIndexFromTensorPos';
 import getArrayIndexFromTexturePos from '../../shader/atom/getArrayIndexFromTexturePos';
 import getTensorPosFromArrayIndex from '../../shader/atom/getTensorPosFromArrayIndex';
@@ -124,6 +128,11 @@ export default {
             params: mul_params,
             func: mul_func,
             confs: mul_conf
+        },
+        concat: {
+            params: concat_params,
+            func: concat_func,
+            confs: concat_conf
         },
         relu: {
             params: dynamic_params,

@@ -20,11 +20,12 @@ void main(void) {
 	int index = 0;
 	for (int i = 4 - shape_length_origin + axis; i < 4 - shape_length_origin + axis + shape_length_counter; i++ ){
 		if (index > 0) {
-			index = index * pos_counter[i];
+			index = index * pos_counter[i-1];
 		}
 		index += new_oPos[i];
 	}
-	float c = getValueFromCounter(index);
+	ivec4 counter_pos = transferFromNHWCtoNCHW(index, channel_counter, width_shape_counter, height_shape_counter, total_shape_counter);
+	float c = getValueFromTensorPos_counter(counter_pos.r, counter_pos.g, counter_pos.b, counter_pos.a);
 	float res = c + o;
     //float res = ACTIVE_FUNCTION(o + c, multi_value, bias_value);
     setOutput(res);

@@ -18,9 +18,9 @@ export default {
 			}
 		},
 		{
-            func: 'getPixelsFromTexturePos',
+            func: 'getValueFromTensorPos',
             conf: {
-				TEXTURE_NAME: 'texture_counter'
+                TENSOR_NAME: 'counter'
             }
         }
     ],
@@ -32,6 +32,12 @@ export default {
         'HEIGHT_TEXTURE_ORIGIN',
         'CHANNEL_ORIGIN',
 
+		'WIDTH_SHAPE_COUNTER',
+        'HEIGHT_SHAPE_COUNTER',
+        'LENGTH_SHAPE_COUNTER',
+        'WIDTH_TEXTURE_COUNTER',
+        'HEIGHT_TEXTURE_COUNTER',
+        'CHANNEL_COUNTER',
 
         'WIDTH_SHAPE_OUT',
         'HEIGHT_SHAPE_OUT',
@@ -51,9 +57,9 @@ export default {
         },
 		{
             tensor: 'counter',
-            variable: 'data',
-            setter: 'uniform1fv',
-            type: 'uniform'
+            variable: 'texture',
+            setter: 'initTexture',
+            type: 'texture'
         }
     ]
 };

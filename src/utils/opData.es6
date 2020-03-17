@@ -65,7 +65,7 @@ const opBehavior = {
         'mergeTensor'
     ],
     elementwise_add: [
-        'broadcast',
+        //'broadcast',
         'needBatch',
 		'processAxis'
     ],

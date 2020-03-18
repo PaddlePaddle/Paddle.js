@@ -22,6 +22,8 @@ export default `
     const int width_texture_origin = WIDTH_TEXTURE_ORIGIN;
     const int height_texture_origin = HEIGHT_TEXTURE_ORIGIN;
     const int channel_origin = CHANNEL_ORIGIN;
+
+    const int total_shape_out = TOTAL_SHAPE_OUT;
     
     // 计算相关
     // 拆分步长

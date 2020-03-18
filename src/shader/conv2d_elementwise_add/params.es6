@@ -32,7 +32,8 @@ export default `
     const int dilation_v = DILATIONS_Y;
     // groups
     const int groups = GROUPS;
-   
+
+   const int total_shape_out = TOTAL_SHAPE_OUT;
     // 加法
     const int axis = AXIS;
      

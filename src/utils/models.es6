@@ -35,8 +35,8 @@ export default {
     'separate': {
         modelPath: 'separablemodel',
         feedShape: {
-			fw: 320,
-			fh: 320
+            fw: 320,
+            fh: 320
         },
         outputShapes: {
             from: [10, 10, 25, 1],

@@ -124,7 +124,7 @@ export default class OpData {
         // 是否忽略当前当前op, 使用dropout
         // dropout是指在深度学习网络的训练过程中,对于神经网络单元,按照一定的概率将其暂时从网络中丢弃。
         this.isPass = this.checkIsPass();
-        if (true || this.isPass) {
+        if (this.isPass) {
             this.input = input;
             this.output = output;
             // op数据, 当前不扩展

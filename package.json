@@ -8,6 +8,7 @@
     "mnistdemo": "parcel ./examples/mnist/index.html",
     "mobilenet": "parcel ./examples/mobileNet/index.html",
     "tinyYolo": "parcel ./examples/tinyYolo/index.html",
+    "huangfan": "parcel ./examples/huangfan/index.html",
     "yolo": "parcel ./examples/yolo/index.html",
     "videoDemo": "parcel ./examples/videoDemo.html --port 8123 --https",
     "unitTest": "parcel ./test/unitTest.html",

@@ -44,8 +44,8 @@ export default class Graph {
     }
 
     buildOpData(op) {
-        const tensor = this.constructTensor(op);
-        const opData = new OpData(op.type, tensor.inputs, tensor.outputs, tensor.attrs);
+        const executor = this.constructExecutor(op);
+        const opData = new OpData(op.type, executor.inputs, executor.outputs, executor.attrs);
         const name = opData.name;
         const fsCode = factory.buildShader(name, opData.data);
         opData.fsCode = fsCode;
@@ -82,7 +82,7 @@ export default class Graph {
         if (executor.next) {
             const id = executor.next;
             const next = this.getTensor(id);
-            this.execute_(next[0])
+            this.execute_(next[0]);
         }
     }
     /**
@@ -125,7 +125,7 @@ export default class Graph {
             return item;
         });
     }
-    constructTensor(executor) {
+    constructExecutor(executor) {
         let that = this;
         const inputName = executor.inputsName[0];
         const input = executor.inputs;
@@ -157,14 +157,13 @@ export default class Graph {
             }
         });
         // console.log(input);
-        const tensor = {
+        return {
             inputs: input,
             outputs: output,
             attrs: executor.attrs,
             type: executor.type,
             next: executor.next
         };
-        return tensor;
     }
     /**
      * Construct Ops Relationship

@@ -33,7 +33,8 @@ export default class imageFeed {
         let output = [];
         if (!this.result) {
             const [b, c, h, w] = params.targetShape;
-            this.result = new Float32Array(h * w * 3);
+            // 计算确定targetShape所需Float32Array占用空间
+            this.result = new Float32Array(h * w * c);
         }
         output = this.fromPixels(input, params);
         return output;
@@ -50,11 +51,15 @@ export default class imageFeed {
         const vPadding = Math.ceil((sh - height) / 2);
 
         let data = imageData.data;
+        // channel RGB
         let red = [];
         let green = [];
         let blue = [];
+        // 平均数
         let mean = opt.mean;
+        // 标准差
         let std = opt.std;
+        // 考虑channel因素获取数据
         for (let i = 0; i < data.length; i += 4) {
             // img_mean 0.485, 0.456, 0.406
             //img_std 0.229, 0.224, 0.225
@@ -68,6 +73,7 @@ export default class imageFeed {
                 blue.push(((data[i + 2] / 255) - mean[2]) / std[2]); // blue
             }
         }
+        // 转成 GPU 加速 NCHW 格式
         let tmp = green.concat(blue);
         return red.concat(tmp);
     };
@@ -183,6 +189,7 @@ export default class imageFeed {
         // 原始图片宽高
         const width = this.pixelWidth;
         const height = this.pixelHeight;
+        // 画布设置
         this.fromPixels2DContext2.canvas.width = width;
         this.fromPixels2DContext2.canvas.height = height;
         this.fromPixels2DContext2.drawImage(image, 0, 0, width, height);
@@ -195,11 +202,12 @@ export default class imageFeed {
      */
     getImageData(pixels, scaleSize) {
         const {sw, sh} = scaleSize;
+        // 复制画布上指定矩形的像素数据
         let vals = this.fromPixels2DContext
             .getImageData(0, 0, sw, sh);
         // crop图像
-        const width = pixels.width;
-        const height = pixels.height;
+        // const width = pixels.width;
+        // const height = pixels.height;
         return vals;
     };
 
@@ -212,6 +220,7 @@ export default class imageFeed {
         let data = imageData.data;
 
         for (let i = 0; i < data.length; i += 4) {
+            // 3 channel 灰度处理无空间压缩
             let avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
             data[i] = avg; // red
             data[i + 1] = avg; // green
@@ -244,7 +253,7 @@ export default class imageFeed {
             data = grayscale(data);
         }
 
-        if (opt.shape) {
+        if (opt.reShape) {
             data = this.reshape(data, opt, scaleSize);
         }
 

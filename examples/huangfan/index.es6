@@ -49,7 +49,7 @@ async function run(input) {
         }});
 
     console.dir(['feed', feed]);
-    const path = 'model/mobileNet';
+    const path = 'model/huangfan';
 
     if (!loaded) {
         const MODEL_CONFIG = {
@@ -60,7 +60,7 @@ async function run(input) {
         const paddle = new Paddle({
             urlConf: MODEL_CONFIG,
             options: {
-                multipart: true,
+                multipart: false,
                 dataType: 'json'
             }
         });

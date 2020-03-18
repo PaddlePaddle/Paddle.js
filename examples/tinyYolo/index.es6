@@ -28,7 +28,7 @@ const outputShapes = {
         from: [10, 10, 25, 1],
         to: [10, 10, 5, 5]
     },
-    'separate': {
+    'tinyYolo': {
         from: [10, 10, 25, 1],
         to: [10, 10, 5, 5]
     }
@@ -47,16 +47,16 @@ const feedShape = {
         fw: 320,
         fh: 320
     },
-    'separate': {
+    'tinyYolo': {
         fw: 320,
         fh: 320
     }
 };
 // 模型路径
 const modelPath = {
-    'separate': 'model/tinyYolo'
+    'tinyYolo': 'model/tinyYolo'
 };
-const modelType = 'separate';
+const modelType = 'tinyYolo';
 const path = modelPath[modelType];
 // 统计参数
 let loaded = false;
@@ -100,8 +100,7 @@ async function run(input) {
                     getFileName(i) { // 获取第i个文件的名称
                         return 'chunk_0.dat';
                     }
-                },
-                feed
+                }
             }
         });
 

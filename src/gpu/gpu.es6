@@ -360,9 +360,16 @@ export default class gpu {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-            gl.texImage2D(gl.TEXTURE_2D, 0, this.internalFormat, item.width_texture,
-                item.height_texture, 0,
-                this.textureFormat, gl.FLOAT, item.data, 0);
+            gl.texImage2D(gl.TEXTURE_2D,
+                0,
+                this.internalFormat,
+                item.width_texture,
+                item.height_texture,
+                0,
+                this.textureFormat,
+                gl.FLOAT,
+                item.data,
+                0);
         }
     }
 
@@ -404,14 +411,15 @@ export default class gpu {
 
     render(data = [], iLayer = 0, isRendered = false) {
         const gl = this.gl;
+        let that = this;
         let textureIndex = 0;
         data.forEach(item => {
             if (item.type === 'texture') {
-                this.initTexture(textureIndex, item, iLayer, isRendered);
-                gl.uniform1i(this.getUniformLoc(item.variable + '_' + item.tensor, iLayer, isRendered), textureIndex++);
+                that.initTexture(textureIndex, item, iLayer, isRendered);
+                gl.uniform1i(that.getUniformLoc(item.variable + '_' + item.tensor, iLayer, isRendered), textureIndex++);
             }
             else if (item.type === 'uniform') {
-                gl[item.setter](this.getUniformLoc(item.variable + '_' + item.tensor, iLayer, isRendered), item.data);
+                gl[item.setter](that.getUniformLoc(item.variable + '_' + item.tensor, iLayer, isRendered), item.data);
             }
         });
         // gl.clearColor(.0, .0, .0, 1);

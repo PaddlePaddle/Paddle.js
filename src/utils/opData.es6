@@ -115,16 +115,6 @@ const opBehavior = {
 };
 const mergeType = 'conv2d-elementwise_add';
 
-export function getTextureShapeInfo(data, tensorName) {
-    if (tensorName === 'out') {
-        return data;
-    }
-    tensorAttrs.forEach(key => {
-        data[`${key}_out`] = data[`${key}_${tensorName}`];
-        delete data[`${key}_${tensorName}`];
-    })
-    return data;
-}
 export default class OpData {
     constructor(name, input = {}, output = {}, attrs = {}) {
         this.realName = name;
@@ -146,11 +136,11 @@ export default class OpData {
             };
 
             // tensor数据
-            this.tensor = {};
-            this.outTensor = 1;
-            this.originTensor = 1;
+            this.inputTensors = [];
+            this.outputTensors = [];
+            this.fShaderParams = [];
             this.buildTensor();
-            this.buildAttrs();
+            this.buildShaderParams();
         }
     }
 
@@ -218,29 +208,20 @@ export default class OpData {
         behavior.forEach(behavior => {
             this[behavior](tensorData);
         });
+
         // 生成tensor对象
-
-
-
         tensorData.forEach(data => {
             if (data) {
+                let tensor = null;
+                const tensorName = data.tensorName;
                 if (data.notTensor) {
-                    this.tensor[data.tensorName] = {
-                        name: data.tensorName,
+                    tensor = {
+                        name: tensorName,
                         data: new Float32Array(data.data),
                         total_shape: data.data.length
                     };
                 } else {
-                    let tensorName = data.tensorName;
-                    if (this.tensor[tensorName] && tensorName === 'out') {
-                        tensorName += `_${this.outTensor}`;
-                        this.outTensor++;
-                    }
-                    if (this.tensor[tensorName] && tensorName === 'origin') {
-                        tensorName += `_${this.originTensor}`;
-                        this.originTensor++;
-                    }
-                    this.tensor[tensorName] = new Tensor({
+                    tensor = new Tensor({
                         type: data.name,
                         name: tensorName,
                         shape: data.shape,
@@ -250,11 +231,18 @@ export default class OpData {
                         isPacked: data.isPacked || false
                     });
                 }
+
+                if (tensorName === 'out') {
+                    this.outputTensors.push(tensor);
+                }
+                else {
+                    this.inputTensors.push(tensor);
+                }
             }
         });
     }
 
-    buildAttrs() {
+    buildShaderParams() {
         // 计算属性
         for (let key in this.attrs) {
             if (this.attrs.hasOwnProperty(key)) {
@@ -272,13 +260,23 @@ export default class OpData {
                 }
             }
         }
-        // 获取tensor的数据
-        for (let key in this.tensor) {
-            const tensor = this.tensor[key];
+        // 遍历 获取input tensor的数据
+        this.inputTensors.forEach(inputTensor => {
             tensorAttrs.forEach(attr => {
-                this.data[attr+ '_' + tensor.name] = tensor[attr];
+                this.data[attr+ '_' + inputTensor.name] = inputTensor[attr];
             });
-        }
+        });
+
+        // 根据out tensor 个数 生成对应的 fShader 个数
+        this.outputTensors.forEach(outTensor => {
+            const params = JSON.parse(JSON.stringify(this.data));
+            // 获取output tensor的数据
+            tensorAttrs.forEach(attr => {
+                params[attr+ '_' + outTensor.name] = outTensor[attr];
+            });
+            this.fShaderParams.push(params);
+        });
+
     }
 
     needBatch(tensorData = []) {
@@ -286,11 +284,7 @@ export default class OpData {
     }
 
 	setPerm(tensorData = []){
-		console.log('setPerm!');
-		console.dir(tensorData);
-		console.dir(this);
 		let arrayPerm = this.attrs['perm'];
-		console.dir(arrayPerm);
 		let l = arrayPerm.length;
 		if (l == 3) {
 			if (arrayPerm == [2,0,1]) {
@@ -307,7 +301,6 @@ export default class OpData {
 			}
 			arrayPerm = temp;
 		}
-		console.log ('l is '+ l);
 		this.data['perm_0'] = 0;
 		this.data['perm_1'] = 0;
 		this.data['perm_2'] = 0;
@@ -325,7 +318,6 @@ export default class OpData {
 			this.data['perm_3'] = arrayPerm[3];
 		}
 		this.data['perm_size'] = l;
-		console.log('setperm end!');
 	}
 
     isGlobalPooling(tensorData = []) {
@@ -410,9 +402,6 @@ export default class OpData {
 
         // mobilenet model
         // todo: 默认y的shape length是1, 以后需要实现通用版本
-console.log('2. x and y is ');
-console.log(x);
-console.log(y);
         let shape = Utils.getBroadcastShapeInPaddle(x.shape, y.shape, this.attrs['axis']);
         // 填充shape数据
         if (small.shape.length === 1) {
@@ -477,8 +466,6 @@ console.log(y);
     }
 
     processAxis() {
-    	console.log('now in processAxis');
-		console.dir(this);
 		let shape_x = this.input.X[0].shape;
 		let shape_y = this.input.Y[0].shape;
 		let y_length = shape_y.length;

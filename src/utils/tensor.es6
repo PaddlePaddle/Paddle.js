@@ -11,6 +11,8 @@ export default class Tensor {
         this.isPacked = this.isPacked || false;
         // 设置tensor名字
         this.name = opts.name;
+        // 设置 tensorId
+        this.tensorId = opts.type;
         // tensor的形状
         let shape = this.shape = opts.shape;
         // 原始数据个数

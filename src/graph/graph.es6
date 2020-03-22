@@ -47,12 +47,16 @@ export default class Graph {
         const executor = this.constructExecutor(op);
         const opData = new OpData(op.type, executor.inputs, executor.outputs, executor.attrs);
         const name = opData.name;
-        // const fsCode = factory.buildShader(name, opData.data);
-        // opData.fsCode = fsCode;
-        // opData.program = this.inst.createProgram(fsCode, opData.tensor['out']);
+
+        opData.program = [];
+        opData.program = opData.outputTensors.map((outTensor, index) => {
+            const fsCode = factory.buildShader(name, opData.fShaderParams[index], index);
+            return this.inst.createProgram(fsCode, outTensor);
+        });
+
         opData.renderData = opConfs[name].map(elem => {
             let item = Object.assign({}, elem);
-            const tensorData = opData.tensor[item.tensor];
+            const tensorData = opData.inputTensors.find(tensor => tensor.name === item.tensor);
             if (item.type === 'texture') {
                 item.tensorId = tensorData.opts.type;
                 item.data = tensorData.data;

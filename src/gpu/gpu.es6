@@ -156,7 +156,7 @@ export default class gpu {
             gl.FLOAT,          // Data type for each chanel.
             null);
         gl.bindTexture(gl.TEXTURE_2D, null);
-        this.texturesMap[out.opts.type] = texture;
+        this.texturesMap[out.tensorId] = texture;
         return program;
     }
 

@@ -40,19 +40,12 @@ export default {
         }
         // 设置gpu参数
         const gpu = this.gpu;
-        for(let index = 0; index < opData.outTensor; index++) {
-            const outTensorName = index === 0 ? 'out' : `out_${index}`;
-            if (!isRendered) {
-                // 使用对应outputTensor shape
-                const shapeInfo = getTextureShapeInfo(opData.data, outTensorName);
-                const fsCode = factory.buildShader(opData.name, shapeInfo, index);
-                opData.fsCode = fsCode;
-                opData.program = this.createProgram(fsCode, opData.tensor[outTensorName]);
-            }
-
-            gpu.setOutProps(opData.tensor[outTensorName]);
+        opData.program.forEach((program, index) => {
+            const outTensor = opData.outputTensors[index];
+            const outTensorId = outTensor.tensorId;
+            gpu.setOutProps(outTensor);
             // 生成帧缓存材质
-            gpu.attachFrameBuffer(opData.iLayer, opData.tensor[outTensorName].opts.type);
+            gpu.attachFrameBuffer(opData.iLayer, outTensorId);
             // let end = +Date.now();
             let bufferStatus = gpu.frameBufferIsComplete();
             if (bufferStatus.isComplete) {
@@ -60,7 +53,7 @@ export default {
                 // timeObj['buferstatus-time'] = start - end;
                 // gpu.attachShader(opData.fshader);
 
-                gpu.setProgram(opData.program, isRendered);
+                gpu.setProgram(program, isRendered);
                 // end = +Date.now();
                 // timeObj['createshader-time'] = end - start;
                 // timeObj['jsTime'] = end - time;
@@ -70,7 +63,7 @@ export default {
                 // 开始计算，执行 gl.drawArrays
                 this.gpu.render(opData.renderData, opData.iLayer, isRendered);
             }
-        }
+        });
     },
 
     /**

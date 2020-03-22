@@ -17,10 +17,11 @@ export default class Factory {
         }
     }
 
-    buildShader(opName, data) {
+    buildShader(opName, data, runtime = undefined) {
         let result = '';
         result = this.buildPrefix(opName);
         result += this.buildCommon(opName);
+        result += runtime !== undefined ? this.buildRuntime(runtime) : '';
         result += this.buildOp(opName);
         data.texture2d = this.texture2d;
         result = this.populateData(result, data);
@@ -38,6 +39,12 @@ export default class Factory {
         return ops.common.params + ops.common.func;
     }
 
+    buildRuntime(runtime) {
+        return `
+            int layer_run_time = ${runtime};
+        `;
+    }
+
     buildOp(opName) {
         let code = ops.ops[opName].params;
         // 依赖的方法
@@ -50,7 +57,7 @@ export default class Factory {
             let snippet = atoms[func];
             code += this.populateData(snippet, data);
         });
-        // suffix
+        // 引入 suffix 方法
         code += this.buildSuffix(opName);
         // main方法
         code += ops.ops[opName].func;

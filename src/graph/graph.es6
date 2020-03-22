@@ -47,13 +47,14 @@ export default class Graph {
         const executor = this.constructExecutor(op);
         const opData = new OpData(op.type, executor.inputs, executor.outputs, executor.attrs);
         const name = opData.name;
-        const fsCode = factory.buildShader(name, opData.data);
-        opData.fsCode = fsCode;
-        opData.program = this.inst.createProgram(fsCode, opData.tensor['out']);
+        // const fsCode = factory.buildShader(name, opData.data);
+        // opData.fsCode = fsCode;
+        // opData.program = this.inst.createProgram(fsCode, opData.tensor['out']);
         opData.renderData = opConfs[name].map(elem => {
             let item = Object.assign({}, elem);
             const tensorData = opData.tensor[item.tensor];
             if (item.type === 'texture') {
+                item.tensorId = tensorData.opts.type;
                 item.data = tensorData.data;
                 if (this.feedOp.id === op.id && item.tensor === 'origin') {
                     item.shape = tensorData.shape;
@@ -131,7 +132,9 @@ export default class Graph {
         const input = executor.inputs;
         const output = executor.outputs;
         Object.keys(output).forEach(function(key){
-            output[key] = that.getTensorAttr(output[key][0]);
+            output[key].forEach((item, index) => {
+                output[key][index] = that.getTensorAttr(item)[0];
+            });
         });
         Object.keys(input).forEach(function(key){
             if (that.test && ((key === 'Input') || (key === 'X'))) {

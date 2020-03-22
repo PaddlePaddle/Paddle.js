@@ -16,6 +16,9 @@ export default {
             conf: {
                 TENSOR_NAME: 'counter'
             }
+        },
+        {
+            func: 'transferFromNHWCtoNCHW'
         }
     ],
     conf: [

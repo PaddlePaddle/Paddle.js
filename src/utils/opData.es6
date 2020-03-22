@@ -105,17 +105,28 @@ const opBehavior = {
 		'setPerm'
 	],
     concat: [
+        'normalizeDim',
+        'needBatch'
+    ],
+    split: [
+        'normalizeDim',
         'needBatch'
     ]
 };
 const mergeType = 'conv2d-elementwise_add';
+
+export function getTextureShapeInfo(data, tensorName) {
+    if (tensorName === 'out') {
+        return data;
+    }
+    tensorAttrs.forEach(key => {
+        data[`${key}_out`] = data[`${key}_${tensorName}`];
+        delete data[`${key}_${tensorName}`];
+    })
+    return data;
+}
 export default class OpData {
     constructor(name, input = {}, output = {}, attrs = {}) {
-    console.log('now in constructor');
-    console.dir(name);
-    console.dir(input);
-    console.dir(output);
-
         this.realName = name;
         this.name = name;
         this.attrs = attrs;
@@ -136,6 +147,8 @@ export default class OpData {
 
             // tensor数据
             this.tensor = {};
+            this.outTensor = 1;
+            this.originTensor = 1;
             this.buildTensor();
             this.buildAttrs();
         }
@@ -193,8 +206,10 @@ export default class OpData {
                 // 默认取第一个数据
                 const data = this.output[key] || [{}];
                 if (tensorName[key.toLowerCase()]) {
-                    data[0].tensorName = tensorName[key.toLowerCase()];
-                    tensorData.push(data[0]);
+                    data.forEach(item => {
+                        item.tensorName = tensorName[key.toLowerCase()];
+                        tensorData.push(item);
+                    });
                 }
             }
         }
@@ -208,7 +223,6 @@ export default class OpData {
 
 
         tensorData.forEach(data => {
-            // console.log(data);
             if (data) {
                 if (data.notTensor) {
                     this.tensor[data.tensorName] = {
@@ -217,9 +231,18 @@ export default class OpData {
                         total_shape: data.data.length
                     };
                 } else {
-                    this.tensor[data.tensorName] = new Tensor({
+                    let tensorName = data.tensorName;
+                    if (this.tensor[tensorName] && tensorName === 'out') {
+                        tensorName += `_${this.outTensor}`;
+                        this.outTensor++;
+                    }
+                    if (this.tensor[tensorName] && tensorName === 'origin') {
+                        tensorName += `_${this.originTensor}`;
+                        this.originTensor++;
+                    }
+                    this.tensor[tensorName] = new Tensor({
                         type: data.name,
-                        name: data.tensorName,
+                        name: tensorName,
                         shape: data.shape,
                         data: data.data,
                         needBatch: data.needBatch || false,
@@ -229,10 +252,6 @@ export default class OpData {
                 }
             }
         });
-         console.dir(['tensors', this.tensor]);
-         console.log('now in buildTensor show this and tensorData');
-         console.log(this);
-         console.log(tensorData);
     }
 
     buildAttrs() {
@@ -240,11 +259,9 @@ export default class OpData {
         for (let key in this.attrs) {
             if (this.attrs.hasOwnProperty(key)) {
                 const item = this.attrs[key];
-                if (Object.prototype.toString.call(item) === '[object Array]') {
-                    if (keys.indexOf(key) > -1) {
-                        this.data[key + '_x'] = item[0];
-                        this.data[key + '_y'] = item[1];
-                    }
+                if (Object.prototype.toString.call(item) === '[object Array]' && keys.indexOf(key) > -1) {
+                    this.data[key + '_x'] = item[0];
+                    this.data[key + '_y'] = item[1];
                 } else {
                     this.data[key] = item;
                     // 获取shader所需的数据
@@ -443,6 +460,20 @@ console.log(y);
             this.data['multi_value'] = this.attrs.alpha;
             this.data['active_function'] = 'leakyRelu';
         }
+    }
+
+    normalizeDim() {
+        const origin_shape = this.input.X[0].shape;
+        const axis = this.attrs.axis > -1 ? this.attrs.axis : origin_shape.length + this.attrs.axis;
+        const dim_value = [];
+        for (let index = 0; index < origin_shape[axis]; index++) {
+            dim_value[index] = index;
+        }
+        this.attrs.target_length = dim_value.length;
+        this.attrs.target_value = dim_value;
+        // 保存 输入 tensor 对应dim 的长度
+        this.attrs.inputs_dim = [origin_shape[axis]];
+        this.attrs.dim = 4 - origin_shape.length + axis;
     }
 
     processAxis() {

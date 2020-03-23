@@ -13,7 +13,7 @@ import IO from '../feed/ImageFeed';
 import DataFeed from '../feed/dataFeed';
 import PostProcess from './postProcess';
 import Logger from '../../tools/logger';
-import Paddle from "../paddle/paddle";
+import Paddle from '../paddle/paddle';
 window.log = new Logger();
 
 export default class Runner {
@@ -163,7 +163,7 @@ export default class Runner {
     startStream(getMedia, callback) {
         this.flags.runVideoPaused = false;
         if (typeof getMedia === 'function') {
-            this.runStream(getMedia (), callback);
+            this.runStream(getMedia(), callback);
         } else {
             this.runStream(getMedia, callback);
         }

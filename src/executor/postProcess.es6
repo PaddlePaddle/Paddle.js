@@ -1,14 +1,14 @@
 /* eslint-disable */
 
-/* 后处理图片 by zhangmiao06 */
-// let preTestRun = index => {
-//     let img = document.getElementById('image');
-//     img.src = tempPic[index];
-//     img.onload = function () {
-//         testRun(testOutput.data[index], img);
-//     };
-// };
-
+/** 后处理图片 by zhangmiao06, wangqun
+ * let preTestRun = index => {
+ *     let img = document.getElementById('image');
+ *     img.src = tempPic[index];
+ *     img.onload = function () {
+ *         testRun(testOutput.data[index], img);
+ *    };
+ * };
+ **/
 import models from '../utils/models';
 
 const isSimilar = (r1, r2, threshold = 5) => {
@@ -132,11 +132,11 @@ const reshapeMany = data => {
 
 export default class PostProcess {
     constructor(options) {
-        this.modelConfig = models[options.modelName];
+        this.modelConfig = options;
         this.count = 0;
         this.lastRect = [0, 0, 0, 0]
     }
-    
+
     run(data, img, callback, canavs) {
         let {from, to} = this.modelConfig.outputShapes;
         let shape = [].concat(from).reverse();

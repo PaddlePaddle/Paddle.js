@@ -60,7 +60,7 @@ const runner = new Runner({
 startBtn.disabled = true;
 runner.preheat()
     .then(() =>{
-        startBtn.disabled = false
+        startBtn.disabled = false;
     });
 
 const domElement = document.getElementById('video');

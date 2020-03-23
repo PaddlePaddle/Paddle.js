@@ -1,6 +1,6 @@
 /**
  * @file Runner 整个流程封装一下
- * @author hantian(hantianjiao@baidu.com), wangqun
+ * @author hantian(hantianjiao@baidu.com), wangqungit push origin master:refs/for/master
  * 使用方法：
  * const runner = new Runner({
  *      modelName: 'separate' // '608' | '320' | '320fused' | 'separate'
@@ -163,8 +163,8 @@ export default class Runner {
     startStream(getMedia, callback) {
         this.flags.runVideoPaused = false;
         if (typeof getMedia === 'function') {
-            this.runStream(getMedia(), callback);
-        }else{
+            this.runStream(getMedia (), callback);
+        } else {
             this.runStream(getMedia, callback);
         }
 

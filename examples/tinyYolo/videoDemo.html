@@ -12,54 +12,54 @@
     }
     #myDiv {
         position: fixed;
-        border: 1px solid red;
+        border: 1px solid #F00;
         box-sizing: border-box;
     }
     #video {
-      background: red;
+        background: #F00;
     }
     p {
-      display: block;
-      margin-block-start: 1em;
-      margin-block-end: 1em;
-      margin-inline-start: 0;
-      margin-inline-end: 0;
+        display: block;
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+        margin-inline-start: 0;
+        margin-inline-end: 0;
     }
     p.section-head {
-      font-variant: small-caps;
-      text-transform: uppercase;
-      letter-spacing: .17em;
-      line-height: 1.2em;
-      font-weight: 500;
-      margin-top: 2em;
-      margin-bottom: 1em;
-      border-left: 1px solid #EF6C00;
-      padding-left: 24px;
-      color: #818181;
+        font-variant: small-caps;
+        text-transform: uppercase;
+        letter-spacing: .17em;
+        line-height: 1.2em;
+        font-weight: 500;
+        margin-top: 2em;
+        margin-bottom: 1em;
+        border-left: 1px solid #EF6C00;
+        padding-left: 24px;
+        color: #818181;
     }
     </style>
 </head>
 <body>
-  <section class="title-area">
-    <h1>Paddle.js: Using a pretrained tinyYolo with WebRTC</h1>
-  </section>
+    <section class="title-area">
+        <h1>Paddle.js: Using a pretrained tinyYolo with WebRTC</h1>
+    </section>
 
-  <section>
-    <p class="section-head">Description</p>
+    <section>
+        <p class="section-head">Description</p>
+        <p>
+          Please start the face trace.
+        </p>
+    </section>
+    <video id="video">
+    </video>
     <p>
-      Please start the face trace.
+        <button id="start">开始识别</button>
+        <button id="stop">结束</button>
     </p>
-  </section>
-  <video id="video">
-  </video>
-  <p>
-    <button id="start">开始识别</button>
-    <button id="stop">结束</button>
-  </p>
-  <select id="videoSelect"></select>
-  <p id="tips">tips</p>
-  <div id="myDiv"></div>
+    <select id="videoSelect"></select>
+    <p id="tips">tips</p>
+    <div id="myDiv"></div>
 
-  <script src="./videoDemo.es6"></script>
+    <script src="./videoDemo.es6"></script>
 </body>
 </html>

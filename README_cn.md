@@ -1,43 +1,114 @@
+[中文版](https://github.com/PaddlePaddle/Paddle-Lite/blob/develop/web/README_cn.md)
+
 # Web
 
-该Web项目是致力于在浏览器中运行的开源深度学习框架，在支持WebGL的浏览器上即可直接运行。
+Paddle.js is an Web project for Baidu Paddle, which is an an open source deep learning framework designed to work on web browser. Load a pretrained paddle.js SavedModel or Paddle Hub module into the browser and run inference through Paddle.js. It could run on nearly every browser with WebGL support.
 
-## 主要特点
+## Key Features
 
-### 模块化
+### Modular
 
-该Web项目建立于Atom组件之上。Atom组件在WebGL基础上进行了封装，可以方便的进行通用GPU计算任务。它是高度模块化的，不仅可以用于本项目，也可以用于其它的WebGL加速场景。
+Web project is built on Atom system which is a versatile framework to support GPGPU operation on WebGL. It is quite modular and could be used to make computation tasks faster by utilizing WebGL.
 
-### 高性能
+### High Performance
 
-目前Web项目运行TinyYolo模型可以达到30ms以内，对于一般的实时场景已经足够应对。
+Web project could run TinyYolo model in less than 30ms on chrome. This is fast enough to run deep learning models in many realtime scenarios.
 
-### 浏览器覆盖面
+### Browser Coverage
 
 * PC: Chrome
 * Mac: Chrome
 * Android: Baidu App and QQ Browser
 
-## 如何构建部署 demo
+### Supported operations
+
+Currently Paddle.js only supports a limited set of Paddle Ops. See the full list. If your model uses unsupported ops, the Paddle.js script will fail and produce a list of the unsupported ops in your model. Please file issues to let us know what ops you need support with.
+
+[Supported operations Pages](./src/factory/fshader/README.md)
+
+
+## Loading and running in the browser
+
+If the original model was a SavedModel, use paddle.load(). 
 
 ```bash
-cd web                        # 进入根目录
-npm i                         # 安装依赖
-mkdir dist                    # 创建资源目录
-cd dist                       # 进入资源目录
-git clone https://github.com/DerekYangMing/Paddle-Web-Models.git # 获取模型
-mv Paddle-Web-Models/separablemodel .                            # 移动模型到制定地点
-cd ..                         # 返回根目录
-npm run testVideoDemo         # 启动 demo 服务
+
+import * as tf from 'paddlejs';
+
+let feed = io.process({
+    input: document.getElementById('image'),
+    params: {
+        gapFillWith: '#000', // What to use to fill the square part after zooming
+        targetSize: {
+            height: fw,
+            width: fh
+        },
+        targetShape: [1, 3, fh, fw], // Target shape changed its name to be compatible with previous logic
+        // shape: [3, 608, 608], // Preset sensor shape
+        mean: [117.001, 114.697, 97.404], // Preset mean
+        // std: [0.229, 0.224, 0.225]  // Preset std
+    }
+});
+
+const MODEL_CONFIG = {
+    dir: `/${path}/`, // model URL
+    main: 'model.json', // main graph
+};
+
+const paddle = new Paddle({
+    urlConf: MODEL_CONFIG,
+    options: {
+        multipart: true,
+        dataType: 'binary',
+        options: {
+            fileCount: 1, // How many model have been cut
+            getFileName(i) { 
+                return 'chunk_' + i + '.dat';
+            }
+        }
+    }
+});
+
+model = await paddle.load();
+
+// run model
+let inst = model.execute({
+    input: feed
+});
+
+// There should be a fetch execution call or a fetch output
+let result = await inst.read();
+
+
 ```
 
-## 如何预览 demo
+Please see feed documentation for details.
 
-1. 在浏览器中打开url: https://localhost:8123/
-2. 点击【开始检测】按钮。
-3. 将人脸对准摄像头，没有问题的话，可以正常检测到人脸。
+Please see fetch documentation for details.
 
-##  交流与反馈
-* 欢迎您通过Github Issues来提交问题、报告与建议
-* QQ群: 696965088 
-* 论坛: 欢迎大家在[PaddlePaddle论坛](https://ai.baidu.com/forum/topic/list/168)分享在使用PaddlePaddle中遇到的问题和经验, 营造良好的论坛氛围
+
+## Run the converter script provided by the pip package:
+
+The converter expects a Paddlejs SavedModel, Paddle Hub module, Tpaddle.js JSON format for input.
+
+
+## Web-friendly format
+
+The conversion script above produces 2 types of files:
+
+ - model.json (the dataflow graph and weight manifest file)
+ - group1-shard\*of\* (collection of binary weight files)
+
+
+## Preview Demo
+
+Paddle.js has some pre-converted models to Paddle.js format .There are some demos in the following URL, open a browser page with the demo.
+
+[Supported Demo Pages](./examples/README.md)
+
+
+## Feedback and Community Support
+
+- Questions, reports, and suggestions are welcome through Github Issues!
+- Forum: Opinions and questions are welcome at our [PaddlePaddle Forum](https://ai.baidu.com/forum/topic/list/168)！
+- QQ group chat: 696965088

@@ -16,11 +16,11 @@ const unitPath = {
 	'transpose' : 'model.test.transpose.json',
 	'conv2d_transpose': 'model.test.conv2d_transpose.json',
 	'elementwise_add': 'model.test.elementwise_add.json',
-    'concat': 'model.test.concat.json'
-
+    'concat': 'model.test.concat.json',
+    'split': 'model.test.split.json'
 };
 // 制定运行的 op
-const modelType = 'elementwise_add';
+const modelType = 'split';
 // 制定运行的 op
 const unitData = unitPath[modelType];
 

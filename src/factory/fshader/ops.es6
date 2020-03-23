@@ -58,6 +58,10 @@ import concat_params from '../../shader/concat/params';
 import concat_func from '../../shader/concat/main';
 import concat_conf from '../../shader/concat/conf';
 
+import split_params from '../../shader/split/params';
+import split_func from '../../shader/split/main';
+import split_conf from '../../shader/split/conf';
+
 import getArrayIndexFromTensorPos from '../../shader/atom/getArrayIndexFromTensorPos';
 import getArrayIndexFromTexturePos from '../../shader/atom/getArrayIndexFromTexturePos';
 import getTensorPosFromArrayIndex from '../../shader/atom/getTensorPosFromArrayIndex';
@@ -148,6 +152,11 @@ export default {
             params: concat_params,
             func: concat_func,
             confs: concat_conf
+        },
+        split: {
+            params: split_params,
+            func: split_func,
+            confs: split_conf
         },
         relu: {
             params: dynamic_params,

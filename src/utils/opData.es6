@@ -65,7 +65,6 @@ const opBehavior = {
         'mergeTensor'
     ],
     elementwise_add: [
-        //'broadcast',
         'needBatch',
 		'processAxis'
     ],
@@ -111,7 +110,13 @@ const opBehavior = {
     split: [
         'normalizeDim',
         'needBatch'
-    ]
+    ],
+    softmax: [
+        'needBatch'
+    ],
+    scale: [
+        'needBatch'
+    ],
 };
 const mergeType = 'conv2d-elementwise_add';
 
@@ -389,33 +394,6 @@ export default class OpData {
                 item.isPacked = true;
             }
         });
-    }
-
-    broadcast(tensorData = []) {
-        tensorData.forEach(item => {
-            if (item.tensorName === 'counter') {
-                item.notTensor = true;
-            }
-        });
-
-        return;
-
-        // mobilenet model
-        // todo: 默认y的shape length是1, 以后需要实现通用版本
-        let shape = Utils.getBroadcastShapeInPaddle(x.shape, y.shape, this.attrs['axis']);
-        // 填充shape数据
-        if (small.shape.length === 1) {
-            const result = [];
-            small.shape = shape;
-            let total = shape.reduce((all, num) => all * num);
-            for (let i = 0; i < small.shape[0]; i++) {
-                let item = small.data[i];
-                for (let j = 0; j < total / shape[0]; j++) {
-                    result.push(item);
-                }
-            }
-            small.data = result;
-        }
     }
 
     isMax(tensorData = []) {

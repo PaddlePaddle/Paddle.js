@@ -6,50 +6,40 @@
 export default `
 // start函数
 void main(void) {
-    vec4 v4 = getPixelsFromTexturePos_texture_origin(vCoord);
-    vec2 onePixel = vec2(1.0 / float(width_texture_origin), 1.0 / float(height_texture_origin));
+    ivec4 oPos = getOutputTensorPos();
+    const int n = int(total_shape_origin/channel_origin/height_shape_origin/width_shape_origin);
+    float o = getValueFromTensorPos_origin(oPos[0], oPos[1], oPos[2], oPos[3]);
+    // 输出坐标转换为输入坐标
     float total = 0.0;
-    float maxValue = getPixelsFromTexturePos_texture_origin(onePixel).r;
-    int number = 0;
-    vec4 pixels;
-    // 求最大
-    for (int i = 0; i < height_texture_origin; i++) {
-        for (int j = 0; j < width_texture_origin; j++) {
-            pixels = getPixelsFromTexturePos_texture_origin(onePixel * vec2(float(j), float(i)));
-            number = i * width_texture_origin + j;
-            if ((number * 4 + 1) < total_shape_origin) {
-                maxValue = max(pixels.r, maxValue);
-            }
-            if ((number * 4 + 2) < total_shape_origin) {
-                maxValue = max(pixels.g, maxValue);
-            }
-            if ((number * 4 + 3) < total_shape_origin) {
-                maxValue = max(pixels.b, maxValue);
-            }
-            if ((number * 4 + 4) < total_shape_origin) {
-                maxValue = max(pixels.a, maxValue);
-            }
+    float res = 0.0;
+    if (axis == 0) {
+        for (int i = 0; i < n; i++){
+        float temp = getValueFromTensorPos_origin(i, oPos[1], oPos[2], oPos[3]);
+        total += exp(temp);
         }
+        res = exp(o) / total;
     }
-    // 求和
-    for (int i = 0; i < height_texture_origin; i++) {
-        for (int j = 0; j < width_texture_origin; j++) {
-            pixels = getPixelsFromTexturePos_texture_origin(onePixel * vec2(float(j), float(i)));
-            number = i * width_texture_origin + j;
-            if ((number * 4 + 1) < total_shape_origin) {
-                total += exp(pixels.r - maxValue);
-            }
-            if ((number * 4 + 2) < total_shape_origin) {
-                total += exp(pixels.g - maxValue);
-            }
-            if ((number * 4 + 3) < total_shape_origin) {
-                total += exp(pixels.b - maxValue);
-            }
-            if ((number * 4 + 4) < total_shape_origin) {
-                total += exp(pixels.a - maxValue);
-            }
+    else if (axis == 1) {
+        for (int i = 0; i < channel_origin; i++){
+        float temp = getValueFromTensorPos_origin(oPos[0], i, oPos[2], oPos[3]);
+        total += exp(temp);
         }
+        res = exp(o) / total;
     }
-    gl_FragColor = exp(v4 - vec4(maxValue, maxValue, maxValue, maxValue)) / vec4(total, total, total, total) ;
+    else if (axis == 2) {
+        for (int i = 0; i < height_shape_origin; i++){
+        float temp = getValueFromTensorPos_origin(oPos[0], oPos[1], i, oPos[3]);
+        total += exp(temp);
+        }
+        res = exp(o) / total;
+    }
+    else {
+        for (int i = 0; i < width_shape_origin; i++){
+        float temp = getValueFromTensorPos_origin(oPos[0], oPos[1], oPos[2], i);
+        total += exp(temp);
+        }
+        res = exp(o) / total;
+    }
+    setOutput(res);
 }
 `;

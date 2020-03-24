@@ -5,8 +5,7 @@
 export default `
 // start函数
 void main(void) {
-	float res = (-1.0 / exp(-20.0));
-	//float res = 0.0;
+	float res = 0.0;
     // 获取output的坐标
     ivec4 out_pos = getOutputTensorPosLIMIT_OUT();
     // X、Y方向的移动步长

@@ -7,13 +7,10 @@ export default `
     // start函数
     void main(void) {
         ivec4 oPos = getOutputTensorPosLIMIT_OUT();
-        // 重排遍历顺序
-        int sumVal = oPos.g + oPos.a * channel_out + oPos.b * channel_out * width_shape_out;
-        ivec4 new_oPos = transferFromNHWCtoNCHW(sumVal, channel_out, width_shape_out, height_shape_out, total_shape_out);
-        int x = new_oPos.a;
-        int c = new_oPos.g;
-        int y = new_oPos.b;
-        int b = new_oPos.r;
+        int x = oPos.a;
+        int c = oPos.g;
+        int y = oPos.b;
+        int b = oPos.r; 
         float res = 0.0;
 
         // 获取output的坐标

@@ -119,11 +119,12 @@ export default {
         let offsetY = 0;
         // 安卓和ios的max texture size是4096, 改造存储空间(2bh, cw / 2)
         let exceedMax = false;
-        if (height > 4096 || width > 4096) {
-            height *= 2;
-            width = c * (Math.ceil(w / 2));
-            exceedMax = true;
-        }
+        // FIXME:为了让mobilenet能正常执行，这里先注释掉，待群哥修复
+        // if (height > MAX_TEXTURE_SIZE || width > MAX_TEXTURE_SIZE) {
+        //     height *= 2;
+        //     width = c * (Math.ceil(w / 2));
+        //     exceedMax = true;
+        // }
         if (isPacked) {
             // 紧凑布局
             height = b * c * Math.ceil(h / 2);
@@ -185,6 +186,67 @@ export default {
             // data.push(0);
         }
         renderData.data = data;
+    },
+    /*
+     * 将shape扩充到4维，在shape前补1
+     */
+    padToFourDimShape(shape) {
+        let fourDimShape = [];
+        if (shape.length == 4) {
+            fourDimShape = shape;
+        } else if (shape.length < 4) {
+            for (let i = 0; i < 4 - shape.length; i++) {
+                fourDimShape.push(1);
+            }
+            fourDimShape = fourDimShape.concat(shape);
+        }
+        return fourDimShape;
+    },
+
+    /* 
+     * 将nhwc排布数据转为nchw排布数据
+     */
+    nhwc2nchw(data, shape) {
+        let N = shape[0];
+        let H = shape[1];
+        let W = shape[2];
+        let C = shape[3];
+        let WXC = W * C;
+        let HXWXC = H * W * C;
+        let nchwData = [];
+        for (let n = 0; n < N; n++) {
+            for (let c = 0; c < C; c++) {
+                for (let h = 0; h < H; h++) {
+                    for (let w = 0; w < W; w++) {
+                        nchwData.push(data[n * HXWXC + h * WXC + w * C + c]);
+                    }
+                }
+            }
+        }
+        return nchwData;
+    },
+
+    /* 
+     * 将nchw排布数据转为nhwc排布数据
+     */
+    nchw2nhwc(data, shape) {
+        let N = shape[0];
+        let C = shape[1];
+        let H = shape[2];
+        let W = shape[3];
+        let HXW = H * W;
+        let CXHXW = C * H * W;
+        let nhwcData = [];
+        for (let n = 0; n < N; n++) {
+            for (let h = 0; h < H; h++) {
+                for (let w = 0; w < W; w++) {
+                    for (let c = 0; c < C; c++) {
+                        nhwcData.push(data[n * CXHXW + c * HXW + h * W + w]);
+                    }
+                }
+            }
+        }
+        return nhwcData;
     }
 };
 /* eslint-enable */

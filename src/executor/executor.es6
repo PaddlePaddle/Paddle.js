@@ -36,7 +36,7 @@ export default class GraphExecutor {
 			return this.inputs.Input;
 		}
         else if (this.type === 'elementwise_add') {
-            return this.inputs.X;
+            return this.inputs.X.concat(this.inputs.Y);
         }
         else if (this.type === 'relu' || this.type === 'leaky_relu') {
             return this.inputs.X;
@@ -68,6 +68,7 @@ export default class GraphExecutor {
         }
         else if (this.type === 'batchnorm' || this.type === 'batch_norm') {
             this.outputs.out = this.outputs.Y;
+            delete this.outputs.Y;
             return this.outputs.out;
         }
 		else if (this.outputs.Y) {

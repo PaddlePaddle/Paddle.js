@@ -242,8 +242,10 @@ export default class Graph {
      */
     getNextExecutor(ops, id) {
         return ops.filter((item, key) => {
-            if (id === item.inputsName[0]) {
-                return true;
+            for (let i = 0; i < item.inputsName.length; i++) {
+                if (id === item.inputsName[i]) {
+                    return true;
+                }
             }
         });
     }

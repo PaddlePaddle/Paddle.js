@@ -350,9 +350,7 @@ export default class gpu {
                 texture = tData[item.variable + '_' + item.tensor];
             } else {
                 texture = gl.createTexture();
-                if (index === 0) {
-                    this.cacheTextures['' + iLayer] = this.cacheTextures['' + iLayer] || {};
-                }
+                this.cacheTextures['' + iLayer] = this.cacheTextures['' + iLayer] || {};
                 this.cacheTextures['' + iLayer][item.variable + '_' + item.tensor] = texture;
             }
         }

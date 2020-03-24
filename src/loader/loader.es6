@@ -139,8 +139,11 @@ export default class Loader  {
             // }) // 按字母顺序排列 在model.json里
             .forEach(item => {
                 len = item.shape.reduce((a, b) => a * b); // 长度为shape的乘积
-                item.data = this.allData.slice(marker, marker + len);
-                marker += len;
+                // 为了减少模型体积，模型转换工具不会导出非persistable的数据，这里只需要读取persistable的数据
+                if (item.persistable) {
+                    item.data = this.allData.slice(marker, marker + len);
+                    marker += len;
+                }
             });
     }
 

@@ -4,6 +4,9 @@ import IO from '../../src/feed/imageFeed';
 import Utils from '../../src/utils/utils';
 // 获取map表
 import Map from '../../test/data/map';
+
+const fileDownload = require('js-file-download');
+
 /**
  * @file model demo 入口文件
  * @author wangqun@baidu.com
@@ -11,25 +14,21 @@ import Map from '../../test/data/map';
  */
 // 模型feed数据
 const feedShape = {
-    '608': {
-        fw: 608,
-        fh: 608
-    },
-    '320': {
-        fw: 320,
-        fh: 320
-    },
-    '320fused': {
-        fw: 320,
-        fh: 320
-    },
-    'separate': {
-        fw: 320,
-        fh: 320
+    'mobilenetv2': {
+        fw: 224,
+        fh: 224
     }
 };
-const modelType = 'separate';
+
+// 模型fetch数据
+const fetchShape = {
+    'mobilenetv2': [1, 1000, 1, 1]
+};
+
+const modelType = 'mobilenetv2';
 const {fw, fh} = feedShape[modelType];
+const outputShape = fetchShape[modelType];
+
 // 统计参数
 let loaded = false;
 let model = {};
@@ -40,15 +39,18 @@ async function run(input) {
     let feed = io.process({
         input: input,
         params: {
-            targetShape: [1, 3, fh, fw], // 目标形状 为了兼容之前的逻辑所以改个名
+            gapFillWith: '#000', // 缩放后用什么填充不足方形部分
+            targetSize: {
+                height: fh,
+                width: fw
+            },
             scale: 256, // 缩放尺寸
-            width: 224, height: 224, // 压缩宽高
-            shape: [3, 224, 224], // 预设tensor形状
-            mean: [0.485, 0.456, 0.406], // 预设期望
-            std: [0.229, 0.224, 0.225]  // 预设方差
-        }});
+            targetShape: [1, 3, fh, fw], // 目标形状 为了兼容之前的逻辑所以改个名
+            mean: [0.485, 0.456, 0.406],
+            std: [0.229, 0.224, 0.225]
+        }
+    });
 
-    console.dir(['feed', feed]);
     const path = 'model/mobileNet';
 
     if (!loaded) {
@@ -61,31 +63,45 @@ async function run(input) {
             urlConf: MODEL_CONFIG,
             options: {
                 multipart: true,
-                dataType: 'json'
+                dataType: 'binary',
+                options: {
+                    fileCount: 4, // 切成了多少文件
+                    getFileName(i) { // 获取第i个文件的名称
+                        return 'chunk_' + i + '.dat';
+                    }
+                },
+                feed
             }
         });
-
         model = await paddle.load();
-
     }
 
     let inst = model.execute({
         input: feed
     });
 
-    // 其实这里应该有个fetch的执行调用或者fetch的输出
     let result = await inst.read();
 
-    console.dir(['result', result]);
-    let maxItem = Utils.getMaxItem(result);
+    let N = outputShape[0];
+    let C = outputShape[1];
+    let H = outputShape[2];
+    let W = outputShape[3];
+    console.log(outputShape);
+    let nhwcShape = [N, H, W, C];
+    console.log(nhwcShape);
+    console.log(result.length);
+
+    let nchwData = Utils.nhwc2nchw(result, nhwcShape);
+    Utils.stridePrint(nchwData);
+    Utils.continuousPrint(nchwData);
+
+    // for test
+    // fileDownload(nchwData, "paddlejs-0.txt");
+
+    let maxItem = Utils.getMaxItem(nchwData);
+    console.log(maxItem);
     document.getElementById('txt').innerHTML = Map['' + maxItem.index];
     console.log('识别出的结果是' + Map['' + maxItem.index]);
-    // console.dir(['每个op耗时', window.statistic]);
-    // let total = statistic.reduce((all, cur) => {
-    //     return all + cur.runTime;
-    // }, 0);
-    // console.log('op total = ' + total);
-
 };
 var image = '';
 function selectImage(file) {

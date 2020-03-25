@@ -247,6 +247,42 @@ export default {
             }
         }
         return nhwcData;
+    },
+
+    /* 
+     * 等距间隔打印数据
+     */ 
+    stridePrint(data, count = 20) {
+        let realPrintCount = count;
+        if (data.length <= realPrintCount) {
+            this.continuousPrint(data, realPrintCount);
+            return;
+        }
+        let numbers = [];
+        let stride = Math.floor(data.length / realPrintCount);
+        if (stride == 0) {
+            stride = 1;
+        }
+        realPrintCount = Math.floor(data.length / stride)
+        for (let i = 0; i < realPrintCount; i++) {
+            numbers.push(i * stride + ": " + data[i * stride]);
+        }
+        console.log(numbers)
+    },
+
+    /* 
+     * 连续打印数据
+     */
+    continuousPrint(data, count = 100) {
+        let numbers = [];
+        let realPrintCount = count;
+        if (data.length <= realPrintCount) {
+            realPrintCount = data.length;
+        }
+        for (let i = 0; i < realPrintCount; i++) {
+            numbers.push(i + ": " + data[i]);
+        }
+        console.log(numbers)
     }
 };
 /* eslint-enable */

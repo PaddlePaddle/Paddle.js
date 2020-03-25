@@ -13,6 +13,7 @@ export default class imageFeed {
         this.pixels = '';
         this.defaultParams = {
             gapFillWith: '#000',
+            mean: [0, 0, 0],
             std: [1, 1, 1]
         };
     };
@@ -86,7 +87,9 @@ export default class imageFeed {
         const {sw, sh} = scaleSize;
         const [b, c, h, w] = opt.targetShape;
         let data = imageData.data || imageData;
+        // mean和std是介于0-1之间的
         let mean = opt.mean;
+        let std = opt.std;
         let dataLength = data.length;
         // let result = new Float32Array(dataLength * 3);
         let result = this.result;
@@ -102,7 +105,10 @@ export default class imageFeed {
                 let iwj = iw + j;
                 for (let k = 0; k < c; ++k) {
                     let a = iwj * 4 + k;
-                    result[offset++] = (data[a] - mean[k]) / 256;
+                    result[offset] = data[a] / 256;
+                    result[offset] -= mean[k];
+                    result[offset] /= std[k];
+                    offset++;
                 }
             }
         }

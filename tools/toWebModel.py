@@ -19,7 +19,7 @@ logDataCount = 50
 modelDir = "infer_model/MobileNetV2/"
 # 输入模型名
 modelName = "model"
-# 输入参数名
+# 输入参数名，当且仅当所有模型参数被保存在一个单独的二进制文件中，它才需要被指定，若为分片模型，请设置为None
 paramsName = "params"
 # 模型feed shape
 inputShape = (1, 3, 224, 224)

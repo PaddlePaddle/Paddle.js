@@ -1,9 +1,12 @@
 /* eslint-disable */
 /**
  * @file 参数文件
- * @author yangmingming
+ * @author chenhaoze
  */
 export default `
+    // conv2d的input数据
+    
+    // 常量
     // 卷积核
     const int length_shape_filter = LENGTH_SHAPE_FILTER;
     const int width_shape_filter = WIDTH_SHAPE_FILTER;
@@ -22,34 +25,21 @@ export default `
     
     // 计算相关
     // 拆分步长
-    const int stride_h = STRIDES_X;
-    const int stride_v = STRIDES_Y;
+    const int stride_h = int(STRIDES_X);
+    const int stride_v = int(STRIDES_Y);
     // padding的数目
-    const int padLeft = PADDINGS_X;
-    const int padTop = PADDINGS_Y;
+    const int padLeft = width_shape_filter - PADDINGS_X - 1;
+    const int padTop = height_shape_filter - PADDINGS_Y - 1;
     // dilation膨胀系数
-    const int dilation_h = DILATIONS_X;
-    const int dilation_v = DILATIONS_Y;
+    const int dilation_h = DILATION_H;
+    const int dilation_v = DILATION_V;
     // groups
     const int groups = GROUPS;
-
-   const int total_shape_out = TOTAL_SHAPE_OUT;
-    // 加法
-    const int axis = AXIS;
-     
+    
     // uniform变量
     // 卷积核
     uniform sampler2D texture_filter;
     
     // 输入数据
     uniform sampler2D texture_origin;
-    
-    // 加法
-    uniform sampler2D texture_counter;
-    // 加法用到的函数
-    float getValueFromCounter(int index) {
-        float xPos = float(index) / float(WIDTH_SHAPE_COUNTER);
-        vec4 pixels = TEXTURE2D(texture_counter, vec2(xPos, 0.5));
-        return pixels.r;
-    }
 `;

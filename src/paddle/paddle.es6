@@ -3,7 +3,7 @@ import 'babel-polyfill';
 import Loader from '../loader/loader';
 import Graph from '../graph/graph';
 /**
- * @file paddle对象，负责加载模型和执行在线推理
+ * @file GraphModel，绘制生成model网络
  * @author wangqun@baidu.com
  */
 
@@ -28,6 +28,7 @@ export default class Paddle {
     }
 
     async load() {
+
         if (this.options === null) {
             // todo saniac 报错提示修改
             throw new Error(
@@ -56,7 +57,6 @@ export default class Paddle {
      * @returns {*}
      */
     execute(inputs) {
-        debugger;
         let that = this;
         this.feed = this.graph.feed = inputs;
         // 生成op数据

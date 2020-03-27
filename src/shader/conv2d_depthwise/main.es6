@@ -12,7 +12,6 @@ export default `
         int y = oPos.b;
         int b = oPos.r; 
         float res = 0.0;
-
         int top = y * stride_v - padTop;
         int left = x * stride_h - padLeft;
         for (int fy = 0; fy < height_shape_filter; fy++) {

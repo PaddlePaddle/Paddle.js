@@ -32,8 +32,11 @@ export default class GraphExecutor {
         else if (this.type === 'depthwise_conv2d') {
             return this.inputs.Input;
         }
+        else if (this.type === 'conv2d_transpose') {
+			return this.inputs.Input;
+		}
         else if (this.type === 'elementwise_add') {
-            return this.inputs.X;
+            return this.inputs.X.concat(this.inputs.Y);
         }
         else if (this.type === 'relu' || this.type === 'leaky_relu') {
             return this.inputs.X;
@@ -65,8 +68,13 @@ export default class GraphExecutor {
         }
         else if (this.type === 'batchnorm' || this.type === 'batch_norm') {
             this.outputs.out = this.outputs.Y;
-            return this.outputs.Y;
+            delete this.outputs.Y;
+            return this.outputs.out;
         }
+		else if (this.outputs.Y) {
+			this.outpus.out = this.outputs.Y;
+			return this.outputs.out;
+		}
         else {
             return this.outputs.Out || this.outputs.Output;
         }
@@ -83,7 +91,6 @@ export default class GraphExecutor {
         if (this.type !== 'feed') {
             // let time = +Date.now();
             // log.start(this.opData.iLayer + '-' + this.type);
-            console.log(this.type, this.opData);
             runtime.run(this.type, this.opData, isRendered);
             // log.end(this.opData.iLayer + '-' + this.type);
             // if (runtime.gpu.frameBufferIsComplete().isComplete) {

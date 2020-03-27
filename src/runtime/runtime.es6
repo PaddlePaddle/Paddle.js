@@ -1,6 +1,10 @@
 /* eslint-disable */
 import Gpu from '../gpu/gpu';
 import getMaxUniforms from '../test/getMaxUniforms';
+import Factory from '../factory/fshader/factory';
+import {getTextureShapeInfo} from '../utils/opData';
+// 生成factory实例
+const factory = new Factory({});
 /**
  * @file gpu运行时
  * @author wangqun@baidu.com, yangmingming@baidu.com
@@ -36,26 +40,30 @@ export default {
         }
         // 设置gpu参数
         const gpu = this.gpu;
-        gpu.setOutProps(opData.tensor['out']);
-        // 生成帧缓存材质
-        gpu.attachFrameBuffer(opData.iLayer);
-        // let end = +Date.now();
-        let bufferStatus = gpu.frameBufferIsComplete();
-        if (bufferStatus.isComplete) {
-            // start = +Date.now();
-            // timeObj['buferstatus-time'] = start - end;
-            // gpu.attachShader(opData.fshader);
-            gpu.setProgram(opData.program, isRendered);
-            // end = +Date.now();
-            // timeObj['createshader-time'] = end - start;
-            // timeObj['jsTime'] = end - time;
-            // statistic.push(timeObj);
-            // 开始计算
-            this.gpu.render(opData.renderData, opData.iLayer, isRendered);
-            return this;
-        } else {
-            return bufferStatus.message;
-        }
+        opData.program.forEach((program, index) => {
+            const outTensor = opData.outputTensors[index];
+            const outTensorId = outTensor.tensorId;
+            gpu.setOutProps(outTensor);
+            // 生成帧缓存材质
+            gpu.attachFrameBuffer(opData.iLayer, outTensorId);
+            // let end = +Date.now();
+            let bufferStatus = gpu.frameBufferIsComplete();
+            if (bufferStatus.isComplete) {
+                // start = +Date.now();
+                // timeObj['buferstatus-time'] = start - end;
+                // gpu.attachShader(opData.fshader);
+
+                gpu.setProgram(program, isRendered);
+                // end = +Date.now();
+                // timeObj['createshader-time'] = end - start;
+                // timeObj['jsTime'] = end - time;
+                // statistic.push(timeObj);
+
+
+                // 开始计算，执行 gl.drawArrays
+                this.gpu.render(opData.renderData, opData.iLayer, isRendered);
+            }
+        });
     },
 
     /**

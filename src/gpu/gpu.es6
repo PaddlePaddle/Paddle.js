@@ -23,6 +23,7 @@ export default class gpu {
         opts.width_raw_canvas = Number(opts.width_raw_canvas) || 512;
         opts.height_raw_canvas = Number(opts.height_raw_canvas) || 512;
         const canvas = opts.el ? opts.el : document.createElement('canvas');
+
         canvas.addEventListener('webglcontextlost', evt => {
             evt.preventDefault();
             console.log('webgl context is lost~');
@@ -103,7 +104,7 @@ export default class gpu {
         this.cacheTextures = {};
         this.uniformLocations = {};
         // texture buffer
-        this.outTextures = [];
+        this.texturesMap = {};
         // pbo
         this.pbo = gl.createBuffer();
     }
@@ -155,7 +156,7 @@ export default class gpu {
             gl.FLOAT,          // Data type for each chanel.
             null);
         gl.bindTexture(gl.TEXTURE_2D, null);
-        this.outTextures.push(texture);
+        this.texturesMap[out.tensorId] = texture;
         return program;
     }
 
@@ -263,19 +264,19 @@ export default class gpu {
      * @param {WebGLTexture} texture 材质
      * @returns {WebGLFramebuffer} The framebuffer
      */
-    attachFrameBuffer(iLayer) {
+    attachFrameBuffer(iLayer, tensorId) {
         this.prevTexture = this.currentTexture;
         // this.currentTexture = this.textureBuffer[this.textureBufferIndex % 2];
         // this.textureBufferIndex = (this.textureBufferIndex + 1) >= 2 ? 0 : 1;
-        this.currentTexture = this.outTextures[iLayer];
-        console.log('this.currentTexture', this.currentTexture);
+        this.currentTexture = this.texturesMap[tensorId];
         const gl = this.gl;
         gl.framebufferTexture2D(gl.FRAMEBUFFER, // The target is always a FRAMEBUFFER.
-            gl.COLOR_ATTACHMENT0, // We are providing the color buffer.
+            gl.COLOR_ATTACHMENT0, // We are providing the color buffer.表示texture是颜色关联对象
             gl.TEXTURE_2D, // This is a 2D image texture.
             this.currentTexture, // The texture.
             0 // 0, we aren't using MIPMAPs
         );
+
         gl.viewport(
             0,
             0,
@@ -340,7 +341,8 @@ export default class gpu {
         const gl = this.gl;
         let texture;
         if (!item.data) {
-            texture = this.prevTexture;
+            // texture = this.prevTexture;
+            texture = this.texturesMap[item.tensorId];
         } else {
             // texture = gl.createTexture();
             if (isRendered && (iLayer > 0 || (iLayer === 0 && item.tensor !== 'origin'))) {
@@ -348,9 +350,7 @@ export default class gpu {
                 texture = tData[item.variable + '_' + item.tensor];
             } else {
                 texture = gl.createTexture();
-                if (index === 0) {
-                    this.cacheTextures['' + iLayer] = this.cacheTextures['' + iLayer] || {};
-                }
+                this.cacheTextures['' + iLayer] = this.cacheTextures['' + iLayer] || {};
                 this.cacheTextures['' + iLayer][item.variable + '_' + item.tensor] = texture;
             }
         }

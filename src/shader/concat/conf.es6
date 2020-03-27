@@ -1,7 +1,7 @@
 /* eslint-disable */
 /**
- * @file conv2d-elementwise_add的配置文件
- * @author yangmingming
+ * @file concat的配置文件
+ * @author zhangjingyuan02
  */
 export default {
     dep: [
@@ -14,23 +14,20 @@ export default {
         {
             func: 'getValueFromTensorPos',
             conf: {
-                TENSOR_NAME: 'filter'
+                TENSOR_NAME: 'counter'
             }
         },
-		{
-			func: 'transferFromNHWCtoNCHW',
-			conf:{
-
-			}
-		}
+        {
+            func: 'transferFromNHWCtoNCHW'
+        }
     ],
     conf: [
-        'LENGTH_SHAPE_FILTER',
-        'WIDTH_SHAPE_FILTER',
-        'HEIGHT_SHAPE_FILTER',
-        'WIDTH_TEXTURE_FILTER',
-        'HEIGHT_TEXTURE_FILTER',
-        'CHANNEL_FILTER',
+        'LENGTH_SHAPE_COUNTER',
+        'WIDTH_SHAPE_COUNTER',
+        'HEIGHT_SHAPE_COUNTER',
+        'WIDTH_TEXTURE_COUNTER',
+        'HEIGHT_TEXTURE_COUNTER',
+        'CHANNEL_COUNTER',
 
         'WIDTH_SHAPE_ORIGIN',
         'HEIGHT_SHAPE_ORIGIN',
@@ -44,37 +41,17 @@ export default {
         'WIDTH_TEXTURE_OUT',
         'HEIGHT_TEXTURE_OUT',
         'CHANNEL_OUT',
-        'OFFSET_Y_OUT',
-
-        'WIDTH_SHAPE_COUNTER',
-
-        'STRIDE_HORIZONTAL',
-        'STRIDE_VERTICAL',
-        'PAD_LEFT',
-        'PAD_TOP',
-        'DILATION_HORIZONTAL',
-        'DILATION_VERTICAL',
-        'GROUPS',
-        'AXIS',
-        'MULTI_VALUE',
-        'BIAS_VALUE',
-        'ACTIVE_FUNCTION'
+        'OFFSET_Y_OUT'
     ],
     input: [
         {
-            tensor: 'filter',
+            tensor: 'origin',
             variable: 'texture',
             setter: 'initTexture',
             type: 'texture'
         },
         {
             tensor: 'counter',
-            variable: 'texture',
-            setter: 'initTexture',
-            type: 'texture'
-        },
-        {
-            tensor: 'origin',
             variable: 'texture',
             setter: 'initTexture',
             type: 'texture'

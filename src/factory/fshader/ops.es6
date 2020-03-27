@@ -12,6 +12,9 @@ import conv2d_conf from '../../shader/conv2d/conf';
 import conv2d_depthwise_params from '../../shader/conv2d_depthwise/params';
 import conv2d_depthwise_func from '../../shader/conv2d_depthwise/main';
 import conv2d_depthwise_conf from '../../shader/conv2d_depthwise/conf';
+import conv2d_transpose_params from '../../shader/conv2d_transpose/params';
+import conv2d_transpose_func from '../../shader/conv2d_transpose/main';
+import conv2d_transpose_conf from '../../shader/conv2d_transpose/conf';
 import dynamic_params from '../../shader/dynamic/params';
 import dynamic_func from '../../shader/dynamic/main';
 import dynamic_conf from '../../shader/dynamic/conf';
@@ -36,6 +39,12 @@ import softmax_conf from '../../shader/softmax/conf';
 import batchnorm_params from '../../shader/batchnorm/params';
 import batchnorm_func from '../../shader/batchnorm/main';
 import batchnorm_conf from '../../shader/batchnorm/conf';
+import reshape_params from '../../shader/reshape/params';
+import reshape_func from '../../shader/reshape/main';
+import reshape_conf from '../../shader/reshape/conf';
+import transpose_params from '../../shader/transpose/params';
+import transpose_func from '../../shader/transpose/main';
+import transpose_conf from '../../shader/transpose/conf';
 
 import conv2d_elementwise_add_params from '../../shader/conv2d_elementwise_add/params';
 import conv2d_elementwise_add_func from '../../shader/conv2d_elementwise_add/main';
@@ -44,6 +53,14 @@ import conv2d_elementwise_add_conf from '../../shader/conv2d_elementwise_add/con
 import conv2d_elementwise_add_winograd_params from '../../shader/conv2d_elementwise_add_winograd/params';
 import conv2d_elementwise_add_winograd_func from '../../shader/conv2d_elementwise_add_winograd/main';
 import conv2d_elementwise_add_winograd_conf from '../../shader/conv2d_elementwise_add_winograd/conf';
+
+import concat_params from '../../shader/concat/params';
+import concat_func from '../../shader/concat/main';
+import concat_conf from '../../shader/concat/conf';
+
+import split_params from '../../shader/split/params';
+import split_func from '../../shader/split/main';
+import split_conf from '../../shader/split/conf';
 
 import getArrayIndexFromTensorPos from '../../shader/atom/getArrayIndexFromTensorPos';
 import getArrayIndexFromTexturePos from '../../shader/atom/getArrayIndexFromTexturePos';
@@ -56,6 +73,7 @@ import moveTexture2PosToReal from '../../shader/atom/moveTexture2PosToReal';
 import getPixelsFromTexturePos from '../../shader/atom/getPixelsFromTexturePos';
 import getRangePowSumFromArrayIndex from '../../shader/atom/getRangePowSumFromArrayIndex';
 import getRangeSumFromArrayIndex from '../../shader/atom/getRangeSumFromArrayIndex';
+import transferFromNHWCtoNCHW from '../../shader/atom/transferFromNHWCtoNCHW';
 import sigmoid from '../../shader/atom/sigmoid';
 import prelu from '../../shader/atom/prelu';
 import scale from '../../shader/atom/scale';
@@ -75,6 +93,11 @@ export default {
         ivec56
     },
     ops: {
+    	conv2d_transpose:{
+            params: conv2d_transpose_params,
+            func: conv2d_transpose_func,
+            confs: conv2d_transpose_conf
+		},
         conv2d: {
             params: conv2d_params,
             func: conv2d_func,
@@ -125,6 +148,16 @@ export default {
             func: mul_func,
             confs: mul_conf
         },
+        concat: {
+            params: concat_params,
+            func: concat_func,
+            confs: concat_conf
+        },
+        split: {
+            params: split_params,
+            func: split_func,
+            confs: split_conf
+        },
         relu: {
             params: dynamic_params,
             func: dynamic_func,
@@ -149,7 +182,17 @@ export default {
             params: batchnorm_params,
             func: batchnorm_func,
             confs: batchnorm_conf
-        }
+        },
+		reshape: {
+			params: reshape_params,
+			func: reshape_func,
+			confs: reshape_conf
+		},
+		transpose: {
+			params: transpose_params,
+			func: transpose_func,
+			confs: transpose_conf
+		}
     },
     atoms: {
         getArrayIndexFromTensorPos,
@@ -166,6 +209,7 @@ export default {
         sigmoid,
         prelu,
         scale,
-        softmax
+        softmax,
+        transferFromNHWCtoNCHW
     }
 };

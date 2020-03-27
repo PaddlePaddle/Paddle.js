@@ -1,7 +1,8 @@
+/* eslint-disable */
 import Utils from './utils';
 /**
  * @file Tensor类
- * @author wangqun, yangmingming
+ * @author yangmingming
  */
 export default class Tensor {
     constructor(opts = {}) {
@@ -10,6 +11,8 @@ export default class Tensor {
         this.isPacked = this.isPacked || false;
         // 设置tensor名字
         this.name = opts.name;
+        // 设置 tensorId
+        this.tensorId = opts.type;
         // tensor的形状
         let shape = this.shape = opts.shape;
         // 原始数据个数
@@ -32,7 +35,6 @@ export default class Tensor {
         // tensor数据
         let data;
         if (opts.type === 'image' || opts.type === 'x') {
-            console.log('image', this.data);
             this.data = opts.data;
         }
         else if (opts.data && opts.data.length) {
@@ -167,3 +169,4 @@ export default class Tensor {
         }
     }
 }
+/* eslint-enable */

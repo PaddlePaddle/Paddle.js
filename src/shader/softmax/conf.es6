@@ -6,17 +6,19 @@
 export default {
     dep: [
         {
-            func: 'getPixelsFromTexturePos',
+            func: 'getValueFromTensorPos',
             conf: {
-                TEXTURE_NAME: 'texture_origin'
+                TENSOR_NAME: 'origin'
             }
         }
     ],
     conf: [
+        'WIDTH_SHAPE_ORIGIN',
+        'HEIGHT_SHAPE_ORIGIN',
+        'LENGTH_SHAPE_ORIGIN',
         'WIDTH_TEXTURE_ORIGIN',
         'HEIGHT_TEXTURE_ORIGIN',
-        'TOTAL_SHAPE_ORIGIN',
-        'OFFSET_Y_OUT'
+        'CHANNEL_ORIGIN',
     ],
     input: [
         {

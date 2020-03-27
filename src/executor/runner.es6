@@ -1,6 +1,6 @@
 /**
  * @file Runner 整个流程封装一下
- * @author hantian(hantianjiao@baidu.com)
+ * @author hantian(hantianjiao@baidu.com), wangqungit push origin master:refs/for/master
  * 使用方法：
  * const runner = new Runner({
  *      modelName: 'separate' // '608' | '320' | '320fused' | 'separate'
@@ -11,16 +11,15 @@
  */
 import IO from '../feed/ImageFeed';
 import DataFeed from '../feed/dataFeed';
-import Graph from './loader';
 import PostProcess from './postProcess';
-import models from '../utils/models';
 import Logger from '../../tools/logger';
+import Paddle from '../paddle/paddle';
 window.log = new Logger();
 
 export default class Runner {
     // 加载模型&预热
     constructor(options) {
-        this.modelConfig = models[options.modelName];
+        this.modelConfig = options; // models[options.modelName];
         this.flags = {
             isRunning: false,
             isPreheating: false,
@@ -41,28 +40,42 @@ export default class Runner {
             name: 'image',
             shape: [1, 3, fh, fw]
         }];
-        const MODEL_URL = `/${path}/model.json`;
-        let dir = `https://mms-graph.cdn.bcebos.com/activity/facegame/paddle/${path}/`;
-        if (location.href.indexOf('test=1') > -1) {
-            dir = `/src/view/common/lib/paddle/${path}/`;
-        }
+
         const MODEL_CONFIG = {
-            dir: dir,
-            main: 'model.json' // 主文件
+            dir: `/${path}/`, // 存放模型的文件夹
+            main: 'model.json', // 主文件
         };
-        const graphModel = new Graph();
-        this.model = await graphModel.loadGraphModel(MODEL_CONFIG, {
-            multipart: true,
-            dataType: 'binary',
-            binaryOption: {
-                fileCount: 1, // 切成了多少文件
-                getFileName(i) { // 获取第i个文件的名称
-                    return 'chunk_0.dat';
+        // const graphModel = new Graph();
+        // this.model = await graphModel.loadGraphModel(MODEL_CONFIG, {
+        //     multipart: true,
+        //     dataType: 'binary',
+        //     binaryOption: {
+        //         fileCount: 1, // 切成了多少文件
+        //         getFileName(i) { // 获取第i个文件的名称
+        //             return 'chunk_0.dat';
+        //         }
+        //     },
+        //     feed
+        // });
+
+
+        const paddle = new Paddle({
+            urlConf: MODEL_CONFIG,
+            options: {
+                multipart: true,
+                dataType: 'binary',
+                options: {
+                    fileCount: 1, // 切成了多少文件
+                    getFileName(i) { // 获取第i个文件的名称
+                        return 'chunk_0.dat';
+                    }
                 }
-            },
-            feed
+            }
         });
-        this.model.execute({
+        this.model = await paddle.load();
+
+
+        let inst = this.model.execute({
             input: feed
         });
         this.flags.isPreheating = false;
@@ -149,6 +162,11 @@ export default class Runner {
 
     startStream(getMedia, callback) {
         this.flags.runVideoPaused = false;
-        this.runStream(getMedia, callback);
+        if (typeof getMedia === 'function') {
+            this.runStream(getMedia(), callback);
+        } else {
+            this.runStream(getMedia, callback);
+        }
+
     }
 }

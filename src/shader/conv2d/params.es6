@@ -22,7 +22,7 @@ export default `
     const int width_texture_origin = WIDTH_TEXTURE_ORIGIN;
     const int height_texture_origin = HEIGHT_TEXTURE_ORIGIN;
     const int channel_origin = CHANNEL_ORIGIN;
-    
+
     // 计算相关
     // 拆分步长
     const int stride_h = STRIDES_X;

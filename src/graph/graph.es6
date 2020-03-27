@@ -10,7 +10,6 @@ import Utils from '../utils/utils';
  * @file Graph，绘制生成model网络
  * @author wangqun@baidu.com
  */
-let start = 0;
 // 生成factory实例
 const factory = new Factory({});
 // 获取op的输入配置
@@ -48,16 +47,19 @@ export default class Graph {
         const executor = this.constructExecutor(op);
         const opData = new OpData(op.type, executor.inputs, executor.outputs, executor.attrs);
         const name = opData.name;
-        const fsCode = factory.buildShader(name, opData.data);
 
-        opData.fsCode = fsCode;
-        opData.program = this.inst.createProgram(fsCode, opData.tensor['out']);
+        opData.program = [];
+        opData.program = opData.outputTensors.map((outTensor, index) => {
+            const fsCode = factory.buildShader(name, opData.fShaderParams[index], index);
+            return this.inst.createProgram(fsCode, outTensor);
+        });
+
         opData.renderData = opConfs[name].map(elem => {
             let item = Object.assign({}, elem);
-            const tensorData = opData.tensor[item.tensor];
+            const tensorData = opData.inputTensors.find(tensor => tensor.name === item.tensor);
             if (item.type === 'texture') {
+                item.tensorId = tensorData.opts.type;
                 item.data = tensorData.data;
-
                 if (this.feedOp.id === op.id && item.tensor === 'origin') {
                     item.shape = tensorData.shape;
                     this.feedItem = item;
@@ -70,7 +72,6 @@ export default class Graph {
             }
             return item;
         });
-
         // console.timeEnd('opData.renderData');
         opData.iLayer = this.iLayer++;
         op.opData = opData;
@@ -83,7 +84,6 @@ export default class Graph {
             return;
         }
         executor.execute(this.inst, this.isExecuted);
-        // if (executor.next && start++ < 2) {
         if (executor.next) {
             const id = executor.next;
             const next = this.getTensor(id);
@@ -136,7 +136,9 @@ export default class Graph {
         const input = executor.inputs;
         const output = executor.outputs;
         Object.keys(output).forEach(function(key){
-            output[key] = that.getTensorAttr(output[key][0]);
+            output[key].forEach((item, index) => {
+                output[key][index] = that.getTensorAttr(item)[0];
+            });
         });
         Object.keys(input).forEach(function(key){
             if (that.test && ((key === 'Input') || (key === 'X'))) {
@@ -240,8 +242,10 @@ export default class Graph {
      */
     getNextExecutor(ops, id) {
         return ops.filter((item, key) => {
-            if (id === item.inputsName[0]) {
-                return true;
+            for (let i = 0; i < item.inputsName.length; i++) {
+                if (id === item.inputsName[i]) {
+                    return true;
+                }
             }
         });
     }

@@ -1,7 +1,7 @@
 /* eslint-disable */
 /**
- * @file conv2d-elementwise_add的配置文件
- * @author yangmingming
+ * @file conv2d的配置文件
+ * @author chenhaoze
  */
 export default {
     dep: [
@@ -16,13 +16,7 @@ export default {
             conf: {
                 TENSOR_NAME: 'filter'
             }
-        },
-		{
-			func: 'transferFromNHWCtoNCHW',
-			conf:{
-
-			}
-		}
+        }
     ],
     conf: [
         'LENGTH_SHAPE_FILTER',
@@ -46,8 +40,6 @@ export default {
         'CHANNEL_OUT',
         'OFFSET_Y_OUT',
 
-        'WIDTH_SHAPE_COUNTER',
-
         'STRIDE_HORIZONTAL',
         'STRIDE_VERTICAL',
         'PAD_LEFT',
@@ -55,20 +47,19 @@ export default {
         'DILATION_HORIZONTAL',
         'DILATION_VERTICAL',
         'GROUPS',
-        'AXIS',
         'MULTI_VALUE',
         'BIAS_VALUE',
         'ACTIVE_FUNCTION'
     ],
     input: [
+        // {
+        //     tensor: 'filter',
+        //     variable: 'numbers_shape',
+        //     setter: 'uniform1iv',
+        //     type: 'uniform'
+        // },
         {
             tensor: 'filter',
-            variable: 'texture',
-            setter: 'initTexture',
-            type: 'texture'
-        },
-        {
-            tensor: 'counter',
             variable: 'texture',
             setter: 'initTexture',
             type: 'texture'
@@ -79,5 +70,17 @@ export default {
             setter: 'initTexture',
             type: 'texture'
         }
+        // {
+        //     tensor: 'origin',
+        //     variable: 'numbers_shape',
+        //     setter: 'uniform1iv',
+        //     type: 'uniform'
+        // },
+        // {
+        //     tensor: 'out',
+        //     variable: 'numbers_shape',
+        //     setter: 'uniform1iv',
+        //     type: 'uniform'
+        // }
     ]
 };

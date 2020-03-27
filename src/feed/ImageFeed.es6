@@ -13,6 +13,7 @@ export default class imageFeed {
         this.pixels = '';
         this.defaultParams = {
             gapFillWith: '#000',
+            mean: [0, 0, 0],
             std: [1, 1, 1]
         };
     };
@@ -61,7 +62,8 @@ export default class imageFeed {
         let std = opt.std;
         // 考虑channel因素获取数据
         for (let i = 0; i < data.length; i += 4) {
-
+            // img_mean 0.485, 0.456, 0.406
+            //img_std 0.229, 0.224, 0.225
             let index = i / 4;
             let vIndex = Math.floor(index / sw);
             let hIndex = index - (vIndex * sw) - 1;
@@ -82,10 +84,12 @@ export default class imageFeed {
      * @param shape
      */
     allReshapeToRGB(imageData, opt, scaleSize) {
-        const {sw, sh} = scaleSize;
+        //const {sw, sh} = scaleSize;
         const [b, c, h, w] = opt.targetShape;
         let data = imageData.data || imageData;
+        // mean和std是介于0-1之间的
         let mean = opt.mean;
+        let std = opt.std;
         let dataLength = data.length;
         // let result = new Float32Array(dataLength * 3);
         let result = this.result;
@@ -101,10 +105,14 @@ export default class imageFeed {
                 let iwj = iw + j;
                 for (let k = 0; k < c; ++k) {
                     let a = iwj * 4 + k;
-                    result[offset++] = (data[a] - mean[k]) / 256;
+                    result[offset] = data[a] / 255;
+                    result[offset] -= mean[k];
+                    result[offset] /= std[k];
+                    offset++;
                 }
             }
         }
+        
         return result;
     };
 
@@ -115,6 +123,7 @@ export default class imageFeed {
      * @return {Object} 缩放后的尺寸
      */
     reSize(image, params) {
+        console.log('execute resize!!');
         // 原始图片宽高
         const width = this.pixelWidth;
         const height = this.pixelHeight;
@@ -136,7 +145,40 @@ export default class imageFeed {
         this.setInputCanvas(image);
         return {sw, sh};
     };
+    /**
+     * 根据scale缩放图像并且缩放成目标尺寸并居中
+     */
+    resizeAndFitTargetSize(image, params){
+        console.log('execute resizeAndFitTargetSize!!');
+        // 原始图片宽高
+        const width = this.pixelWidth;
+        const height = this.pixelHeight;
+        // 缩放后的宽高
+        let sw = width;
+        let sh = height;
+        // 最小边缩放到scale
+        if (width < height) {
+            sw = params.scale;
+            sh = Math.round(sw * height / width);
+        } else {
+            sh = params.scale;
+            sw = Math.round(sh * width / height);
+        }
 
+        this.fromPixels2DContext.canvas.width = sw;
+        this.fromPixels2DContext.canvas.height = sh;
+        const targetWidth = params.targetSize.width;
+        const targetHeight = params.targetSize.height;
+        this.fromPixels2DContext.drawImage(
+            image, 0, 0, sw, sh);
+        let x = (sw - targetWidth)/2;
+        let y = (sh - targetHeight)/2;
+        sw = targetWidth;
+        sh = targetHeight;
+        let data = this.getImageData(params, x, y, {sw, sh});
+        this.setInputCanvas(image);
+        return data;
+}
 
     /**
      * 缩放成目标尺寸并居中
@@ -199,14 +241,16 @@ export default class imageFeed {
      * @param pixels
      * @returns {Uint8ClampedArray}
      */
-    getImageData(pixels, scaleSize) {
+    getImageData(pixels, x, y, scaleSize) {
+
         const {sw, sh} = scaleSize;
         // 复制画布上指定矩形的像素数据
         let vals = this.fromPixels2DContext
-            .getImageData(0, 0, sw, sh);
+            .getImageData(x, y, sw, sh);
         // crop图像
         // const width = pixels.width;
         // const height = pixels.height;
+
         return vals;
     };
 
@@ -236,17 +280,26 @@ export default class imageFeed {
         if (pixels instanceof HTMLImageElement || pixels instanceof HTMLVideoElement) {
             this.pixelWidth = pixels.naturalWidth || pixels.width;
             this.pixelHeight = pixels.naturalHeight || pixels.height;
-            if (opt.scale) { // 兼容以前的，如果有scale就是短边缩放到scale模式
-                scaleSize = this.reSize(pixels, opt);
-                data = this.getImageData(opt, scaleSize);
+            if (opt.scale && opt.targetSize){ // Moblienet的情况
+                data = this.resizeAndFitTargetSize(pixels, opt);
                 data2 = this.fromPixels2DContext2.getImageData(0, 0, this.pixelWidth, this.pixelHeight);
             }
-            else if (opt.targetSize) { // 如果有targetSize，就是装在目标宽高里的模式
+            else if (opt.scale) { // 兼容以前的，如果有scale就是短边缩放到scale模式
+
+                scaleSize = this.reSize(pixels, opt);
+                console.dir(scaleSize);
+                console.dir(pixels);
+                data = this.getImageData(opt, 0, 0, scaleSize);
+                data2 = this.fromPixels2DContext2.getImageData(0, 0, this.pixelWidth, this.pixelHeight);
+            }
+            else if (opt.targetSize) { // 如果有targetSize，就是装在目标宽高里的模式 TinyYolo的情况
+
                 scaleSize = this.fitToTargetSize(pixels, opt);
-                data = this.getImageData(opt, scaleSize);
+                data = this.getImageData(opt, 0, 0, scaleSize);
                 data2 = this.fromPixels2DContext2.getImageData(0, 0, this.pixelWidth, this.pixelHeight);
             }
         }
+
 
         if (opt.gray) {
             data = grayscale(data);
@@ -259,7 +312,6 @@ export default class imageFeed {
         if (opt.targetShape) {
             data = this.allReshapeToRGB(data, opt, scaleSize);
         }
-        
         return [{data: data, shape: opt.shape || opt.targetShape, name: 'image', canvas: data2}];
     }
 }

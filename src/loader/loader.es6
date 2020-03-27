@@ -29,6 +29,24 @@ export default class Loader  {
         if (!this.loadOptions) {
             this.loadOptions = {};
         }
+        else {
+            // this.fetchJson(this.modelGonfig.dir + 'x.json').then(data => {
+            //     const [b, c, h, w] = [1, 3, 320, 320];
+            //     const size = data.length;
+            //     const total = 3 * 320 * 320;
+            //     this.testData = new Float32Array(total);
+            //     for (let i = 0; i < size; i++) {
+            //         let j = i / (c * w) | 0;
+            //         let k = i % (c * w);
+            //         let b1 = j / h | 0;
+            //         let h1 = j % h;
+            //         let c1 = k % c;
+            //         let w1 = k / c | 0;
+            //         let l = b1 * (c * h * w) + c1 * (h * w) + h1 * (w) + w1;
+            //         this.testData[i] = data[l];
+            //     }
+            // });
+        }
     }
 
     fetchOneChunk(path) {
@@ -110,10 +128,22 @@ export default class Loader  {
                 && item.name.match(TMP_SCHEME_REGEX) === null
                 && item.name.match(TMP_REGEX) === null;
             })
+            // .sort((a, b) => {
+            //     if (a.name > b.name) {
+            //         return 1;
+            //     }
+            //     if (a.name < b.name) {
+            //         return -1;
+            //     }
+            //     return 0;
+            // }) // 按字母顺序排列 在model.json里
             .forEach(item => {
                 len = item.shape.reduce((a, b) => a * b); // 长度为shape的乘积
-                item.data = this.allData.slice(marker, marker + len);
-                marker += len;
+                // 为了减少模型体积，模型转换工具不会导出非persistable的数据，这里只需要读取persistable的数据
+                if (item.persistable) {
+                    item.data = this.allData.slice(marker, marker + len);
+                    marker += len;
+                }
             });
     }
 

@@ -16,7 +16,13 @@ export default {
             conf: {
                 TENSOR_NAME: 'filter'
             }
-        }
+        },
+        		{
+			func: 'transferFromNHWCtoNCHW',
+			conf:{
+
+			}
+		}
     ],
     conf: [
         'LENGTH_SHAPE_FILTER',

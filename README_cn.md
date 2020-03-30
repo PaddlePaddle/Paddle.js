@@ -87,7 +87,7 @@ let result = await inst.read();
 
 模型转换器需要输入一个Paddle格式的model，可以是Paddle Hub中的model，运行转换器将会得到paddle.js的JSON格式model。
 
-## eb友好的model格式
+## Web友好的model格式
 
 上面的转换脚本生成两种类型的文件：
 

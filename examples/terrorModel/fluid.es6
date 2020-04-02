@@ -110,8 +110,8 @@ async function run(input) {
     let nchwData = Utils.nhwc2nchw(result, shape);
     Utils.stridePrint(nchwData);
 
-    // fileDownload(nchwData, "data.txt");
-};
+    // fileDownload(nchwData, 'data.txt');
+}
 
 function generareFluidData(feed) {
     let data = new Float32Array(3 * 224 * 224);
@@ -132,13 +132,13 @@ function selectImage(file) {
     reader.onload = function (evt) {
         let img = document.getElementById('image');
         img.src = evt.target.result;
-        img.onload = function() {
+        img.onload = function () {
             run(img);
         };
-    }
+    };
     reader.readAsDataURL(file.files[0]);
 }
 // selectImage
-document.getElementById("uploadImg").onchange = function () {
+document.getElementById('uploadImg').onchange = function () {
     selectImage(this);
 };

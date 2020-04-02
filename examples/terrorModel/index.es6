@@ -119,7 +119,7 @@ async function run(input) {
         class2Score.push({
             name,
             score: score2List[index]
-        })
+        });
     });
 
     // 展示结果
@@ -129,10 +129,10 @@ async function run(input) {
     document.querySelector('.result #name').innerHTML = resName;
     document.querySelector('.result #percent').innerHTML = resPercent;
     document.querySelector('.detector-result-container').style.display = 'block';
-};
+}
 
 // 小数转百分比
-function toPercent(data){
+function toPercent(data) {
     let str = Number(data * 100).toFixed(3);
     return str += '%';
 }
@@ -146,13 +146,13 @@ function convertTo12class(scores) {
 }
 
 function convertTo2class(scores) {
-    const totalScore = scores.reduce((acc, cur) => acc +=cur, 0);
+    const totalScore = scores.reduce((acc, cur) => acc += cur, 0);
     let normalScore = scores[0] + scores[10] + scores[11] + scores[12] + scores[13];
     let terrorScore = totalScore - normalScore;
     return [
         normalScore,
         terrorScore
-    ]
+    ];
 }
 
 function selectImage(file) {
@@ -163,13 +163,13 @@ function selectImage(file) {
     reader.onload = function (evt) {
         let img = document.getElementById('image');
         img.src = evt.target.result;
-        img.onload = function() {
+        img.onload = function () {
             run(img);
         };
-    }
+    };
     reader.readAsDataURL(file.files[0]);
 }
 // selectImage
-document.getElementById("uploadImg").onchange = function () {
+document.getElementById('uploadImg').onchange = function () {
     selectImage(this);
 };

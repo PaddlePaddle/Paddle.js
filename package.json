@@ -9,6 +9,7 @@
     "mobilenet": "parcel ./examples/mobileNet/index.html",
     "tinyYolo": "parcel ./examples/tinyYolo/index.html",
     "huangfan": "parcel ./examples/huangfan/index.html",
+    "terrorModel": "parcel ./examples/terrorModel/index.html",
     "yolo": "parcel ./examples/yolo/index.html",
     "videoDemo": "parcel ./examples/videoDemo.html --port 8123 --https",
     "unitTest": "parcel ./test/unitTest.html",
@@ -33,6 +34,7 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "babel-runtime": "^6.26.0",
+    "less": "^3.11.1",
     "parcel-bundler": "^1.10.3",
     "webpack-cli": "^3.3.6"
   },
@@ -43,7 +45,7 @@
     "@babel/plugin-transform-runtime": "^7.6.2",
     "@babel/runtime": "^7.7.2",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
-    "js-file-download": "^0.4.5",
+    "js-file-download": "^0.4.10",
     "vconsole": "^3.3.2",
     "webpack": "^4.39.2",
     "webpack-zepto": "0.0.1"

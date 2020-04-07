@@ -203,7 +203,7 @@ export default {
         return fourDimShape;
     },
 
-    /* 
+    /*
      * 将nhwc排布数据转为nchw排布数据
      */
     nhwc2nchw(data, shape) {
@@ -226,7 +226,7 @@ export default {
         return nchwData;
     },
 
-    /* 
+    /*
      * 将nchw排布数据转为nhwc排布数据
      */
     nchw2nhwc(data, shape) {
@@ -249,9 +249,9 @@ export default {
         return nhwcData;
     },
 
-    /* 
+    /*
      * 等距间隔打印数据
-     */ 
+     */
     stridePrint(data, count = 20) {
         let realPrintCount = count;
         if (data.length <= realPrintCount) {
@@ -270,7 +270,7 @@ export default {
         // console.log(numbers)
     },
 
-    /* 
+    /*
      * 连续打印数据
      */
     continuousPrint(data, count = 100) {
@@ -282,7 +282,30 @@ export default {
         for (let i = 0; i < realPrintCount; i++) {
             numbers.push(i + ": " + data[i]);
         }
-        // console.log(numbers)
+        console.log(numbers)
+    },
+
+    softmax(nchwData) {
+        let result = new Float32Array(nchwData.length);
+        let maxValue = nchwData[0];
+        let tempValue = 0.0;
+        let sumValue = 0.0;
+        for (let i = 1; i < nchwData.lenght; i++) {
+            tempValue = nchwData[i];
+            if (maxValue < tempValue) {
+                maxValue = tempValue;
+            }
+        }
+        for (let i = 0; i < nchwData.length; i++) {
+            tempValue = Math.exp(nchwData[i] - maxValue);
+            result[i] = tempValue;
+            sumValue = sumValue + tempValue;
+        }
+        for (let i = 0; i < nchwData.length; i++) {
+            result[i] = result[i] / sumValue;
+        }
+        return result;
+
     }
 };
 /* eslint-enable */

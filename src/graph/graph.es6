@@ -1,6 +1,5 @@
 /* eslint-disable */
 import GraphExecutor from '../executor/executor';
-import IO from '../feed/imageFeed';
 import Runtime from '../runtime/runtime';
 import OpData from '../utils/opData';
 import Factory from '../factory/fshader/factory';
@@ -27,12 +26,19 @@ export default class Graph {
         this.feedOp = null;
         this.feedItem = null;
         this.test = false;
+        this.formatLayout = 'NCHW';
         this.isExecuted = false;
         // 网络层数
         this.iLayer = 0;
 
-        if (this.options && this.options.options && this.options.options.test === true) {
-            this.test = true;
+        if (this.options && this.options.options ) {
+            if (this.options.options.test === true) {
+                this.test = true;
+            }
+            if (this.options.options.formatLayout) {
+                this.formatLayout = this.options.options.formatLayout;
+            }
+
         }
 
         if (!this.inst) {
@@ -222,6 +228,15 @@ export default class Graph {
                 return item;
         });
     }
+    formatWeight(vars) {
+        if (this.formatLayout === 'NHWC') {
+            vars.map((item) => {
+                if (item.data && item.shape) {
+                    item.data =  Utils.nhwc2nchw(item.data, item.shape);
+                }
+            });
+        }
+    };
     /**
      * Create Ops Executor Object Map
      * @param ops

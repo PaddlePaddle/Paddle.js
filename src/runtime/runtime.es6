@@ -86,6 +86,7 @@ export default {
         // 其实这里应该有个fetch的执行调用或者fetch的输出
         // log.start('后处理-读取数据');
         // 开始读数据
+        // window.log.end('执行时间');
         return this.gpu.downloadFoat32TensorFromBuffer(pbo);
     },
 

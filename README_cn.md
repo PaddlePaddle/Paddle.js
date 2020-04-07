@@ -1,39 +1,35 @@
-[中文版](https://github.com/PaddlePaddle/Paddle-Lite/blob/develop/web/README_cn.md)
+[中文版](./README_cn.md)
 
-# Web
+# Paddle.js
 
-Paddle.js is an Web project for Baidu Paddle, which is an an open source deep learning framework designed to work on web browser. Load a pretrained paddle.js SavedModel or Paddle Hub module into the browser and run inference through Paddle.js. It could run on nearly every browser with WebGL support.
+Paddle.js是百度Paddle的web方向子项目，是一个运行在浏览器中的开源深度学习框架。Paddle.js可以加载提前训练好的paddle模型，或者将paddle hub中的模型通过paddle.js的模型转换工具变成浏览器友好的模型进行在线推理预测使用。目前，paddle.js仅可以在支持webGL的浏览器中运行。
 
-## Key Features
+## 主要特点
 
 ### Modular
 
 Web project is built on Atom system which is a versatile framework to support GPGPU operation on WebGL. It is quite modular and could be used to make computation tasks faster by utilizing WebGL.
 
-### High Performance
-
-Web project could run TinyYolo model in less than 30ms on chrome. This is fast enough to run deep learning models in many realtime scenarios.
-
-### Browser Coverage
+### 浏览器覆盖范围
 
 * PC: Chrome
 * Mac: Chrome
 * Android: Baidu App and QQ Browser
 
-### Supported operations
+### 支持的操作
 
 Currently Paddle.js only supports a limited set of Paddle Ops. See the full list. If your model uses unsupported ops, the Paddle.js script will fail and produce a list of the unsupported ops in your model. Please file issues to let us know what ops you need support with.
+目前，Paddle.js只支持有限的一组算子操作。如果您的模型使用不支持的操作，那么padde.js将运行失败，如果您的模型中存在不支持的op操作的列表。请提出问题，让我们知道你需要支持。
+[查看完整列表](./src/factory/fshader/README.md)
 
-[Supported operations Pages](./src/factory/fshader/README.md)
 
+## 加载和运行模型
 
-## Loading and running in the browser
-
-If the original model was a SavedModel, use paddle.load(). 
+如果原始模型是浏览器友好的model格式, 使用 paddle.load()接在模型。
 
 ```bash
 
-import * as tf from 'paddlejs';
+import Paddle from 'paddlejs';
 
 let feed = io.process({
     input: document.getElementById('image'),
@@ -82,32 +78,30 @@ let result = await inst.read();
 
 ```
 
-Please see feed documentation for details.
+对于前输入处理的有关详细信息，请参阅feed文档。
 
-Please see fetch documentation for details.
-
-
-## Run the converter script provided by the pip package:
-
-The converter expects a Paddlejs SavedModel, Paddle Hub module, Tpaddle.js JSON format for input.
+对于得到结果后输出处理的有关详细信息，请参阅fetch文档。
 
 
-## Web-friendly format
+## 运行Paddle.js提供的转换器脚本
 
-The conversion script above produces 2 types of files:
+模型转换器需要输入一个Paddle格式的model，可以是Paddle Hub中的model，运行转换器将会得到paddle.js的JSON格式model。
 
- - model.json (the dataflow graph and weight manifest file)
- - group1-shard\*of\* (collection of binary weight files)
+## Web友好的model格式
 
+上面的转换脚本生成两种类型的文件：
 
-## Preview Demo
-
-Paddle.js has some pre-converted models to Paddle.js format .There are some demos in the following URL, open a browser page with the demo.
-
-[Supported Demo Pages](./examples/README.md)
+ - model.json (数据流图和权重清单文件)
+ - group1-shard\*of\* (二进制权重文件的集合)
 
 
-## Feedback and Community Support
+## 预览演示
+
+Paddle.js已经将一些模型转换成了Paddle.js支持的格式。在下面的URL中有一些演示，打开一个带有演示的浏览器页面。
+[查看更多](./examples/README.md)
+
+
+## 反馈和社区支持
 
 - Questions, reports, and suggestions are welcome through Github Issues!
 - Forum: Opinions and questions are welcome at our [PaddlePaddle Forum](https://ai.baidu.com/forum/topic/list/168)！

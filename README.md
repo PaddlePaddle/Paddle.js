@@ -1,6 +1,6 @@
-[中文版](https://github.com/PaddlePaddle/Paddle-Lite/blob/develop/web/README_cn.md)
+[中文版](./README_cn.md)
 
-# Web
+# Paddle.js
 
 Paddle.js is an Web project for Baidu Paddle, which is an an open source deep learning framework designed to work on web browser. Load a pretrained paddle.js SavedModel or Paddle Hub module into the browser and run inference through Paddle.js. It could run on nearly every browser with WebGL support.
 
@@ -33,7 +33,8 @@ If the original model was a SavedModel, use paddle.load().
 
 ```bash
 
-import * as tf from 'paddlejs';
+import Paddle from 'paddlejs';
+
 
 let feed = io.process({
     input: document.getElementById('image'),
@@ -71,7 +72,7 @@ const paddle = new Paddle({
 
 model = await paddle.load();
 
-// run model
+// 
 let inst = model.execute({
     input: feed
 });
@@ -89,7 +90,7 @@ Please see fetch documentation for details.
 
 ## Run the converter script provided by the pip package:
 
-The converter expects a Paddlejs SavedModel, Paddle Hub module, Tpaddle.js JSON format for input.
+The converter expects a Paddlejs SavedModel, Paddle Hub module, paddle.js JSON format for input.
 
 
 ## Web-friendly format

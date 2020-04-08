@@ -45,7 +45,7 @@ export default {
             gpu.attachFrameBuffer(opData.iLayer, outTensorId);
             // let end = +Date.now();
             let bufferStatus = gpu.frameBufferIsComplete();
-            if (bufferStatus.isComplete) {
+            // if (bufferStatus.isComplete) {
                 // start = +Date.now();
                 // timeObj['buferstatus-time'] = start - end;
                 // gpu.attachShader(opData.fshader);
@@ -59,7 +59,7 @@ export default {
 
                 // 开始计算，执行 gl.drawArrays
                 this.gpu.render(opData.renderData, opData.iLayer, isRendered);
-            }
+             // }
         });
 
     },

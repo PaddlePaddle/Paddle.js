@@ -75,7 +75,6 @@ export default class Paddle {
     }
     updateFeed() {
         this.graph.feedItem.data = this.graph.feed.input[0].data;
-        // Utils.img2texture(this.graph.feedItem);
     }
     /**
      * dispose

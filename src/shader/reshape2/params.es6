@@ -14,7 +14,6 @@ const int channel_origin = CHANNEL_ORIGIN;
 const int total_shape_origin = TOTAL_SHAPE_ORIGIN;
 
 
-
 // 输入数据
  uniform sampler2D texture_origin;
 `;

@@ -267,7 +267,6 @@ export default {
         for (let i = 0; i < realPrintCount; i++) {
             numbers.push(i * stride + ": " + data[i * stride]);
         }
-        // console.log(numbers)
     },
 
     /*

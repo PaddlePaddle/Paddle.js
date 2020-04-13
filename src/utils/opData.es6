@@ -65,8 +65,8 @@ const opBehavior = {
         'mergeTensor'
     ],
     elementwise_add: [
-        'needBatch',
-		'processAxis'
+		'processAxis',
+        'needBatch'
     ],
     conv2d_elementwise_add: [
         'mergeAttrs',
@@ -95,11 +95,14 @@ const opBehavior = {
         'reshape',
         'needBatch'
     ],
-	reshape: [
+    bilinear_interp:[
+        'needBatch'
+    ],
+	reshape2: [
 		'needBatch',
 		'inferShape'
 	],
-	transpose: [
+	transpose2: [
 		'needBatch',
 		'setPerm'
 	],
@@ -122,6 +125,7 @@ const mergeType = 'conv2d-elementwise_add';
 
 export default class OpData {
     constructor(name, input = {}, output = {}, attrs = {}) {
+        console.dir(this);
         this.realName = name;
         this.name = name;
         this.attrs = attrs;
@@ -150,7 +154,7 @@ export default class OpData {
     }
 
     inferShape(){
-		if (this.name == 'reshape'){
+		if (this.name == 'reshape2'){
 			let inputShape = this.input.X[0].shape;
 			let targetShape = this.attrs.new_shape;
 			for (let i = 0; i < targetShape.length; i++){
@@ -201,6 +205,7 @@ export default class OpData {
                 // 默认取第一个数据
                 const data = this.output[key] || [{}];
                 if (tensorName[key.toLowerCase()]) {
+                    console.dir(this);
                     data.forEach(item => {
                         item.tensorName = tensorName[key.toLowerCase()];
                         tensorData.push(item);
@@ -276,6 +281,7 @@ export default class OpData {
         this.outputTensors.forEach(outTensor => {
             const params = JSON.parse(JSON.stringify(this.data));
             // 获取output tensor的数据
+
             tensorAttrs.forEach(attr => {
                 params[attr+ '_' + outTensor.name] = outTensor[attr];
             });
@@ -289,7 +295,7 @@ export default class OpData {
     }
 
 	setPerm(tensorData = []){
-		let arrayPerm = this.attrs['perm'];
+		let arrayPerm = this.attrs['axis'];
 		let l = arrayPerm.length;
 		if (l == 3) {
 			if (arrayPerm == [2,0,1]) {
@@ -430,7 +436,15 @@ export default class OpData {
     }
 
     normalizeDim() {
-        const origin_shape = this.input.X[0].shape;
+        let origin_shape_temp = this.input.X[0].shape;
+        if (origin_shape_temp.length < 4) {
+            let batch = [];
+            for (let i = 0; i < (4 - origin_shape_temp.length); i++) {
+                batch.push(1);
+            }
+            origin_shape_temp = batch.concat(origin_shape_temp);
+        }
+        const origin_shape = origin_shape_temp;
         const axis = this.attrs.axis > -1 ? this.attrs.axis : origin_shape.length + this.attrs.axis;
         const dim_value = [];
         for (let index = 0; index < origin_shape[axis]; index++) {
@@ -439,25 +453,24 @@ export default class OpData {
         this.attrs.target_length = dim_value.length;
         this.attrs.target_value = dim_value;
         // 保存 输入 tensor 对应dim 的长度
+        console.log('this.attrs.target_length' + this.attrs.target_length);
+        console.log('this.attrs.target_value' + this.attrs.target_value);
         this.attrs.inputs_dim = [origin_shape[axis]];
+        console.log('this.attrs.inputs_dim' + this.attrs.inputs_dim);
         this.attrs.dim = 4 - origin_shape.length + axis;
+        console.log('this.attrs.dim' + this.attrs.dim);
     }
 
     processAxis() {
 		let shape_x = this.input.X[0].shape;
-		let shape_y = this.input.Y[0].shape;
-		let y_length = shape_y.length;
-		for (let i = shape_y.length - 1; i >=0 ;i--){
-			if (shape_y[i] == 1) {
-				y_length -= 1;
-			}
-		}
-		let axis_temp = this.attrs['axis'];
-		if (axis_temp == -1) {
-			this.attrs['axis'] = shape_x.length - y_length;
-		}
-		this.attrs['shape_length_origin'] = shape_x.length;
-		this.attrs['shape_length_counter'] = y_length;
+        let shape_y = this.input.Y[0].shape;
+        let axis_temp = this.attrs['axis'];
+        if (axis_temp == -1) {
+            this.attrs['axis'] = shape_x.length - shape_y.length;
+        }
+        else {
+            this.attrs['axis'] = 4 - shape_y.length - axis_temp;
+        }
 	}
 
     reshape(tensorData = []) {

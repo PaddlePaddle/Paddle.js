@@ -10,6 +10,7 @@
     "tinyYolo": "parcel ./examples/tinyYolo/index.html",
     "huangfan": "parcel ./examples/huangfan/index.html",
     "terrorModel": "parcel ./examples/terrorModel/index.html",
+    "humanseg": "parcel ./examples/humanseg/index.html",
     "yolo": "parcel ./examples/yolo/index.html",
     "videoDemo": "parcel ./examples/videoDemo.html --port 8123 --https",
     "unitTest": "parcel ./test/unitTest.html",

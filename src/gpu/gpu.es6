@@ -346,6 +346,7 @@ export default class gpu {
         } else {
             // texture = gl.createTexture();
             if (isRendered && (iLayer > 0 || (iLayer === 0 && item.tensor !== 'origin'))) {
+            
                 const tData = this.cacheTextures['' + iLayer];
                 texture = tData[item.variable + '_' + item.tensor];
             } else {

@@ -13,6 +13,7 @@ const unitPath = {
 	'elementwise' : 'model.test.elementwise_add.json',
 	'depthwise' : 'model.test.depthwise_conv2d.json',
 	'reshape' : 'model.test.reshape.json',
+	'bilinear_interp' : 'model.test.bilinear_interp.json',
 	'transpose' : 'model.test.transpose.json',
 	'conv2d_transpose': 'model.test.conv2d_transpose.json',
 	'elementwise_add': 'model.test.elementwise_add.json',
@@ -20,7 +21,7 @@ const unitPath = {
     'split': 'model.test.split.json'
 };
 // 制定运行的 op
-const modelType = 'split';
+const modelType = 'conv2d_transpose';
 // 制定运行的 op
 const unitData = unitPath[modelType];
 

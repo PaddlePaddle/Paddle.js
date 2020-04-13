@@ -38,6 +38,9 @@ export default class GraphExecutor {
         else if (this.type === 'elementwise_add') {
             return this.inputs.X.concat(this.inputs.Y);
         }
+        else if (this.type === 'concat') {
+            return this.inputs.X.concat(this.inputs.Y);
+        }
         else if (this.type === 'relu' || this.type === 'leaky_relu') {
             return this.inputs.X;
         }
@@ -60,7 +63,13 @@ export default class GraphExecutor {
     }
 
     get outputsName() {
-        if (this.type === 'conv2d') {
+        if (this.outputs.Output) {
+            return this.outputs.Output;
+        }
+        else if (this.outputs.out) {
+            return this.outputs.out;
+        }
+        else if (this.type === 'conv2d') {
             return this.outputs.Output;
         }
         else if (this.type === 'depthwise_conv2d') {

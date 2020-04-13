@@ -16,17 +16,17 @@ import struct
 logDataCount = 50
 
 # 输入模型所在目录
-modelDir = "infer_model/MobileNetV2/"
+modelDir = "humanseg/"
 # 输入模型名
 modelName = "model"
 # 输入参数名，当且仅当所有模型参数被保存在一个单独的二进制文件中，它才需要被指定，若为分片模型，请设置为None
-paramsName = "params"
+paramsName = None
 # 模型feed shape
-inputShape = (1, 3, 224, 224)
+inputShape = (1, 3, 192, 192)
 # 输入数据
 inputData = np.full(inputShape, 1, "float32")
 # 输出模型目录
-outputDir = "../dist/model/mobileNet/"
+outputDir = "../dist/model/humanseg/"
 # 权重分片扩展名
 extensionName = ".dat"
 # 输出各var数据

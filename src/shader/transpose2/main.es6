@@ -1,6 +1,6 @@
 /* eslint-disable */
 /**
- * @file reshape主函数
+ * @file transpose主函数
  * @author chenhaoze
  */
 export default `
@@ -9,11 +9,11 @@ void main(void) {
     // 输出数据
 	ivec4 oPos = getOutputTensorPos();
 	    // 重排遍历顺序
-	int sumVal = oPos.g + oPos.a * channel_out + oPos.b * channel_out * width_shape_out + oPos.r * channel_out * width_shape_out * height_shape_out;
-	ivec4 new_oPos = transferFromNHWCtoNCHW(sumVal, channel_out, width_shape_out, height_shape_out, total_shape_origin);
+	//int sumVal = oPos.g + oPos.a * channel_out + oPos.b * channel_out * width_shape_out + oPos.r * channel_out * width_shape_out * height_shape_out;
+	//ivec4 new_oPos = transferFromNHWCtoNCHW(sumVal, channel_out, width_shape_out, height_shape_out, total_shape_origin);
 
 	// 转置 坐标变换
-	oPos = new_oPos;
+	//oPos = new_oPos;
 	float o = 0.0;
 	if (perm_size == 1) {
 		o = getValueFromTensorPos_origin(oPos[0], oPos[1], oPos[2], oPos[3]);

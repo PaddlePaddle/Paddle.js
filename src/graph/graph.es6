@@ -115,10 +115,10 @@ export default class Graph {
      */
     execute(inputs) {
         this.feed = inputs;
-        console.log('this.weightMap');
-        console.dir(this.weightMap);
+        //console.log('this.weightMap');
+        //console.dir(this.weightMap);
         const executor = this.getNetsStart(this.weightMap);
-        console.dir(executor);
+        //console.dir(executor);
         if (!this.inst) {
             this.inst = Runtime.init({
                 'width_raw_canvas': 512,
@@ -200,9 +200,9 @@ export default class Graph {
     constructOpsMap(ops) {
         return ops.map((item, idx) => {
             const outputsName = item.outputsName[0];
-            console.log(item);
+            //console.log(item);
             const next = this.getNextExecutor(ops, outputsName);
-            console.log(next);
+            //console.log(next);
             if (next.length > 0) {
                 item.next = next[0].id;
             }
@@ -211,11 +211,11 @@ export default class Graph {
     }
 
     execute_try(temp, ops, idtoindex, executed, inline, prev){
-        console.log('execute_try!first look at this op');
-        console.log(ops[temp]);
+        //console.log('execute_try!first look at this op');
+        //console.log(ops[temp]);
         let canrun = this.checkifcanrun(temp, ops, idtoindex, executed);
         if (canrun === false) {
-            console.log('canrun === false!');
+            //console.log('canrun === false!');
             var a = inline.pop();
             this.execute_try(idtoindex[a.id], ops, idtoindex, executed, inline, prev);
             return;
@@ -227,40 +227,40 @@ export default class Graph {
             executed[item] = true;
         })
         let next = this.getNextByOp(ops, ops[temp]);
-        console.log('this is its next:');
-        console.dir(next);
+        //console.log('this is its next:');
+        //console.dir(next);
         while (next.length === 1) {
             let flag = true;
             for (let i = 0; i < next[0].inputsName.length; i++){
                 if (executed[next[0].inputsName[i]] === false) flag = false;
             }
             if (flag === false) {
-                console.log('can not execute next now! jump to another op:');
+                //console.log('can not execute next now! jump to another op:');
 
                 if (inline.length === 0) return;
                 prev = temp;
                 let a = inline.pop();
-                console.dir(a);
+                //console.dir(a);
                 ops[temp].next = a.id;
                 temp = idtoindex[a.id];
                 this.execute_try(temp, ops, idtoindex, executed, inline, prev);
                 return;
             }
             else {
-                console.log('now execute next op! it is');
+                //console.log('now execute next op! it is');
                 ops[temp].next = next[0].id;
                 temp = idtoindex[next[0].id];
-                console.dir(ops[temp]);
+                //console.dir(ops[temp]);
                 next = this.getNextByOp(ops, ops[temp]);
-                console.log('its next is: ');
+                //console.log('its next is: ');
                 ops[temp].outputsName.forEach(function(item, index) {
                     executed[item] = true;
                 })
-                console.dir(next);
+                //console.dir(next);
             }
         }
         if (next.length > 1){
-            console.log('next.length > 1!!!');
+            //console.log('next.length > 1!!!');
             for (let i = next.length - 1; i >=0 ; i--){
                  inline.push(next[i]);
             }
@@ -273,18 +273,18 @@ export default class Graph {
 
 
     arrangeMap(ops) {
-        console.log('arrangeMap!');
-        console.dir(ops);
+        //console.log('arrangeMap!');
+        //console.dir(ops);
         var idtoindex = {};
         var executed = {};
         var inline = [];
         let temp = 0;
-        console.log('graph ops:');
-        console.dir(ops);
+        //console.log('graph ops:');
+        //console.dir(ops);
         let ops1 = ops;
         ops1.forEach(function(item, index) {
             idtoindex[item.id] = index;
-            console.dir(item);
+            //console.dir(item);
             item.outputsName.forEach(function(i, idx){
                 executed[i] = false;
             })
@@ -359,8 +359,8 @@ export default class Graph {
      * @returns {*}
      */
     createOpsMap(ops) {
-        console.log('ops!!');
-        console.dir(ops);
+        //console.log('ops!!');
+        //console.dir(ops);
         return ops.map((item, idx) => {
             item.idx = idx;
             const graphExecutor = new GraphExecutor(item);

@@ -8,11 +8,13 @@ export default `
     precision highp float;
     precision highp int;
 #else
-    precision mediump float;
-    precision mediump int;
+    precision highp float;
+    precision highp int;
 #endif
-
+    varying vec2 vCoord;
+    varying vec4 outColor;
     void setOutput(float result) {
-        gl_FragColor.r = result;
+            gl_FragColor.r = result;
     }
 `;
+

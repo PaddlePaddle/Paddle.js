@@ -43,7 +43,7 @@ export default class Paddle {
 
     }
     preGraph (artifacts) {
-        console.log('preGraph');
+        //console.log('preGraph');
         let that = this;
         const graph = new Graph(that.options);
         that.graph = graph;
@@ -51,11 +51,11 @@ export default class Paddle {
         that.graph.formatWeight(that.graph.data.vars);
         const opsMap = that.graph.createOpsMap(that.graph.data.ops, that.graph.data.vars);
         const opsMap1 = that.graph.constructOpsMap(opsMap);
-        console.log('opsMap1!');
-        console.dir(opsMap1);
+        //console.log('opsMap1!');
+        //console.dir(opsMap1);
         const opsMap2 = that.graph.arrangeMap(opsMap1);
-        console.log('opsMap2!');
-        console.dir(opsMap2);
+        //console.log('opsMap2!');
+        //console.dir(opsMap2);
         that.graph.weightMap = opsMap2;
     }
     /**
@@ -74,7 +74,7 @@ export default class Paddle {
             this.graph.weightMap.forEach(op => {
                 const type = op.type;
                 if (type !== 'feed' && type !== 'fetch') {
-                    console.log(op.type);
+                    //console.log(op.type);
                     that.graph.buildOpData(op);
                 }
             });

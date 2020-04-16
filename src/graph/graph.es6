@@ -92,6 +92,7 @@ export default class Graph {
         }
         opindex++;
         console.log(opindex);
+        console.dir(executor.type);
         //if (executor.opData) console.log(executor.opData.iLayer);
         executor.execute(this.inst, this.isExecuted);
         if (false && executor.opData && opindex >= 184){
@@ -277,6 +278,7 @@ export default class Graph {
         //console.dir(ops);
         var idtoindex = {};
         var executed = {};
+        var inIndex = [];
         var inline = [];
         let temp = 0;
         //console.log('graph ops:');
@@ -286,14 +288,61 @@ export default class Graph {
             idtoindex[item.id] = index;
             //console.dir(item);
             item.outputsName.forEach(function(i, idx){
+                executed[i] = true;
+            })
+        });
+
+         ops1.forEach(function(item, index) {
+            inIndex[index] = 0;
+            idtoindex[item.id] = index;
+            if (item.inputsName.length > 1) {
+                item.inputsName.forEach(function(i,idx){
+                    if (executed[i] == true) inIndex[index]++;
+                })
+            }
+            else inIndex[index] = item.inputsName.length;
+            console.log('inIndex '+index+' type '+item.type+' is '+inIndex[index]);
+            //console.dir(item);
+        });
+          ops1.forEach(function(item, index) {
+            idtoindex[item.id] = index;
+            //console.dir(item);
+            item.outputsName.forEach(function(i, idx){
                 executed[i] = false;
             })
         });
 
         //ops[0].inputsName[0] = {name : "feed"};
-       // ops[0].outputsName[0] = {name : "image"};
-        this.execute_try(temp, ops, idtoindex, executed, inline, -1);
+       //ops[0].outputsName[0] = {name : "image"};
+        //this.execute_try(temp, ops, idtoindex, executed, inline, -1);
+
+        this.topoSort(ops, inIndex, inline);
         return ops;
+    }
+
+    topoSort(ops, inIndex, inline){
+        var inline = [];
+        inline.push(0);
+        let prev = -1;
+        let a = 0;
+        while(inline.length > 0){
+        if (prev >= 0) ops[prev].next = ops[a].id;
+        prev = a;
+        a = inline.pop();
+        for (let i = 0; i < ops[a].outputsName.length; i++){
+            //executed[ops[a].outputsName[i]] = true;
+            ops.forEach(function(item, index) {
+            item.inputsName.forEach(function(j, idx){
+                if (j == ops[a].outputsName[i]) {
+                    inIndex[index]--;
+                    if (inIndex[index] == 0){
+                        inline.push(index);
+                    }
+                }
+            })
+        });
+        }
+        }
     }
 
     checkifcanrun(temp, ops, executed){

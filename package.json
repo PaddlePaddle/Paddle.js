@@ -11,6 +11,7 @@
     "huangfan": "parcel ./examples/huangfan/index.html",
     "terrorModel": "parcel ./examples/terrorModel/index.html",
     "humanseg": "parcel ./examples/humanseg/index.html",
+    "humanStream": "parcel ./examples/humanStream/index.html --port 1234 --https",
     "yolo": "parcel ./examples/yolo/index.html",
     "videoDemo": "parcel ./examples/videoDemo.html --port 8123 --https",
     "unitTest": "parcel ./test/unitTest.html",

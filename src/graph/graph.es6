@@ -91,9 +91,6 @@ export default class Graph {
             return;
         }
         opindex++;
-        //console.log(opindex);
-        //console.dir(executor.type);
-        //if (executor.opData) console.log(executor.opData.iLayer);
         executor.execute(this.inst, this.isExecuted);
         if (false && executor.opData && opindex >= 184){
             console.log('return!');
@@ -116,10 +113,7 @@ export default class Graph {
      */
     execute(inputs) {
         this.feed = inputs;
-        //console.log('this.weightMap');
-        //console.dir(this.weightMap);
         const executor = this.getNetsStart(this.weightMap);
-        //console.dir(executor);
         if (!this.inst) {
             this.inst = Runtime.init({
                 'width_raw_canvas': 512,
@@ -201,9 +195,7 @@ export default class Graph {
     constructOpsMap(ops) {
         return ops.map((item, idx) => {
             const outputsName = item.outputsName[0];
-            //console.log(item);
             const next = this.getNextExecutor(ops, outputsName);
-            //console.log(next);
             if (next.length > 0) {
                 item.next = next[0].id;
             }
@@ -234,7 +226,6 @@ export default class Graph {
                 })
             }
             else inIndex[index] = item.inputsName.length;
-            //console.log('inIndex '+index+' type '+item.type+' is '+inIndex[index]);
         });
         this.topoSort(ops, inIndex, idtoindex);
         return ops;
@@ -266,8 +257,6 @@ export default class Graph {
                 }
             }
         }
-        //console.dir(ops);
-        //console.log('this is ops');
     }
 
 
@@ -321,8 +310,6 @@ export default class Graph {
      * @returns {*}
      */
     createOpsMap(ops) {
-        //console.log('ops!!');
-        //console.dir(ops);
         return ops.map((item, idx) => {
             item.idx = idx;
             const graphExecutor = new GraphExecutor(item);

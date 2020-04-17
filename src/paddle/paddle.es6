@@ -43,7 +43,6 @@ export default class Paddle {
 
     }
     preGraph (artifacts) {
-        //console.log('preGraph');
         let that = this;
         const graph = new Graph(that.options);
         that.graph = graph;
@@ -51,11 +50,7 @@ export default class Paddle {
         that.graph.formatWeight(that.graph.data.vars);
         const opsMap = that.graph.createOpsMap(that.graph.data.ops, that.graph.data.vars);
         const opsMap1 = that.graph.constructOpsMap(opsMap);
-        //console.log('opsMap1!');
-        //console.dir(opsMap1);
         const opsMap2 = that.graph.arrangeMap(opsMap1);
-        //console.log('opsMap1!');
-        //console.dir(opsMap1);
         that.graph.weightMap = opsMap2;
     }
     /**
@@ -67,8 +62,6 @@ export default class Paddle {
     execute(inputs) {
         let that = this;
         this.feed = this.graph.feed = inputs;
-        //console.log('weightMap!');
-        //console.dir(this.graph.weightMap);
         // 生成op数据
         if (!this.graph.isExecuted) {
             let i = 0;

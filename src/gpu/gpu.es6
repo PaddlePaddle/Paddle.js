@@ -156,7 +156,6 @@ export default class gpu {
             gl.RGBA,       // Format for each pixel.
             gl.FLOAT,          // Data type for each chanel.
             temp);
-        //console.log('case 1 is good.');
         gl.bindTexture(gl.TEXTURE_2D, null);
         this.texturesMap[out.tensorId] = texture;
         return program;
@@ -364,8 +363,6 @@ export default class gpu {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-            //console.log('case 2 begins here.')
-            //console.dir(this);
             if (this.version == 2){
             gl.texImage2D(gl.TEXTURE_2D,
                 0,
@@ -380,12 +377,8 @@ export default class gpu {
             else {
                 let oneSize = item.width_texture * item.height_texture;
                 let temp = new Float32Array(item.width_texture * item.height_texture * 4);
-                if (oneSize != item.data.length) {
-                    //console.log('length mismatch!');
-                }
                 for (let i = 0; i < item.data.length; i++){
                     temp[i*4] = (item.data[i]);
-                    //console.log(temp[i*4]);
                     temp[i*4+1] = 0;
                     temp[i*4+2] = 0;
                     temp[i*4+3] = 0;
@@ -400,7 +393,6 @@ export default class gpu {
                 gl.FLOAT,
                 temp);
             }
-            //console.log('case 2 is good. ends here.');
         }
     }
 

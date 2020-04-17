@@ -151,8 +151,8 @@ export default class imageFeed {
                 }
             }
         }
-        console.log('this is the end of reshapetorgb !!!');
-        console.dir(result);
+        //console.log('this is the end of reshapetobgr !!!');
+        //console.dir(result);
         return result;
     };
 
@@ -328,13 +328,13 @@ export default class imageFeed {
                 data2 = this.fromPixels2DContext2.getImageData(0, 0, this.pixelWidth, this.pixelHeight);
             }
             else if (opt.scale) { // 兼容以前的，如果有scale就是短边缩放到scale模式
-                console.log('op.scale!!!');
+                //console.log('op.scale!!!');
                 scaleSize = this.reSize(pixels, opt);
-                console.dir(scaleSize);
-                console.dir(pixels);
+                //console.dir(scaleSize);
+                //console.dir(pixels);
                 data = this.getImageData(opt, 0, 0, scaleSize);
-                console.log('this is the end of opt.scale');
-                console.dir(data);
+                //console.log('this is the end of opt.scale');
+                //console.dir(data);
                 data2 = this.fromPixels2DContext2.getImageData(0, 0, this.pixelWidth, this.pixelHeight);
             }
             else if (opt.targetSize) { // 如果有targetSize，就是装在目标宽高里的模式 TinyYolo的情况

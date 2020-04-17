@@ -91,8 +91,8 @@ export default class Graph {
             return;
         }
         opindex++;
-        console.log(opindex);
-        console.dir(executor.type);
+        //console.log(opindex);
+        //console.dir(executor.type);
         //if (executor.opData) console.log(executor.opData.iLayer);
         executor.execute(this.inst, this.isExecuted);
         if (false && executor.opData && opindex >= 184){
@@ -234,7 +234,7 @@ export default class Graph {
                 })
             }
             else inIndex[index] = item.inputsName.length;
-            console.log('inIndex '+index+' type '+item.type+' is '+inIndex[index]);
+            //console.log('inIndex '+index+' type '+item.type+' is '+inIndex[index]);
         });
         this.topoSort(ops, inIndex, idtoindex);
         return ops;
@@ -266,8 +266,8 @@ export default class Graph {
                 }
             }
         }
-        console.dir(ops);
-        console.log('this is ops');
+        //console.dir(ops);
+        //console.log('this is ops');
     }
 
 

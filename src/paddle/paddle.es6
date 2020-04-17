@@ -54,8 +54,8 @@ export default class Paddle {
         //console.log('opsMap1!');
         //console.dir(opsMap1);
         const opsMap2 = that.graph.arrangeMap(opsMap1);
-        console.log('opsMap1!');
-        console.dir(opsMap1);
+        //console.log('opsMap1!');
+        //console.dir(opsMap1);
         that.graph.weightMap = opsMap2;
     }
     /**
@@ -67,8 +67,8 @@ export default class Paddle {
     execute(inputs) {
         let that = this;
         this.feed = this.graph.feed = inputs;
-        console.log('weightMap!');
-        console.dir(this.graph.weightMap);
+        //console.log('weightMap!');
+        //console.dir(this.graph.weightMap);
         // 生成op数据
         if (!this.graph.isExecuted) {
             let i = 0;

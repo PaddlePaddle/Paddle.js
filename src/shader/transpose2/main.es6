@@ -19,10 +19,10 @@ void main(void) {
 		o = getValueFromTensorPos_origin(oPos[0], oPos[1], oPos[2], oPos[3]);
 	}
 	else if (perm_size == 2) {
-		o = getValueFromTensorPos_origin(oPos[0], oPos[1], oPos[min(2 + perm_0, 3)], oPos[min(2 + perm_1, 3)]);
+		o = getValueFromTensorPos_origin(oPos[0], oPos[1], oPos[(2 + perm_0)>3?3:(2 + perm_0)], oPos[(2 + perm_1)>3?3:(2 + perm_1)]);
 	}
 	else if (perm_size == 3) {
-		o = getValueFromTensorPos_origin(oPos[0], oPos[min(1 + perm_0, 3)], oPos[min(1 + perm_1, 3)], oPos[min(1 + perm_2, 3)]);
+		o = getValueFromTensorPos_origin(oPos[0], oPos[(1 + perm_0)>3?3:(1 + perm_0)], oPos[(1 + perm_1)>3?3:(1 + perm_1)], oPos[(1 + perm_2)>3?3:(1 + perm_2)]);
 	}
 	else if (perm_size == 4) {
 		o = getValueFromTensorPos_origin(oPos[perm_0], oPos[perm_1], oPos[perm_2], oPos[perm_3]);

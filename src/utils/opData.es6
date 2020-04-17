@@ -455,7 +455,7 @@ export default class OpData {
         // 保存 输入 tensor 对应dim 的长度
         //console.log('this.attrs.target_length' + this.attrs.target_length);
         //console.log('this.attrs.target_value' + this.attrs.target_value);
-        this.attrs.inputs_dim = [origin_shape[axis]];
+        this.attrs.inputs_dim = origin_shape[axis];
         //console.log('this.attrs.inputs_dim' + this.attrs.inputs_dim);
         this.attrs.dim = 4 - origin_shape.length + axis;
         //console.log('this.attrs.dim' + this.attrs.dim);

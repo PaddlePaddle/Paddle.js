@@ -18,7 +18,7 @@ const int total_shape_out = TOTAL_SHAPE_OUT;
 
 const int dim = DIM;
 const int num = NUM;
-const int target_value[TARGET_LENGTH] = int[](TARGET_VALUE);
+const int target_length = TARGET_LENGTH;
 
 
 // 输入数据

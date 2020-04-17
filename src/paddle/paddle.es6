@@ -50,13 +50,13 @@ export default class Paddle {
         that.graph.data = artifacts.data;
         that.graph.formatWeight(that.graph.data.vars);
         const opsMap = that.graph.createOpsMap(that.graph.data.ops, that.graph.data.vars);
-        //const opsMap1 = that.graph.constructOpsMap(opsMap);
+        const opsMap1 = that.graph.constructOpsMap(opsMap);
         //console.log('opsMap1!');
         //console.dir(opsMap1);
-        const opsMap1 = that.graph.arrangeMap(opsMap);
+        const opsMap2 = that.graph.arrangeMap(opsMap1);
         console.log('opsMap1!');
         console.dir(opsMap1);
-        that.graph.weightMap = opsMap1;
+        that.graph.weightMap = opsMap2;
     }
     /**
      * Executes inference for the model for given input tensors.
@@ -75,11 +75,7 @@ export default class Paddle {
             this.graph.weightMap.forEach((op, index) => {
                 const type = op.type;
                 if (type !== 'feed' && type !== 'fetch') {
-                    console.log(index);
-                    console.dir(op.type);
-                    console.log('this op outputs: '+op.outputsName[0]);
-                    console.log('this op is: '+op.id);
-                    console.log('this ops next is: '+op.next);
+
                     that.graph.buildOpData(op);
                 }
             });

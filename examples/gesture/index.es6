@@ -101,7 +101,7 @@ async function run(input) {
     console.log(maxItem);
     document.getElementById('txt').innerHTML = Map['' + maxItem.index];
     console.log('识别出的结果是' + Map['' + maxItem.index]);
-};
+}
 var image = '';
 function selectImage(file) {
     if (!file.files || !file.files[0]) {
@@ -111,14 +111,14 @@ function selectImage(file) {
     reader.onload = function (evt) {
         let img = document.getElementById('image');
         img.src = evt.target.result;
-        img.onload = function() {
+        img.onload = function () {
             run(img);
         };
         image = evt.target.result;
-    }
+    };
     reader.readAsDataURL(file.files[0]);
 }
 // selectImage
-document.getElementById("uploadImg").onchange = function () {
+document.getElementById('uploadImg').onchange = function () {
     selectImage(this);
 };

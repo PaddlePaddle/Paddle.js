@@ -28,11 +28,13 @@ export default `
     const int stride_h = int(STRIDES_X);
     const int stride_v = int(STRIDES_Y);
     // padding的数目
-    const int padLeft = width_shape_filter - PADDINGS_X - 1;
-    const int padTop = height_shape_filter - PADDINGS_Y - 1;
+    //const int padLeft = width_shape_filter - PADDINGS_X - 1;
+    //const int padTop = height_shape_filter - PADDINGS_Y - 1;
+    const int padLeft = PADDINGS_X;
+    const int padTop = PADDINGS_Y;
     // dilation膨胀系数
-    const int dilation_h = DILATION_H;
-    const int dilation_v = DILATION_V;
+    const int dilation_h = DILATIONS_X;
+    const int dilation_v = DILATIONS_Y;
     // groups
     const int groups = GROUPS;
     

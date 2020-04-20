@@ -26,6 +26,7 @@ export default class Camera {
     }
 
     // 访问用户媒体设备的兼容方法
+    // safari在getusermedia之后 才能拿到deviceid
     run(deviceId, callback) {
         if (window.stream) {
             window.stream.getTracks().forEach(function (track) {
@@ -41,7 +42,12 @@ export default class Camera {
         };
         const error = this.error.bind(this);
         if (this.deviceInfos.length) {
-            constraints.video.deviceId=  {exact: deviceId || this.deviceInfos[0]};
+            constraints.video.deviceId =  {exact: deviceId || this.deviceInfos[0].deviceId};
+        }
+        if (!constraints.video.deviceId) {
+            constraints = {
+                video: true
+            };
         }
 
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {

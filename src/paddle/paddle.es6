@@ -47,8 +47,15 @@ export default class Paddle {
         const graph = new Graph(that.options);
         that.graph = graph;
         that.graph.data = artifacts.data;
+        that.graph.formatWeight(that.graph.data.vars);
         const opsMap = that.graph.createOpsMap(that.graph.data.ops, that.graph.data.vars);
-        that.graph.weightMap = that.graph.constructOpsMap(opsMap);
+        const opsMap1 = that.graph.constructOpsMap(opsMap);
+        // console.log('opsMap1!');
+        // console.dir(opsMap1);
+        const opsMap2 = that.graph.arrangeMap(opsMap1);
+        // console.log('opsMap2!');
+        // console.dir(opsMap2);
+        that.graph.weightMap = opsMap2;
     }
     /**
      * Executes inference for the model for given input tensors.

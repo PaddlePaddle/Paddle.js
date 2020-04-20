@@ -2,9 +2,9 @@
 import Gpu from '../gpu/gpu';
 import getMaxUniforms from '../test/getMaxUniforms';
 import Factory from '../factory/fshader/factory';
-import {getTextureShapeInfo} from '../utils/opData';
+// import {getTextureShapeInfo} from '../utils/opData';
 // 生成factory实例
-const factory = new Factory({});
+// const factory = new Factory({});
 /**
  * @file gpu运行时
  * @author wangqun@baidu.com, yangmingming@baidu.com
@@ -48,7 +48,7 @@ export default {
             gpu.attachFrameBuffer(opData.iLayer, outTensorId);
             // let end = +Date.now();
             let bufferStatus = gpu.frameBufferIsComplete();
-            if (bufferStatus.isComplete) {
+            // if (bufferStatus.isComplete) {
                 // start = +Date.now();
                 // timeObj['buferstatus-time'] = start - end;
                 // gpu.attachShader(opData.fshader);
@@ -62,7 +62,7 @@ export default {
 
                 // 开始计算，执行 gl.drawArrays
                 this.gpu.render(opData.renderData, opData.iLayer, isRendered);
-            }
+             // }
         });
     },
 
@@ -86,6 +86,7 @@ export default {
         // 其实这里应该有个fetch的执行调用或者fetch的输出
         // log.start('后处理-读取数据');
         // 开始读数据
+        // window.log.end('执行时间');
         return this.gpu.downloadFoat32TensorFromBuffer(pbo);
     },
 

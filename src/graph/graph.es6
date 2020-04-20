@@ -14,6 +14,7 @@ import Utils from '../utils/utils';
 const factory = new Factory({});
 // 获取op的输入配置
 const opConfs = factory.getOpConfs();
+let opindex = 0;
 
 export default class Graph {
     constructor(options) {
@@ -27,12 +28,19 @@ export default class Graph {
         this.feedOp = null;
         this.feedItem = null;
         this.test = false;
+        this.formatLayout = 'NCHW';
         this.isExecuted = false;
         // 网络层数
         this.iLayer = 0;
 
-        if (this.options && this.options.options && this.options.options.test === true) {
-            this.test = true;
+        if (this.options && this.options.options ) {
+            if (this.options.options.test === true) {
+                this.test = true;
+            }
+            if (this.options.options.formatLayout) {
+                this.formatLayout = this.options.options.formatLayout;
+            }
+
         }
 
         if (!this.inst) {
@@ -83,6 +91,9 @@ export default class Graph {
         if (executor.type === 'fetch') {
             return;
         }
+        opindex++;
+        // console.log(opindex);
+        //if (executor.opData) console.log(executor.opData.iLayer);
         executor.execute(this.inst, this.isExecuted);
         if (executor.next) {
             const id = executor.next;
@@ -187,6 +198,106 @@ export default class Graph {
             return item;
         });
     }
+
+    execute_try(temp, ops, idtoindex, executed, inline, prev){
+        console.log('execute_try!first look at this op');
+        console.log(ops[temp]);
+        let canrun = this.checkifcanrun(temp, ops, idtoindex, executed);
+        if (canrun === false) {
+            // console.log('canrun === false!');
+            var a = inline.pop();
+            this.execute_try(idtoindex[a.id], ops, idtoindex, executed, inline, prev);
+            return;
+        }
+        if (prev >=0) {
+            ops[prev].next = ops[temp].id;
+        }
+        ops[temp].outputsName.forEach(function(item, index) {
+            executed[item] = true;
+        })
+        let next = this.getNextByOp(ops, ops[temp]);
+        // console.log('this is its next:');
+        // console.dir(next);
+        while (next.length === 1) {
+            let flag = true;
+            for (let i = 0; i < next[0].inputsName.length; i++){
+                if (executed[next[0].inputsName[i]] === false) flag = false;
+            }
+            if (flag === false) {
+                // console.log('can not execute next now! jump to another op:');
+
+                if (inline.length === 0) return;
+                prev = temp;
+                let a = inline.pop();
+                // console.dir(a);
+                ops[temp].next = a.id;
+                temp = idtoindex[a.id];
+                this.execute_try(temp, ops, idtoindex, executed, inline, prev);
+                return;
+            }
+            else {
+                // console.log('now execute next op! it is');
+                ops[temp].next = next[0].id;
+                temp = idtoindex[next[0].id];
+                // console.dir(ops[temp]);
+                next = this.getNextByOp(ops, ops[temp]);
+                // console.log('its next is: ');
+                ops[temp].outputsName.forEach(function(item, index) {
+                    executed[item] = true;
+                })
+                // console.dir(next);
+            }
+        }
+        if (next.length > 1){
+            // console.log('next.length > 1!!!');
+            for (let i = next.length - 1; i >=0 ; i--){
+                 inline.push(next[i]);
+            }
+
+            var a = inline.pop();
+            this.execute_try(idtoindex[a.id], ops, idtoindex, executed, inline, temp);
+        }
+        return;
+    }
+
+
+    arrangeMap(ops) {
+        // console.log('arrangeMap!');
+        // console.dir(ops);
+        var idtoindex = {};
+        var executed = {};
+        var inline = [];
+        let temp = 0;
+        // console.log('graph ops:');
+        // console.dir(ops);
+        let ops1 = ops;
+        ops1.forEach(function(item, index) {
+            idtoindex[item.id] = index;
+            // console.dir(item);
+            item.outputsName.forEach(function(i, idx){
+                executed[i] = false;
+            })
+        });
+
+        //ops[0].inputsName[0] = {name : "feed"};
+       // ops[0].outputsName[0] = {name : "image"};
+        this.execute_try(temp, ops, idtoindex, executed, inline, -1);
+        return ops;
+    }
+
+    checkifcanrun(temp, ops, executed){
+        if (!ops[temp].inputsName) return true;
+        for (let i = 0; i < ops[temp].inputsName.length; i++){
+                if (executed[ops[temp].inputsName[i]] === false)  return false;
+        }
+        return true;
+    }
+
+
+
+
+
+
     /**
      * Get Ops Nets Start Node
      * @param ops
@@ -222,12 +333,23 @@ export default class Graph {
                 return item;
         });
     }
+    formatWeight(vars) {
+        if (this.formatLayout === 'NHWC') {
+            vars.map((item) => {
+                if (item.data && item.shape) {
+                    item.data =  Utils.nhwc2nchw(item.data, item.shape);
+                }
+            });
+        }
+    };
     /**
      * Create Ops Executor Object Map
      * @param ops
      * @returns {*}
      */
     createOpsMap(ops) {
+        // console.log('ops!!');
+        // console.dir(ops);
         return ops.map((item, idx) => {
             item.idx = idx;
             const graphExecutor = new GraphExecutor(item);
@@ -250,6 +372,17 @@ export default class Graph {
         });
     }
 
+    getNextByOp(ops, op) {
+        return ops.filter((item, key) => {
+            for (let i = 0; i < item.inputsName.length; i++) {
+                for(let j = 0; j < op.outputsName.length; j++) {
+                    if (item.inputsName[i] === op.outputsName[j]) {
+                        return true;
+                    }
+                }
+            }
+        });
+    }
     /**
      * dispose
      */

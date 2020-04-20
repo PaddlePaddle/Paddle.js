@@ -283,6 +283,29 @@ export default {
             numbers.push(i + ": " + data[i]);
         }
         console.log(numbers)
+    },
+
+    softmax(nchwData) {
+        let result = new Float32Array(nchwData.length);
+        let maxValue = nchwData[0];
+        let tempValue = 0.0;
+        let sumValue = 0.0;
+        for (let i = 1; i < nchwData.lenght; i++) {
+            tempValue = nchwData[i];
+            if (maxValue < tempValue) {
+                maxValue = tempValue;
+            }
+        }
+        for (let i = 0; i < nchwData.length; i++) {
+            tempValue = Math.exp(nchwData[i] - maxValue);
+            result[i] = tempValue;
+            sumValue = sumValue + tempValue;
+        }
+        for (let i = 0; i < nchwData.length; i++) {
+            result[i] = result[i] / sumValue;
+        }
+        return result;
+
     }
 };
 /* eslint-enable */

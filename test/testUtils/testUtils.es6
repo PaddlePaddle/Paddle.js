@@ -1,5 +1,6 @@
 import 'babel-polyfill';
 import Paddle from '../../src/paddle/paddle';
+import Utils from '../../src/utils/utils';
 
 const unitPath = {
     'conv2d': 'model.test.conv2d.json',
@@ -9,16 +10,24 @@ const unitPath = {
     'relu': 'model.test.relu.json',
     'scale': 'model.test.scale.json',
     'softmax': 'model.test.softmax.json',
-    'relu6' : 'model.test.relu6.json'
+    'relu6' : 'model.test.relu6.json',
+	'elementwise' : 'model.test.elementwise_add.json',
+	'depthwise' : 'model.test.depthwise_conv2d.json',
+	'reshape' : 'model.test.reshape.json',
+	'bilinear_interp' : 'model.test.bilinear_interp.json',
+	'transpose' : 'model.test.transpose.json',
+	'conv2d_transpose': 'model.test.conv2d_transpose.json',
+	'elementwise_add': 'model.test.elementwise_add.json',
+    'concat': 'model.test.concat.json',
+    'split': 'model.test.split.json'
 };
 // 制定运行的 op
-const modelType = 'softmax';
+const modelType = 'split';
+// 制定运行的 op
 const unitData = unitPath[modelType];
 
-let Diff = require('./diff');
 let datas;
-let otherResult;
-let output
+let output;
 async function run() {
     const path = 'test/unitData';
     const MODEL_CONFIG = {
@@ -35,8 +44,9 @@ async function run() {
 
     let model = await paddle.load();
     datas = model.graph.data;
+
     output = deepCopy(datas);
-    // 测试单元
+
     model.graph.weightMap.forEach(op => {
         const type = op.type;
         if (type !== 'feed' && type !== 'fetch') {
@@ -45,18 +55,22 @@ async function run() {
         }
     });
     const executor = model.graph.weightMap;
-    let inst = model.graph.execute_(executor[0]);
+    model.graph.execute_(executor[0]);
 
-    let result = model.graph.inst.read();
-    console.dir(['result', result]);
-    var one = model.graph.inst.read();
-// var other = getResult('conv2d');
+    // NHWC输出
+    let result = await model.graph.inst.read();
 
-    console.log('one');
-    console.log(one);
-    console.log('other');
+    // 获取 NHWC -> NCHW 的 输出
+    const outputNCHWShape = getOutputShape();
+    const outputNHWCShape = nchwShape2nhwcShape(outputNCHWShape);
+    let nchwResult = Utils.nhwc2nchw(result, outputNHWCShape);
+
+    console.log('result');
+    console.log(result);
+
+    console.log('NCHW RESULT');
+    console.log(nchwResult);
 }
-
 
 run();
 
@@ -64,90 +78,44 @@ function deepCopy (data) {
     return JSON.parse(JSON.stringify(data));
 }
 
-// let output = deepCopy(datas);
-let getTensor = function(id, times = 1) {
-    let find = 0;
-    let data = datas.ops.filter((item, idx) => {
-        if (id === item.type) {
-            ++find;
-            if (find === times) {
-                return true;
-            }
-        }
-    });
-    return getInputs(data[0]);
-};
 
-let getInputs = function(data) {
-
-    Object.keys(data.inputs).forEach(function(key){
-        data.inputs[key] = getValue(data.inputs[key][0], datas);
-
-    });
-    Object.keys(data.outputs).forEach(function(key){
-        let out = getValue(data.outputs[key][0], datas)
-        data.outputs[key] = out;
-        otherResult = out[0].data;
-    });
-    return data;
-
-};
-
-let getResult = function(id) {
-    let data = output.ops.filter((item, idx) => {
-        if (id === item.type) {
-
-            return true;
-        }
-    });
+const getResult = function (id) {
+    const data = output.ops.filter(item => id === item.type);
     return getoutputs(data[0]);
 };
-let getoutputs = function(data) {
-    let otherResult;
-    Object.keys(data.outputs).forEach(function(key){
-        let out = getValue(data.outputs[key][0], output);
-        otherResult = out[0].data;
-    });
-    return otherResult;
+
+const getValue = function(name, datas) {
+    return datas.vars.find(item => name === item.name);
 };
 
-let getValue = function(name, datas) {
-    return datas.vars.filter((item, idx) => {
-        if (name === item.name) {
-            return item;
+const OUTPUT_KEYS = ['out', 'y', 'output'];
+const getoutputs = function (data) {
+    const outputkey = Object.keys(data.outputs).find(key => OUTPUT_KEYS.includes(key.toLowerCase()));
+    const outputTensorId = data.outputs[outputkey].slice(-1)[0];
+    const outputTensor = getValue(outputTensorId, output);
+
+    return outputTensor;
+};
+
+function getOutputShape () {
+    var outputTensor = getResult(modelType);
+    return outputTensor.shape;
+}
+
+// NCHW shape 2 NHWC shape
+function nchwShape2nhwcShape(nchw) {
+    let batchNCHW = nchw;
+    if (nchw.length < 4) {
+        let batch = [];
+        for (let i = 0; i < (4 - nchw.length); i++) {
+            batch.push(1);
         }
-    });
-};
-// // 测试单元
-// let item = getTensor('conv2d');
+        batchNCHW = batch.concat(nchw);
+    }
+    const N = batchNCHW[0];
+    const C = batchNCHW[1];
+    const H = batchNCHW[2];
+    const W = batchNCHW[3];
 
-let func = function (model) {
-
-  //  console.log(other);
-
-
-    // var one = inst.read();
-    // var other = getResult('softmax');
-    // var color ='';
-    // var span = null;
-
-    // var diff = Diff.diffChars(one.toString(), other.toString()),
-    //     display = document.getElementById('display'),
-    //     fragment = document.createDocumentFragment();
-    //
-    // diff.forEach(function(part){
-    //     // green for additions, red for deletions
-    //     // grey for common parts
-    //     color = part.added ? 'green' :
-    //         part.removed ? 'red' : 'grey';
-    //     span = document.createElement('span');
-    //     span.style.color = color;
-    //     span.appendChild(document
-    //         .createTextNode(part.value));
-    //     fragment.appendChild(span);
-    // });
-    //
-    // display.appendChild(fragment);
-
-};
-
+    return [N, H, W, C];
+}

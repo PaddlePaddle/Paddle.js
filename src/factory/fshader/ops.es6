@@ -39,12 +39,15 @@ import softmax_conf from '../../shader/softmax/conf';
 import batchnorm_params from '../../shader/batchnorm/params';
 import batchnorm_func from '../../shader/batchnorm/main';
 import batchnorm_conf from '../../shader/batchnorm/conf';
-import reshape_params from '../../shader/reshape/params';
-import reshape_func from '../../shader/reshape/main';
-import reshape_conf from '../../shader/reshape/conf';
-import transpose_params from '../../shader/transpose/params';
-import transpose_func from '../../shader/transpose/main';
-import transpose_conf from '../../shader/transpose/conf';
+import reshape2_params from '../../shader/reshape2/params';
+import reshape2_func from '../../shader/reshape2/main';
+import reshape2_conf from '../../shader/reshape2/conf';
+import bilinear_interp_params from '../../shader/bilinear_interp/params';
+import bilinear_interp_func from '../../shader/bilinear_interp/main';
+import bilinear_interp_conf from '../../shader/bilinear_interp/conf';
+import transpose2_params from '../../shader/transpose2/params';
+import transpose2_func from '../../shader/transpose2/main';
+import transpose2_conf from '../../shader/transpose2/conf';
 
 import conv2d_elementwise_add_params from '../../shader/conv2d_elementwise_add/params';
 import conv2d_elementwise_add_func from '../../shader/conv2d_elementwise_add/main';
@@ -183,15 +186,20 @@ export default {
             func: batchnorm_func,
             confs: batchnorm_conf
         },
-		reshape: {
-			params: reshape_params,
-			func: reshape_func,
-			confs: reshape_conf
+		reshape2: {
+			params: reshape2_params,
+			func: reshape2_func,
+			confs: reshape2_conf
 		},
-		transpose: {
-			params: transpose_params,
-			func: transpose_func,
-			confs: transpose_conf
+        bilinear_interp: {
+            params: bilinear_interp_params,
+            func: bilinear_interp_func,
+            confs: bilinear_interp_conf
+        },
+		transpose2: {
+			params: transpose2_params,
+			func: transpose2_func,
+			confs: transpose2_conf
 		}
     },
     atoms: {

@@ -33,52 +33,52 @@ If the original model was a SavedModel, use paddle.load().
 
 ```bash
 
-	import Paddle from 'paddlejs';
+import Paddle from 'paddlejs';
 
 
-	let feed = io.process({
-        input: document.getElementById('image'),
-        params: {
-            gapFillWith: '#000', // What to use to fill the square part after zooming
-            targetSize: {
-                height: fw,
-                width: fh
-            },
-            targetShape: [1, 3, fh, fw], // Target shape changed its name to be compatible with previous logic
-            // shape: [3, 608, 608], // Preset sensor shape
-            mean: [117.001, 114.697, 97.404], // Preset mean
-            // std: [0.229, 0.224, 0.225]  // Preset std
-        }
-    });
+let feed = io.process({
+    input: document.getElementById('image'),
+    params: {
+        gapFillWith: '#000', // What to use to fill the square part after zooming
+        targetSize: {
+            height: fw,
+            width: fh
+        },
+        targetShape: [1, 3, fh, fw], // Target shape changed its name to be compatible with previous logic
+        // shape: [3, 608, 608], // Preset sensor shape
+        mean: [117.001, 114.697, 97.404], // Preset mean
+        // std: [0.229, 0.224, 0.225]  // Preset std
+    }
+});
 
-	const MODEL_CONFIG = {
-        dir: `/${path}/`, // model URL
-        main: 'model.json', // main graph
-    };
-	
-	const paddle = new Paddle({
-        urlConf: MODEL_CONFIG,
+const MODEL_CONFIG = {
+    dir: `/${path}/`, // model URL
+    main: 'model.json', // main graph
+};
+
+const paddle = new Paddle({
+    urlConf: MODEL_CONFIG,
+    options: {
+        multipart: true,
+        dataType: 'binary',
         options: {
-            multipart: true,
-            dataType: 'binary',
-            options: {
-                fileCount: 1, // How many model have been cut
-                getFileName(i) { 
-                    return 'chunk_' + i + '.dat';
-                }
+            fileCount: 1, // How many model have been cut
+            getFileName(i) { 
+                return 'chunk_' + i + '.dat';
             }
         }
-    });
+    }
+});
 
-    model = await paddle.load();
+model = await paddle.load();
 
-    // 
-	let inst = model.execute({
-        input: feed
-    });
+// 
+let inst = model.execute({
+    input: feed
+});
 
-    // There should be a fetch execution call or a fetch output
-    let result = await inst.read();
+// There should be a fetch execution call or a fetch output
+let result = await inst.read();
 
 
 ```

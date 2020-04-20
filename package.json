@@ -4,14 +4,19 @@
   "description": "paddle",
   "main": "index.js",
   "scripts": {
+    "server": "parcel ./src/index.html",
     "mnistdemo": "parcel ./examples/mnist/index.html",
     "mobilenet": "parcel ./examples/mobileNet/index.html",
     "tinyYolo": "parcel ./examples/tinyYolo/index.html",
     "huangfan": "parcel ./examples/huangfan/index.html",
+    "terrorModel": "parcel ./examples/terrorModel/index.html",
+    "humanseg": "parcel ./examples/humanseg/index.html",
+    "humanStream": "parcel ./examples/humanStream/index.html --port 1234 --https",
     "yolo": "parcel ./examples/yolo/index.html",
     "videoDemo": "parcel ./examples/videoDemo.html --port 8123 --https",
     "unitTest": "parcel ./test/unitTest.html",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack -w"
   },
   "devDependencies": {
     "@babel/core": "^7.7.2",
@@ -27,6 +32,7 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "babel-runtime": "^6.26.0",
+    "less": "^3.11.1",
     "parcel-bundler": "^1.10.3",
     "webpack-cli": "^3.3.6"
   },
@@ -34,7 +40,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "js-file-download": "^0.4.5",
-    "vconsole": "^3.3.2"
+    "@babel/plugin-transform-runtime": "^7.6.2",
+    "@babel/runtime": "^7.7.2",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "js-file-download": "^0.4.10",
+    "vconsole": "^3.3.2",
+    "webpack": "^4.39.2",
+    "webpack-zepto": "0.0.1"
   }
 }

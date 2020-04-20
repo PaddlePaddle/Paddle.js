@@ -7,8 +7,8 @@ export default `
     // start函数
     void main(void) {
         ivec4 oPos = getOutputTensorPosLIMIT_OUT();
-		int sumVal = oPos.g + oPos.a * channel_out + oPos.b * channel_out * width_shape_out;
-        ivec4 new_oPos = transferFromNHWCtoNCHW(sumVal, channel_out, width_shape_out, height_shape_out, total_shape_out);
+		//int sumVal = oPos.g + oPos.a * channel_out + oPos.b * channel_out * width_shape_out;
+        //ivec4 new_oPos = transferFromNHWCtoNCHW(sumVal, channel_out, width_shape_out, height_shape_out, total_shape_out);
         int x = oPos.a;
         int c = oPos.g;
         int y = oPos.b;

@@ -3,64 +3,12 @@
     <head>
         <meta charset="utf-8">
         <title>paddle web demo</title>
-        <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,initial-scale=1,viewport-fit=cover">
-        <style>
-            p {
-                display: block;
-                margin-block-start: 1em;
-                margin-block-end: 1em;
-                margin-inline-start: 0;
-                margin-inline-end: 0;
-            }
-            #uploadImg {
-                border: solid 1px #808080;
-                width: 100%;
-                padding: 10px;
-                background-color: #cabfbf;
-                color: #FFF;
-                font-size: 16px;
-            }
-            p.section-head {
-                font-variant: small-caps;
-                text-transform: uppercase;
-                letter-spacing: .17em;
-                line-height: 1.2em;
-                font-weight: 500;
-                margin-top: 2em;
-                margin-bottom: 1em;
-                border-left: 1px solid #EF6C00;
-                padding-left: 24px;
-                color: #818181;
-            }
-            .image-wrap {
-                position: relative;
-            }
-            #image {
-                width: 100%;
-            }
-            #myDiv {
-                position: absolute;
-                border: 1px solid #F00;
-                box-sizing: border-box;
-            }
-        </style>
+        <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
     </head>
     <body>
-        <section class="title-area">
-            <h1>Paddle.js: Using a pretrained mobileNet V2</h1>
-        </section>
-
-        <section>
-            <p class="section-head">Description</p>
-            <p>
-                Please upload a picture to experience online classification.
-            </p>
-        </section>
-        <section>
-            <img id="image" src="https://m.baidu.com/se/static/img/iphone/logo.png" style="max-width: 100%;">
-            <input type="file" id="uploadImg">
-            <div id="txt"></div>
-        </section>
+        <img id="image" src="https://m.baidu.com/se/static/img/iphone/logo.png" style="max-width: 100%;">
+        <input type="file" id="uploadImg">
+        <div id="txt"></div>
         <script src="index.es6"></script>
     </body>
 </html>

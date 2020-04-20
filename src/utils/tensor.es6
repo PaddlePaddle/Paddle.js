@@ -57,13 +57,6 @@ export default class Tensor {
                     }
                     this.data = data;
                 }
-                else {
-                    if (opts.data.length > this.total) {
-                        opts.data = opts.data.slice(0, this.total);
-                    }
-                    this.data = new Float32Array(opts.data);
-                    debugger;
-                }
 
             } else {
                 // batchnorm的scale

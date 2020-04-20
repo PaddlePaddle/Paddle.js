@@ -108,6 +108,7 @@ export default class imageFeed {
                     result[offset] = data[a] / 255;
                     result[offset] -= mean[k];
                     result[offset] /= std[k];
+                    //result[offset] = 0.5;
                     offset++;
                 }
             }
@@ -115,6 +116,46 @@ export default class imageFeed {
         
         return result;
     };
+
+/**
+     * 全部转bgr * H * W
+     * @param shape
+     */
+    allReshapeToBGR(imageData, opt, scaleSize) {
+        //const {sw, sh} = scaleSize;
+        const [b, c, h, w] = opt.targetShape;
+        let data = imageData.data || imageData;
+        // mean和std是介于0-1之间的
+        let mean = opt.mean;
+        let std = opt.std;
+        let dataLength = data.length;
+        // let result = new Float32Array(dataLength * 3);
+        let result = this.result;
+        // let offsetR = 0;
+        // let offsetG = dataLength / 4;
+        // let offsetB = dataLength / 2;
+        let offset = 0;
+        let size = h * w;
+        // h w c
+        for (let i = 0; i < h; ++i) {
+            let iw = i * w;
+            for (let j = 0; j < w; ++j) {
+                let iwj = iw + j;
+                for (let k = 0; k < c; ++k) {
+                    let a = iwj * 4 + (2-k);
+                    result[offset] = data[a];
+                    result[offset] -= mean[2-k];
+                    result[offset] /= std[2-k];
+                    //result[offset] = 0.5;
+                    offset++;
+                }
+            }
+        }
+        console.log('this is the end of reshapetorgb !!!');
+        console.dir(result);
+        return result;
+    };
+
 
     /**
      * 根据scale缩放图像
@@ -138,6 +179,8 @@ export default class imageFeed {
             sh = params.scale;
             sw = Math.round(sh * width / height);
         }
+        sw = params.scale;
+        sh = params.scale;
         this.fromPixels2DContext.canvas.width = sw;
         this.fromPixels2DContext.canvas.height = sh;
         this.fromPixels2DContext.drawImage(
@@ -285,15 +328,16 @@ export default class imageFeed {
                 data2 = this.fromPixels2DContext2.getImageData(0, 0, this.pixelWidth, this.pixelHeight);
             }
             else if (opt.scale) { // 兼容以前的，如果有scale就是短边缩放到scale模式
-
+               
                 scaleSize = this.reSize(pixels, opt);
                 console.dir(scaleSize);
                 console.dir(pixels);
                 data = this.getImageData(opt, 0, 0, scaleSize);
+                
                 data2 = this.fromPixels2DContext2.getImageData(0, 0, this.pixelWidth, this.pixelHeight);
             }
             else if (opt.targetSize) { // 如果有targetSize，就是装在目标宽高里的模式 TinyYolo的情况
-
+                
                 scaleSize = this.fitToTargetSize(pixels, opt);
                 data = this.getImageData(opt, 0, 0, scaleSize);
                 data2 = this.fromPixels2DContext2.getImageData(0, 0, this.pixelWidth, this.pixelHeight);
@@ -309,7 +353,10 @@ export default class imageFeed {
             data = this.reshape(data, opt, scaleSize);
         }
 
-        if (opt.targetShape) {
+        if (opt.bgr) {
+            data = this.allReshapeToBGR(data, opt, scaleSize);
+        }
+        else if (opt.targetShape) {
             data = this.allReshapeToRGB(data, opt, scaleSize);
         }
         return [{data: data, shape: opt.shape || opt.targetShape, name: 'image', canvas: data2}];

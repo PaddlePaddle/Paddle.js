@@ -74,12 +74,12 @@ async function run(input) {
         params: {
             gapFillWith: '#000', // 缩放后用什么填充不足方形部分
             targetSize: {
-                height: fw,
-                width: fh
+                height: fh,
+                width: fw
             },
             targetShape: [1, 3, fh, fw], // 目标形状 为了兼容之前的逻辑所以改个名
             // shape: [3, 608, 608], // 预设tensor形状
-            mean: [117.001, 114.697, 97.404], // 预设期望
+            mean: [117.001 / 255, 114.697 / 255, 97.404 / 255], // 预设期望
             // std: [0.229, 0.224, 0.225]  // 预设方差
         }
     });

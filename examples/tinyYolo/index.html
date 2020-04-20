@@ -5,45 +5,44 @@
     <title>paddleJS demo</title>
     <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,initial-scale=1,viewport-fit=cover">
     <style>
-        p {
-            display: block;
-            margin-block-start: 1em;
-            margin-block-end: 1em;
-            margin-inline-start: 0px;
-            margin-inline-end: 0px;
-        }
-        #uploadImg {
-            border: solid 1px gray;
-            width: 100%;
-            padding: 10px;
-            background-color: #cabfbf;
-            color: white;
-            font-size: 16px;
-        }
-        p.section-head {
-            font-variant: small-caps;
-            text-transform: uppercase;
-            letter-spacing: 0.17em;
-            line-height: 1.2em;
-            font-weight: 500;
-            margin-top: 2em;
-            margin-bottom: 1em;
-            border-left: 1px solid #EF6C00;
-            padding-left: 24px;
-            
-            color: #818181;
-        }
-        .image-wrap {
-            position: relative;
-        }
-        #image {
-            width: 100%;
-        }
-        #myDiv {
-            position: absolute;
-            border: 1px solid red;
-            box-sizing: border-box;
-        }
+    p {
+        display: block;
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+        margin-inline-start: 0;
+        margin-inline-end: 0;
+    }
+    #uploadImg {
+        border: solid 1px #808080;
+        width: 100%;
+        padding: 10px;
+        background-color: #cabfbf;
+        color: #FFF;
+        font-size: 16px;
+    }
+    p.section-head {
+        font-variant: small-caps;
+        text-transform: uppercase;
+        letter-spacing: .17em;
+        line-height: 1.2em;
+        font-weight: 500;
+        margin-top: 2em;
+        margin-bottom: 1em;
+        border-left: 1px solid #EF6C00;
+        padding-left: 24px;
+        color: #818181;
+    }
+    .image-wrap {
+        position: relative;
+    }
+    #image {
+        width: 100%;
+    }
+    #myDiv {
+        position: absolute;
+        border: 1px solid #F00;
+        box-sizing: border-box;
+    }
     </style>
 </head>
 <body>
@@ -62,17 +61,17 @@
     <section>
         <p class="section-head">Model Output</p>
         <div class="image-wrap">
-            <img id="mobilenet" />
+            <img id="mobilenet">
         </div>
         <p>原图片</p>
         <div class="image-wrap">
-            <img id="image" src=""/>
+            <img id="image" src="data:image/jpeg;base64,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">
             <div id="myDiv"></div>
         </div>
         <p>画布</p>
         <canvas id="myCanvas"></canvas>
-        <br/>
-        <input type="file" id="uploadImg"/>
+        <br>
+        <input type="file" id="uploadImg">
         <div id="txt"></div>
 
     </section>

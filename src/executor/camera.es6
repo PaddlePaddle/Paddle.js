@@ -35,7 +35,10 @@ export default class Camera {
         }
 
         let constraints = {
-            video: {}
+            video: {
+                width: { min: 200, ideal: 400, max: 800 },
+                height: { min: 250, ideal: 500, max: 1000 }
+            }
         };
         const success = stream => {
             this.success(stream, callback);

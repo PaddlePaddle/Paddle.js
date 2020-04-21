@@ -16,7 +16,7 @@
     "videoDemo": "parcel ./examples/videoDemo.html --port 8123 --https",
     "unitTest": "parcel ./test/unitTest.html",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack -w"
+    "build": "parcel build ./examples/humanStream/index.html"
   },
   "repository": {
     "type": "git",

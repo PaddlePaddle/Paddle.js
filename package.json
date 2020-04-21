@@ -7,7 +7,6 @@
     "server": "parcel ./src/index.html",
     "mnistdemo": "parcel ./examples/mnist/index.html",
     "mobilenet": "parcel ./examples/mobileNet/index.html",
-    "gesture": "parcel ./examples/gesture/index.html",
     "tinyYolo": "parcel ./examples/tinyYolo/index.html",
     "huangfan": "parcel ./examples/huangfan/index.html",
     "terrorModel": "parcel ./examples/terrorModel/index.html",

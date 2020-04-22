@@ -145,8 +145,6 @@ export default class gpu {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
-        let temp = new Float32Array(out.width_texture * out.height_texture * 4);
         gl.texImage2D(gl.TEXTURE_2D, // Target, matches bind above.
             0,             // Level of detail.
             this.downloadInternalFormat,       // Internal format.
@@ -155,7 +153,7 @@ export default class gpu {
             0,             // Always 0 in OpenGL ES.
             gl.RGBA,       // Format for each pixel.
             gl.FLOAT,          // Data type for each chanel.
-            temp);
+            null);
         gl.bindTexture(gl.TEXTURE_2D, null);
         this.texturesMap[out.tensorId] = texture;
         return program;

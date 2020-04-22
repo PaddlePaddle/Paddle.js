@@ -64,7 +64,6 @@ export default class Paddle {
         this.feed = this.graph.feed = inputs;
         // 生成op数据
         if (!this.graph.isExecuted) {
-            let i = 0;
             this.graph.weightMap.forEach((op, index) => {
                 const type = op.type;
                 if (type !== 'feed' && type !== 'fetch') {

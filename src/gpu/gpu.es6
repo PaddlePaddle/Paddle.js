@@ -425,7 +425,6 @@ export default class gpu {
             data);         // Image data in the described format, or null.
         // Unbind the texture.
         // gl.bindTexture(gl.TEXTURE_2D, null);
-        console.log('case 3 is good.');
         this.attachFrameBuffer();
 
         return texture;
@@ -480,9 +479,6 @@ export default class gpu {
         for (let i = 0; i < this.width_texture_out * this.height_texture_out; i++) {
             result.push(pixels[4 * i]);
         }
-        // const result = Array.prototype.slice.call(pixels);
-        // console.dir(['result', result]);
-        // log.end('后处理-readloop');
         return result;
         }
         else {
@@ -491,29 +487,8 @@ export default class gpu {
         for (let i = 0; i < this.width_texture_out * this.height_texture_out; i++) {
             result.push(pixels[4 * i]);
         }
-        // const result = Array.prototype.slice.call(pixels);
-        // console.dir(['result', result]);
-        // log.end('后处理-readloop');
         return result;
         }
-        // log.start('后处理-readloop');
-        // let result = [];
-        // let offset = 0;
-        // for (let h = 0; h < this.height_texture_out; h++) {
-        //     // 纪录第1和2行数据
-        //     let temp1 = [];
-        //     let temp2 = [];
-        //     for (let w = 0; w < this.width_texture_out; w++) {
-        //         temp1.push(pixels[offset]);
-        //         temp1.push(pixels[offset + 1]);
-        //         temp2.push(pixels[offset + 2]);
-        //         temp2.push(pixels[offset + 3]);
-        //         offset += 4;
-        //     }
-        //     result = result.concat(temp1);
-        //     result = result.concat(temp2);
-        // }
-
     }
 
 
@@ -577,8 +552,6 @@ export default class gpu {
         const tt2 = +Date.now();
         gl.readPixels(0, 0, this.width_texture_out, this.height_texture_out, gl.RGBA, gl.FLOAT, pixels);
         // console.log('本次读取数据时间是' + (+Date.now() - tt2)+ ',' + (tt2 - tt));
-        // log.end('后处理-readinside');
-        // log.start('后处理-readloop');
         let result = [];
         for (let i = 0; i < this.width_texture_out * this.height_texture_out; i++) {
             result.push(pixels[4 * i]);

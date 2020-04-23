@@ -51,7 +51,8 @@ async function run(input) {
         params: {
             targetShape: [1, 3, fh, fw], // 目标形状 为了兼容之前的逻辑所以改个名
             scale: 256, // 缩放尺寸
-            width: 224, height: 224, // 压缩宽高
+            width: 224,
+            height: 224, // 压缩宽高
             shape: [3, 224, 224], // 预设tensor形状
             mean: [0.485, 0.456, 0.406], // 预设期望
             std: [0.229, 0.224, 0.225]  // 预设方差
@@ -100,17 +101,11 @@ async function run(input) {
     let C = shape[1];
     let H = shape[2];
     let W = shape[3];
-    shape[0] = N;
-    shape[1] = H;
-    shape[2] = W;
-    shape[3] = C;
-    console.log(shape);
-    console.log(result.length);
+    const nhwc = [N, H, W, C];
 
-    let nchwData = Utils.nhwc2nchw(result, shape);
-    Utils.stridePrint(nchwData);
-
-    // fileDownload(nchwData, 'data.txt');
+    let nchwData = Utils.nhwc2nchw(result, nhwc);
+    const formatData = Utils.formatReadData(nchwData, shape);
+    fileDownload(formatData, 'data.txt');
 }
 
 function generareFluidData(feed) {

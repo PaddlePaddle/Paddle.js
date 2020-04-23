@@ -48,7 +48,7 @@ export default class Paddle {
         that.graph = graph;
         that.graph.data = artifacts.data;
         that.graph.formatWeight(that.graph.data.vars);
-        const opsMap = that.graph.createOpsMap(that.graph.data.ops, that.graph.data.vars);
+        const opsMap = that.graph.createOpsMap(that.graph.data.ops);
         const opsMap1 = that.graph.constructOpsMap(opsMap);
         const opsMap2 = that.graph.arrangeMap(opsMap1);
         that.graph.weightMap = opsMap2;

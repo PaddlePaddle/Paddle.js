@@ -51,6 +51,10 @@ export default class gpu {
                 console.log('float extension is started or not? ' + !!this.textureFloat);
             }
         }
+
+        this.maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+        this.maxTextureImageUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
+
         // 关闭相关功能
         gl.disable(gl.DEPTH_TEST);
         gl.disable(gl.STENCIL_TEST);
@@ -67,12 +71,20 @@ export default class gpu {
         this.waits = 0;
 
         console.log('WebGl版本是 ' + this.version);
-        console.log('MAX_TEXTURE_SIZE is ' + gl.getParameter(gl.MAX_TEXTURE_SIZE));
-        console.log('MAX_TEXTURE_IMAGE_UNITS is ' + gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS));
+        console.log('MAX_TEXTURE_SIZE is ' + this.maxTextureSize);
+        console.log('MAX_TEXTURE_IMAGE_UNITS is ' + this.maxTextureImageUnits);
     }
 
     getWebglVersion() {
         return this.version;
+    }
+
+    getWebglMaxTextureSize() {
+        return this.maxTextureSize;
+    }
+
+    getWebglMaxTextureImageUnits() {
+        return this.maxTextureImageUnits;
     }
 
     initCache() {
@@ -345,7 +357,7 @@ export default class gpu {
         } else {
             // texture = gl.createTexture();
             if (isRendered && (iLayer > 0 || (iLayer === 0 && item.tensor !== 'origin'))) {
-            
+
                 const tData = this.cacheTextures['' + iLayer];
                 texture = tData[item.variable + '_' + item.tensor];
             } else {

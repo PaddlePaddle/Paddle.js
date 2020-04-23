@@ -26,6 +26,14 @@ export default {
         return this.gpu.getWebglVersion();
     },
 
+    getWebglMaxTextureSize() {
+        return this.gpu.maxTextureSize();
+    },
+
+    getWebglMaxTextureImageUnits() {
+        return this.gpu.maxTextureImageUnits();
+    },
+
     run(opName, opData, isRendered) {
         // console.dir(['fscode', opData.fsCode]);
         // let time = +Date.now();

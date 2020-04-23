@@ -7,8 +7,8 @@ export default `
 // start函数
 void main(void) {
     // 输出数据
-    ivec4 oPos = getOutputTensorPos();
-    float o = getValueFromTensorPos_origin(oPos.r, oPos.g, oPos.b, oPos.a);
+    ivec4 oPos = getOutputTensorPosLIMIT_OUT();
+    float o = getValueFromTensorPosLIMIT_ORIGIN_origin(oPos.r, oPos.g, oPos.b, oPos.a);
 
     // 归一化数据
     vec4 scale = getPixelsFromTexturePos_texture_scale(vec2( float(oPos.g) / float(width_texture_scale), 0.0));

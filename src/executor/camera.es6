@@ -23,6 +23,9 @@ export default class Camera {
         if(navigator.mediaDevices) {
             this.haveDevice = true;
         }
+        if (option.constraints) {
+            this.constraints = option.constraints;
+        }
     }
 
     // 访问用户媒体设备的兼容方法
@@ -35,10 +38,7 @@ export default class Camera {
         }
 
         let constraints = {
-            video: {
-                width: { min: 200, ideal: 400, max: 800 },
-                height: { min: 250, ideal: 500, max: 1000 }
-            }
+            video: {}
         };
         const success = stream => {
             this.success(stream, callback);
@@ -51,6 +51,9 @@ export default class Camera {
             constraints = {
                 video: true
             };
+        }
+        else if (this.constraints) {
+            constraints = this.constraints;
         }
 
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {

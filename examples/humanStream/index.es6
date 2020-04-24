@@ -41,7 +41,13 @@ const videoSelect = document.getElementById('videoSelect');
 
 let camera = new Camera({
     // 用来显示摄像头图像的dom
-    videoDom: video
+    videoDom: video,
+    constraints: {
+        video: {
+            width: { min: 200, ideal: 400, max: 800 },
+            height: { min: 250, ideal: 500, max: 1000 }
+        }
+    }
 });
 
 camera.getDevices().then(devices => {

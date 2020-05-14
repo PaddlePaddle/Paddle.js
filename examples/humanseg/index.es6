@@ -138,12 +138,18 @@ async function run(input) {
     ctx2.putImageData(temp, 0, 0);
 }
 
-function threshold_mask(img, thresh_bg, thresh_fg) {
-    for (let i = 0; i < img.data.length; i++){
-        let tmp = (img.data[i] - thresh_bg*255.0)/(thresh_fg - thresh_bg);
-        if (tmp < 0) img.data[i] = 0;
-        else if (tmp > 255) img.data[i] = 255;
-        else img.data[i] = tmp;
+function threshold_mask(img, threshBg, threshFg) {
+    for (let i = 0; i < img.data.length; i++) {
+        let tmp = (img.data[i] - threshBg * 255.0) / (threshFg - threshBg);
+        if (tmp < 0) {
+            img.data[i] = 0;
+        }
+        else if (tmp > 255) {
+            img.data[i] = 255;
+        }
+        else {
+            img.data[i] = tmp;
+        }
     }
 }
 

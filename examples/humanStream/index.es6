@@ -4,12 +4,21 @@ import IO from '../../src/feed/imageFeed';
 import Utils from '../../src/utils/utils';
 import Camera from '../../src/executor/camera';
 import Runner from '../../src/executor/runner';
+import cv from'../../opencv.js';
+
+function threshold_mask(img, thresh_bg, thresh_fg) {
+    for (let i = 0; i < img.data.length/4; i++){
+        let tmp = (img.data[i * 4 + 3] - thresh_bg * 255.0)/(thresh_fg - thresh_bg);
+        if (tmp < 0) img.data[i * 4 + 3] = 0;
+        else if (tmp > 255) img.data[i * 4 + 3] = 255;
+        else img.data[i * 4 + 3] = tmp;
+    }
+}
 
 if (location.protocol === 'http:') {
     location.href = location.href.replace('http://', 'https://');
 }
-console.log = function() {}
-console.dir = function() {}
+
 /**
  * @file model demo 入口文件
  * @author zhuxingyu01@baidu.com
@@ -44,8 +53,8 @@ let camera = new Camera({
     videoDom: video,
     constraints: {
         video: {
-            width: { min: 200, ideal: 400, max: 800 },
-            height: { min: 250, ideal: 500, max: 1000 }
+            width: { min: 200, ideal: 480, max: 1080 },
+            height: { min: 300, ideal: 720, max: 1620 }
         }
     }
 });
@@ -165,21 +174,15 @@ async function run(input) {
     let C = outputShape[1];
     let H = outputShape[2];
     let W = outputShape[3];
-    console.log(outputShape);
-    console.dir(result);
     let nhwcShape = [N, H, W, C];
-    console.log(nhwcShape);
+
     // console.dir(result);
 
     let nchwData = Utils.nhwc2nchw(result, nhwcShape);
-    Utils.stridePrint(nchwData);
-    Utils.continuousPrint(nchwData);
-    console.log('this is nchwData');
-
-
+    //Utils.stridePrint(nchwData);
+    //Utils.continuousPrint(nchwData);
 
     let myCanvas = document.getElementById('myCanvas');
-    // let [w1, h1, width, height] = calSize(img);
     let img = document.getElementById('video');
     myCanvas.width = 192;
     myCanvas.height = 192;
@@ -201,7 +204,16 @@ async function run(input) {
     }
 
     ctx.putImageData(myImageData, 0, 0);
-
+    let logit = cv.imread(myCanvas);
+    let dst = new cv.Mat();
+    let ksize = new cv.Size(5, 5);
+    let anchor = new cv.Point(-1, -1);
+    cv.blur(logit, dst, ksize, anchor, cv.BORDER_DEFAULT);
+    threshold_mask(dst, 0.2, 0.8);
+    for (let i = 0; i < 36864; i++) {
+        myImageData.data[i * 4 + 3] = dst.data[i * 4 + 3];
+    }
+    ctx.putImageData(myImageData, 0, 0);
     ctx2.drawImage(myCanvas, 0, 0, img.videoWidth, img.videoHeight);
     let temp = ctx2.getImageData(0, 0, img.videoWidth, img.videoHeight);
     myCanvas.width = img.videoWidth;
@@ -214,7 +226,6 @@ async function run(input) {
         temp.data[i * 4 + 2] = origin.data[i * 4 + 2];
     }
     ctx.clearRect(0, 0, img.videoWidth, img.videoHeight);
+    ctx2.clearRect(0, 0, img.videoWidth, img.videoHeight);
     ctx2.putImageData(temp, 0, 0);
-    let end = Date.now();
-    console.info(end - start);
 };

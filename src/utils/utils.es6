@@ -121,10 +121,10 @@ export default {
         let exceedMax = false;
         // trick TEXTURE_SIZE 超限问题，后续升级更优解
         if (height > 4096 || width > 4096) {
-            console.error('大小超限', shape);
-            height *= 4;
-            width = c * (Math.ceil(w / 4));
-            exceedMax = true;
+            //console.error('大小超限', shape);
+            //height *= 4;
+            //width = c * (Math.ceil(w / 4));
+            //exceedMax = true;
         }
         if (isPacked) {
             // 紧凑布局
@@ -268,6 +268,7 @@ export default {
         for (let i = 0; i < realPrintCount; i++) {
             numbers.push(i * stride + ": " + data[i * stride]);
         }
+        console.log(numbers);
     },
 
     /*
@@ -282,6 +283,7 @@ export default {
         for (let i = 0; i < realPrintCount; i++) {
             numbers.push(i + ": " + data[i]);
         }
+        console.log(numbers);
     },
 
     softmax(nchwData) {

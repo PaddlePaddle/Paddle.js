@@ -109,8 +109,9 @@ export default class Loader  {
         const TMP_REGEX = /\-/;
         let requesterArr = arr.map(item => {
             if (item.name
-                && item.name.match(TMP_SCHEME_REGEX) === null
-                && item.name.match(TMP_REGEX) === null) {
+                // && item.name.match(TMP_SCHEME_REGEX) === null
+                // && item.name.match(TMP_REGEX) === null
+                ) {
                 return this.fetchData(item.name).then(data => item.data = data);
             }
             return Promise.resolve();
@@ -124,9 +125,9 @@ export default class Loader  {
         let marker = 0; // 读到哪个位置了
         let len; // 当前op长度
         arr.filter(item => {
-            return item.name
-                && item.name.match(TMP_SCHEME_REGEX) === null
-                && item.name.match(TMP_REGEX) === null;
+            return item.name;
+                // && item.name.match(TMP_SCHEME_REGEX) === null
+                // && item.name.match(TMP_REGEX) === null;
             })
             // .sort((a, b) => {
             //     if (a.name > b.name) {

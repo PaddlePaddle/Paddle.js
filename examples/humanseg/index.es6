@@ -2,7 +2,7 @@ import 'babel-polyfill';
 import Paddle from '../../src/paddle/paddle';
 import IO from '../../src/feed/imageFeed';
 import Utils from '../../src/utils/utils';
-
+import cv from'../../opencv.js';
 const fileDownload = require('js-file-download');
 
 /**
@@ -79,16 +79,12 @@ async function run(input) {
     let C = outputShape[1];
     let H = outputShape[2];
     let W = outputShape[3];
-    console.log(outputShape);
-    console.dir(result);
     let nhwcShape = [N, H, W, C];
-    console.log(nhwcShape);
     // console.dir(result);
 
     let nchwData = Utils.nhwc2nchw(result, nhwcShape);
-    Utils.stridePrint(nchwData);
-    Utils.continuousPrint(nchwData);
-    console.log('this is nchwData');
+    //Utils.stridePrint(nchwData);
+    //Utils.continuousPrint(nchwData);
 
 
 
@@ -116,7 +112,18 @@ async function run(input) {
 
     ctx.putImageData(myImageData, 0, 0);
 
+    let logit = cv.imread(myCanvas);
+    let dst = new cv.Mat();
+    let ksize = new cv.Size(5, 5);
+    let anchor = new cv.Point(-1, -1);
+    cv.blur(logit, dst, ksize, anchor, cv.BORDER_DEFAULT);
+    threshold_mask(dst, 0.4, 0.8);
+    for (let i = 0; i < 36864; i++) {
+        myImageData.data[i * 4 + 3] = dst.data[i * 4 + 3];
+    }
+    ctx.putImageData(myImageData, 0, 0);
     ctx2.drawImage(myCanvas, 0, 0, img.naturalWidth, img.naturalHeight);
+
     let temp = ctx2.getImageData(0, 0, img.naturalWidth, img.naturalHeight);
     myCanvas.width = img.naturalWidth;
     myCanvas.height = img.naturalHeight;
@@ -129,12 +136,17 @@ async function run(input) {
     }
     ctx.clearRect(0, 0, img.naturalWidth, img.naturalHeight);
     ctx2.putImageData(temp, 0, 0);
-
-
-
-    // for test
-    // fileDownload(nchwData, 'out-humanseg.txt');
 }
+
+function threshold_mask(img, thresh_bg, thresh_fg) {
+    for (let i = 0; i < img.data.length; i++){
+        let tmp = (img.data[i] - thresh_bg*255.0)/(thresh_fg - thresh_bg);
+        if (tmp < 0) img.data[i] = 0;
+        else if (tmp > 255) img.data[i] = 255;
+        else img.data[i] = tmp;
+    }
+}
+
 var image = '';
 function selectImage(file) {
     if (!file.files || !file.files[0]) {
@@ -143,8 +155,6 @@ function selectImage(file) {
     let reader = new FileReader();
     reader.onload = function (evt) {
         let img = document.getElementById('image');
-        console.log('this is img');
-        console.dir(img);
         img.src = evt.target.result;
         img.onload = function () {
             run(img);

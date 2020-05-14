@@ -2,7 +2,7 @@ import 'babel-polyfill';
 import Paddle from '../../src/paddle/paddle';
 import IO from '../../src/feed/imageFeed';
 import Utils from '../../src/utils/utils';
-import cv from'../../opencv.js';
+import cv from '../../opencv.js';
 const fileDownload = require('js-file-download');
 
 /**
@@ -83,8 +83,8 @@ async function run(input) {
     // console.dir(result);
 
     let nchwData = Utils.nhwc2nchw(result, nhwcShape);
-    //Utils.stridePrint(nchwData);
-    //Utils.continuousPrint(nchwData);
+    // Utils.stridePrint(nchwData);
+    // Utils.continuousPrint(nchwData);
 
 
 
@@ -117,7 +117,7 @@ async function run(input) {
     let ksize = new cv.Size(5, 5);
     let anchor = new cv.Point(-1, -1);
     cv.blur(logit, dst, ksize, anchor, cv.BORDER_DEFAULT);
-    threshold_mask(dst, 0.4, 0.8);
+    thresholdMask(dst, 0.4, 0.8);
     for (let i = 0; i < 36864; i++) {
         myImageData.data[i * 4 + 3] = dst.data[i * 4 + 3];
     }
@@ -138,7 +138,7 @@ async function run(input) {
     ctx2.putImageData(temp, 0, 0);
 }
 
-function threshold_mask(img, threshBg, threshFg) {
+function thresholdMask(img, threshBg, threshFg) {
     for (let i = 0; i < img.data.length; i++) {
         let tmp = (img.data[i] - threshBg * 255.0) / (threshFg - threshBg);
         if (tmp < 0) {

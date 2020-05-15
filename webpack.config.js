@@ -1,6 +1,9 @@
 /**
  * @file 打包到rd机器的配置
+<<<<<<< HEAD
  * @author yangmingming zhangmiao06
+=======
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
  */
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Referenced from https://github.com/github/gitignore/blob/master/Node.gitignore
 
 # Logs
@@ -324,3 +325,7 @@ tools/mnist_model/conv2d_1.b_0
 tools/mnist_model/conv2d_1.w_0
 tools/mnist_model/fc_0.b_0
 tools/mnist_model/fc_0.w_0
+=======
+
+.DS_Store
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee

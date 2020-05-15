@@ -151,6 +151,11 @@ export default class imageFeed {
                 }
             }
         }
+<<<<<<< HEAD
+=======
+        console.log('this is the end of reshapetorgb !!!');
+        console.dir(result);
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
         return result;
     };
 
@@ -162,6 +167,10 @@ export default class imageFeed {
      * @return {Object} 缩放后的尺寸
      */
     reSize(image, params) {
+<<<<<<< HEAD
+=======
+        console.log('execute resize!!');
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
         // 原始图片宽高
         const width = this.pixelWidth;
         const height = this.pixelHeight;
@@ -189,6 +198,10 @@ export default class imageFeed {
      * 根据scale缩放图像并且缩放成目标尺寸并居中
      */
     resizeAndFitTargetSize(image, params){
+<<<<<<< HEAD
+=======
+        console.log('execute resizeAndFitTargetSize!!');
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
         // 原始图片宽高
         const width = this.pixelWidth;
         const height = this.pixelHeight;
@@ -245,6 +258,10 @@ export default class imageFeed {
             sh = Math.round(sw * this.pixelHeight / this.pixelWidth);
             y = Math.floor((targetHeight - sh) / 2);
         }
+<<<<<<< HEAD
+=======
+        // console.log(x, y, sw, sh);
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
         if (center) {
             this.fromPixels2DContext.drawImage(
                 image, x, y, sw, sh);
@@ -322,18 +339,36 @@ export default class imageFeed {
                 data = this.resizeAndFitTargetSize(pixels, opt);
                 data2 = this.fromPixels2DContext2.getImageData(0, 0, this.pixelWidth, this.pixelHeight);
             }
+<<<<<<< HEAD
             else if (opt.scale) { // 直接resize到targetShape Humanseg的情况
                 scaleSize = this.reSize(pixels, opt);
                 data = this.getImageData(opt, 0, 0, scaleSize);
                 data2 = this.fromPixels2DContext2.getImageData(0, 0, this.pixelWidth, this.pixelHeight);
             }
             else if (opt.targetSize) { // 如果有targetSize，就是装在目标宽高里的模式 TinyYolo的情况
+=======
+            else if (opt.scale) { // 兼容以前的，如果有scale就是短边缩放到scale模式
+               
+                scaleSize = this.reSize(pixels, opt);
+                console.dir(scaleSize);
+                console.dir(pixels);
+                data = this.getImageData(opt, 0, 0, scaleSize);
+                
+                data2 = this.fromPixels2DContext2.getImageData(0, 0, this.pixelWidth, this.pixelHeight);
+            }
+            else if (opt.targetSize) { // 如果有targetSize，就是装在目标宽高里的模式 TinyYolo的情况
+                
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
                 scaleSize = this.fitToTargetSize(pixels, opt);
                 data = this.getImageData(opt, 0, 0, scaleSize);
                 data2 = this.fromPixels2DContext2.getImageData(0, 0, this.pixelWidth, this.pixelHeight);
             }
         }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
         if (opt.gray) {
             data = grayscale(data);
         }
@@ -348,7 +383,10 @@ export default class imageFeed {
         else if (opt.targetShape) {
             data = this.allReshapeToRGB(data, opt, scaleSize);
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
         return [{data: data, shape: opt.shape || opt.targetShape, name: 'image', canvas: data2}];
     }
 }

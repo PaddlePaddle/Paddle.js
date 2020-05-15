@@ -51,10 +51,13 @@ export default class gpu {
                 console.log('float extension is started or not? ' + !!this.textureFloat);
             }
         }
+<<<<<<< HEAD
 
         this.maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
         this.maxTextureImageUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
 
+=======
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
         // 关闭相关功能
         gl.disable(gl.DEPTH_TEST);
         gl.disable(gl.STENCIL_TEST);
@@ -71,14 +74,20 @@ export default class gpu {
         this.waits = 0;
 
         console.log('WebGl版本是 ' + this.version);
+<<<<<<< HEAD
         console.log('MAX_TEXTURE_SIZE is ' + this.maxTextureSize);
         console.log('MAX_TEXTURE_IMAGE_UNITS is ' + this.maxTextureImageUnits);
+=======
+        console.log('MAX_TEXTURE_SIZE is ' + gl.getParameter(gl.MAX_TEXTURE_SIZE));
+        console.log('MAX_TEXTURE_IMAGE_UNITS is ' + gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS));
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
     }
 
     getWebglVersion() {
         return this.version;
     }
 
+<<<<<<< HEAD
     getWebglMaxTextureSize() {
         return this.maxTextureSize;
     }
@@ -87,6 +96,8 @@ export default class gpu {
         return this.maxTextureImageUnits;
     }
 
+=======
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
     initCache() {
         // 运行次数
         this.times = 0;
@@ -157,6 +168,10 @@ export default class gpu {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
         gl.texImage2D(gl.TEXTURE_2D, // Target, matches bind above.
             0,             // Level of detail.
             this.downloadInternalFormat,       // Internal format.
@@ -357,7 +372,10 @@ export default class gpu {
         } else {
             // texture = gl.createTexture();
             if (isRendered && (iLayer > 0 || (iLayer === 0 && item.tensor !== 'origin'))) {
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
                 const tData = this.cacheTextures['' + iLayer];
                 texture = tData[item.variable + '_' + item.tensor];
             } else {
@@ -373,7 +391,10 @@ export default class gpu {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+<<<<<<< HEAD
             if (this.version == 2){
+=======
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
             gl.texImage2D(gl.TEXTURE_2D,
                 0,
                 this.internalFormat,
@@ -382,6 +403,7 @@ export default class gpu {
                 0,
                 this.textureFormat,
                 gl.FLOAT,
+<<<<<<< HEAD
                 item.data);
             }
             else {
@@ -403,6 +425,10 @@ export default class gpu {
                 gl.FLOAT,
                 temp);
             }
+=======
+                item.data,
+                0);
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
         }
     }
 
@@ -421,7 +447,11 @@ export default class gpu {
     // 生成帧缓存的texture
     makeTexure(type, data, opts = {}) {
         const gl = this.gl;
+<<<<<<< HEAD
         let index = int(mod(float(this.textureBufferIndex), 2.0));
+=======
+        let index = this.textureBufferIndex % 2;
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
         let texture = this.textureBuffer[index];
         gl.bindTexture(gl.TEXTURE_2D, texture);
 
@@ -461,7 +491,10 @@ export default class gpu {
     }
 
     createPBO() {
+<<<<<<< HEAD
         if (this.version == 2){
+=======
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
         const gl2 = this.gl;
         const buffer = this.pbo;
         gl2.bindBuffer(gl2.PIXEL_PACK_BUFFER, buffer);
@@ -470,6 +503,7 @@ export default class gpu {
         gl2.readPixels(0, 0, this.width_texture_out, this.height_texture_out, gl2.RGBA, gl2.FLOAT, 0);
         gl2.bindBuffer(gl2.PIXEL_PACK_BUFFER, null);
         return buffer;
+<<<<<<< HEAD
         }
         else {
         let buffer = new Float32Array(this.width_texture_out * this.height_texture_out * 4);
@@ -477,20 +511,46 @@ export default class gpu {
         gl2.readPixels(0, 0, this.width_texture_out, this.height_texture_out, gl2.RGBA, gl2.FLOAT, buffer);
         return buffer;
         }
+=======
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
     }
 
     downloadFoat32TensorFromBuffer(buffer) {
         const gl2 = this.gl;
         const size = 4 * this.width_texture_out * this.height_texture_out;
+<<<<<<< HEAD
         if (this.version == 2){
+=======
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
         const pixels = new Float32Array(size);
         gl2.bindBuffer(gl2.PIXEL_PACK_BUFFER, buffer);
         gl2.getBufferSubData(gl2.PIXEL_PACK_BUFFER, 0, pixels);
         gl2.bindBuffer(gl2.PIXEL_PACK_BUFFER, null);
+<<<<<<< HEAD
+=======
+        // log.start('后处理-readloop');
+        // let result = [];
+        // let offset = 0;
+        // for (let h = 0; h < this.height_texture_out; h++) {
+        //     // 纪录第1和2行数据
+        //     let temp1 = [];
+        //     let temp2 = [];
+        //     for (let w = 0; w < this.width_texture_out; w++) {
+        //         temp1.push(pixels[offset]);
+        //         temp1.push(pixels[offset + 1]);
+        //         temp2.push(pixels[offset + 2]);
+        //         temp2.push(pixels[offset + 3]);
+        //         offset += 4;
+        //     }
+        //     result = result.concat(temp1);
+        //     result = result.concat(temp2);
+        // }
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
         let result = [];
         for (let i = 0; i < this.width_texture_out * this.height_texture_out; i++) {
             result.push(pixels[4 * i]);
         }
+<<<<<<< HEAD
         return result;
         }
         else {
@@ -504,6 +564,14 @@ export default class gpu {
     }
 
 
+=======
+        // const result = Array.prototype.slice.call(pixels);
+        // console.dir(['result', result]);
+        // log.end('后处理-readloop');
+        return result;
+    }
+
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
     getWebglError(status) {
         const gl2 = this.gl;
         switch (status) {
@@ -528,7 +596,11 @@ export default class gpu {
 
     createAndWaitForFence() {
         const gl2 = this.gl;
+<<<<<<< HEAD
         const isFenceEnabled = (gl2.fenceSync != null);
+=======
+        const isFenceEnabled = (gl2.fenceSync !== null);
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
         let isFencePassed = () => true;
         if (isFenceEnabled) {
             const sync = gl2.fenceSync(gl2.SYNC_GPU_COMMANDS_COMPLETE, 0);
@@ -562,8 +634,15 @@ export default class gpu {
         let pixels = new Float32Array(this.width_texture_out * this.height_texture_out * 4);
         // gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
         const tt2 = +Date.now();
+<<<<<<< HEAD
         gl.readPixels(0, 0, this.width_texture_out, this.height_texture_out, gl.RGBA, gl.FLOAT, pixels);
         // console.log('本次读取数据时间是' + (+Date.now() - tt2)+ ',' + (tt2 - tt));
+=======
+        gl.readPixels(0, 0, this.width_texture_out, this.height_texture_out, gl.RGBA, gl.FLOAT, pixels, 0);
+        // console.log('本次读取数据时间是' + (+Date.now() - tt2)+ ',' + (tt2 - tt));
+        // log.end('后处理-readinside');
+        // log.start('后处理-readloop');
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
         let result = [];
         for (let i = 0; i < this.width_texture_out * this.height_texture_out; i++) {
             result.push(pixels[4 * i]);

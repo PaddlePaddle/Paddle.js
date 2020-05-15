@@ -1,11 +1,10 @@
 /* eslint-disable */
 /**
- * @file split参数文件
- * @author zhangjingyuan02
+ * @file batchnorm参数文件
+ * @author chenhaoze
  */
 export default `
-// 常量
-
+// 输入数据
 const int width_shape_origin = WIDTH_SHAPE_ORIGIN;
 const int height_shape_origin = HEIGHT_SHAPE_ORIGIN;
 const int length_shape_origin = LENGTH_SHAPE_ORIGIN;
@@ -14,17 +13,8 @@ const int height_texture_origin = HEIGHT_TEXTURE_ORIGIN;
 const int channel_origin = CHANNEL_ORIGIN;
 const int total_shape_origin = TOTAL_SHAPE_ORIGIN;
 
-const int total_shape_out = TOTAL_SHAPE_OUT;
-
-const int dim = DIM;
-const int num = NUM;
-<<<<<<< HEAD
-const int target_length = TARGET_LENGTH;
-=======
-const int target_value[TARGET_LENGTH] = int[](TARGET_VALUE);
->>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
 
 
 // 输入数据
-uniform sampler2D texture_origin;
+ uniform sampler2D texture_origin;
 `;

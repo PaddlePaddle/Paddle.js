@@ -23,9 +23,12 @@ export default class Camera {
         if(navigator.mediaDevices) {
             this.haveDevice = true;
         }
+<<<<<<< HEAD
         if (option.constraints) {
             this.constraints = option.constraints;
         }
+=======
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
     }
 
     // 访问用户媒体设备的兼容方法
@@ -52,9 +55,12 @@ export default class Camera {
                 video: true
             };
         }
+<<<<<<< HEAD
         else if (this.constraints) {
             constraints = this.constraints;
         }
+=======
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
 
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             // 最新的标准API

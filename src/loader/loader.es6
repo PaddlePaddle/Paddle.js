@@ -109,9 +109,14 @@ export default class Loader  {
         const TMP_REGEX = /\-/;
         let requesterArr = arr.map(item => {
             if (item.name
+<<<<<<< HEAD
                 // && item.name.match(TMP_SCHEME_REGEX) === null
                 // && item.name.match(TMP_REGEX) === null
                 ) {
+=======
+                && item.name.match(TMP_SCHEME_REGEX) === null
+                && item.name.match(TMP_REGEX) === null) {
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
                 return this.fetchData(item.name).then(data => item.data = data);
             }
             return Promise.resolve();
@@ -125,9 +130,15 @@ export default class Loader  {
         let marker = 0; // 读到哪个位置了
         let len; // 当前op长度
         arr.filter(item => {
+<<<<<<< HEAD
             return item.name;
                 // && item.name.match(TMP_SCHEME_REGEX) === null
                 // && item.name.match(TMP_REGEX) === null;
+=======
+            return item.name
+                && item.name.match(TMP_SCHEME_REGEX) === null
+                && item.name.match(TMP_REGEX) === null;
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
             })
             // .sort((a, b) => {
             //     if (a.name > b.name) {

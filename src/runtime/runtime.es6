@@ -2,6 +2,12 @@
 import Gpu from '../gpu/gpu';
 import getMaxUniforms from '../test/getMaxUniforms';
 import Factory from '../factory/fshader/factory';
+<<<<<<< HEAD
+=======
+// import {getTextureShapeInfo} from '../utils/opData';
+// 生成factory实例
+// const factory = new Factory({});
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
 /**
  * @file gpu运行时
  * @author wangqun@baidu.com, yangmingming@baidu.com
@@ -26,6 +32,7 @@ export default {
         return this.gpu.getWebglVersion();
     },
 
+<<<<<<< HEAD
     getWebglMaxTextureSize() {
         return this.gpu.maxTextureSize();
     },
@@ -34,6 +41,8 @@ export default {
         return this.gpu.maxTextureImageUnits();
     },
 
+=======
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
     run(opName, opData, isRendered) {
         // console.dir(['fscode', opData.fsCode]);
         // let time = +Date.now();
@@ -69,7 +78,10 @@ export default {
                 this.gpu.render(opData.renderData, opData.iLayer, isRendered);
              // }
         });
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
     },
 
     /**

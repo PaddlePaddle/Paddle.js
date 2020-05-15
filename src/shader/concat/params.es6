@@ -28,7 +28,11 @@ const int total_shape_origin = TOTAL_SHAPE_ORIGIN;
 const int total_shape_out = TOTAL_SHAPE_OUT;
 
 const int dim = DIM;
+<<<<<<< HEAD
 const int inputs_dim = INPUTS_DIM;
+=======
+const int inputs_dim[1] = int[](INPUTS_DIM);
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
 
 
 // uniform变量

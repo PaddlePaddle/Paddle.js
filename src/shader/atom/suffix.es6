@@ -15,18 +15,30 @@ ivec4 getOutputTensorPos() {
     return ivec4(b, c, y, x);
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
 ivec4 getOutputTensorPosLimit() {
     // 获取原始长度
     vec2 outCoord = vCoord.xy * _2d_shape_texture_out;
     float offsetY = floor(outCoord.y / float(height_shape_out));
     int x = int(outCoord.x / float(channel_out));
+<<<<<<< HEAD
     if (mod(offsetY, 4.0) > 0.0) {
         x += int(mod(offsetY, 4.0)) * int(ceil(float(width_shape_out) / 4.0));
     }
     int y = int(mod(outCoord.y, float(height_shape_out)));
     int c = int(mod(outCoord.x, float(channel_out)));
     int b = int(outCoord.y / float(4 * height_shape_out));
+=======
+    if (mod(offsetY, 2.0) > 0.0) {
+        x += int(ceil(float(width_shape_out) / 2.0));
+    }
+    int y = int(mod(outCoord.y, float(height_shape_out)));
+    int c = int(mod(outCoord.x, float(channel_out)));
+    int b = int(outCoord.y / float(2 * height_shape_out));
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
     return ivec4(b, c, y, x);
 }
 

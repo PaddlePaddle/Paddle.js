@@ -48,9 +48,19 @@ export default class Paddle {
         that.graph = graph;
         that.graph.data = artifacts.data;
         that.graph.formatWeight(that.graph.data.vars);
+<<<<<<< HEAD
         const opsMap = that.graph.createOpsMap(that.graph.data.ops);
         const opsMap1 = that.graph.constructOpsMap(opsMap);
         const opsMap2 = that.graph.arrangeMap(opsMap1);
+=======
+        const opsMap = that.graph.createOpsMap(that.graph.data.ops, that.graph.data.vars);
+        const opsMap1 = that.graph.constructOpsMap(opsMap);
+        // console.log('opsMap1!');
+        // console.dir(opsMap1);
+        const opsMap2 = that.graph.arrangeMap(opsMap1);
+        // console.log('opsMap2!');
+        // console.dir(opsMap2);
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
         that.graph.weightMap = opsMap2;
     }
     /**
@@ -64,10 +74,17 @@ export default class Paddle {
         this.feed = this.graph.feed = inputs;
         // 生成op数据
         if (!this.graph.isExecuted) {
+<<<<<<< HEAD
             this.graph.weightMap.forEach((op, index) => {
                 const type = op.type;
                 if (type !== 'feed' && type !== 'fetch') {
 
+=======
+            this.graph.weightMap.forEach(op => {
+                const type = op.type;
+                if (type !== 'feed' && type !== 'fetch') {
+                    console.log(op.type);
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
                     that.graph.buildOpData(op);
                 }
             });
@@ -77,6 +94,10 @@ export default class Paddle {
     }
     updateFeed() {
         this.graph.feedItem.data = this.graph.feed.input[0].data;
+<<<<<<< HEAD
+=======
+        // Utils.img2texture(this.graph.feedItem);
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
     }
     /**
      * dispose

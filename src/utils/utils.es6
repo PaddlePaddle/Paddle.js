@@ -119,6 +119,7 @@ export default {
         let offsetY = 0;
         // 安卓和ios的max texture size是4096, 改造存储空间(2bh, cw / 2)
         let exceedMax = false;
+<<<<<<< HEAD
         // trick TEXTURE_SIZE 超限问题，后续升级更优解
         if (height > 4096 || width > 4096) {
             //console.error('大小超限', shape);
@@ -126,6 +127,14 @@ export default {
             //width = c * (Math.ceil(w / 4));
             //exceedMax = true;
         }
+=======
+        // FIXME:为了让mobilenet能正常执行，这里先注释掉，待群哥修复
+        // if (height > MAX_TEXTURE_SIZE || width > MAX_TEXTURE_SIZE) {
+        //     height *= 2;
+        //     width = c * (Math.ceil(w / 2));
+        //     exceedMax = true;
+        // }
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
         if (isPacked) {
             // 紧凑布局
             height = b * c * Math.ceil(h / 2);
@@ -204,7 +213,11 @@ export default {
         return fourDimShape;
     },
 
+<<<<<<< HEAD
     /*
+=======
+    /* 
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
      * 将nhwc排布数据转为nchw排布数据
      */
     nhwc2nchw(data, shape) {
@@ -227,7 +240,11 @@ export default {
         return nchwData;
     },
 
+<<<<<<< HEAD
     /*
+=======
+    /* 
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
      * 将nchw排布数据转为nhwc排布数据
      */
     nchw2nhwc(data, shape) {
@@ -250,9 +267,15 @@ export default {
         return nhwcData;
     },
 
+<<<<<<< HEAD
     /*
      * 等距间隔打印数据
      */
+=======
+    /* 
+     * 等距间隔打印数据
+     */ 
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
     stridePrint(data, count = 20) {
         let realPrintCount = count;
         if (data.length <= realPrintCount) {
@@ -268,10 +291,17 @@ export default {
         for (let i = 0; i < realPrintCount; i++) {
             numbers.push(i * stride + ": " + data[i * stride]);
         }
+<<<<<<< HEAD
         console.log(numbers);
     },
 
     /*
+=======
+        console.log(numbers)
+    },
+
+    /* 
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
      * 连续打印数据
      */
     continuousPrint(data, count = 100) {
@@ -283,7 +313,11 @@ export default {
         for (let i = 0; i < realPrintCount; i++) {
             numbers.push(i + ": " + data[i]);
         }
+<<<<<<< HEAD
         console.log(numbers);
+=======
+        console.log(numbers)
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
     },
 
     softmax(nchwData) {
@@ -307,6 +341,7 @@ export default {
         }
         return result;
 
+<<<<<<< HEAD
     },
 
     // 针对model final texture输出超限后，inst.read读取数据不对的case
@@ -345,6 +380,8 @@ export default {
         }
 
         return formatData;
+=======
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
     }
 };
 /* eslint-enable */

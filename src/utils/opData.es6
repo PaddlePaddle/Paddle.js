@@ -125,6 +125,10 @@ const mergeType = 'conv2d-elementwise_add';
 
 export default class OpData {
     constructor(name, input = {}, output = {}, attrs = {}) {
+<<<<<<< HEAD
+=======
+        // console.dir(this);
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
         this.realName = name;
         this.name = name;
         this.attrs = attrs;
@@ -204,6 +208,10 @@ export default class OpData {
                 // 默认取第一个数据
                 const data = this.output[key] || [{}];
                 if (tensorName[key.toLowerCase()]) {
+<<<<<<< HEAD
+=======
+                    // console.dir(this);
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
                     data.forEach(item => {
                         item.tensorName = tensorName[key.toLowerCase()];
                         tensorData.push(item);
@@ -451,7 +459,11 @@ export default class OpData {
         this.attrs.target_length = dim_value.length;
         this.attrs.target_value = dim_value;
         // 保存 输入 tensor 对应dim 的长度
+<<<<<<< HEAD
         this.attrs.inputs_dim = origin_shape[axis];
+=======
+        this.attrs.inputs_dim = [origin_shape[axis]];
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
         this.attrs.dim = 4 - origin_shape.length + axis;
     }
 

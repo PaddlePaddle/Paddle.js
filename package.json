@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "name": "paddle-web-demo",
+=======
+  "name": "paddel-web",
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
   "version": "1.0.0",
   "description": "paddle",
   "main": "index.js",
@@ -16,16 +20,24 @@
     "videoDemo": "parcel ./examples/videoDemo.html --port 8123 --https",
     "unitTest": "parcel ./test/unitTest.html",
     "test": "echo \"Error: no test specified\" && exit 1",
+<<<<<<< HEAD
     "build": "parcel build ./examples/humanStream/index.html"
   },
   "repository": {
     "type": "git",
     "url": "ssh://yangmingming@icode.baidu.com:8235/baidu/mms/paddle-web-demo"
+=======
+    "build": "webpack -w"
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
   },
   "devDependencies": {
     "@babel/core": "^7.7.2",
     "@babel/preset-env": "^7.7.1",
+<<<<<<< HEAD
     "axios": "^0.17.1",
+=======
+    "axios": "^0.19.2",
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
     "babel-core": "^6.26.3",
     "babel-loader": "^8.0.6",
     "babel-plugin-transform-class-properties": "^6.24.1",

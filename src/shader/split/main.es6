@@ -6,7 +6,11 @@
 export default `
 // start函数
 void main(void) {
+<<<<<<< HEAD
     int length = int(target_length / num);
+=======
+    int length = int(target_value.length() / num);
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
     ivec4 oPos = getOutputTensorPos();
     // 输出坐标转换为输入坐标
 	//int sumVal = oPos.g + oPos.a * channel_out + oPos.b * channel_out * width_shape_out + oPos.r * channel_out * width_shape_out * height_shape_out;

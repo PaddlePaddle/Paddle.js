@@ -22,7 +22,11 @@ const unitPath = {
     'split': 'model.test.split.json'
 };
 // 制定运行的 op
+<<<<<<< HEAD
 const modelType = 'conv2d';
+=======
+const modelType = 'split';
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
 // 制定运行的 op
 const unitData = unitPath[modelType];
 
@@ -63,6 +67,7 @@ async function run() {
     // 获取 NHWC -> NCHW 的 输出
     const outputNCHWShape = getOutputShape();
     const outputNHWCShape = nchwShape2nhwcShape(outputNCHWShape);
+<<<<<<< HEAD
 
     let nchwResult = Utils.nhwc2nchw(result, outputNHWCShape);
     const formatData = Utils.formatReadData(nchwResult, outputNCHWShape);
@@ -70,6 +75,15 @@ async function run() {
     console.log('NCHW RESULT');
     console.log(formatData);
 
+=======
+    let nchwResult = Utils.nhwc2nchw(result, outputNHWCShape);
+
+    console.log('result');
+    console.log(result);
+
+    console.log('NCHW RESULT');
+    console.log(nchwResult);
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
 }
 
 run();
@@ -112,7 +126,10 @@ function nchwShape2nhwcShape(nchw) {
         }
         batchNCHW = batch.concat(nchw);
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6c40834f2e1ff1fcfd564d2aeaa1f4c2724fe8ee
     const N = batchNCHW[0];
     const C = batchNCHW[1];
     const H = batchNCHW[2];

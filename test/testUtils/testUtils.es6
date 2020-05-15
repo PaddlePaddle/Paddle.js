@@ -22,7 +22,7 @@ const unitPath = {
     'split': 'model.test.split.json'
 };
 // 制定运行的 op
-const modelType = 'split';
+const modelType = 'conv2d';
 // 制定运行的 op
 const unitData = unitPath[modelType];
 
@@ -63,13 +63,13 @@ async function run() {
     // 获取 NHWC -> NCHW 的 输出
     const outputNCHWShape = getOutputShape();
     const outputNHWCShape = nchwShape2nhwcShape(outputNCHWShape);
-    let nchwResult = Utils.nhwc2nchw(result, outputNHWCShape);
 
-    console.log('result');
-    console.log(result);
+    let nchwResult = Utils.nhwc2nchw(result, outputNHWCShape);
+    const formatData = Utils.formatReadData(nchwResult, outputNCHWShape);
 
     console.log('NCHW RESULT');
-    console.log(nchwResult);
+    console.log(formatData);
+
 }
 
 run();
@@ -112,6 +112,7 @@ function nchwShape2nhwcShape(nchw) {
         }
         batchNCHW = batch.concat(nchw);
     }
+
     const N = batchNCHW[0];
     const C = batchNCHW[1];
     const H = batchNCHW[2];

@@ -1,6 +1,5 @@
 /* eslint-disable */
 import GraphExecutor from '../executor/executor';
-import IO from '../feed/imageFeed';
 import Runtime from '../runtime/runtime';
 import OpData from '../utils/opData';
 import Factory from '../factory/fshader/factory';
@@ -92,9 +91,14 @@ export default class Graph {
             return;
         }
         opindex++;
-        // console.log(opindex);
-        //if (executor.opData) console.log(executor.opData.iLayer);
         executor.execute(this.inst, this.isExecuted);
+        if (false && executor.opData && opindex >= 184){
+            console.log('return!');
+            console.dir(executor);
+            console.dir(executor.type);
+            console.dir(this);
+            return;
+        }
         if (executor.next) {
             const id = executor.next;
             const next = this.getTensor(id);
@@ -199,103 +203,61 @@ export default class Graph {
         });
     }
 
-    execute_try(temp, ops, idtoindex, executed, inline, prev){
-        console.log('execute_try!first look at this op');
-        console.log(ops[temp]);
-        let canrun = this.checkifcanrun(temp, ops, idtoindex, executed);
-        if (canrun === false) {
-            // console.log('canrun === false!');
-            var a = inline.pop();
-            this.execute_try(idtoindex[a.id], ops, idtoindex, executed, inline, prev);
-            return;
-        }
-        if (prev >=0) {
-            ops[prev].next = ops[temp].id;
-        }
-        ops[temp].outputsName.forEach(function(item, index) {
-            executed[item] = true;
-        })
-        let next = this.getNextByOp(ops, ops[temp]);
-        // console.log('this is its next:');
-        // console.dir(next);
-        while (next.length === 1) {
-            let flag = true;
-            for (let i = 0; i < next[0].inputsName.length; i++){
-                if (executed[next[0].inputsName[i]] === false) flag = false;
-            }
-            if (flag === false) {
-                // console.log('can not execute next now! jump to another op:');
-
-                if (inline.length === 0) return;
-                prev = temp;
-                let a = inline.pop();
-                // console.dir(a);
-                ops[temp].next = a.id;
-                temp = idtoindex[a.id];
-                this.execute_try(temp, ops, idtoindex, executed, inline, prev);
-                return;
-            }
-            else {
-                // console.log('now execute next op! it is');
-                ops[temp].next = next[0].id;
-                temp = idtoindex[next[0].id];
-                // console.dir(ops[temp]);
-                next = this.getNextByOp(ops, ops[temp]);
-                // console.log('its next is: ');
-                ops[temp].outputsName.forEach(function(item, index) {
-                    executed[item] = true;
-                })
-                // console.dir(next);
-            }
-        }
-        if (next.length > 1){
-            // console.log('next.length > 1!!!');
-            for (let i = next.length - 1; i >=0 ; i--){
-                 inline.push(next[i]);
-            }
-
-            var a = inline.pop();
-            this.execute_try(idtoindex[a.id], ops, idtoindex, executed, inline, temp);
-        }
-        return;
-    }
 
 
     arrangeMap(ops) {
-        // console.log('arrangeMap!');
-        // console.dir(ops);
-        var idtoindex = {};
         var executed = {};
-        var inline = [];
+        var inIndex = [];
+        var idtoindex = {};
         let temp = 0;
-        // console.log('graph ops:');
-        // console.dir(ops);
         let ops1 = ops;
         ops1.forEach(function(item, index) {
-            idtoindex[item.id] = index;
-            // console.dir(item);
             item.outputsName.forEach(function(i, idx){
-                executed[i] = false;
+                executed[i] = true;
             })
         });
 
-        //ops[0].inputsName[0] = {name : "feed"};
-       // ops[0].outputsName[0] = {name : "image"};
-        this.execute_try(temp, ops, idtoindex, executed, inline, -1);
+         ops1.forEach(function(item, index) {
+            inIndex[index] = 0;
+            idtoindex[item.id] = index;
+            if (item.inputsName.length > 1) {
+                item.inputsName.forEach(function(i,idx){
+                    if (executed[i] == true) inIndex[index]++;
+                })
+            }
+            else inIndex[index] = item.inputsName.length;
+        });
+        this.topoSort(ops, inIndex, idtoindex);
         return ops;
     }
 
-    checkifcanrun(temp, ops, executed){
-        if (!ops[temp].inputsName) return true;
-        for (let i = 0; i < ops[temp].inputsName.length; i++){
-                if (executed[ops[temp].inputsName[i]] === false)  return false;
+    topoSort(ops, inIndex, idtoindex){
+        var inline = [];
+        inline.push(ops[0]);
+        let ops_temp = ops.slice(0);
+        let prev = null;
+        let a = ops[0];
+        while(inline.length > 0){
+            if (prev != null) ops[idtoindex[prev.id]].next = a.id;
+            prev = a;
+            a = inline.pop();
+            for (let i = 0; i < a.outputsName.length; i++){
+                for (let k = 0; k < ops_temp.length; k++){
+                    for (let j = 0; j < ops_temp[k].inputsName.length; j++){
+                        if (ops_temp[k].inputsName[j] == a.outputsName[i]) {
+                            inIndex[idtoindex[ops_temp[k].id]]--;
+                            if (inIndex[idtoindex[ops_temp[k].id]] == 0){
+                                inline.push(ops[idtoindex[ops_temp[k].id]]);
+                                ops_temp.splice(k,1);
+                                k--;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
         }
-        return true;
     }
-
-
-
-
 
 
     /**
@@ -348,8 +310,6 @@ export default class Graph {
      * @returns {*}
      */
     createOpsMap(ops) {
-        // console.log('ops!!');
-        // console.dir(ops);
         return ops.map((item, idx) => {
             item.idx = idx;
             const graphExecutor = new GraphExecutor(item);
@@ -372,17 +332,6 @@ export default class Graph {
         });
     }
 
-    getNextByOp(ops, op) {
-        return ops.filter((item, key) => {
-            for (let i = 0; i < item.inputsName.length; i++) {
-                for(let j = 0; j < op.outputsName.length; j++) {
-                    if (item.inputsName[i] === op.outputsName[j]) {
-                        return true;
-                    }
-                }
-            }
-        });
-    }
     /**
      * dispose
      */

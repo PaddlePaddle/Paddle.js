@@ -119,12 +119,13 @@ export default {
         let offsetY = 0;
         // 安卓和ios的max texture size是4096, 改造存储空间(2bh, cw / 2)
         let exceedMax = false;
-        // FIXME:为了让mobilenet能正常执行，这里先注释掉，待群哥修复
-        // if (height > MAX_TEXTURE_SIZE || width > MAX_TEXTURE_SIZE) {
-        //     height *= 2;
-        //     width = c * (Math.ceil(w / 2));
-        //     exceedMax = true;
-        // }
+        // trick TEXTURE_SIZE 超限问题，后续升级更优解
+        if (height > 4096 || width > 4096) {
+            //console.error('大小超限', shape);
+            //height *= 4;
+            //width = c * (Math.ceil(w / 4));
+            //exceedMax = true;
+        }
         if (isPacked) {
             // 紧凑布局
             height = b * c * Math.ceil(h / 2);
@@ -203,7 +204,7 @@ export default {
         return fourDimShape;
     },
 
-    /* 
+    /*
      * 将nhwc排布数据转为nchw排布数据
      */
     nhwc2nchw(data, shape) {
@@ -226,7 +227,7 @@ export default {
         return nchwData;
     },
 
-    /* 
+    /*
      * 将nchw排布数据转为nhwc排布数据
      */
     nchw2nhwc(data, shape) {
@@ -249,9 +250,9 @@ export default {
         return nhwcData;
     },
 
-    /* 
+    /*
      * 等距间隔打印数据
-     */ 
+     */
     stridePrint(data, count = 20) {
         let realPrintCount = count;
         if (data.length <= realPrintCount) {
@@ -267,10 +268,10 @@ export default {
         for (let i = 0; i < realPrintCount; i++) {
             numbers.push(i * stride + ": " + data[i * stride]);
         }
-        console.log(numbers)
+        console.log(numbers);
     },
 
-    /* 
+    /*
      * 连续打印数据
      */
     continuousPrint(data, count = 100) {
@@ -282,7 +283,7 @@ export default {
         for (let i = 0; i < realPrintCount; i++) {
             numbers.push(i + ": " + data[i]);
         }
-        console.log(numbers)
+        console.log(numbers);
     },
 
     softmax(nchwData) {
@@ -306,6 +307,44 @@ export default {
         }
         return result;
 
+    },
+
+    // 针对model final texture输出超限后，inst.read读取数据不对的case
+    formatReadData(nchwData, nchwShape) {
+        if (nchwShape.length < 4) {
+            let batch = [];
+            for (let i = 0; i < (4 - nchwShape.length); i++) {
+                batch.push(1);
+            }
+            nchwShape = batch.concat(nchwShape);
+        }
+        const shape_b = nchwShape[0];
+        const shape_c = nchwShape[1];
+        const shape_h = nchwShape[2];
+        const shape_w = nchwShape[3];
+        const texture_height = shape_b * shape_h;
+        const texture_width = shape_c * shape_w;
+
+        if (texture_height <= 4096 && texture_width <= 4096) {
+            return nchwData;
+        }
+        let pos = 0;
+        const formatData = [];
+        const pieceW = Math.ceil(shape_w / 4); // reshape后的 shape_width
+
+        for (let bIndex = 0; bIndex < shape_b; bIndex++) {
+            for (let cIndex = 0; cIndex < shape_c; cIndex++) {
+                for (let hIndex = 0; hIndex < shape_h; hIndex++) {
+                    for (let wIndex = 0; wIndex < shape_w; wIndex++) {
+                        pos = Math.floor(wIndex / pieceW) * pieceW * (shape_h - 1) + wIndex + hIndex * pieceW;
+                        pos += bIndex * shape_c * shape_h * shape_w+ cIndex  * shape_h * shape_w;
+                        formatData.push(nchwData[pos]);
+                    }
+                }
+            }
+        }
+
+        return formatData;
     }
 };
 /* eslint-enable */

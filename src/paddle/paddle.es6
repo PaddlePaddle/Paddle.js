@@ -48,13 +48,9 @@ export default class Paddle {
         that.graph = graph;
         that.graph.data = artifacts.data;
         that.graph.formatWeight(that.graph.data.vars);
-        const opsMap = that.graph.createOpsMap(that.graph.data.ops, that.graph.data.vars);
+        const opsMap = that.graph.createOpsMap(that.graph.data.ops);
         const opsMap1 = that.graph.constructOpsMap(opsMap);
-        // console.log('opsMap1!');
-        // console.dir(opsMap1);
         const opsMap2 = that.graph.arrangeMap(opsMap1);
-        // console.log('opsMap2!');
-        // console.dir(opsMap2);
         that.graph.weightMap = opsMap2;
     }
     /**
@@ -68,10 +64,10 @@ export default class Paddle {
         this.feed = this.graph.feed = inputs;
         // 生成op数据
         if (!this.graph.isExecuted) {
-            this.graph.weightMap.forEach(op => {
+            this.graph.weightMap.forEach((op, index) => {
                 const type = op.type;
                 if (type !== 'feed' && type !== 'fetch') {
-                    console.log(op.type);
+
                     that.graph.buildOpData(op);
                 }
             });
@@ -81,7 +77,6 @@ export default class Paddle {
     }
     updateFeed() {
         this.graph.feedItem.data = this.graph.feed.input[0].data;
-        // Utils.img2texture(this.graph.feedItem);
     }
     /**
      * dispose

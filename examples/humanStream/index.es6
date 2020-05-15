@@ -8,7 +8,7 @@ import cv from '../../opencv.js';
 
 function thresholdMask(img, threshBg, threshFg) {
     for (let i = 0; i < img.data.length / 4; i++) {
-        let tmp = (img.data[i * 4 + 3] - threshBg * 255.0)/(threshFg - threshBg);
+        let tmp = (img.data[i * 4 + 3] - threshBg * 255.0) / (threshFg - threshBg);
         if (tmp < 0) {
             img.data[i * 4 + 3] = 0;
         }
@@ -59,8 +59,8 @@ let camera = new Camera({
     videoDom: video,
     constraints: {
         video: {
-            width: { min: 200, ideal: 480, max: 1080 },
-            height: { min: 300, ideal: 720, max: 1620 }
+            width: {min: 200, ideal: 480, max: 1080},
+            height: {min: 300, ideal: 720, max: 1620}
         }
     }
 });

@@ -4,14 +4,20 @@ import IO from '../../src/feed/imageFeed';
 import Utils from '../../src/utils/utils';
 import Camera from '../../src/executor/camera';
 import Runner from '../../src/executor/runner';
-import cv from'../../opencv.js';
+import cv from '../../opencv.js';
 
-function threshold_mask(img, thresh_bg, thresh_fg) {
-    for (let i = 0; i < img.data.length/4; i++){
-        let tmp = (img.data[i * 4 + 3] - thresh_bg * 255.0)/(thresh_fg - thresh_bg);
-        if (tmp < 0) img.data[i * 4 + 3] = 0;
-        else if (tmp > 255) img.data[i * 4 + 3] = 255;
-        else img.data[i * 4 + 3] = tmp;
+function thresholdMask(img, threshBg, threshFg) {
+    for (let i = 0; i < img.data.length / 4; i++) {
+        let tmp = (img.data[i * 4 + 3] - threshBg * 255.0)/(threshFg - threshBg);
+        if (tmp < 0) {
+            img.data[i * 4 + 3] = 0;
+        }
+        else if (tmp > 255) {
+            img.data[i * 4 + 3] = 255;
+        }
+        else {
+            img.data[i * 4 + 3] = tmp;
+        }
     }
 }
 
@@ -179,8 +185,8 @@ async function run(input) {
     // console.dir(result);
 
     let nchwData = Utils.nhwc2nchw(result, nhwcShape);
-    //Utils.stridePrint(nchwData);
-    //Utils.continuousPrint(nchwData);
+    // Utils.stridePrint(nchwData);
+    // Utils.continuousPrint(nchwData);
 
     let myCanvas = document.getElementById('myCanvas');
     let img = document.getElementById('video');
@@ -209,7 +215,7 @@ async function run(input) {
     let ksize = new cv.Size(5, 5);
     let anchor = new cv.Point(-1, -1);
     cv.blur(logit, dst, ksize, anchor, cv.BORDER_DEFAULT);
-    threshold_mask(dst, 0.2, 0.8);
+    thresholdMask(dst, 0.2, 0.8);
     for (let i = 0; i < 36864; i++) {
         myImageData.data[i * 4 + 3] = dst.data[i * 4 + 3];
     }

@@ -151,8 +151,6 @@ export default class imageFeed {
                 }
             }
         }
-        console.log('this is the end of reshapetorgb !!!');
-        console.dir(result);
         return result;
     };
 
@@ -164,7 +162,6 @@ export default class imageFeed {
      * @return {Object} 缩放后的尺寸
      */
     reSize(image, params) {
-        console.log('execute resize!!');
         // 原始图片宽高
         const width = this.pixelWidth;
         const height = this.pixelHeight;
@@ -192,7 +189,6 @@ export default class imageFeed {
      * 根据scale缩放图像并且缩放成目标尺寸并居中
      */
     resizeAndFitTargetSize(image, params){
-        console.log('execute resizeAndFitTargetSize!!');
         // 原始图片宽高
         const width = this.pixelWidth;
         const height = this.pixelHeight;
@@ -249,7 +245,6 @@ export default class imageFeed {
             sh = Math.round(sw * this.pixelHeight / this.pixelWidth);
             y = Math.floor((targetHeight - sh) / 2);
         }
-        // console.log(x, y, sw, sh);
         if (center) {
             this.fromPixels2DContext.drawImage(
                 image, x, y, sw, sh);
@@ -327,23 +322,17 @@ export default class imageFeed {
                 data = this.resizeAndFitTargetSize(pixels, opt);
                 data2 = this.fromPixels2DContext2.getImageData(0, 0, this.pixelWidth, this.pixelHeight);
             }
-            else if (opt.scale) { // 兼容以前的，如果有scale就是短边缩放到scale模式
-               
+            else if (opt.scale) { // 直接resize到targetShape Humanseg的情况
                 scaleSize = this.reSize(pixels, opt);
-                console.dir(scaleSize);
-                console.dir(pixels);
                 data = this.getImageData(opt, 0, 0, scaleSize);
-                
                 data2 = this.fromPixels2DContext2.getImageData(0, 0, this.pixelWidth, this.pixelHeight);
             }
             else if (opt.targetSize) { // 如果有targetSize，就是装在目标宽高里的模式 TinyYolo的情况
-                
                 scaleSize = this.fitToTargetSize(pixels, opt);
                 data = this.getImageData(opt, 0, 0, scaleSize);
                 data2 = this.fromPixels2DContext2.getImageData(0, 0, this.pixelWidth, this.pixelHeight);
             }
         }
-
 
         if (opt.gray) {
             data = grayscale(data);
@@ -359,6 +348,7 @@ export default class imageFeed {
         else if (opt.targetShape) {
             data = this.allReshapeToRGB(data, opt, scaleSize);
         }
+
         return [{data: data, shape: opt.shape || opt.targetShape, name: 'image', canvas: data2}];
     }
 }

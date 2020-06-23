@@ -6,20 +6,19 @@ Paddle.js是百度Paddle的web方向子项目，是一个运行在浏览器中�
 
 ## 主要特点
 
-### Modular
+### 模块化
 
-Web project is built on Atom system which is a versatile framework to support GPGPU operation on WebGL. It is quite modular and could be used to make computation tasks faster by utilizing WebGL.
+Paddle.js项目基于Atom系统构建，该系统是一个通用框架，可支持WebGL上的GPGPU操作。 它非常模块化，可以通过利用WebGL来更快地执行计算任务。
 
 ### 浏览器覆盖范围
 
-* PC: Chrome
-* Mac: Chrome
+* PC: Chrome, firefox
+* Mac: Chrome, Safari
 * Android: Baidu App and QQ Browser
 
 ### 支持的操作
 
-Currently Paddle.js only supports a limited set of Paddle Ops. See the full list. If your model uses unsupported ops, the Paddle.js script will fail and produce a list of the unsupported ops in your model. Please file issues to let us know what ops you need support with.
-目前，Paddle.js只支持有限的一组算子操作。如果您的模型使用不支持的操作，那么padde.js将运行失败，如果您的模型中存在不支持的op操作的列表。请提出问题，让我们知道你需要支持。
+目前，Paddle.js只支持有限的一组算子操作。如果您的模型中使用了不支持的操作，那么padde.js将运行失败并提示您的模型中有哪些op算子目前还不支持。如果您的模型中存在目前Paddle.js不支持的算子，请提出问题，让我们知道你需要支持。
 [查看完整列表](./src/factory/fshader/README.md)
 
 
@@ -86,6 +85,7 @@ let result = await inst.read();
 ## 运行Paddle.js提供的转换器脚本
 
 模型转换器需要输入一个Paddle格式的model，可以是Paddle Hub中的model，运行转换器将会得到paddle.js的JSON格式model。
+[查看转换工具使用方法](./tools/ModelConverter/README_cn.md)
 
 ## Web友好的model格式
 
@@ -103,6 +103,6 @@ Paddle.js已经将一些模型转换成了Paddle.js支持的格式。在下面�
 
 ## 反馈和社区支持
 
-- Questions, reports, and suggestions are welcome through Github Issues!
-- Forum: Opinions and questions are welcome at our [PaddlePaddle Forum](https://ai.baidu.com/forum/topic/list/168)！
-- QQ group chat: 696965088
+- 欢迎在Github Issue中提出问题，反馈和建议！
+- 欢迎在我们的[PaddlePaddle Forum](https://ai.baidu.com/forum/topic/list/168)提出观点，进行讨论！
+- QQ群：696965088

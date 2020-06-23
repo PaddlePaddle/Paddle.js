@@ -16,16 +16,8 @@ export default `
         int temp_y = 0;
         float o = 0.0;
         float f = 0.0;
-        if (x % 2 == 1) x = x - 2;
-        if (y % 2 == 1) y = y - 2;
-// 重排遍历顺序
-//int sumVal = oPos.g + oPos.a * channel_out + oPos.b * channel_out * width_shape_out;
-//int new_a = sumVal % width_shape_out;
-//int new_b = int((sumVal - new_a) / width_shape_out) % height_shape_out;
-//int new_g = int((((sumVal - new_a) / width_shape_out) - new_b) / height_shape_out);
-//int x = new_a;
-//int c = new_g;
-//int y = new_b;
+        if (int(mod(float(x), 2.0)) == 1) x = x - 2;
+        if (int(mod(float(y), 2.0)) == 1) y = y - 2;
         // 获取output的坐标
         int oTensorChannel = int(c * groups / channel_out) * channel_origin;
         int oy = y;
@@ -43,8 +35,7 @@ export default `
                 }
                 // channel计算
                 for (int j = 0; j < channel_origin; j++) {
-
-                	if (ox % stride_h == 0 && oy % stride_v == 0) {
+                	if (int(mod(float(ox), float(stride_h))) == 0 && int(mod(float(oy), float(stride_v))) == 0) {
 						temp_x = int(floor(float(ox) / float(stride_h)));
 						temp_y = int(floor(float(oy) / float(stride_v)));
                         if (temp_x < width_shape_origin && temp_y < height_shape_origin){

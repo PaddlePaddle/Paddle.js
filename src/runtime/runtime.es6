@@ -2,9 +2,6 @@
 import Gpu from '../gpu/gpu';
 import getMaxUniforms from '../test/getMaxUniforms';
 import Factory from '../factory/fshader/factory';
-// import {getTextureShapeInfo} from '../utils/opData';
-// 生成factory实例
-// const factory = new Factory({});
 /**
  * @file gpu运行时
  * @author wangqun@baidu.com, yangmingming@baidu.com
@@ -27,6 +24,14 @@ export default {
 
     getWebglVersion() {
         return this.gpu.getWebglVersion();
+    },
+
+    getWebglMaxTextureSize() {
+        return this.gpu.maxTextureSize();
+    },
+
+    getWebglMaxTextureImageUnits() {
+        return this.gpu.maxTextureImageUnits();
     },
 
     run(opName, opData, isRendered) {
@@ -64,6 +69,7 @@ export default {
                 this.gpu.render(opData.renderData, opData.iLayer, isRendered);
              // }
         });
+
     },
 
     /**

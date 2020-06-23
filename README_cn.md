@@ -14,7 +14,7 @@ Paddle.js项目基于Atom系统构建，该系统是一个通用框架，可支�
 
 * PC: Chrome, firefox
 * Mac: Chrome, Safari
-* Android: Baidu App and QQ Browser
+* Android: Baidu App , UC, Chrome and QQ Browser
 
 ### 支持的操作
 

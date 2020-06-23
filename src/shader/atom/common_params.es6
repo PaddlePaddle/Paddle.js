@@ -7,6 +7,7 @@ export default `
     // dynamic的input数据
     const float multi_value = float(MULTI_VALUE);
     const float bias_value = float(BIAS_VALUE);
+    const bool fuse_relu =  bool(FUSE_RELU);
 
     // 输出数据
     const int width_shape_out = WIDTH_SHAPE_OUT;

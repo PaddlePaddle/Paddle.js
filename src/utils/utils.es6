@@ -3,7 +3,35 @@
  * @author yangmingming
  */
 /* eslint-disable */
+
+let GPU_TEXTURE_MAX_SIZE = null;
+
 export default {
+    setTextureMaxSize(size) {
+        GPU_TEXTURE_MAX_SIZE = size;
+    },
+    getQueryTime(gl, query) {
+        const timeElapsedNanos = gl.getQueryParameter(query, gl.QUERY_RESULT);
+        // Return milliseconds.
+        return timeElapsedNanos;
+    },
+    beginQuery(gl) {
+        const ext = gl.getExtension('EXT_disjoint_timer_query_webgl2');
+        if (!ext) {
+            return;
+        }
+        const query = gl.createQuery();
+        gl.beginQuery(ext.TIME_ELAPSED_EXT, query);
+        return query;
+    },
+    endQuery(gl, query) {
+        const ext = gl.getExtension('EXT_disjoint_timer_query_webgl2');
+        if (!ext) {
+            return;
+        }
+        gl.endQuery(ext.TIME_ELAPSED_EXT);
+        return query;
+    },
     // todo: 适用2维矩阵乘法，以后实现通用版本
     getReshapeInPaddle(inputShape = [], counterShape = [], outShape = []) {
         let total = inputShape.reduce((all, num) => all * num);
@@ -117,14 +145,14 @@ export default {
         let width = c * w;
         let offsetX = 0;
         let offsetY = 0;
-        // 安卓和ios的max texture size是4096, 改造存储空间(2bh, cw / 2)
+        // 安卓和ios的max texture size是4096, 改造存储空间(4bh, cw / 4)
         let exceedMax = false;
         // trick TEXTURE_SIZE 超限问题，后续升级更优解
-        if (height > 4096 || width > 4096) {
-            //console.error('大小超限', shape);
-            //height *= 4;
-            //width = c * (Math.ceil(w / 4));
-            //exceedMax = true;
+        if (height > GPU_TEXTURE_MAX_SIZE || width > GPU_TEXTURE_MAX_SIZE) {
+            console.error('大小超限', shape);
+            height *= 4;
+            width = c * (Math.ceil(w / 4));
+            exceedMax = true;
         }
         if (isPacked) {
             // 紧凑布局
@@ -325,7 +353,7 @@ export default {
         const texture_height = shape_b * shape_h;
         const texture_width = shape_c * shape_w;
 
-        if (texture_height <= 4096 && texture_width <= 4096) {
+        if (texture_height <= GPU_TEXTURE_MAX_SIZE && texture_width <= GPU_TEXTURE_MAX_SIZE) {
             return nchwData;
         }
         let pos = 0;
@@ -345,6 +373,11 @@ export default {
         }
 
         return formatData;
+    },
+    // 小数转百分比
+    toPercent(data) {
+        let str = Number(data * 100).toFixed(3);
+        return str += '%';
     }
 };
 /* eslint-enable */

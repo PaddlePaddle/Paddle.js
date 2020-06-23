@@ -3,7 +3,10 @@
  * @file 顶点文件
  * @author yangmingming
  */
-export default `
+ export default `
+precision highp float;
+precision highp int;
+
 attribute vec4 position;
 varying vec2 vCoord;
 

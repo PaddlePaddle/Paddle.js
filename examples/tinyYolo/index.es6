@@ -54,7 +54,7 @@ const feedShape = {
 };
 // 模型路径
 const modelPath = {
-    'tinyYolo': 'model/tinyYolo'
+    'tinyYolo': 'https://paddlejs.cdn.bcebos.com/models/tinyYolo'
 };
 const modelType = 'tinyYolo';
 const path = modelPath[modelType];
@@ -86,7 +86,7 @@ async function run(input) {
     // log.end('预处理');
     if (!loaded) {
         const MODEL_CONFIG = {
-            dir: `/${path}/`, // 存放模型的文件夹
+            dir: `${path}/`, // 存放模型的文件夹
             main: 'model.json', // 主文件
         };
         loaded = true;
@@ -98,7 +98,7 @@ async function run(input) {
                 options: {
                     fileCount: 1, // 切成了多少文件
                     getFileName(i) { // 获取第i个文件的名称
-                        return 'chunk_0.dat';
+                        return `chunk_${i}.dat`;
                     }
                 }
             }

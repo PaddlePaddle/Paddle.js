@@ -16,11 +16,11 @@ module.exports = {
         minimize: true
     },
     entry: {
-        index: ['./src/executor/runner']
+        index: ['./src/index']
     },
     output: {
-        filename: '../graphfe/dep/paddleweb/index.min.js',
-        path: path.resolve(__dirname, './'),
+        filename: 'index.js',
+        path: path.resolve(__dirname, './pub/dist'),
         library: 'panorama',
         libraryTarget: 'umd',
         libraryExport: 'default'

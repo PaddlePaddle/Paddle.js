@@ -7,6 +7,7 @@ export default class Factory {
     constructor(opts) {
         this.defaultOpts = Object.assign({}, opts);
         this.webglVersion = 2;
+        this.isFrameBufferSupportFloat = true;
         this.texture2d = 'texture';
     }
 
@@ -15,6 +16,10 @@ export default class Factory {
         if (vs === 1) {
             this.texture2d = 'texture2D';
         }
+    }
+
+    setIsFrameBufferSupportFloat(res = true) {
+        this.isFrameBufferSupportFloat = res;
     }
 
     buildShader(opName, data, runtime = undefined) {
@@ -30,7 +35,7 @@ export default class Factory {
 
     buildPrefix(opName) {
         if (this.webglVersion === 1) {
-            return ops.common.prefix;
+            return this.isFrameBufferSupportFloat ? ops.common.prefix : ops.common.prefixHalf;
         }
         return ops.common.prefix2;
     }

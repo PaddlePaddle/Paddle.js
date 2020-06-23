@@ -16,9 +16,9 @@ Web project could run TinyYolo model in less than 30ms on chrome. This is fast e
 
 ### Browser Coverage
 
-* PC: Chrome
-* Mac: Chrome
-* Android: Baidu App and QQ Browser
+* PC: Chrome, firefox
+* Mac: Chrome, Safari
+* Android: Baidu App , UC, Chrome and QQ Browser
 
 ### Supported operations
 

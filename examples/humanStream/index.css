@@ -1,0 +1,19 @@
+.wrapper {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+    width: 100%;
+}
+#video {
+    width: 45%;
+    min-width: 310px;
+    border: 2px solid #aaa;
+    transform: rotateY(180deg);
+}
+#myCanvas2 {
+    width: 45%;
+    min-width: 310px;
+    border: 2px solid #aaa;
+    transform: rotateY(180deg);
+}

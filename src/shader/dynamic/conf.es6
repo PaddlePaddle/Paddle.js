@@ -19,7 +19,7 @@ export default {
         'HEIGHT_TEXTURE_OUT',
         'CHANNEL_OUT',
         'OFFSET_Y_OUT',
-
+        'FUSE_RELU',
         'MULTI_VALUE',
         'BIAS_VALUE',
         'ACTIVE_FUNCTION'

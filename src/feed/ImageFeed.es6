@@ -81,23 +81,29 @@ export default class imageFeed {
 
     /**
      * 全部转rgb * H * W
-     * @param shape
+     * @param imageData 数据
+     * @param opt 参数
+     * @param opt.mean 均值
+     * @param opt.std 方差
+     * @param opt.targetShape 输出shape
+     * @param opt.normalizeType 0：将数据映射为0~1， 1：映射为-1~1之间
      */
-    allReshapeToRGB(imageData, opt, scaleSize) {
-        //const {sw, sh} = scaleSize;
-        const [b, c, h, w] = opt.targetShape;
-        let data = imageData.data || imageData;
+    allReshapeToRGB(imageData, opt) {
+
         // mean和std是介于0-1之间的
-        let mean = opt.mean;
-        let std = opt.std;
-        let dataLength = data.length;
-        // let result = new Float32Array(dataLength * 3);
+        let {mean, std, normalizeType = 0, targetShape} = opt;
+        const [b, c, h, w] = targetShape;
+        let data = imageData.data || imageData;
+
         let result = this.result;
-        // let offsetR = 0;
-        // let offsetG = dataLength / 4;
-        // let offsetB = dataLength / 2;
         let offset = 0;
-        let size = h * w;
+
+        if (!result) {
+            const [b, c, h, w] = targetShape;
+            // 计算确定targetShape所需Float32Array占用空间
+            result = new Float32Array(h * w * c);
+         }
+
         // h w c
         for (let i = 0; i < h; ++i) {
             let iw = i * w;
@@ -105,15 +111,14 @@ export default class imageFeed {
                 let iwj = iw + j;
                 for (let k = 0; k < c; ++k) {
                     let a = iwj * 4 + k;
-                    result[offset] = data[a] / 255;
+                    result[offset] = normalizeType === 0 ? data[a] / 255 : (data[a] - 128 ) / 128;
                     result[offset] -= mean[k];
                     result[offset] /= std[k];
-                    //result[offset] = 0.5;
                     offset++;
                 }
             }
         }
-        
+
         return result;
     };
 
@@ -316,8 +321,8 @@ export default class imageFeed {
         let data2;
         let scaleSize;
         if (pixels instanceof HTMLImageElement || pixels instanceof HTMLVideoElement) {
-            this.pixelWidth = pixels.naturalWidth || pixels.width;
-            this.pixelHeight = pixels.naturalHeight || pixels.height;
+            this.pixelWidth = pixels.naturalWidth || pixels.videoWidth ||  pixels.width;
+            this.pixelHeight = pixels.naturalHeight || pixels.videoWidth ||  pixels.height;
             if (opt.scale && opt.targetSize){ // Moblienet的情况
                 data = this.resizeAndFitTargetSize(pixels, opt);
                 data2 = this.fromPixels2DContext2.getImageData(0, 0, this.pixelWidth, this.pixelHeight);

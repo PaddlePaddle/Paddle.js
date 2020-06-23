@@ -23,7 +23,7 @@ def grantWritePermission(func, path, execinfo):
 if __name__ == "__main__":
     """
     Example:
-    'python convertToPaddleJSModel.py --modelPath=../infer_model/MobileNetV2/__model__ --paramPath=../infer_model/MobileNetV2/params --outputDir=../jsmodel --optimize=1'
+    'python convertToPaddleJSModel.py --modelPath=../infer_model/MobileNetV2/model --paramPath=../infer_model/MobileNetV2/params --outputDir=../jsmodel --optimize=1'
     """
     try:
         p = argparse.ArgumentParser(description='转化为PaddleJS模型参数解析')

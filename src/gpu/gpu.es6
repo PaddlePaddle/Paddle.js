@@ -16,40 +16,59 @@ const CONF = {
 };
 const MAX_WAIT = 100;
 export default class gpu {
+
     constructor(opts = {}) {
-        // 版本, 默认webgl version 2.0
-        this.version = 2;
+
+        this.version = 2; // 版本, 默认webgl version 2.0
         this.opts = opts;
+        this.frameBufferSupportFloat = true; // 默认frame buffer支持 float精度
+
         opts.width_raw_canvas = Number(opts.width_raw_canvas) || 512;
         opts.height_raw_canvas = Number(opts.height_raw_canvas) || 512;
-        const canvas = opts.el ? opts.el : document.createElement('canvas');
+        let gl = null;
+        if (!this.opts.gl) {
+            const canvas = opts.el ? opts.el : document.createElement('canvas');
 
-        canvas.addEventListener('webglcontextlost', evt => {
-            evt.preventDefault();
-            console.log('webgl context is lost~');
-        }, false);
-        let gl = canvas.getContext('webgl2', CONF);
-        if (!!gl) {
-            // 开启float32
-            this.version = 2;
-            this.textureFloat = gl.getExtension('EXT_color_buffer_float');
-            this.internalFormat = gl.R32F;
-            this.textureFormat = gl.RED;
-            this.downloadInternalFormat = gl.RGBA32F;
-        } else {
-            gl = canvas.getContext('webgl', CONF) || canvas.getContext('experimental-webgl', CONF);
+            canvas.addEventListener('webglcontextlost', evt => {
+                evt.preventDefault();
+                console.log('webgl context is lost~');
+            }, false);
+            gl = canvas.getContext('webgl2', CONF);
+            if (!!gl) {
+                // 开启float32
+                this.version = 2;
+                this.textureFloat = gl.getExtension('EXT_color_buffer_float');
+                this.internalFormat = gl.R16F;
+                this.textureFormat = gl.RED;
+                this.downloadInternalFormat = gl.RGBA16F;
+            } else {
+                gl = canvas.getContext('webgl', CONF) || canvas.getContext('experimental-webgl', CONF);
+                this.version = 1;
+                this.internalFormat = gl.RGBA;
+                this.textureFormat = gl.RGBA;
+                this.downloadInternalFormat = gl.RGBA;
+                if (!gl) {
+                    this.version = 0;
+                    alert('当前环境创建webgl context失败');
+                } else {
+                    // 开启扩展
+                    this.textureFloat  = gl.getExtension('OES_texture_float');
+                    this.textureHalfFloat = gl.getExtension('OES_texture_half_float');
+                    // 帧缓冲区是否支持float精度（IOS 不支持float精度，只支持half_float）
+                    this.frameBufferSupportFloat = this.isDownloadFloatTextureEnabled(gl);
+                }
+            }
+        }
+        else {
+            gl = this.opts.gl;
             this.version = 1;
             this.internalFormat = gl.RGBA;
             this.textureFormat = gl.RGBA;
             this.downloadInternalFormat = gl.RGBA;
-            if (!gl) {
-                this.version = 0;
-                alert('当前环境创建webgl context失败');
-            } else {
-                // 开启扩展
-                this.textureFloat  = gl.getExtension('OES_texture_float');
-                console.log('float extension is started or not? ' + !!this.textureFloat);
-            }
+            this.textureFloat = gl.getExtension('OES_texture_float');
+            this.textureHalfFloat = gl.getExtension('OES_texture_half_float');
+            // 帧缓冲区是否支持float精度（IOS 不支持float精度，只支持half_float）
+            this.frameBufferSupportFloat = this.isDownloadFloatTextureEnabled(gl);
         }
 
         this.maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
@@ -70,9 +89,9 @@ export default class gpu {
         // 同步查看次数
         this.waits = 0;
 
-        console.log('WebGl版本是 ' + this.version);
-        console.log('MAX_TEXTURE_SIZE is ' + this.maxTextureSize);
-        console.log('MAX_TEXTURE_IMAGE_UNITS is ' + this.maxTextureImageUnits);
+        // console.log('WebGl版本是 ' + this.version);
+        // console.log('MAX_TEXTURE_SIZE is ' + this.maxTextureSize);
+        // console.log('MAX_TEXTURE_IMAGE_UNITS is ' + this.maxTextureImageUnits);
     }
 
     getWebglVersion() {
@@ -85,6 +104,10 @@ export default class gpu {
 
     getWebglMaxTextureImageUnits() {
         return this.maxTextureImageUnits;
+    }
+
+    getIsFrameBufferSupportFloat() {
+        return this.frameBufferSupportFloat;
     }
 
     initCache() {
@@ -144,12 +167,41 @@ export default class gpu {
         return (this.textureFloat !== null);
     }
 
+    // 判断当前frameBuffer能否支持 float texture
+    isDownloadFloatTextureEnabled(gl) {
+        const texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        var width = 1;
+        var height = 1;
+        gl.texImage2D(
+            gl.TEXTURE_2D,
+            0,
+            this.downloadInternalFormat,
+            width,
+            height,
+            0,
+            gl.RGBA,
+            gl.FLOAT,
+            null
+        );
+        const frameBuffer = gl.createFramebuffer();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+        const isFrameBufferComplete = gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE;
+        gl.bindTexture(gl.TEXTURE_2D, null);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.deleteTexture(texture);
+        gl.deleteFramebuffer(frameBuffer);
+        return isFrameBufferComplete;
+    }
+
     createProgram(fshader, out) {
         const gl = this.gl;
         const program = gl.createProgram();
         gl.attachShader(program, this.vertexShader);
         gl.attachShader(program, fshader);
         gl.linkProgram(program);
+
         // 生成output的texture缓存
         const texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -164,7 +216,9 @@ export default class gpu {
             out.height_texture,
             0,             // Always 0 in OpenGL ES.
             gl.RGBA,       // Format for each pixel.
-            gl.FLOAT,          // Data type for each chanel.
+            this.frameBufferSupportFloat
+                ? gl.FLOAT
+                : this.textureHalfFloat.HALF_FLOAT_OES,    // Data type for each chanel.
             null);
         gl.bindTexture(gl.TEXTURE_2D, null);
         this.texturesMap[out.tensorId] = texture;
@@ -311,7 +365,6 @@ export default class gpu {
         let value;
 
         status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
-
         switch (status)
         {
             case gl.FRAMEBUFFER_COMPLETE:
@@ -411,7 +464,6 @@ export default class gpu {
             return this.uniformLocations['' + ilayer][name];
         }
         let loc = this.gl.getUniformLocation(this.program, name);
-        if (loc === null) throw `getUniformLoc ${name} err`;
         // 缓存
         this.uniformLocations['' + ilayer] = this.uniformLocations['' + ilayer] || {};
         this.uniformLocations['' + ilayer][name] = loc;
@@ -448,8 +500,12 @@ export default class gpu {
         let textureIndex = 0;
         data.forEach(item => {
             if (item.type === 'texture') {
+                const loc = that.getUniformLoc(item.variable + '_' + item.tensor, iLayer, isRendered);
+                if (!loc) {
+                    return;
+                }
                 that.initTexture(textureIndex, item, iLayer, isRendered);
-                gl.uniform1i(that.getUniformLoc(item.variable + '_' + item.tensor, iLayer, isRendered), textureIndex++);
+                gl.uniform1i(loc, textureIndex++);
             }
             else if (item.type === 'uniform') {
                 gl[item.setter](that.getUniformLoc(item.variable + '_' + item.tensor, iLayer, isRendered), item.data);
@@ -461,45 +517,45 @@ export default class gpu {
     }
 
     createPBO() {
-        if (this.version == 2){
-        const gl2 = this.gl;
-        const buffer = this.pbo;
-        gl2.bindBuffer(gl2.PIXEL_PACK_BUFFER, buffer);
-        const sizeBytes = 4 * 4 * this.width_texture_out * this.height_texture_out;
-        gl2.bufferData(gl2.PIXEL_PACK_BUFFER, sizeBytes, gl2.STREAM_READ);
-        gl2.readPixels(0, 0, this.width_texture_out, this.height_texture_out, gl2.RGBA, gl2.FLOAT, 0);
-        gl2.bindBuffer(gl2.PIXEL_PACK_BUFFER, null);
-        return buffer;
+        if (this.version == 2) {
+            const gl2 = this.gl;
+            const buffer = this.pbo;
+            gl2.bindBuffer(gl2.PIXEL_PACK_BUFFER, buffer);
+            const sizeBytes = 4 * 4 * this.width_texture_out * this.height_texture_out;
+            gl2.bufferData(gl2.PIXEL_PACK_BUFFER, sizeBytes, gl2.STREAM_READ);
+            gl2.readPixels(0, 0, this.width_texture_out, this.height_texture_out, gl2.RGBA, gl2.FLOAT, 0);
+            gl2.bindBuffer(gl2.PIXEL_PACK_BUFFER, null);
+            return buffer;
         }
         else {
-        let buffer = new Float32Array(this.width_texture_out * this.height_texture_out * 4);
-        const gl2 = this.gl;
-        gl2.readPixels(0, 0, this.width_texture_out, this.height_texture_out, gl2.RGBA, gl2.FLOAT, buffer);
-        return buffer;
+            let buffer = new Float32Array(this.width_texture_out * this.height_texture_out * 4);
+            const gl2 = this.gl;
+            gl2.readPixels(0, 0, this.width_texture_out, this.height_texture_out, gl2.RGBA, gl2.FLOAT, buffer);
+            return buffer;
         }
     }
 
     downloadFoat32TensorFromBuffer(buffer) {
         const gl2 = this.gl;
         const size = 4 * this.width_texture_out * this.height_texture_out;
-        if (this.version == 2){
-        const pixels = new Float32Array(size);
-        gl2.bindBuffer(gl2.PIXEL_PACK_BUFFER, buffer);
-        gl2.getBufferSubData(gl2.PIXEL_PACK_BUFFER, 0, pixels);
-        gl2.bindBuffer(gl2.PIXEL_PACK_BUFFER, null);
-        let result = [];
-        for (let i = 0; i < this.width_texture_out * this.height_texture_out; i++) {
-            result.push(pixels[4 * i]);
-        }
-        return result;
+        if (this.version == 2) {
+            const pixels = new Float32Array(size);
+            gl2.bindBuffer(gl2.PIXEL_PACK_BUFFER, buffer);
+            gl2.getBufferSubData(gl2.PIXEL_PACK_BUFFER, 0, pixels);
+            gl2.bindBuffer(gl2.PIXEL_PACK_BUFFER, null);
+            let result = [];
+            for (let i = 0; i < this.width_texture_out * this.height_texture_out; i++) {
+                result.push(pixels[4 * i]);
+            }
+            return result;
         }
         else {
-        let pixels = buffer;
-        let result = [];
-        for (let i = 0; i < this.width_texture_out * this.height_texture_out; i++) {
-            result.push(pixels[4 * i]);
-        }
-        return result;
+            let pixels = buffer;
+            let result = [];
+            for (let i = 0; i < this.width_texture_out * this.height_texture_out; i++) {
+                result.push(pixels[4 * i]);
+            }
+            return result;
         }
     }
 

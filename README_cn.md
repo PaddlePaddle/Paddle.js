@@ -28,52 +28,31 @@ Paddle.js项目基于Atom系统构建，该系统是一个通用框架，可支�
 
 ```bash
 
-import Paddle from 'paddlejs';
+import {runner as Paddlejs} from 'paddlejs';
 
-let feed = io.process({
-    input: document.getElementById('image'),
-    params: {
-        gapFillWith: '#000', // What to use to fill the square part after zooming
-        targetSize: {
-            height: fw,
-            width: fh
+const paddlejs = new Paddlejs({
+        modelPath: 'model/mobilenetv2', // model path
+        fileCount: 4, // model data file count
+        feedShape: {  // input shape
+            fw: 256,
+            fh: 256
         },
-        targetShape: [1, 3, fh, fw], // Target shape changed its name to be compatible with previous logic
-        // shape: [3, 608, 608], // Preset sensor shape
-        mean: [117.001, 114.697, 97.404], // Preset mean
-        // std: [0.229, 0.224, 0.225]  // Preset std
-    }
-});
+        fetchShape: [1, 1, 1920, 10],  // output shape
+        fill: '#fff',   // fill color when resize image
+        needBatch: true, // whether need to complete the shape to 4 dimension
+        inputType: 'image' // whether is image or video
+    });
 
-const MODEL_CONFIG = {
-    dir: `/${path}/`, // model URL
-    main: 'model.json', // main graph
-};
-
-const paddle = new Paddle({
-    urlConf: MODEL_CONFIG,
-    options: {
-        multipart: true,
-        dataType: 'binary',
-        options: {
-            fileCount: 1, // How many model have been cut
-            getFileName(i) { 
-                return 'chunk_' + i + '.dat';
-            }
-        }
-    }
-});
-
-model = await paddle.load();
+// load paddlejs model and preheat
+await paddlejs.loadModel();
 
 // run model
-let inst = model.execute({
-    input: feed
-});
+await paddlejs.predict(img, postProcess);
 
-// There should be a fetch execution call or a fetch output
-let result = await inst.read();
-
+function postProcee(data) {
+    // data为预测结果
+    console.log(data);
+}
 
 ```
 
@@ -85,7 +64,6 @@ let result = await inst.read();
 ## 运行Paddle.js提供的转换器脚本
 
 模型转换器需要输入一个Paddle格式的model，可以是Paddle Hub中的model，运行转换器将会得到paddle.js的JSON格式model。
-[查看转换工具使用方法](./tools/ModelConverter/README_cn.md)
 
 ## Web友好的model格式
 

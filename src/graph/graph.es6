@@ -31,6 +31,7 @@ export default class Graph {
         this.isExecuted = false;
         // 网络层数
         this.iLayer = 0;
+        this.queryList = [];
 
         if (this.options && this.options.options ) {
             if (this.options.options.test === true) {
@@ -44,8 +45,10 @@ export default class Graph {
 
         if (!this.inst) {
             // op runner
-            this.inst = Runtime.init();
+            this.inst = new Runtime(this.options.options);
             factory.setWebglVersion(this.inst.getWebglVersion());
+            factory.setIsFrameBufferSupportFloat(this.inst.getIsFrameBufferSupportFloat());
+            Utils.setTextureMaxSize(this.inst.getWebglMaxTextureSize());
 
         }
     }
@@ -90,8 +93,16 @@ export default class Graph {
         if (executor.type === 'fetch') {
             return;
         }
+
+        const gl = this.inst.gpu.gl;
+        let query = Utils.beginQuery(gl);
+
         opindex++;
         executor.execute(this.inst, this.isExecuted);
+
+        this.queryList.push({name: executor.type, query, count: 1});
+        query = Utils.endQuery(gl, query);
+
         if (false && executor.opData && opindex >= 184){
             console.log('return!');
             console.dir(executor);
@@ -123,6 +134,7 @@ export default class Graph {
         if (this.isExecuted) {
             this.updateFeed();
         }
+        this.queryList = [];
         this.execute_(executor[0]);
         this.isExecuted = true;
         return this.inst;
@@ -175,10 +187,21 @@ export default class Graph {
                 that.feedOp = executor;
             }
             else {
-                input[key] = that.getTensorAttr(input[key][0]);
+                if (key === 'X' && input[key].length > 1) {
+                    // 兼容key为X,value是个长度大于1的数组的情况，如concat
+                    const [x, y, z] = input[key];
+                    input['X'] = that.getTensorAttr(x);
+                    y && (input['Y'] = that.getTensorAttr(y));
+                    if (z) {
+                        input['Z'] = that.getTensorAttr(z);
+                        executor.type += '_mul';
+                    }
+                }
+                else {
+                    input[key] = that.getTensorAttr(input[key][0]);
+                }
             }
         });
-        // console.log(input);
         return {
             inputs: input,
             outputs: output,

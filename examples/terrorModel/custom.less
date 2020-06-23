@@ -1,0 +1,45 @@
+.detector-area {
+    width: 580px;
+    height: 400px;
+    background-color: #fafafa;
+    overflow: hidden;
+    text-align: center;
+    position: relative;
+
+    img {
+        height: 100%;
+        max-width: 100%;
+    }
+
+    .detector-result-container {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #00000080;
+        display: none;
+
+        .result {
+            opacity: 0.8;
+            color: #fff;
+            font-size: 40px;
+            text-align: center;
+            #name {
+                padding: 30px;
+                display: inline-block;
+                border: 2px #fff solid;
+                margin-top: 80px;
+            }
+            #percent {
+                padding-top: 20px;
+            }
+        }
+    }
+}
+
+#txt {
+    font-size: 30px;
+    color: #fff;
+}
+
+

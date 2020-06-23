@@ -7,32 +7,26 @@ import Factory from '../factory/fshader/factory';
  * @author wangqun@baidu.com, yangmingming@baidu.com
  *
  */
-export default {
-    /**
-     * 初始化, 生成gpu实例
-     * @param {Object} opts 运行时参数，包含el：canvas，dim: 256
-     * @return {Object} this 实例对象
-     */
-    init(opts = {}) {
-        const gpu = this.gpu = new Gpu(opts);
-        if (gpu.isFloatingTexture()) {
-            return this;
-        } else {
-            return null;
-        }
-    },
+export default class Runtime {
+    constructor(opts = {}) {
+        this.gpu = new Gpu(opts);
+    }
 
     getWebglVersion() {
         return this.gpu.getWebglVersion();
-    },
+    }
 
     getWebglMaxTextureSize() {
-        return this.gpu.maxTextureSize();
-    },
+        return this.gpu.getWebglMaxTextureSize();
+    }
 
     getWebglMaxTextureImageUnits() {
         return this.gpu.maxTextureImageUnits();
-    },
+    }
+
+    getIsFrameBufferSupportFloat() {
+        return this.gpu.getIsFrameBufferSupportFloat();
+    }
 
     run(opName, opData, isRendered) {
         // console.dir(['fscode', opData.fsCode]);
@@ -52,7 +46,7 @@ export default {
             // 生成帧缓存材质
             gpu.attachFrameBuffer(opData.iLayer, outTensorId);
             // let end = +Date.now();
-            let bufferStatus = gpu.frameBufferIsComplete();
+            // let bufferStatus = gpu.frameBufferIsComplete();
             // if (bufferStatus.isComplete) {
                 // start = +Date.now();
                 // timeObj['buferstatus-time'] = start - end;
@@ -70,7 +64,7 @@ export default {
              // }
         });
 
-    },
+    }
 
     /**
      * 读取op计算结果, 并返回数据
@@ -82,7 +76,7 @@ export default {
             return this.gpu.compute();
         }
         return null;
-    },
+    }
 
     async read() {
         const pbo = this.gpu.createPBO();
@@ -94,7 +88,7 @@ export default {
         // 开始读数据
         // window.log.end('执行时间');
         return this.gpu.downloadFoat32TensorFromBuffer(pbo);
-    },
+    }
 
     createProgram(fsCode, outTensor) {
         const fshader = this.gpu.initShader(fsCode, 'fragment');
@@ -104,7 +98,7 @@ export default {
         // alert(maxUniforms.maxFragmentShader);
         // console.table(maxUniforms.uniforms);
         return program;
-    },
+    }
 
     // 释放资源
     dispose() {

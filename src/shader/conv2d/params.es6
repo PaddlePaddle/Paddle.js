@@ -5,7 +5,7 @@
  */
 export default `
     // conv2d的input数据
-    
+
     // 常量
     // 卷积核
     const int length_shape_filter = LENGTH_SHAPE_FILTER;
@@ -14,7 +14,7 @@ export default `
     const int width_texture_filter = WIDTH_TEXTURE_FILTER;
     const int height_texture_filter = HEIGHT_TEXTURE_FILTER;
     const int channel_filter = CHANNEL_FILTER;
-    
+
     // 输入数据
     const int width_shape_origin = WIDTH_SHAPE_ORIGIN;
     const int height_shape_origin = HEIGHT_SHAPE_ORIGIN;
@@ -22,6 +22,14 @@ export default `
     const int width_texture_origin = WIDTH_TEXTURE_ORIGIN;
     const int height_texture_origin = HEIGHT_TEXTURE_ORIGIN;
     const int channel_origin = CHANNEL_ORIGIN;
+
+    // bias
+    const int width_shape_bias = WIDTH_SHAPE_BIAS;
+    const int height_shape_bias = HEIGHT_SHAPE_BIAS;
+    const int length_shape_bias = LENGTH_SHAPE_BIAS;
+    const int width_texture_bias = WIDTH_TEXTURE_BIAS;
+    const int height_texture_bias = HEIGHT_TEXTURE_BIAS;
+    const int channel_bias = CHANNEL_BIAS;
 
     // 计算相关
     // 拆分步长
@@ -35,11 +43,15 @@ export default `
     const int dilation_v = DILATIONS_Y;
     // groups
     const int groups = GROUPS;
-    
+
     // uniform变量
     // 卷积核
     uniform sampler2D texture_filter;
-    
+
     // 输入数据
     uniform sampler2D texture_origin;
+
+
+    // bias
+    uniform sampler2D texture_bias;
 `;

@@ -51,11 +51,11 @@ async function run(input) {
         }
     });
 
-    const path = 'model/mobileNet';
+    const path = 'https://paddlejs.cdn.bcebos.com/models/mobileNetV2';
 
     if (!loaded) {
         const MODEL_CONFIG = {
-            dir: `/${path}/`, // 存放模型的文件夹
+            dir: `${path}/`, // 存放模型的文件夹
             main: 'model.json', // 主文件
         };
         loaded = true;
@@ -86,10 +86,8 @@ async function run(input) {
     let C = outputShape[1];
     let H = outputShape[2];
     let W = outputShape[3];
-    console.log(outputShape);
     let nhwcShape = [N, H, W, C];
     console.log(nhwcShape);
-    console.log(result.length);
 
     let nchwData = Utils.nhwc2nchw(result, nhwcShape);
     Utils.stridePrint(nchwData);

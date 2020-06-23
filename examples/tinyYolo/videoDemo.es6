@@ -45,7 +45,7 @@ const feedShape = {
     }
 };
 const modelPath = {
-    'tinyYolo': 'model/tinyYolo'
+    'tinyYolo': 'https://paddlejs.cdn.bcebos.com/models/tinyYolo'
 };
 const modelType = 'tinyYolo';
 const path = modelPath[modelType];
@@ -55,7 +55,8 @@ const runner = new Runner({
     modelName: modelType, // '608' | '320' | '320fused' | 'separate'
     modelPath: path,
     feedShape: feedShape[modelType],
-    outputShapes: outputShapes[modelType]
+    outputShapes: outputShapes[modelType],
+    inputType: 'video'
 });
 startBtn.disabled = true;
 runner.preheat()
@@ -95,7 +96,7 @@ const handleDiv = function (data) {
 }
 startBtn.addEventListener('click', function () {
     startBtn.disabled = true;
-    runner.startStream(() => camera.curVideo, handleDiv);
+    runner.predict(() => camera.curVideo, handleDiv);
 });
 stopBtn.addEventListener('click', function () {
     startBtn.disabled = false;

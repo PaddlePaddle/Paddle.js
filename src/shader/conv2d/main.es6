@@ -10,7 +10,7 @@ export default `
         int x = oPos.a;
         int c = oPos.g;
         int y = oPos.b;
-        int b = oPos.r; 
+        int b = oPos.r;
         float res = 0.0;
 
         // 获取output的坐标
@@ -42,6 +42,12 @@ export default `
                 ox += dilation_h;
             }
             oy += dilation_v;
+        }
+
+        float bi = getValueFromTensorPosLIMIT_BIAS_bias(0, 0, 0, c);
+        res += bi;
+        if (fuse_relu) {
+            res = max(0.0, res);
         }
         setOutput(res);
     }

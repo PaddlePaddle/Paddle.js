@@ -3,6 +3,7 @@ import common_params from '../../shader/atom/common_params';
 import common_func from '../../shader/atom/common_func';
 import prefix from '../../shader/atom/prefix';
 import prefix2 from '../../shader/atom/prefix2';
+import prefixHalf from '../../shader/atom/prefix_half';
 import suffix from '../../shader/atom/suffix';
 import ivec56 from '../../shader/atom/type_ivec56';
 
@@ -61,6 +62,10 @@ import concat_params from '../../shader/concat/params';
 import concat_func from '../../shader/concat/main';
 import concat_conf from '../../shader/concat/conf';
 
+import concat_mul_params from '../../shader/concat_mul/params';
+import concat_mul_func from '../../shader/concat_mul/main';
+import concat_mul_conf from '../../shader/concat_mul/conf';
+
 import split_params from '../../shader/split/params';
 import split_func from '../../shader/split/main';
 import split_conf from '../../shader/split/conf';
@@ -91,6 +96,7 @@ export default {
         params: common_params,
         func: common_func,
         prefix,
+        prefixHalf,
         prefix2,
         suffix,
         ivec56
@@ -156,6 +162,12 @@ export default {
             func: concat_func,
             confs: concat_conf
         },
+        concat_mul: {
+            params: concat_mul_params,
+            func: concat_mul_func,
+            confs: concat_mul_conf
+        },
+
         split: {
             params: split_params,
             func: split_func,

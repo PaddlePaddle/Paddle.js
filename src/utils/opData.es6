@@ -1,6 +1,7 @@
 /* eslint-disable */
 import Utils from './utils';
 import Tensor from './tensor';
+
 /**
  * @file op的数据对象
  * @author yangmingming
@@ -44,6 +45,7 @@ const tensorName = {
     'x': 'origin',
     'filter': 'filter',
     'y': 'counter',
+    'z': 'appender',
     'output': 'out',
     'out': 'out',
     'scale': 'scale',
@@ -55,10 +57,12 @@ const tensorName = {
 const opBehavior = {
     conv2d: [
         'needBatch',
+        'adaptPaddings',
         'isApplySeparableConv'
     ],
 	conv2d_transpose: [
-		'needBatch'
+        'needBatch',
+        // 'adaptPaddings'
 	],
     batchnorm: [
         'needBatch',
@@ -110,6 +114,12 @@ const opBehavior = {
         'normalizeDim',
         'needBatch'
     ],
+    concat_mul: [
+        'needBatch',
+        'processDim',
+        'normalizeDim',
+        'normalizeDim2',
+    ],
     split: [
         'normalizeDim',
         'needBatch'
@@ -140,7 +150,8 @@ export default class OpData {
             this.data = {
                 'active_function': 'scale',
                 'multi_value': '1.0',
-                'bias_value': '0.0'
+                'bias_value': '0.0',
+                'fuse_relu': false
             };
 
             // tensor数据
@@ -152,9 +163,28 @@ export default class OpData {
         }
     }
 
+    adaptPaddings() {
+        for (let key in this.attrs) {
+            if (this.attrs.hasOwnProperty(key) && key === 'paddings') {
+                const item = this.attrs[key];
+                const [x, y] = item;
+                if (x === 0 && y === 1) {
+                    // 兼容paddings为[0, 1]的情况
+                    this.attrs[key][1] = 0;
+                }
+                return;
+            }
+        }
+    }
     inferShape(){
 		if (this.name == 'reshape2'){
-			let inputShape = this.input.X[0].shape;
+            let inputShape = this.input.X[0].shape;
+            // 把shape变更为new_shape
+            if (this.attrs.shape) {
+                this.attrs.new_shape = this.attrs.shape;
+                delete this.attrs.shape;
+            }
+
 			let targetShape = this.attrs.new_shape;
 			for (let i = 0; i < targetShape.length; i++){
 				if (targetShape[i] == 0) {
@@ -360,14 +390,33 @@ export default class OpData {
 
     isApplySeparableConv(tensorData = []) {
         const groups = this.attrs.groups;
+        let hasBias = false;
+        let outC;
         const filter = tensorData.filter(item => {
-            const [b, c, h, w] = item.shape;
+            const {shape, tensorName} = item;
+            if (tensorName === 'bias') {
+                hasBias = true;
+            }
+            const [b, c, h, w] = shape;
+            if (!hasBias && !outC && tensorName === 'out') {
+                outC = c;
+            }
+
             return (b === groups) && (c === 1) && (item.tensorName === 'filter');
         });
         if (filter && filter.length) {
             // 可以执行separable conv
             this.name += '_depthwise';
         }
+
+        !hasBias && tensorData.push({
+            name: "conv1_scale_offset",
+            needBatch: true,
+            persistable: true,
+            shape: [outC],
+            data: Array.from(new Float32Array(outC), i => 0),
+            tensorName: "bias"
+        });
     }
 
     setPacked(tensorData = []) {
@@ -453,6 +502,29 @@ export default class OpData {
         // 保存 输入 tensor 对应dim 的长度
         this.attrs.inputs_dim = origin_shape[axis];
         this.attrs.dim = 4 - origin_shape.length + axis;
+    }
+    normalizeDim2() {
+        let origin_shape_temp = this.input.Y[0].shape;
+        if (origin_shape_temp.length < 4) {
+            let batch = [];
+            for (let i = 0; i < (4 - origin_shape_temp.length); i++) {
+                batch.push(1);
+            }
+            origin_shape_temp = batch.concat(origin_shape_temp);
+        }
+        const origin_shape = origin_shape_temp;
+        const axis = this.attrs.axis > -1 ? this.attrs.axis : origin_shape.length + this.attrs.axis;
+
+        // 保存 输入 tensor 对应dim 的长度
+        this.attrs.append_num = origin_shape[axis];
+    }
+
+    processDim() {
+        const axis = this.attrs.axis;
+        if (axis !== -1) {
+            let shape = this.input.X[0].shape;
+            this.attrs.axis += 4 - shape.length;
+        }
     }
 
     processAxis() {

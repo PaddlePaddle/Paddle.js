@@ -17,7 +17,13 @@ export default {
                 TENSOR_NAME: 'filter'
             }
         },
-        		{
+        {
+            func: 'getValueFromTensorPos',
+            conf: {
+                TENSOR_NAME: 'bias'
+            }
+        },
+        {
 			func: 'transferFromNHWCtoNCHW',
 			conf:{
 
@@ -31,6 +37,13 @@ export default {
         'WIDTH_TEXTURE_FILTER',
         'HEIGHT_TEXTURE_FILTER',
         'CHANNEL_FILTER',
+
+        'WIDTH_SHAPE_BIAS',
+        'HEIGHT_SHAPE_BIAS',
+        'LENGTH_SHAPE_BIAS',
+        'WIDTH_TEXTURE_BIAS',
+        'HEIGHT_TEXTURE_BIAS',
+        'CHANNEL_BIAS',
 
         'WIDTH_SHAPE_ORIGIN',
         'HEIGHT_SHAPE_ORIGIN',
@@ -65,6 +78,12 @@ export default {
         },
         {
             tensor: 'origin',
+            variable: 'texture',
+            setter: 'initTexture',
+            type: 'texture'
+        },
+        {
+            tensor: 'bias',
             variable: 'texture',
             setter: 'initTexture',
             type: 'texture'

@@ -37,7 +37,7 @@ python -m pip install paddlepaddle -i https://mirror.baidu.com/pypi/simple
 ```
 - 如果`需要`使用优化模型的能力，执行命令：
 ``` bash
-python -m pip install paddlepaddle paddlelite -i https://mirror.baidu.com/pypi/simple
+python -m pip install paddlepaddle paddlelite==2.6.0 -i https://mirror.baidu.com/pypi/simple
 ```
 
 ### 1.2. 快速上手

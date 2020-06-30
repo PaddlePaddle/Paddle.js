@@ -104,7 +104,7 @@ export default class Loader  {
         return load;
     }
 
-    async fetchAllDate (arr) {
+    async fetchAllData (arr) {
         const TMP_SCHEME_REGEX = /\.tmp/;
         const TMP_REGEX = /\-/;
         let requesterArr = arr.map(item => {
@@ -212,7 +212,7 @@ export default class Loader  {
                     .then(() => this.traverse(artifacts.vars));
             }
             else {
-                await that.fetchAllDate(artifacts.vars);
+                await that.fetchAllData(artifacts.vars);
             }
         }
         return artifacts;

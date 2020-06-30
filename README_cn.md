@@ -80,7 +80,7 @@ Paddle.js已经将一些模型转换成了Paddle.js支持的格式。在下面�
 
 
 ## 反馈和社区支持
-- 在线视频课程 [开始学习]（https://www.bilibili.com/video/BV1gZ4y1H7UA?p=6）
+- 在线视频课程 [开始学习](https://www.bilibili.com/video/BV1gZ4y1H7UA?p=6)
 - 欢迎在Github Issue中提出问题，反馈和建议！
 - 欢迎在我们的[PaddlePaddle Forum](https://ai.baidu.com/forum/topic/list/168)提出观点，进行讨论！
 - QQ群：696965088

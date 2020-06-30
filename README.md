@@ -85,7 +85,7 @@ Paddle.js has some pre-converted models to Paddle.js format .There are some demo
 
 
 ## Feedback and Community Support
-
+- Online video tutorial [start video]（https://www.bilibili.com/video/BV1gZ4y1H7UA?p=6）
 - Questions, reports, and suggestions are welcome through Github Issues!
 - Forum: Opinions and questions are welcome at our [PaddlePaddle Forum](https://ai.baidu.com/forum/topic/list/168)！
 - QQ group chat: 696965088

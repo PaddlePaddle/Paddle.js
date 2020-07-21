@@ -147,7 +147,7 @@ export default Vue.extend({
                 {name: 'preheat time', t: this.preheatT},
                 {name: 'subsequent average time', t: this.remainOthersT},
                 {name: 'best time', t: this.bestT},
-                {name: 'op count', t: this.opCount},
+                {name: 'op count', t: this.opCount}
             ]
         }
     },
@@ -239,7 +239,7 @@ export default Vue.extend({
 
                 totaltimeList.push(t);
 
-                ops.push(this.getOpPerf(quertyResults, this.aggregate, {}));
+                ops.push(this.getOpPerf(quertyResults, this.aggregate, {}, true));
                 curTimes++;
             }
 
@@ -286,7 +286,7 @@ export default Vue.extend({
             item.count++;
             return now;
         },
-        getOpPerf(queryList, reduceF, acc) {
+        getOpPerf(queryList, reduceF, acc, needNoMean) {
             let timeRes = acc ? queryList.reduce(reduceF, acc) : queryList.reduce(reduceF);
             for(let key of Object.keys(timeRes)) {
                 const item = timeRes[key];
@@ -294,7 +294,7 @@ export default Vue.extend({
                 if (name === 'feed') {
                     return item;
                 }
-                item.time = +(time / count).toFixed(4);
+                item.time = needNoMean ? time : +(time / count).toFixed(4);
                 item.count = 1;
             }
             return timeRes;

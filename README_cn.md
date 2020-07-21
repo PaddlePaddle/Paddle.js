@@ -32,7 +32,7 @@ import {runner as Paddlejs} from 'paddlejs';
 
 const paddlejs = new Paddlejs({
         modelPath: 'model/mobilenetv2', // model path
-        fileCount: 4, // model data file count
+        fileCount: 4, // model data file count 可以不填写
         feedShape: {  // input shape
             fw: 256,
             fh: 256

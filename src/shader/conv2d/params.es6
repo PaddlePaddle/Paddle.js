@@ -54,4 +54,8 @@ export default `
 
     // bias
     uniform sampler2D texture_bias;
+
+    // 合并 channel 计算
+    const int filter_nearest_vec4 = FILTER_NEAREST_VEC4;
+    const int filter_remainder_vec4 = FILTER_REMAINDER_VEC4;
 `;

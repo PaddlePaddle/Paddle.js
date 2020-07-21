@@ -82,7 +82,7 @@ if __name__ == "__main__":
         print("enableLogModelInfo: " + str(enableLogModelInfo))
         print("sliceDataSize:" + str(sliceDataSize))
 
-        pythonCmd = "python"
+        pythonCmd = "python3"
 
         print("Starting...")
         if enableOptimization:

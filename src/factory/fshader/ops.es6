@@ -34,6 +34,9 @@ import elementwise_add_conf from '../../shader/elementwise_add/conf';
 import mul_params from '../../shader/mul/params';
 import mul_func from '../../shader/mul/main';
 import mul_conf from '../../shader/mul/conf';
+import fc_params from '../../shader/fc/params';
+import fc_func from '../../shader/fc/main';
+import fc_conf from '../../shader/fc/conf';
 import softmax_params from '../../shader/softmax/params';
 import softmax_func from '../../shader/softmax/main';
 import softmax_conf from '../../shader/softmax/conf';
@@ -156,6 +159,11 @@ export default {
             params: mul_params,
             func: mul_func,
             confs: mul_conf
+        },
+        fc: {
+            params: fc_params,
+            func: fc_func,
+            confs: fc_conf
         },
         concat: {
             params: concat_params,

@@ -47,13 +47,10 @@ export default class Camera {
         if (this.deviceInfos.length) {
             constraints.video.deviceId =  {exact: deviceId || this.deviceInfos[0].deviceId};
         }
-        if (!constraints.video.deviceId) {
+        if (!(constraints.video.deviceId && constraints.video.deviceId.exact)) {
             constraints = {
                 video: true
             };
-        }
-        else if (this.constraints) {
-            constraints = this.constraints;
         }
 
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {

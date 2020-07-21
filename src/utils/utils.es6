@@ -153,6 +153,13 @@ export default {
             height *= 4;
             width = c * (Math.ceil(w / 4));
             exceedMax = true;
+            if (height > GPU_TEXTURE_MAX_SIZE || width > GPU_TEXTURE_MAX_SIZE) {
+                const requested = `[${width}x${height}]`;
+                const max = `[${GPU_TEXTURE_MAX_SIZE}x${GPU_TEXTURE_MAX_SIZE}]`;
+                throw new Error(
+                    'Requested texture size ' + requested +
+                    ' greater than WebGL maximum on this browser / GPU ' + max + '.');
+            }
         }
         if (isPacked) {
             // 紧凑布局

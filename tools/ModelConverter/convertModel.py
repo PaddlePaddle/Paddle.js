@@ -30,7 +30,7 @@ sliceDataSize = 4 * 1024
 # paddlepaddle运行程序实例
 program = None
 # 存放模型结构
-modelInfo = {"vars": [], "ops": []}
+modelInfo = {"vars": [], "ops": [], "chunkNum": 0}
 # 存放参数数值（未排序）
 paramValuesDict = {}
 
@@ -210,6 +210,15 @@ def organizeModelOpInfo():
         index += 1
     print("Organizing model operators info successfully.")
 
+
+def addChunkNumToJson(paramValueList):
+    totalParamValuesCount = len(paramValueList)
+    countPerSlice = int(sliceDataSize * 1024 / 4)
+    count = totalParamValuesCount / countPerSlice
+    modelInfo["chunkNum"] = math.ceil(count)
+    print("Model chunkNum set successfully.")
+
+
 def convertToPaddleJSModel():
     """ 转换fluid modle为paddleJS model """
     # 初始化fluid运行环境和配置
@@ -224,12 +233,14 @@ def convertToPaddleJSModel():
     # 获取program中所有的var，按照字母顺序加入到model info，同时读取参数数值
     organizeModelVariableInfo()
 
+    # 对参数数值dict，按照key（参数名）进行字母顺序排序，并组合到一起
+    paramValues = reorderParamsValue()
+
+    # model.json 设置分片参数
+    addChunkNumToJson(paramValues)
     # 导出模型文件到json
     dumpModelToJsonFile()
 
-    # 对参数数值dict，按照key（参数名）进行字母顺序排序，并组合到一起
-    paramValues = reorderParamsValue()
-    
     # 导出分片参数文件
     sliceDataToBinaryFile(paramValues) 
 

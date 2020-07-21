@@ -22,7 +22,7 @@ const unitPath = {
     'split': 'model.test.split.json'
 };
 // 制定运行的 op
-const modelType = 'conv2d';
+const modelType = 'conv2d_transpose';
 // 制定运行的 op
 const unitData = unitPath[modelType];
 
@@ -51,6 +51,8 @@ async function run() {
         const type = op.type;
         if (type !== 'feed' && type !== 'fetch') {
             console.log(op.type);
+            console.log("this is standard output:");
+            console.log(op.outputs.Output);
             model.graph.buildOpData(op);
         }
     });

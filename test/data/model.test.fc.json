@@ -1,0 +1,67 @@
+{
+    "ops": [
+        {
+            "attrs": {
+                "__@kernel_type_attr@__": "fc/def/4/1/1",
+                "force_fp32_output": false,
+                "in_num_col_dims": 1,
+                "op_device": "",
+                "scale_out": 1.0,
+                "scale_x": 1.0,
+                "scale_y": [
+                    1.0
+                ],
+                "use_mkldnn": false,
+                "x_num_col_dims": 1,
+                "y_num_col_dims": 1
+            },
+            "inputs": {
+                "Bias": [
+                    "fc10_offset"
+                ],
+                "Input": [
+                    "pool2d_0.tmp_0"
+                ],
+                "W": [
+                    "fc10_weights"
+                ]
+            },
+            "outputs": {
+                "Out": [
+                    "fc_0.tmp_1"
+                ]
+            },
+            "type": "fc"
+        }
+    ],
+    "vars": [
+        {
+            "data": [
+                1, 2, 3,
+                4, 5, 6,
+                7, 8, 9,
+                10, 11, 12
+            ],
+            "name": "fc10_weights",
+            "persistable": 0,
+            "shape": [4, 3]
+        },
+        {
+            "data": [2, 3, 4, 5],
+            "name": "pool2d_0.tmp_0",
+            "persistable": 0,
+            "shape": [4, 1, 1]
+        },
+        {
+            "data": [1, 3, -1],
+            "name": "fc10_offset",
+            "persistable": 0,
+            "shape": [1, 3]
+        },
+        {
+            "data": [93, 109, 119],
+            "name": "fc_0.tmp_1",
+            "shape": [1, 3]
+        }
+    ]
+}

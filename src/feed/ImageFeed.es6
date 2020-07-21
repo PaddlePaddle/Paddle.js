@@ -175,14 +175,17 @@ export default class imageFeed {
         let sh = height;
         // 最小边缩放到scale
         if (width < height) {
-            sw = params.scale;
+            sw = params.scale || width;
             sh = Math.round(sw * height / width);
-        } else {
-            sh = params.scale;
+        }
+        else if (width > height){
+            sh = params.scale || height;
             sw = Math.round(sh * width / height);
         }
-        sw = params.scale;
-        sh = params.scale;
+        else {
+            sw = sh = params.scale || width;
+        }
+
         this.fromPixels2DContext.canvas.width = sw;
         this.fromPixels2DContext.canvas.height = sh;
         this.fromPixels2DContext.drawImage(
@@ -327,13 +330,13 @@ export default class imageFeed {
                 data = this.resizeAndFitTargetSize(pixels, opt);
                 data2 = this.fromPixels2DContext2.getImageData(0, 0, this.pixelWidth, this.pixelHeight);
             }
-            else if (opt.scale) { // 直接resize到targetShape Humanseg的情况
-                scaleSize = this.reSize(pixels, opt);
+            else if (opt.targetSize) { // 如果有targetSize，就是装在目标宽高里的模式 TinyYolo的情况
+                scaleSize = this.fitToTargetSize(pixels, opt);
                 data = this.getImageData(opt, 0, 0, scaleSize);
                 data2 = this.fromPixels2DContext2.getImageData(0, 0, this.pixelWidth, this.pixelHeight);
             }
-            else if (opt.targetSize) { // 如果有targetSize，就是装在目标宽高里的模式 TinyYolo的情况
-                scaleSize = this.fitToTargetSize(pixels, opt);
+            else {
+                scaleSize = this.reSize(pixels, opt);
                 data = this.getImageData(opt, 0, 0, scaleSize);
                 data2 = this.fromPixels2DContext2.getImageData(0, 0, this.pixelWidth, this.pixelHeight);
             }

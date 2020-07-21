@@ -51,14 +51,16 @@ const tensorName = {
     'scale': 'scale',
     'bias': 'bias',
     'mean': 'mean',
-    'variance': 'variance'
+    'variance': 'variance',
+    'w': 'weight'
 };
 // unique behavior
 const opBehavior = {
     conv2d: [
         'needBatch',
         'adaptPaddings',
-        'isApplySeparableConv'
+        'isApplySeparableConv',
+        'batchComputeConv2d'
     ],
 	conv2d_transpose: [
         'needBatch',
@@ -130,6 +132,10 @@ const opBehavior = {
     scale: [
         'needBatch'
     ],
+    fc: [
+        'flattenShape',
+        'needBatch'
+    ]
 };
 const mergeType = 'conv2d-elementwise_add';
 
@@ -419,6 +425,13 @@ export default class OpData {
         });
     }
 
+    batchComputeConv2d() {
+        let origin_shape_temp = this.input.Filter[0].shape;
+        let inChannels = origin_shape_temp[1];
+        this.attrs.filter_nearest_vec4 = Math.floor(inChannels / 4) * 4;
+        this.attrs.filter_remainder_vec4 = inChannels % 4;
+    }
+
     setPacked(tensorData = []) {
         const isPacked = this.attrs.ispacked;
         tensorData.forEach(item => {
@@ -539,15 +552,26 @@ export default class OpData {
         }
 	}
 
+    flattenShape(tensorData = []) {
+        const target = tensorData.find(item => item.shape.length > 2);
+        if (target) {
+            const padShape = Utils.padToFourDimShape(target.shape);
+            target.shape = [padShape[0] * padShape[2], padShape[1] * padShape[3]];
+        }
+
+    }
+
     reshape(tensorData = []) {
-        let input = tensorData[0];
-        let counter = tensorData[1];
+        const input = tensorData.find(item => item.tensorName === 'origin');
+        const counter = tensorData.find(item => item.tensorName === 'counter');
+        const out = tensorData.find(item => item.tensorName === 'out' || item.tensorName === 'output');
+
         if (counter.shape.length > input.shape.length) {
-            input = tensorData[1];
-            counter = tensorData[0];
+            input = counter;
+            counter = input;
         }
         if (input.shape.length > 2 && counter.shape.length === 2) {
-            let shape = Utils.getReshapeInPaddle(input.shape, counter.shape, tensorData[2].shape);
+            let shape = Utils.getReshapeInPaddle(input.shape, counter.shape, out.shape);
             input.shape = shape;
         }
 

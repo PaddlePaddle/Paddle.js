@@ -12,6 +12,7 @@ export default class Loader  {
         this.options = options;
         this.multipart = false;
         this.test = false;
+        this.chunkNum = 0;
         // fetch xhr jsonp
         this.params = {type: 'fetch'};
         // 设置分片加载model
@@ -62,7 +63,7 @@ export default class Loader  {
     }
 
     fetchChunks() {
-        let counts = this.binaryOption.fileCount;
+        let counts = this.chunkNum || this.binaryOption.fileCount;
         let chunkArray = [];
         for (let i = 1; i <= counts; i++) {
             chunkArray.push(
@@ -206,6 +207,7 @@ export default class Loader  {
     async load() {
         let that = this;
         const artifacts = this.data = await this.fetchModel();
+        this.chunkNum =  artifacts.chunkNum;
         if (this.multipart === true) {
             if (this.dataType === 'binary') {
                 await this.fetchChunks()

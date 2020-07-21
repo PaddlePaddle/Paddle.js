@@ -69,7 +69,10 @@ export default {
         'MULTI_VALUE',
         'BIAS_VALUE',
         'FUSE_RELU',
-        'ACTIVE_FUNCTION'
+        'ACTIVE_FUNCTION',
+
+        'FILTER_REMAINDER_VEC4',
+        'FILTER_NEAREST_VEC4'
     ],
     input: [
         // {

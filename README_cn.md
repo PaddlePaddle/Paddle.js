@@ -24,7 +24,7 @@ Paddle.js项目基于Atom系统构建，该系统是一个通用框架，可支�
 
 ## 加载和运行模型
 
-如果原始模型是浏览器友好的model格式, 使用 paddle.load()接在模型。
+如果原始模型是浏览器友好的model格式, 使用 paddle.load()加载模型。
 
 ```bash
 

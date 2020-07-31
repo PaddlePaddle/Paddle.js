@@ -147,7 +147,7 @@ export default Vue.extend({
                 {name: 'preheat time', t: this.preheatT},
                 {name: 'subsequent average time', t: this.remainOthersT},
                 {name: 'best time', t: this.bestT},
-                {name: 'op count', t: this.opCount}
+                {name: 'op count', t: this.opCount || '暂无'}
             ]
         }
     },
@@ -217,9 +217,23 @@ export default Vue.extend({
                     // this.remainOthersT = +(remainWholeT / (curTimes - 2).toFixed(4));
 
                 const {queryList} = this.paddle.model.graph;
-                const quertyResults = this.query(queryList);
-                if (!opCount) {
-                    opCount = quertyResults.length;
+
+
+                if (queryList && queryList.length) {
+                    const quertyResults = this.query(queryList);
+
+                    if (!opCount) {
+                        opCount = quertyResults.length;
+                    }
+                    for (let item of quertyResults) {
+                        progress.push({
+                            index: curTimes,
+                            time: item.time,
+                            name: item.name
+                        });
+                    }
+
+                    ops.push(this.getOpPerf(quertyResults, this.aggregate, {}, true));
                 }
 
                 progress.push({
@@ -228,18 +242,7 @@ export default Vue.extend({
                     name: 'total'
                 });
 
-                for (let item of quertyResults) {
-                    progress.push({
-                        index: curTimes,
-                        time: item.time,
-                        name: item.name
-                    });
-                }
-
-
                 totaltimeList.push(t);
-
-                ops.push(this.getOpPerf(quertyResults, this.aggregate, {}, true));
                 curTimes++;
             }
 
@@ -247,16 +250,20 @@ export default Vue.extend({
             totaltimeList.sort((a, b) => a - b);
             this.bestT = totaltimeList[0];
 
-            const opInfos = this.getOpPerf(ops, this.merge);
-            this.opCount = opCount;
             this.remainOthersT = (remainWholeT / this.times).toFixed(4);
             this.progress = progress;
-            this.ops = Object.keys(opInfos).map(opname => {
-                return {
-                    name: opname,
-                    time: opInfos[opname].time
-                };
-            });
+
+            if (ops && ops.length) {
+                const opInfos = this.getOpPerf(ops, this.merge);
+                this.opCount = opCount;
+                this.ops = Object.keys(opInfos).map(opname => {
+                    return {
+                        name: opname,
+                        time: opInfos[opname].time
+                    };
+                });
+            }
+
             this.stage = 4;
         },
         async run() {

@@ -15,21 +15,26 @@ export default {
         // Return milliseconds.
         return timeElapsedNanos;
     },
-    beginQuery(gl) {
-        const ext = gl.getExtension('EXT_disjoint_timer_query_webgl2');
-        if (!ext) {
-            return;
+    beginQuery(gl, glVersion) {
+        if (glVersion === 2) {
+            const ext = gl.getExtension('EXT_disjoint_timer_query_webgl2');
+            if (!ext) {
+                return;
+            }
+            const query = gl.createQuery();
+            gl.beginQuery(ext.TIME_ELAPSED_EXT, query);
+            return query;
         }
-        const query = gl.createQuery();
-        gl.beginQuery(ext.TIME_ELAPSED_EXT, query);
-        return query;
+        return null;
     },
-    endQuery(gl, query) {
-        const ext = gl.getExtension('EXT_disjoint_timer_query_webgl2');
-        if (!ext) {
-            return;
+    endQuery(gl, glVersion, query) {
+        if (glVersion === 2) {
+            const ext = gl.getExtension('EXT_disjoint_timer_query_webgl2');
+            if (!ext) {
+                return;
+            }
+            gl.endQuery(ext.TIME_ELAPSED_EXT);
         }
-        gl.endQuery(ext.TIME_ELAPSED_EXT);
         return query;
     },
     // todo: 适用2维矩阵乘法，以后实现通用版本

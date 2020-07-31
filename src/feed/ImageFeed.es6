@@ -170,21 +170,11 @@ export default class imageFeed {
         // 原始图片宽高
         const width = this.pixelWidth;
         const height = this.pixelHeight;
-        // 缩放后的宽高
+        // Resize后的宽高
         let sw = width;
         let sh = height;
-        // 最小边缩放到scale
-        if (width < height) {
-            sw = params.scale || width;
-            sh = Math.round(sw * height / width);
-        }
-        else if (width > height){
-            sh = params.scale || height;
-            sw = Math.round(sh * width / height);
-        }
-        else {
-            sw = sh = params.scale || width;
-        }
+        // 直接Resize
+        sw = sh = params.scale ;
 
         this.fromPixels2DContext.canvas.width = sw;
         this.fromPixels2DContext.canvas.height = sh;

@@ -1,10 +1,10 @@
 import 'babel-polyfill';
 import Paddle from '../../src/paddle/paddle';
-import IO from '../../src/feed/imageFeed';
+import IO from '../../src/feed/ImageFeed';
 import Utils from '../../src/utils/utils';
 // 获取map表
-import Map from '../../test/data/map';
-
+// import Map from '../../test/data/map';
+let map = {};
 const fileDownload = require('js-file-download');
 
 /**
@@ -33,6 +33,9 @@ const outputShape = fetchShape[modelType];
 let loaded = false;
 let model = {};
 window.statistic = [];
+let loading = document.getElementsByClassName('data-loading');
+let modelTxt = document.getElementById('model-txt');
+
 async function run(input) {
     // const input = document.getElementById('mobilenet');
     const io = new IO();
@@ -54,19 +57,25 @@ async function run(input) {
     const path = 'https://paddlejs.cdn.bcebos.com/models/mobileNetV2';
 
     if (!loaded) {
+
+        fetch(path + '/map.json')
+            .then(response => response.json())
+            .then(data => (map = data));
         const MODEL_CONFIG = {
             dir: `${path}/`, // 存放模型的文件夹
             main: 'model.json', // 主文件
         };
         loaded = true;
+        modelTxt.style.visibility = 'visible';
+        loading[0].style.visibility = 'visible';
         const paddle = new Paddle({
             urlConf: MODEL_CONFIG,
             options: {
                 multipart: true,
                 dataType: 'binary',
                 options: {
-                    fileCount: 4, // 切成了多少文件
-                    getFileName(i) { // 获取第i个文件的名称
+                    // fileCount: 4, // 切成了多少文件
+                    getFileName(i) { // 自定义chunk文件名，获取第i个文件的名称
                         return 'chunk_' + i + '.dat';
                     }
                 },
@@ -74,14 +83,20 @@ async function run(input) {
             }
         });
         model = await paddle.load();
+        loading[0].style.visibility = 'hidden';
+        modelTxt.innerText = '模型加载完成！';
     }
-
+    loading[1].style.visibility = 'visible';
+    loading[2].style.visibility = 'visible';
+    window.statistic.startTime = (+new Date());
     let inst = model.execute({
         input: feed
     });
 
     let result = await inst.read();
-
+    loading[1].style.visibility = 'hidden';
+    loading[2].style.visibility = 'hidden';
+    window.statistic.endTime = (+new Date()) - window.statistic.startTime;
     let N = outputShape[0];
     let C = outputShape[1];
     let H = outputShape[2];
@@ -98,8 +113,9 @@ async function run(input) {
 
     let maxItem = Utils.getMaxItem(nchwData);
     console.log(maxItem);
-    document.getElementById('txt').innerHTML = Map['' + maxItem.index];
-    console.log('识别出的结果是' + Map['' + maxItem.index]);
+    document.getElementById('txt').innerHTML = map['' + maxItem.index];
+    document.getElementById('all-performance-time').innerHTML = '计算时间是' + window.statistic.endTime;
+    console.log('识别出的结果是' + map['' + maxItem.index]);
 };
 var image = '';
 function selectImage(file) {

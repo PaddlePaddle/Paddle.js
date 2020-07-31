@@ -32,6 +32,7 @@ export default class Graph {
         // 网络层数
         this.iLayer = 0;
         this.queryList = [];
+        this.glVersion = 2;
 
         if (this.options && this.options.options ) {
             if (this.options.options.test === true) {
@@ -46,7 +47,8 @@ export default class Graph {
         if (!this.inst) {
             // op runner
             this.inst = new Runtime(this.options.options);
-            factory.setWebglVersion(this.inst.getWebglVersion());
+            this.glVersion = this.inst.getWebglVersion();
+            factory.setWebglVersion(this.glVersion);
             factory.setIsFrameBufferSupportFloat(this.inst.getIsFrameBufferSupportFloat());
             Utils.setTextureMaxSize(this.inst.getWebglMaxTextureSize());
 
@@ -95,13 +97,15 @@ export default class Graph {
         }
 
         const gl = this.inst.gpu.gl;
-        let query = Utils.beginQuery(gl);
+        let query = Utils.beginQuery(gl, this.glVersion);
 
         opindex++;
         executor.execute(this.inst, this.isExecuted);
 
-        this.queryList.push({name: executor.type, query, count: 1});
-        query = Utils.endQuery(gl, query);
+        if (query) {
+            this.queryList.push({name: executor.type, query, count: 1});
+            query = Utils.endQuery(gl,this.glVersion, query);
+        }
 
         if (false && executor.opData && opindex >= 184){
             console.log('return!');

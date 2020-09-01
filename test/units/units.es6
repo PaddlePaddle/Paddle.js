@@ -100,7 +100,7 @@ export default {
             axios.defaults.headers = {
                 'Content-type': 'application/x-www-form-urlencoded'
             }
-            axios.post('http://yq01-paddle-mobile.epc.baidu.com:8088/uniTest', qs.stringify({
+            axios.post('/uniTest', qs.stringify({
                 name: name,
                 input: JSON.stringify(input, function (key, value) {
                     if (value.constructor === Float32Array) {

@@ -78,6 +78,8 @@ function postProcee(data) {
 Paddle.js已经将一些模型转换成了Paddle.js支持的格式。在下面的URL中有一些演示，打开一个带有演示的浏览器页面。
 [查看更多](./examples/README.md)
 
+## 用户自定义算子
+请查看[算子开发流程文档](./tools/PaddlejsOpDevelopWalkthrough.md)，我们欢迎并期待着用户自定义算子，通过提交pr为Paddle.js的建设做出贡献！
 
 ## 反馈和社区支持
 - 在线视频课程 [开始学习](https://www.bilibili.com/video/BV1gZ4y1H7UA?p=6)

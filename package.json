@@ -21,12 +21,15 @@
     "test": "jest",
     "build": "parcel build ./examples/humanStream/index.html",
     "demo": "parcel ./examples/demo/index.html",
-    "pub": "webpack"
+    "pub": "webpack",
+    "lint": "eslint packages/**/*.ts"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",
     "@babel/preset-env": "^7.9.6",
     "@vue/component-compiler-utils": "^3.1.2",
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
     "axios": "^0.19.2",
     "babel-core": "^6.26.3",
     "babel-jest": "^26.0.1",
@@ -46,14 +49,29 @@
     "parcel-bundler": "^1.10.3",
     "pre-push": "^0.1.1",
     "pug": "^3.0.0",
-    "typescript": "^3.9.5",
+    "typescript": "^4.0.5",
     "vue-template-compiler": "^2.6.11",
-    "webpack-cli": "^3.3.6"
+    "webpack-cli": "^3.3.6",
+    "@typescript-eslint/eslint-plugin": "^4.7.0",
+    "@typescript-eslint/parser": "^4.7.0",
+    "eslint": "^7.13.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-promise": "^4.2.1",
+    "husky": "^4.3.0",
+    "lint-staged": "^10.5.1"
   },
   "keywords": [],
-  "pre-push": [
-    "test"
-  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm test"
+    }
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint"
+    ]
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {

@@ -1,4 +1,5 @@
 {
+    "extends": "standard",
     "parser": "@typescript-eslint/parser",
     "env": {
         "es6": true,
@@ -10,6 +11,7 @@
         "expect": true
     },
     "plugins": [
+        "standard",
         "@typescript-eslint",
         "import",
         "promise"
@@ -152,7 +154,6 @@
                 "exceptions": {
                     "Property": true,
                     "BinaryExpression": true,
-                    "VariableDeclarator": true,
                     "ImportDeclaration": true
                 }
             }
@@ -257,7 +258,6 @@
         "import/no-unassigned-import": "off",
         "import/no-webpack-loader-syntax": "warn",
         "import/order": "warn",
-        "import/prefer-default-export": "off",
-        "import/unambiguous": "error"
+        "import/prefer-default-export": "off"
     }
 }

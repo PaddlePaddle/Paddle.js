@@ -2,7 +2,7 @@
     "compilerOptions": {
       /* Basic Options */
       // "incremental": true,                   /* Enable incremental compilation */
-      "target": "es2015",                          /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019' or 'ESNEXT'. */
+      "target": "es5",                          /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019' or 'ESNEXT'. */
       "module": "es2015",                     /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */
       "lib": ["es2015", "dom"],                             /* Specify library files to be included in the compilation. */
       // "allowJs": true,                       /* Allow javascript files to be compiled. */
@@ -24,7 +24,7 @@
   
       /* Strict Type-Checking Options */
       "strict": true,                           /* Enable all strict type-checking options. */
-      // "noImplicitAny": true,                 /* Raise error on expressions and declarations with an implied 'any' type. */
+      "noImplicitAny": false,                 /* Raise error on expressions and declarations with an implied 'any' type. */
       // "strictNullChecks": true,              /* Enable strict null checks. */
       // "strictFunctionTypes": true,           /* Enable strict checking of function types. */
       // "strictBindCallApply": true,           /* Enable strict 'bind', 'call', and 'apply' methods on functions. */
@@ -33,7 +33,7 @@
       "alwaysStrict": true,                  /* Parse in strict mode and emit "use strict" for each source file. */
   
       /* Additional Checks */
-      "noUnusedLocals": true,                /* Report errors on unused locals. */
+      "noUnusedLocals": false,                /* Report errors on unused locals. */
       "noUnusedParameters": true,            /* Report errors on unused parameters. */
       "noImplicitReturns": true,             /* Report error when not all code paths in function return a value. */
       "noFallthroughCasesInSwitch": true,    /* Report errors for fallthrough cases in switch statement. */
@@ -62,6 +62,14 @@
   
       /* Advanced Options */
       "forceConsistentCasingInFileNames": true  /* Disallow inconsistently-cased references to the same file. */
-    }
+    },
+    "include": [
+      "packages/**/*.ts"
+    ],
+    "exclude": [
+      "node_modules/",
+      "dist/",
+      "**/*.test.ts"
+    ]
   }
   

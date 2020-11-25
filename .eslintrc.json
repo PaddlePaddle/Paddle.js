@@ -75,12 +75,6 @@
         ],
         "jsx-quotes": ["error", "prefer-double"],
         "keyword-spacing": "error",
-        "line-comment-position": [
-            "error",
-            {
-                "position": "above"
-            }
-        ],
         "lines-around-comment": "off",
         "max-depth": ["error", 6],
         "max-len": [

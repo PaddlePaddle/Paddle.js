@@ -5,12 +5,6 @@
 import { ModelOp, OpInputs, OpOutputs, OpAttrs } from '../commons/interface';
 import { GLOBALS } from '../globals';
 
-const {
-    opRegistry,
-    backend,
-    backend_instance: backendInstance
-} = GLOBALS;
-
 export default class OpExecutor {
     id: string = '';
     type: string = '';
@@ -46,8 +40,8 @@ export default class OpExecutor {
     }
 
     get inputsName() {
-        const opKey = `${backend}_${this.type}`;
-        const opInfo = opRegistry.ops[opKey];
+        const opKey = `${GLOBALS.backend}_${this.type}`;
+        const opInfo = GLOBALS.opRegistry.ops[opKey];
         if (opInfo && opInfo.inputsName) {
             return opInfo.inputsName.reduce((acc: string[], cur) => acc.concat(this.inputs[cur] || []), []);
         }
@@ -55,8 +49,8 @@ export default class OpExecutor {
     }
 
     get outputsName() {
-        const opKey = `${backend}_${this.type}`;
-        const opInfo = opRegistry.ops[opKey];
+        const opKey = `${GLOBALS.backend}_${this.type}`;
+        const opInfo = GLOBALS.opRegistry.ops[opKey];
         if (opInfo && opInfo.outputsName) {
             return opInfo.outputsName.reduce((acc: string[], cur) => acc.concat(this.outputs[cur] || []), []);
         }
@@ -69,7 +63,7 @@ export default class OpExecutor {
      */
     execute(isRendered) {
         if (this.type !== 'feed') {
-            backendInstance.runProgram(this.type, this.opData, isRendered);
+            GLOBALS.backendInstance.runProgram(this.type, this.opData, isRendered);
         }
 
     }

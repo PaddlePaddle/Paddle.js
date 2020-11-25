@@ -1,3 +1,12 @@
+# 1.0.0 (2020-11-25)
+
+
+### Features
+
+* add paddlejs-core ([7d13952](https://github.com/JingyuanZhang/Paddle.js/commit/7d13952cf2dcfe80c7370dc42a52f4bda47365bb))
+
+
+
 # 1.0.0 (2020-11-11)
 
 

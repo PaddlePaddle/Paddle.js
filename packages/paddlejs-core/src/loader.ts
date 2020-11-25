@@ -7,12 +7,6 @@ interface UrlConf {
     main: string;
 }
 
-interface ModelOption {
-    multipart: boolean,
-    dataType: string,
-    fileCount: number
-}
-
 interface FetchParams {
     type: string;
     method?: string;
@@ -39,18 +33,30 @@ export default class ModelLoader {
         type: 'fetch'
     };
 
-    constructor(urlConf: UrlConf, options?: ModelOption) {
-        this.urlConf = urlConf;
-        if (options) {
-            const {
-                multipart,
-                dataType,
-                fileCount
-            } = options;
-            this.multipart = multipart;
-            this.dataType = dataType;
-            this.chunkNum = fileCount;
+    constructor(modelPath: string, fileCount: number = 1) {
+        let modelDir = '';
+        let filename = 'main.json';
+        if (modelPath.endsWith('.json')) {
+            const dirPosIndex = modelPath.lastIndexOf('/') + 1;
+            modelDir = modelPath.substr(0, dirPosIndex);
+            filename = modelPath.substr(dirPosIndex);
         }
+        else if (modelPath.charAt(modelPath.length - 1) !== '/') {
+            modelDir += '/';
+        }
+
+        this.urlConf = {
+            dir: modelDir.indexOf('http') === 0 // 存放模型的文件夹
+                ? modelDir
+                : modelDir.charAt(0) === '/'
+                    ? `${modelDir}`
+                    : `/${modelDir}`,
+            main: filename // 主文件
+        };
+
+        this.multipart = fileCount > 1;
+        this.dataType = 'binary';
+        this.chunkNum = fileCount;
     }
 
     async load() {

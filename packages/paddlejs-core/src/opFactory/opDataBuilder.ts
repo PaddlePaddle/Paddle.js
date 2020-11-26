@@ -4,11 +4,6 @@ import Tensor from './tensor';
 import opBehaviors from './opBehaviors';
 
 // model的名字和paddleJS的tensor名字mapping
-const {
-    opRegistry,
-    backend,
-    backend_instance: backendInstance
-} = GLOBALS;
 
 export default class OpData {
     name: string = '';
@@ -91,7 +86,7 @@ export default class OpData {
 
     buildProgram() {
         const name = this.name;
-        this.program = this.outputTensors.map((outTensor, index) => backendInstance.createProgram({
+        this.program = this.outputTensors.map((outTensor, index) => GLOBALS.backendInstance.createProgram({
             name,
             outTensor,
             shaderParams: this.fShaderParams[index],
@@ -101,6 +96,7 @@ export default class OpData {
     }
 
     buildRenderData() {
+        const backendInstance = GLOBALS.backendInstance;
         if (backendInstance.createRenderData) { // webgpu 不需要
             this.renderData = backendInstance.createRenderData(this.inputTensors);
         }
@@ -153,16 +149,16 @@ export default class OpData {
         }
 
         // unique behavior
-        const opKey = `${backend}_${this.name}`;
-        const behaviorKeys = opRegistry.ops[opKey]
-            ? opRegistry.ops[opKey].behaviors || []
+        const opKey = `${GLOBALS.backend}_${this.name}`;
+        const behaviorKeys = GLOBALS.opRegistry.ops[opKey]
+            ? GLOBALS.opRegistry.ops[opKey].behaviors || []
             : [];
         behaviorKeys.forEach(key => {
             opBehaviors[key].call(this, tensorData);
         });
 
         // 生成tensor对象
-        tensorData.forEach((data: any) => {
+        tensorData.forEach((data: any, index: number) => {
             if (data) {
                 let tensor: any = null;
                 const tensorName = data.tensorName;
@@ -181,7 +177,8 @@ export default class OpData {
                         data: data.data,
                         needBatch: data.needBatch || false,
                         notCompressed: data.notCompressed || false,
-                        isPacked: this.isPackedOp || false
+                        isPacked: this.isPackedOp || false,
+                        binding: index
                     });
                 }
                 if (tensorName === 'out') {
@@ -204,7 +201,8 @@ export default class OpData {
             'height_texture',
             'limit',
             'channel',
-            'total_shape'
+            'total_shape',
+            'binding'
         ];
 
         for (const key in this.attrs) {

@@ -5,11 +5,6 @@ import OpData from './opFactory/opDataBuilder';
 import { GLOBALS } from './globals';
 import type OpExecutor from './opFactory/opExecutor';
 
-const {
-    backend_instance: backendInstance
-} = GLOBALS;
-
-
 interface ModelConfig {
     modelPath: string; // 模型路径
     feedShape: {
@@ -72,41 +67,32 @@ export default class Runner {
     }
 
     async init() {
+        if (!GLOBALS.backendInstance) {
+            console.error('ERROR: Havent register backend');
+            return;
+        }
+        await GLOBALS.backendInstance.init();
         await this.load();
         this.genGraph();
         this.genOpData();
     }
 
-    private async load() {
-        let {
+    async load() {
+        const {
             modelPath,
             fileCount
         } = this.modelConfig;
 
-        if (modelPath.charAt(modelPath.length - 1) !== '/') {
-            modelPath += '/';
-        }
-        const MODEL_CONFIG = {
-            urlConf: {
-                dir: modelPath.indexOf('http') === 0 ? modelPath : `/${modelPath}`, // 存放模型的文件夹
-                main: 'model.json' // 主文件
-            },
-            options: {
-                multipart: true,
-                dataType: 'binary',
-                fileCount
-            }
-        };
-        const loader = new Loader(MODEL_CONFIG.urlConf, MODEL_CONFIG.options);
+        const loader = new Loader(modelPath, fileCount);
         this.model = await loader.load();
     }
 
-    private genGraph() {
+    genGraph() {
         const graphGenerator = new Graph(this.model);
         this.weightMap = graphGenerator.createGraph();
     }
 
-    private genOpData() {
+    genOpData() {
         const vars = this.model.vars;
         let iLayer = 0;
         this.weightMap.forEach((op: OpExecutor) => {
@@ -152,7 +138,7 @@ export default class Runner {
         return await this.read();
     }
 
-    private executeOp(op: OpExecutor) {
+    executeOp(op: OpExecutor) {
         if (op.type === 'fetch') {
             return;
         }
@@ -166,6 +152,6 @@ export default class Runner {
 
     async read() {
         const fetchOp = Graph.getFetchExecutor(this.weightMap);
-        return await backendInstance.read(fetchOp);
+        return await GLOBALS.backendInstance.read(fetchOp);
     }
 };

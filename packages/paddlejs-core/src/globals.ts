@@ -14,8 +14,8 @@ interface OpRegistry {
 interface GLOBALS_INTERFACE {
     opRegistry: OpRegistry;
     backend: string;
-    backend_version: number;
-    backend_instance: any; // todo Class Backend
+    backendVersion: number;
+    backendInstance: any; // todo Class Backend
 }
 
 export const GLOBALS: GLOBALS_INTERFACE = {
@@ -23,8 +23,8 @@ export const GLOBALS: GLOBALS_INTERFACE = {
         ops: {}
     },
     backend: 'webgl',
-    backend_version: 2,
-    backend_instance: null
+    backendVersion: 2,
+    backendInstance: null
 };
 
 
@@ -32,9 +32,9 @@ export function registerOpsBehaviors(opsBehavior) {
     GLOBALS.opRegistry.opsBehavior = opsBehavior;
 }
 
-export function registerOp(opInfo: OpInfo) {
+export function registerOp(opInfo: OpInfo, key: string) {
+    console.log(opInfo);
     const {
-        name,
         conf,
         params,
         main,
@@ -44,13 +44,13 @@ export function registerOp(opInfo: OpInfo) {
         behaviors = []
     } = opInfo;
 
-    const opKey = `${GLOBALS.backend}_${name}`;
+    const opKey = `${GLOBALS.backend}_${key}`;
     if (GLOBALS.opRegistry.ops[opKey]) {
         return;
     }
 
     GLOBALS.opRegistry.ops[opKey] = {
-        name,
+        name: key,
         conf,
         inputsName,
         outputsName,
@@ -66,9 +66,9 @@ export function registerBackend(backend: string, backendInstance: any, version?:
         GLOBALS.backend = backend;
     }
     if (version) {
-        GLOBALS.backend_version = version;
+        GLOBALS.backendVersion = version;
     }
     if (backendInstance) {
-        GLOBALS.backend_instance = backendInstance;
+        GLOBALS.backendInstance = backendInstance;
     }
 }

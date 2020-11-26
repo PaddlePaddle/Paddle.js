@@ -131,6 +131,10 @@ export default class Tensor {
         return 0;
     }
 
+    get binding() {
+        return this.opts.binding;
+    }
+
     get limit() {
         return this.exceedMax ? 'Limit' : '';
     }

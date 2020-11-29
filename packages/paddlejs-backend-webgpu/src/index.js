@@ -1,6 +1,8 @@
 import WebGPUBackend from './gpu';
 import buildShader from './buildShader';
 import ops from './ops';
+import {registerOp, registerBackend} from '../../paddlejs-core/src/index';
+
 
 /* global GPUBufferUsage */
 
@@ -47,7 +49,16 @@ WebGPUBackend.prototype.read = async function (fetchOp) {
 };
 
 const gpuInstance = new WebGPUBackend();
-export {
-    ops,
-    gpuInstance
-};
+
+function registerWebGPUBackend() {
+    registerBackend(
+        'webgpu',
+        gpuInstance
+    );
+    Object.keys(ops).forEach(key => {
+        registerOp(ops[key], key);
+    });
+    return gpuInstance;
+}
+
+export default registerWebGPUBackend;

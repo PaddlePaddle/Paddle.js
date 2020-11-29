@@ -1,13 +1,5 @@
-import {registerOp, registerBackend, Runner } from '../../paddlejs-core/src/index';
-import { ops, gpuInstance } from '../src/index';
-
-registerBackend(
-    'webgpu',
-    gpuInstance
-);
-Object.keys(ops).forEach(key => {
-    registerOp(ops[key], key);
-});
+import { Runner } from '../../paddlejs-core/src/index';
+import registerWebGPUBackend from '../src/index';
 
 const opName = 'mul';
 const modelDir = `/test/data/`;
@@ -24,4 +16,5 @@ async function run() {
     console.log(await gpuInstance.read(executeOP));
 }
 
+const gpuInstance = registerWebGPUBackend();
 run();

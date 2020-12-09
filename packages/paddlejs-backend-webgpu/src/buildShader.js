@@ -29,14 +29,12 @@ function genMainCode(opName) {
 
 function genDepsCode(opName) {
     const deps = ops[opName].deps || [];
-    let depFuncsCode = '';
-    deps.map(item => {
-        const func = item.func;
-        const conf = item.conf;
+    return deps.reduce((code, dep) => {
+        const func = dep.func;
+        const conf = dep.conf;
         let importFunc = atoms[func];
-        depFuncsCode += populateData(importFunc, conf);
-    });
-    return depFuncsCode;
+        return code += populateData(importFunc, conf);
+    }, '');
 }
 
 function populateData(result, data) {

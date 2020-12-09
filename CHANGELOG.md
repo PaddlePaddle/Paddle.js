@@ -1,3 +1,19 @@
+# 1.0.0 (2020-12-09)
+
+
+### Bug Fixes
+
+* **core:** fix GLOBALS.backend register and Loader support modelPath endsWith xxx.json ([8e4a2c9](https://github.com/JingyuanZhang/Paddle.js/commit/8e4a2c98871016c42219320cff77618143450ea8))
+
+
+### Features
+
+* backend webgpu add op conv2d and optimize building shader ([263379e](https://github.com/JingyuanZhang/Paddle.js/commit/263379eac7af823968ee0999d53046be9a1b5e09))
+* package backend-webgpu only exports api registerWebGPUBackend ([92ac4ca](https://github.com/JingyuanZhang/Paddle.js/commit/92ac4cab0dbe3798403c87c950bac6dd5d476de5))
+* support backend webgpu op test ([88fed2f](https://github.com/JingyuanZhang/Paddle.js/commit/88fed2f7e295bf1512a74a448a46bf85e7b47cf3))
+
+
+
 # 1.0.0 (2020-11-25)
 
 

@@ -8,7 +8,7 @@ const modelPath = `${modelDir}${opName}.json`;
 async function run() {
     const runner = new Runner({
         modelPath,
-        fetchShape: [2, 3]
+        fetchShape: [1, 4, 2, 2]
     });
     await runner.init();
     const executeOP = runner.weightMap[0];

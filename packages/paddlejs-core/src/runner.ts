@@ -50,6 +50,7 @@ export default class Runner {
     weightMap: OpExecutor[] = [];
     isExecuted: boolean = false;
     test: boolean = false;
+    graphGenerator: Graph = {} as Graph;
 
     constructor(options: ModelConfig | null) {
         const opts = {
@@ -88,8 +89,8 @@ export default class Runner {
     }
 
     genGraph() {
-        const graphGenerator = new Graph(this.model);
-        this.weightMap = graphGenerator.createGraph();
+        this.graphGenerator = new Graph(this.model);
+        this.weightMap = this.graphGenerator.createGraph();
     }
 
     genOpData() {
@@ -133,7 +134,7 @@ export default class Runner {
 
     async execute(feed) {
         console.log(feed);
-        const FeedOp = Graph.getFeedExecutor(this.weightMap) as OpExecutor;
+        const FeedOp = this.graphGenerator.getFeedExecutor() as OpExecutor;
         this.executeOp(FeedOp);
         return await this.read();
     }
@@ -145,13 +146,13 @@ export default class Runner {
         op.execute(this.isExecuted);
         if (op.next) {
             const id = op.next;
-            const next = Graph.getOpExecutorById(this.weightMap, id) as OpExecutor;
+            const next = this.graphGenerator.getExecutorById(id) as OpExecutor;
             this.executeOp(next);
         }
     }
 
     async read() {
-        const fetchOp = Graph.getFetchExecutor(this.weightMap);
+        const fetchOp = this.graphGenerator.getFetchExecutor() as OpExecutor;
         return await GLOBALS.backendInstance.read(fetchOp);
     }
 };

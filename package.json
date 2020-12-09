@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "paddlejs",
   "scripts": {
-    "test": "jest",
+    "test": "lerna run test",
     "lint": "eslint packages/**/*.ts --fix",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },

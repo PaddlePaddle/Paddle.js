@@ -22,7 +22,7 @@ export const GLOBALS: GLOBALS_INTERFACE = {
     opRegistry: {
         ops: {}
     },
-    backend: 'webgl',
+    backend: '',
     backendVersion: 2,
     backendInstance: null
 };
@@ -33,7 +33,6 @@ export function registerOpsBehaviors(opsBehavior) {
 }
 
 export function registerOp(opInfo: OpInfo, key: string) {
-    console.log(opInfo);
     const {
         conf,
         params,

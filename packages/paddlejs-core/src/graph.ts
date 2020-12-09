@@ -183,28 +183,26 @@ export default class ModelGraph {
 
     /**
      * Get weightMap start Node FEED
-     * @param weightMap
      * @returns {OpExecutor}
      */
-    static getFeedExecutor(weightMap: OpExecutor[]) : OpExecutor | undefined {
-        return weightMap.find((item: OpExecutor) => item.type === 'feed');
+    getFeedExecutor() : OpExecutor | undefined {
+        return this.weightMap.find((item: OpExecutor) => item.type === 'feed');
     }
 
     /**
      * Get weightMap end Node FETCH
      * @returns {OpExecutor}
      */
-    static getFetchExecutor(weightMap: OpExecutor[]) : OpExecutor | undefined {
-        return weightMap.find((item: OpExecutor) => item.type === 'fetch');
+    getFetchExecutor() : OpExecutor | undefined {
+        return this.weightMap.find((item: OpExecutor) => item.type === 'fetch');
     }
 
     /**
      * get op executor by id in weightMap
-     * @param weightMap
      * @param id
      * @returns {OpExecutor}
      */
-    static getOpExecutorById(weightMap: OpExecutor[], id: string): OpExecutor | undefined {
-        return weightMap.find((op: OpExecutor) => id === op.id);
+    getExecutorById(id: string): OpExecutor | undefined {
+        return this.weightMap.find((op: OpExecutor) => op.id === id);
     }
 }

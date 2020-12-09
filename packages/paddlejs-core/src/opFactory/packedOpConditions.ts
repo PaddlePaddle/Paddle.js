@@ -9,7 +9,7 @@ interface PackedOpConditions {
 }
 
 const packedOpConditions: PackedOpConditions = {
-    conv2d: (op: ModelOp, vars: ModelVar[]): boolean => {
+    conv2d_packed: (op: ModelOp, vars: ModelVar[]): boolean => {
         const strides = op.attrs ? op.attrs.strides : [];
         const inputName = op.inputs.Input[0];
         const filterName = op.inputs.Filter[0];

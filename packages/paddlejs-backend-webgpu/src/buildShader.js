@@ -3,22 +3,42 @@
  * @author zhangjingyuan02
  */
 
-import ops from './ops';
+import {ops, atoms} from './ops';
 
 export default function buildShader(opName, data) {
-    let result = '#version 450';
-    result += buildOp(opName);
-    result = populateData(result, data);
-    return result;
+    const glslVersion = '#version 450';
+    const paramsCode = genParamsCode(opName, data);
+    const depsCode = genDepsCode(opName);
+    const mainCode = genMainCode(opName);
+    const shaderCodeWidthoutValue = `
+    ${glslVersion}
+    ${paramsCode}
+    ${depsCode}
+    ${mainCode}
+    `;
+    return populateData(shaderCodeWidthoutValue, data);
 }
 
-function buildOp(opName) {
-    let code = ops[opName].params;
-    // main方法
-    code += ops[opName].main;
-    return code;
+function genParamsCode(opName, data) {
+    return ops[opName].params(data);
 }
-    
+
+function genMainCode(opName) {
+    return ops[opName].main;
+}
+
+function genDepsCode(opName) {
+    const deps = ops[opName].deps || [];
+    let depFuncsCode = '';
+    deps.map(item => {
+        const func = item.func;
+        const conf = item.conf;
+        let importFunc = atoms[func];
+        depFuncsCode += populateData(importFunc, conf);
+    });
+    return depFuncsCode;
+}
+
 function populateData(result, data) {
     let code = result;
     for (let key in data) {

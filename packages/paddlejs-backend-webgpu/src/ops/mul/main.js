@@ -3,16 +3,6 @@
  * @author zhangjingyuan02
  */
 export default `
-layout(std430, set = 0, binding = BINDING_ORIGIN) readonly buffer OriginMatrix {
-    float numbers[];
-} originMatrix;
-layout(std430, set = 0, binding = BINDING_COUNTER) readonly buffer CounterMatrix {
-    float numbers[];
-} counterMatrix;
-layout(std430, set = 0, binding = BINDING_OUT) buffer ResultMatrix {
-    float numbers[];
-} resultMatrix;
-
 void main() {
     ivec2 resultCell = ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
     float result = 0.0;

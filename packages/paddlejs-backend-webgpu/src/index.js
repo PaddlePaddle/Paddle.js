@@ -1,7 +1,7 @@
 import WebGPUBackend from './gpu';
 import buildShader from './buildShader';
-import ops from './ops';
-import {registerOp, registerBackend} from '../../paddlejs-core/src/index';
+import {ops} from './ops';
+import {registerOp, registerBackend} from 'paddlejs-core/src/index';
 
 
 /* global GPUBufferUsage */

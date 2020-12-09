@@ -1,0 +1,99 @@
+{
+    "ops": [
+        {
+            "attrs": {
+                "__@kernel_type_attr@__": "feed/def/1/4/2"
+            }, 
+            "inputs": {
+                "X": [
+                    "feed"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "image"
+                ]
+            }, 
+            "type": "feed"
+        },
+        {
+            "attrs": {
+                "axis": 1,
+                "use_mkldnn": false,
+                "x_data_format": "",
+                "y_data_format": ""
+            },
+            "inputs": {
+                "X": [
+                    "image"
+                ],
+                "Y": [
+                    "fc7_offset"
+                ]
+            },
+            "outputs": {
+                "Out": [
+                    "fc_0.tmp_1"
+                ]
+            },
+            "type": "elementwise_add"
+        },
+        {
+            "attrs": {
+                "x_num_col_dims": 1,
+                "y_num_col_dims": 1
+            },
+            "inputs": {
+                "X": ["fc_0.tmp_1"],
+                "Y": ["fc7_weights"]
+            },
+            "outputs": {
+                "Out": ["fc_0.tmp_0"]
+            },
+            "type": "mul"
+        }, 
+        {
+            "attrs": {
+                "__@kernel_type_attr@__": "fetch/def/1/4/2", 
+                "data_type": 1
+            }, 
+            "inputs": {
+                "X": [
+                    "fc_0.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "fetch"
+                ]
+            }, 
+            "type": "fetch"
+        }
+    ],
+    "vars": [
+        {
+            "name": "fc_0.tmp_1",
+            "persistable": false,
+            "shape": [1, 1, 2, 4]
+        },
+        {
+            "data": [1, 1 , 1, 1, 1, 1, 1, 1],
+            "name": "fc7_offset",
+            "persistable": true,
+            "shape": [
+                1, 1, 2, 4
+            ]
+        },
+        {
+            "data": [4, 1, 0, -1, 1, 3, 2, 0, 1, 1, 3, 4],
+            "name": "fc7_weights",
+            "persistable": true,
+            "shape": [1, 1, 4, 3]
+        },
+        {
+            "name": "fc_0.tmp_0",
+            "persistable": false,
+            "shape": [1, 1, 2, 3]
+        }
+    ]
+}

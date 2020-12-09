@@ -1,14 +1,13 @@
-import { Runner } from '../../paddlejs-core/src/index';
-import registerWebGPUBackend from '../src/index';
+import { Runner } from 'paddlejs-core/src/index';
+import registerWebGPUBackend from '../../src/index';
 
-const opName = 'mul';
-const modelDir = `/test/data/`;
+const opName = 'conv2d';
+const modelDir = `/test/op/data/`;
 const modelPath = `${modelDir}${opName}.json`;
 
 async function run() {
     const runner = new Runner({
-        modelPath,
-        fetchShape: [1, 4, 2, 2]
+        modelPath
     });
     await runner.init();
     const executeOP = runner.weightMap[0];

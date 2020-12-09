@@ -1,4 +1,4 @@
-import { ModelVar, OpExecutor, OpInputs, OpOutputs, AttrsData } from '../commons/interface';
+import { ModelVar, OpExecutor, OpInputs, OpOutputs, AttrsData, InputFeed } from '../commons/interface';
 import { GLOBALS } from '../globals';
 import Tensor from './tensor';
 import opBehaviors from './opBehaviors';
@@ -19,8 +19,9 @@ export default class OpData {
     iLayer: number = 0;
     program: any[] = [];
     renderData: any[] = [];
+    inputFeed: InputFeed | undefined = {} as InputFeed;
 
-    constructor(op: OpExecutor, iLayer: number, vars: ModelVar[]) {
+    constructor(op: OpExecutor, iLayer: number, vars: ModelVar[], feed?: InputFeed) {
         const {
             type,
             inputs,
@@ -35,6 +36,7 @@ export default class OpData {
         this.checkMergeOp();
         this.vars = vars;
         this.iLayer = iLayer;
+        this.inputFeed = feed;
 
         const isPass = this.checkIsPass();
         if (isPass) {
@@ -71,8 +73,8 @@ export default class OpData {
             });
         });
         Object.keys(this.input).forEach(key => {
-            if ((key === 'Input') || (key === 'X')) {
-                this.input[key] = this.getTensorAttr(this.input[key][0]);
+            if (this.input[key][0] === 'image') {
+                this.input[key] = [this.inputFeed];
             }
             else {
                 this.input[key] = this.getTensorAttr(this.input[key][0]);

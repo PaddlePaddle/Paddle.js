@@ -5,7 +5,8 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 module.exports = {
     mode: 'development',
     entry: {
-        app: './test/opTest.js'
+        op: './test/op/opTest.js',
+        model: './test/model/modelTest.js'
     },
     devtool: 'inline-source-map',
     devServer: {
@@ -16,8 +17,14 @@ module.exports = {
             dangerouslyAllowCleanPatternsOutsideProject: true
         }),
         new HtmlWebpackPlugin({
-            title: 'Output Management',
-            template: './test/index.html'
+            filename: 'model.html',
+            chunks: ['model'],
+            template: './test/model/index.html'
+        }),
+        new HtmlWebpackPlugin({
+            filename: 'op.html',
+            chunks: ['op'],
+            template: './test/op/index.html'
         })
     ],
     resolve: {
@@ -34,7 +41,7 @@ module.exports = {
         ]
     },
     output: {
-        filename: '[name].bundle.js',
+        filename: '[name].js',
         path: path.resolve(__dirname, 'dist')
     }
 };

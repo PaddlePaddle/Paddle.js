@@ -191,10 +191,11 @@ export default class ModelGraph {
 
     /**
      * Get weightMap end Node FETCH
-     * @returns {OpExecutor}
+     * @returns {ModelVar}
      */
-    getFetchExecutor() : OpExecutor | undefined {
-        return this.weightMap.find((item: OpExecutor) => item.type === 'fetch');
+    getFetchExecutorInfo() : ModelVar {
+        const fetchOp: OpExecutor = this.weightMap.find((item: OpExecutor) => item.type === 'fetch') as OpExecutor;
+        return this.vars.find(item => item.name === fetchOp.inputs.X[0]) as ModelVar;
     }
 
     /**

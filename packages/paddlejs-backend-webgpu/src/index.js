@@ -32,10 +32,10 @@ WebGPUBackend.prototype.runProgram = function (type, opData, isRendered) {
     this.submitEncodedCommands();
 }
 
-WebGPUBackend.prototype.read = async function (fetchOp) {
-    const fetchId = fetchOp.opData.outputTensors[0].tensorId;
-    const fetchShape = fetchOp.opData.outputTensors[0].shape;
-    const fetchByteLength = fetchShape.reduce((acc, cur) => acc * cur, fetchShape[0]) * 4;
+WebGPUBackend.prototype.read = async function (fetchInfo) {
+    const fetchId = fetchInfo.name;
+    const fetchShape = fetchInfo.shape;
+    const fetchByteLength = fetchShape.reduce((acc, cur) => acc * cur, 1) * 4;
     this.createReadBuffer({
         size: fetchByteLength
     });

@@ -1,6 +1,6 @@
 import Loader from './loader';
 import Graph from './graph';
-import { Model } from './commons/interface';
+import { Model, InputFeed } from './commons/interface';
 import OpData from './opFactory/opDataBuilder';
 import { GLOBALS } from './globals';
 import type OpExecutor from './opFactory/opExecutor';
@@ -22,12 +22,6 @@ interface ModelConfig {
     needPreheat?: boolean; // 是否需要预热
 }
 
-interface InputFeed {
-    data: Float32Array | number[];
-    shape: number[];
-    name: string;
-    canvas?: number[];
-}
 
 export default class Runner {
     // instance field
@@ -51,6 +45,7 @@ export default class Runner {
     isExecuted: boolean = false;
     test: boolean = false;
     graphGenerator: Graph = {} as Graph;
+    feedData: InputFeed = {} as InputFeed;
 
     constructor(options: ModelConfig | null) {
         const opts = {
@@ -75,7 +70,6 @@ export default class Runner {
         await GLOBALS.backendInstance.init();
         await this.load();
         this.genGraph();
-        this.genOpData();
     }
 
     async load() {
@@ -100,7 +94,7 @@ export default class Runner {
             const type = op.type;
             if (type !== 'feed' && type !== 'fetch') {
                 iLayer++;
-                const opData = new OpData(op, iLayer, vars);
+                const opData = new OpData(op, iLayer, vars, this.feedData);
                 op.opData = opData;
             }
         });
@@ -109,13 +103,14 @@ export default class Runner {
     async preheat() {
         await this.checkModelLoaded();
         const { fh, fw } = this.modelConfig.feedShape;
-        const feed: InputFeed = {
-            data: new Float32Array(3 * fh * fw).fill(5.0),
+        const preheatFeed: InputFeed = {
+            data: new Float32Array(3 * fh * fw).fill(1.0),
             name: 'image',
             shape: [1, 3, fh, fw]
         };
-        this.execute(feed);
+        const result = await this.execute(preheatFeed);
         this.isExecuted = true;
+        return result;
     }
 
     private async checkModelLoaded() {
@@ -123,7 +118,6 @@ export default class Runner {
             console.info('It\'s better to preheat the model before running.');
             await this.load();
             this.genGraph();
-            this.genOpData();
         }
     }
 
@@ -133,7 +127,10 @@ export default class Runner {
     }
 
     async execute(feed) {
-        console.log(feed);
+        this.feedData = feed;
+        if (!this.isExecuted) {
+            this.genOpData();
+        }
         const FeedOp = this.graphGenerator.getFeedExecutor() as OpExecutor;
         this.executeOp(FeedOp);
         return await this.read();
@@ -152,7 +149,7 @@ export default class Runner {
     }
 
     async read() {
-        const fetchOp = this.graphGenerator.getFetchExecutor() as OpExecutor;
-        return await GLOBALS.backendInstance.read(fetchOp);
+        const fetchInfo = this.graphGenerator.getFetchExecutorInfo();
+        return await GLOBALS.backendInstance.read(fetchInfo);
     }
 };

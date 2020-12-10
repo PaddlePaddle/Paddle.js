@@ -3,7 +3,11 @@ import Graph from './graph';
 import { Model, InputFeed } from './commons/interface';
 import OpData from './opFactory/opDataBuilder';
 import { GLOBALS } from './globals';
+import MediaProcessor from './mediaProcessor';
+
 import type OpExecutor from './opFactory/opExecutor';
+
+const mediaProcessor = new MediaProcessor();
 
 interface ModelConfig {
     modelPath: string; // 模型路径
@@ -11,13 +15,15 @@ interface ModelConfig {
         fw: number;
         fh: number;
     };
-    fetchShape: number[];
     targetSize: { // { height: fw, width: fh}
         height: number;
         width: number;
     }
     fileCount: number; // 参数分片chunk_*.dat 个数
     fill?: string; // 缩放后用什么颜色填充不足方形部分
+    mean?: number[];
+    std?: number[];
+    bgr?: boolean;
     inputType?: string; // image | video
     needPreheat?: boolean; // 是否需要预热
 }
@@ -31,7 +37,6 @@ export default class Runner {
             fw: 224,
             fh: 224
         },
-        fetchShape: [],
         targetSize: {
             height: 224,
             width: 224
@@ -39,13 +44,13 @@ export default class Runner {
         fileCount: 1
     };
 
-    flags = {};
+    isPaused: boolean = false;
     model: Model = {} as Model;
     weightMap: OpExecutor[] = [];
     isExecuted: boolean = false;
     test: boolean = false;
     graphGenerator: Graph = {} as Graph;
-    feedData: InputFeed = {} as InputFeed;
+    feedData: InputFeed[] = [];
 
     constructor(options: ModelConfig | null) {
         const opts = {
@@ -54,11 +59,6 @@ export default class Runner {
             fill: '#fff'
         };
         this.modelConfig = Object.assign(opts, options);
-        this.flags = {
-            isRunning: false,
-            isPreheating: false,
-            runVideoPaused: false
-        };
         this.weightMap = [];
     }
 
@@ -87,7 +87,7 @@ export default class Runner {
         this.weightMap = this.graphGenerator.createGraph();
     }
 
-    genOpData() {
+    private genOpData() {
         const vars = this.model.vars;
         let iLayer = 0;
         this.weightMap.forEach((op: OpExecutor) => {
@@ -103,11 +103,11 @@ export default class Runner {
     async preheat() {
         await this.checkModelLoaded();
         const { fh, fw } = this.modelConfig.feedShape;
-        const preheatFeed: InputFeed = {
+        const preheatFeed: InputFeed[] = [{
             data: new Float32Array(3 * fh * fw).fill(1.0),
             name: 'image',
             shape: [1, 3, fh, fw]
-        };
+        }];
         const result = await this.execute(preheatFeed);
         this.isExecuted = true;
         return result;
@@ -121,9 +121,16 @@ export default class Runner {
         }
     }
 
-    async predict() {
+    async predict(media, callback?: Function) {
         // deal with input, such as image, video
-        // execute
+        if (this.isPaused) {
+            return;
+        }
+        const inputFeed: InputFeed[] = mediaProcessor.process(media, this.modelConfig);
+        const result = await this.execute(inputFeed);
+        return callback
+            ? callback(result)
+            : result;
     }
 
     async execute(feed) {
@@ -151,5 +158,9 @@ export default class Runner {
     async read() {
         const fetchInfo = this.graphGenerator.getFetchExecutorInfo();
         return await GLOBALS.backendInstance.read(fetchInfo);
+    }
+
+    stopPredict() {
+        this.isPaused = true;
     }
 };

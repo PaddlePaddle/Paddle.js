@@ -8,12 +8,11 @@ async function run() {
     const runner = new Runner({
         modelPath,
         feedShape: {
-            fw: 4,
-            fh: 2
+            fw: 5,
+            fh: 3
         }
     });
     await runner.init();
-    console.log(runner.weightMap);
     console.log(await runner.preheat());
 }
 

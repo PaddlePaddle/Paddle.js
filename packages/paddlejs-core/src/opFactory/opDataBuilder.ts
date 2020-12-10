@@ -19,9 +19,9 @@ export default class OpData {
     iLayer: number = 0;
     program: any[] = [];
     renderData: any[] = [];
-    inputFeed: InputFeed | undefined = {} as InputFeed;
+    inputFeed: InputFeed[] = [];
 
-    constructor(op: OpExecutor, iLayer: number, vars: ModelVar[], feed?: InputFeed) {
+    constructor(op: OpExecutor, iLayer: number, vars: ModelVar[], feed: InputFeed[]) {
         const {
             type,
             inputs,
@@ -74,7 +74,7 @@ export default class OpData {
         });
         Object.keys(this.input).forEach(key => {
             if (this.input[key][0] === 'image') {
-                this.input[key] = [this.inputFeed];
+                this.input[key] = this.inputFeed;
             }
             else {
                 this.input[key] = this.getTensorAttr(this.input[key][0]);

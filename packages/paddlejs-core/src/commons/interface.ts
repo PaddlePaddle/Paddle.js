@@ -95,5 +95,5 @@ export interface InputFeed {
     data: Float32Array | number[];
     shape: number[];
     name: string;
-    canvas?: number[];
+    canvas?: number[] | any;
 }

@@ -17,7 +17,7 @@ export default class Tensor {
     shape_texture_packed: number[] = [];
     shape_packed: number[] = [];
     exceedMax: boolean = false;
-    data: Float32Array | number[] | null = [];
+    data: Float32Array | number[] | null = null;
 
     constructor(opts: any = {}) {
         this.opts = opts;

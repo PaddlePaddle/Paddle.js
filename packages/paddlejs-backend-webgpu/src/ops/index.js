@@ -3,12 +3,22 @@
  * @author zhangjingyuan02
  */
 
+import * as utils from './utils';
+
 import mul_params from './mul/params';
 import mul_main from './mul/main';
 
 import conv2d_params from './conv2d/params';
 import conv2d_main from './conv2d/main';
 import conv2d_deps from './conv2d/deps';
+
+import concat_params from './concat/params';
+import concat_main from './concat/main';
+import concat_deps from './concat/deps';
+
+import concat_mul_params from './concat_mul/params';
+import concat_mul_main from './concat_mul/main';
+import concat_mul_deps from './concat_mul/deps';
 
 import elementwise_add_params from './elementwise_add/params';
 import elementwise_add_main from './elementwise_add/main';
@@ -26,6 +36,27 @@ export const ops = {
         behaviors: [
             'reshape',
             'needBatch'
+        ]
+    },
+    concat: {
+        params: concat_params,
+        main: concat_main,
+        deps: concat_deps,
+        behaviors: [
+            'needBatch',
+            'normalizeDim',
+            'normalizeDim2'
+        ]
+    },
+    concat_mul: {
+        params: concat_mul_params,
+        main: concat_mul_main,
+        deps: concat_mul_deps,
+        behaviors: [
+            'needBatch',
+            'processDim',
+            'normalizeDim',
+            'normalizeDim2'
         ]
     },
     conv2d: {
@@ -57,3 +88,6 @@ export const atoms = {
     transferFromNHWCtoNCHW
 };
 
+export {
+    utils
+};

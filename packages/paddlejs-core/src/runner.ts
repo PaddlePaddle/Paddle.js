@@ -87,7 +87,7 @@ export default class Runner {
         this.weightMap = this.graphGenerator.createGraph();
     }
 
-    private genOpData() {
+    genOpData() {
         const vars = this.model.vars;
         let iLayer = 0;
         this.weightMap.forEach((op: OpExecutor) => {

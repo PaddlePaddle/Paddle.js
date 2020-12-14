@@ -3,10 +3,11 @@
  * @author zhangjingyuan02
  */
 
-import {ops, atoms} from './ops';
+import {ops, atoms, utils} from './ops';
 
-export default function buildShader(opName, data) {
+export default function buildShader(name, data) {
     const glslVersion = '#version 450';
+    const opName = utils.getExactOpName(name, data);
     const paramsCode = genParamsCode(opName, data);
     const depsCode = genDepsCode(opName);
     const mainCode = genMainCode(opName);
@@ -16,6 +17,7 @@ export default function buildShader(opName, data) {
     ${depsCode}
     ${mainCode}
     `;
+
     return populateData(shaderCodeWidthoutValue, data);
 }
 
@@ -29,12 +31,13 @@ function genMainCode(opName) {
 
 function genDepsCode(opName) {
     const deps = ops[opName].deps || [];
-    return deps.reduce((code, dep) => {
-        const func = dep.func;
-        const conf = dep.conf;
-        let importFunc = atoms[func];
-        return code + populateData(importFunc, conf);
-    }, '');
+    return deps
+        .reduce((code, dep) => {
+            const func = dep.func;
+            const conf = dep.conf;
+            let importFunc = atoms[func];
+            return code + populateData(importFunc, conf);
+        }, '');
 }
 
 function populateData(result, data) {

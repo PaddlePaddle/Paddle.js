@@ -8,7 +8,6 @@ type Color = string;
 
 export default class MediaProcessor {
     targetContext: CanvasRenderingContext2D = {} as CanvasRenderingContext2D;
-    originContext: CanvasRenderingContext2D = {} as CanvasRenderingContext2D;
     gapFillWith: Color = '#000';
     mean: number[] = [0, 0, 0];
     std: number[] = [1, 1, 1];
@@ -19,9 +18,7 @@ export default class MediaProcessor {
 
     constructor() {
         const targetCanvas = document.createElement('canvas') as HTMLCanvasElement;
-        const originCanvas = document.createElement('canvas') as HTMLCanvasElement;
         this.targetContext = targetCanvas.getContext('2d') as CanvasRenderingContext2D;
-        this.originContext = originCanvas.getContext('2d') as CanvasRenderingContext2D;
     };
 
     /**
@@ -61,7 +58,6 @@ export default class MediaProcessor {
 
     fromPixels(pixels, opt): InputFeed[] {
         let data: ImageData | number[] = [];
-        let originData: ImageData | null = null; // 原始video画布数据
         let scaleSize;
         const targetShape: number[] = opt.targetShape || [];
         const shape: number[] = opt.shape || [];
@@ -70,8 +66,7 @@ export default class MediaProcessor {
             return [{
                 data: data,
                 shape: shape || targetShape,
-                name: 'image',
-                canvas: originData
+                name: 'image'
             }] as InputFeed[];
         }
 
@@ -80,17 +75,14 @@ export default class MediaProcessor {
 
         if (opt.scale && opt.targetSize) { // Moblienet的情况
             data = this.resizeAndFitTargetSize(pixels, opt);
-            originData = this.originContext.getImageData(0, 0, this.pixelWidth, this.pixelHeight);
         }
         else if (opt.targetSize) { // 如果有targetSize，就是装在目标宽高里的模式 TinyYolo的情况
             scaleSize = this.fitToTargetSize(pixels, opt);
             data = this.getImageData(0, 0, scaleSize);
-            originData = this.originContext.getImageData(0, 0, this.pixelWidth, this.pixelHeight);
         }
         else {
             scaleSize = this.reSize(pixels, opt);
             data = this.getImageData(0, 0, scaleSize);
-            originData = this.originContext.getImageData(0, 0, this.pixelWidth, this.pixelHeight);
         }
 
         if (opt.gray) {
@@ -111,8 +103,7 @@ export default class MediaProcessor {
         return [{
             data: data,
             shape: shape || targetShape,
-            name: 'image',
-            canvas: originData
+            name: 'image'
         }] as InputFeed[];
     }
 
@@ -252,7 +243,6 @@ export default class MediaProcessor {
         this.targetContext.canvas.height = sh;
         this.targetContext.drawImage(
             image, 0, 0, sw, sh);
-        this.setInputCanvas(image);
         return { sw, sh };
     }
 
@@ -286,7 +276,6 @@ export default class MediaProcessor {
         sw = targetWidth;
         sh = targetHeight;
         const data = this.getImageData(x, y, { sw, sh });
-        this.setInputCanvas(image);
         return data;
     }
 
@@ -322,23 +311,7 @@ export default class MediaProcessor {
         else {
             this.targetContext.drawImage(image, 0, 0, sw, sh);
         }
-        this.setInputCanvas(image);
-
         return { sw: targetWidth, sh: targetHeight };
-    }
-
-    /**
-     * 设置原始video画布
-     * @param image 原始video
-     */
-    setInputCanvas(image) {
-        // 原始图片宽高
-        const width = this.pixelWidth;
-        const height = this.pixelHeight;
-        // 画布设置
-        this.originContext.canvas.width = width;
-        this.originContext.canvas.height = height;
-        this.originContext.drawImage(image, 0, 0, width, height);
     }
 
     /**

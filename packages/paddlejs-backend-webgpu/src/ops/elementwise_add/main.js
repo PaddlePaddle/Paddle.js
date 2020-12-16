@@ -8,7 +8,7 @@ void main(void) {
     float o = getValueFromTensorPos_origin(oPos.r, oPos.g, oPos.b, oPos.a);
 	float c = 0.0;
 
-	if (axis == 1){
+	if (axis == 1) {
         c = getValueFromTensorPos_counter(0, oPos.r, oPos.g, oPos.b);
     }
     else if (axis == 2){

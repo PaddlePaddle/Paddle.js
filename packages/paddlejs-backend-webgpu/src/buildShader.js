@@ -5,10 +5,10 @@
 
 import {ops, atoms, utils} from './ops';
 
-export default function buildShader(name, data) {
+export default function buildShader(name, attrs) {
     const glslVersion = '#version 450';
-    const opName = utils.getExactOpName(name, data);
-    const paramsCode = genParamsCode(opName, data);
+    const opName = utils.getExactOpName(name, attrs);
+    const paramsCode = genParamsCode(opName, attrs);
     const depsCode = genDepsCode(opName);
     const mainCode = genMainCode(opName);
     const shaderCodeWidthoutValue = `
@@ -17,8 +17,7 @@ export default function buildShader(name, data) {
     ${depsCode}
     ${mainCode}
     `;
-
-    return populateData(shaderCodeWidthoutValue, data);
+    return populateData(shaderCodeWidthoutValue, attrs);
 }
 
 function genParamsCode(opName, data) {

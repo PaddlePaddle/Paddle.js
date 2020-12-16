@@ -11,7 +11,6 @@ export interface ModelVar {
     shape: number[];
     data?: number[] | Float32Array;
     persistable?: boolean;
-    needBatch?: boolean;
     tensorName?: string;
 }
 

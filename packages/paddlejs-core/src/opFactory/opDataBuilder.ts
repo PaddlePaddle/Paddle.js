@@ -127,9 +127,9 @@ export default class OpData {
                 const data = this.input[key] || [{}];
                 // 默认取第一个数据
                 if (tensorName[key.toLowerCase()]) {
-                    data[0].tensorName = tensorName[key.toLowerCase()];
-
-                    tensorData.push(data[0]);
+                    const tensor = data[0];
+                    tensor.tensorName = tensorName[key.toLowerCase()];
+                    tensorData.push(tensor);
                 }
             }
         }
@@ -177,7 +177,6 @@ export default class OpData {
                         name: tensorName,
                         shape: data.shape,
                         data: data.data,
-                        needBatch: data.needBatch || false,
                         notCompressed: data.notCompressed || false,
                         isPacked: this.isPackedOp || false,
                         binding: index

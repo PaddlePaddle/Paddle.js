@@ -1,15 +1,11 @@
 import { OpData } from '../commons/interface';
+import * as Utils from './utils';
 
 interface Behaviors {
     [key: string]: (this: OpData, tensorData: any[]) => any;
 }
 
 const behaviors : Behaviors = {
-    needBatch(tensorData = []) {
-        tensorData.forEach(data => {
-            data.needBatch = true;
-        });
-    },
     adaptPaddings() {
         for (const key in this.attrs) {
             if (Object.prototype.hasOwnProperty.call(this.attrs, key) && key === 'paddings') {
@@ -119,14 +115,13 @@ const behaviors : Behaviors = {
             bias.shape = newShape;
         }
         else if (!bias) {
-            const outShape = tensorData.find(item => item.tensorName === 'out').shape;
+            const outShape = Utils.formatShape(tensorData.find(item => item.tensorName === 'out').shape);
             const outC = outShape[outShape.length - 3];
             const biasShape = this.isPackedOp ? [outC, 1, 1] : [outC];
             const biasDataLength = this.isPackedOp ? outC * 4 : outC;
             tensorData.push({
                 name: 'conv1_scale_offset_custom',
                 packed: this.isPackedOp,
-                needBatch: true,
                 persistable: true,
                 shape: biasShape,
                 data: Array.from(new Float32Array(biasDataLength), () => 0),
@@ -187,15 +182,7 @@ const behaviors : Behaviors = {
     },
 
     normalizeDim() {
-        let origin_shape_temp = this.input.X[0].shape;
-        if (origin_shape_temp.length < 4) {
-            const batch: number[] = [];
-            for (let i = 0; i < (4 - origin_shape_temp.length); i++) {
-                batch.push(1);
-            }
-            origin_shape_temp = batch.concat(origin_shape_temp);
-        }
-        const origin_shape = origin_shape_temp;
+        const origin_shape = this.input.X[0].shape;
         const axis = this.attrs.axis > -1 ? this.attrs.axis : origin_shape.length + this.attrs.axis;
         const dim_value: number[] = [];
         for (let index = 0; index < origin_shape[axis]; index++) {
@@ -208,27 +195,11 @@ const behaviors : Behaviors = {
         this.attrs.dim = 4 - origin_shape.length + axis;
     },
     normalizeDim2() {
-        let origin_shape_temp = this.input.Y[0].shape;
-        if (origin_shape_temp.length < 4) {
-            const batch: number[] = [];
-            for (let i = 0; i < (4 - origin_shape_temp.length); i++) {
-                batch.push(1);
-            }
-            origin_shape_temp = batch.concat(origin_shape_temp);
-        }
-        const origin_shape = origin_shape_temp;
+        const origin_shape = this.input.Y[0].shape;
         const axis = this.attrs.axis > -1 ? this.attrs.axis : origin_shape.length + this.attrs.axis;
 
         // 保存 输入 tensor 对应dim 的长度
         this.attrs.append_num = origin_shape[axis];
-    },
-
-    processDim() {
-        const axis = this.attrs.axis;
-        if (axis !== -1) {
-            const shape = this.input.X[0].shape;
-            this.attrs.axis += 4 - shape.length;
-        }
     },
 
     processAxis() {
@@ -246,7 +217,7 @@ const behaviors : Behaviors = {
     flattenShape(tensorData = []) {
         const target = tensorData.find(item => item.shape.length > 2);
         if (target) {
-            const padShape = padToFourDimShape(target.shape);
+            const padShape = Utils.formatShape(target.shape);
             target.shape = [padShape[0] * padShape[2], padShape[1] * padShape[3]];
         }
 
@@ -262,7 +233,7 @@ const behaviors : Behaviors = {
             counter = input;
         }
         if (input.shape.length > 2 && counter.shape.length === 2) {
-            const shape = getReshapeInPaddle(input.shape, out.shape);
+            const shape = Utils.getReshapeInPaddle(input.shape, out.shape);
             input.shape = shape;
         }
 
@@ -281,32 +252,6 @@ const behaviors : Behaviors = {
         }
     }
 };
-
-
-// 将shape扩充到4维，在shape前补1
-function padToFourDimShape(shape) {
-    let fourDimShape: number[] = [];
-    if (shape.length === 4) {
-        fourDimShape = shape;
-    }
-    else if (shape.length < 4) {
-        for (let i = 0; i < 4 - shape.length; i++) {
-            fourDimShape.push(1);
-        }
-        fourDimShape = fourDimShape.concat(shape);
-    }
-    return fourDimShape;
-}
-
-
-function getReshapeInPaddle(inputShape: number[] = [], outShape: number[] = []) {
-    const total: number = inputShape.reduce((all, num) => all * num);
-    if (outShape.length === 1) {
-        return [1, total];
-    }
-    return [outShape[0], total / outShape[0]];
-
-}
 
 
 export default behaviors;

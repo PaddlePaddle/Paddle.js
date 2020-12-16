@@ -29,18 +29,10 @@ export default class Tensor {
         // 设置 tensorId
         this.tensorId = opts.type;
         // tensor的形状
-        let shape = this.shape = opts.shape;
+        this.shape = Utils.formatShape(opts.shape);
+        const shape = this.shape;
         // 原始数据个数
         this.total = shape.reduce((all: number, num: number) => all * num);
-        // 图像tensor是否带有batch
-        if (opts.needBatch && shape.length < 4) {
-            const batch: number[] = [];
-            for (let i = 0; i < (4 - shape.length); i++) {
-                batch.push(1);
-            }
-            shape = batch.concat(shape);
-            this.shape = shape;
-        }
         // 获取转换到texture后的信息
         const {
             exceedMax,
@@ -169,3 +161,4 @@ export default class Tensor {
         }
     }
 }
+

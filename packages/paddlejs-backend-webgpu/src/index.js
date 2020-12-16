@@ -9,27 +9,37 @@ import {registerOp, registerBackend} from 'paddlejs-core/src/index';
 WebGPUBackend.prototype.createProgram = function (opts) {
     const {
         name,
+        runtime,
         shaderParams
     } = opts;
-    return buildShader(name, shaderParams);
+    return buildShader(name, {
+        ...shaderParams,
+        runtime
+    });
 };
 
 WebGPUBackend.prototype.runProgram = function (type, opData, isRendered) {
-    const iLayer = opData.iLayer;
+    const {
+        iLayer,
+        inputTensors,
+        outputTensors,
+        program
+    } = opData;
     const outTensorIds = [];
-    opData.inputTensors.forEach(tensor => {
+    inputTensors.forEach(tensor => {
         this.buildMappedBuffer(tensor, iLayer);
     });
-    opData.outputTensors.forEach(tensor => {
+    outputTensors.forEach(tensor => {
         this.buildOutputBuffer(tensor, iLayer);
         outTensorIds.push(tensor.tensorId);
     });
-
-    this.createBindGroupLayout(iLayer, outTensorIds);
-    this.createComputePipeline(opData.program[0]);
-    this.createBindGroup(iLayer, outTensorIds);
-    this.execute(opData.outputTensors[0].shape_texture);
-    this.submitEncodedCommands();
+    program.forEach((shader, index) => {
+        this.createBindGroupLayout(iLayer, outTensorIds);
+        this.createComputePipeline(shader);
+        this.createBindGroup(iLayer, outTensorIds);
+        this.execute(outputTensors[index].shape_texture);
+        this.submitEncodedCommands();
+    });
 }
 
 WebGPUBackend.prototype.read = async function (fetchInfo) {

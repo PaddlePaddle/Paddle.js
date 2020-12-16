@@ -1,7 +1,7 @@
 import { Runner } from 'paddlejs-core/src/index';
 import registerWebGPUBackend from '../../src/index';
 
-const opName = 'concat_mul';
+const opName = 'elementwise_add';
 const modelDir = `/test/op/data/`;
 const modelPath = `${modelDir}${opName}.json`;
 
@@ -27,12 +27,16 @@ const OP_INFO_MAP = {
     },
     'concat': {
         name: "concat.tmp_2",
-        shape: [2, 2, 3]
+        shape: [2, 4, 2]
     }
     ,
     'concat_mul': {
         name: "concat.tmp_3",
         shape: [2, 2, 5]
+    },
+    'split': {
+        name: 'split_1.tmp_1',
+        shape: [2, 2, 1, 3]
     }
 };
 

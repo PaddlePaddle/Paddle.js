@@ -20,6 +20,10 @@ import concat_mul_params from './concat_mul/params';
 import concat_mul_main from './concat_mul/main';
 import concat_mul_deps from './concat_mul/deps';
 
+import split_params from './split/params';
+import split_main from './split/main';
+import split_deps from './split/deps';
+
 import elementwise_add_params from './elementwise_add/params';
 import elementwise_add_main from './elementwise_add/main';
 import elementwise_add_deps from './elementwise_add/deps';
@@ -34,8 +38,7 @@ export const ops = {
         params: mul_params,
         main: mul_main,
         behaviors: [
-            'reshape',
-            'needBatch'
+            'reshape'
         ]
     },
     concat: {
@@ -43,7 +46,6 @@ export const ops = {
         main: concat_main,
         deps: concat_deps,
         behaviors: [
-            'needBatch',
             'normalizeDim',
             'normalizeDim2'
         ]
@@ -53,8 +55,6 @@ export const ops = {
         main: concat_mul_main,
         deps: concat_mul_deps,
         behaviors: [
-            'needBatch',
-            'processDim',
             'normalizeDim',
             'normalizeDim2'
         ]
@@ -64,7 +64,6 @@ export const ops = {
         main: conv2d_main,
         deps: conv2d_deps,
         behaviors: [
-            'needBatch',
             'adaptPaddings',
             'isApplySeparableConv',
             'batchComputeConv2d',
@@ -76,8 +75,15 @@ export const ops = {
         main: elementwise_add_main,
         deps: elementwise_add_deps,
         behaviors: [
-            'processAxis',
-            'needBatch'
+            'processAxis'
+        ]
+    },
+    split: {
+        params: split_params,
+        main: split_main,
+        deps: split_deps,
+        behaviors: [
+            'normalizeDim'
         ]
     }
 };

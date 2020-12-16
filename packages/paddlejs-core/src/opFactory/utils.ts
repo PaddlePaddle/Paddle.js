@@ -129,7 +129,7 @@ export function transformOriginOp(op: ModelOp) {
  * @param {boolean} isPacked 是否是packed op
  * @returns {Object} texture信息
  */
-export function getTextureInfoFromTensorShape(shape = [], isPacked = false) {
+export function getTextureInfoFromTensorShape(shape: number[] = [], isPacked = false) {
     const GPU_TEXTURE_MAX_SIZE = 4096;
     const b = shape[0];
     const c = shape[1];
@@ -173,8 +173,14 @@ export function getTextureInfoFromTensorShape(shape = [], isPacked = false) {
     };
 }
 
-// 将nchw排布数据转为nhwc排布数据
-export function nchw2nhwc(data: number[] | Float32Array, shape: number[]) {
+
+/**
+ * 将nchw排布数据转为nhwc排布数据
+ * @param {Array} data tensor data
+ * @param {Array} shape nchw
+ * @returns {Array} nhwc data
+ */
+export function nchw2nhwc(data: number[] | Float32Array, shape: number[]): number[] | Float32Array {
     const N = shape[0];
     const C = shape[1];
     const H = shape[2];
@@ -192,4 +198,35 @@ export function nchw2nhwc(data: number[] | Float32Array, shape: number[]) {
         }
     }
     return nhwcData;
+}
+
+/**
+ * tensor shape 标准化为 4维
+ * @param {Array} shape tensor的形状
+ * @returns {Array} 4维 shape
+ */
+export function formatShape(shape: number[]): number[] {
+    if (shape.length < 4) {
+        const batch: number[] = [];
+        for (let i = 0; i < (4 - shape.length); i++) {
+            batch.push(1);
+        }
+        return batch.concat(shape);
+    }
+    return shape;
+}
+
+/**
+ * reshape
+ * @param {Array} inputShape input tensor shape
+ * @param {Array} outputShape output tensor shape
+ * @returns {Array} shape
+ */
+export function getReshapeInPaddle(inputShape: number[] = [], outShape: number[] = []): number[] {
+    const total: number = inputShape.reduce((all, num) => all * num);
+    if (outShape.length === 1) {
+        return [1, total];
+    }
+    return [outShape[0], total / outShape[0]];
+
 }

@@ -15,7 +15,9 @@ export default function(params) {
         channel_out: channelOut,
         dim,
         num,
-        target_length: targetLength
+        target_length: targetLength,
+        binding_origin: bindingOrigin,
+        binding_out: bindingOut
     } = params;
 
     return `
@@ -37,12 +39,12 @@ export default function(params) {
     const int channel_out = ${channelOut};
 
     // 输入数据
-    layout(std430, set = 0, binding = BINDING_ORIGIN) readonly buffer OriginMatrix {
+    layout(std430, set = 0, binding = ${bindingOrigin}) readonly buffer OriginMatrix {
         float numbers[];
     } originMatrix;
 
     // 输出数据
-    layout(std430, set = 0, binding = BINDING_OUT) buffer ResultMatrix {
+    layout(std430, set = 0, binding = ${bindingOut}) buffer ResultMatrix {
         float numbers[];
     } resultMatrix;
     `;

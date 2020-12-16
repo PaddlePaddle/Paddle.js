@@ -19,7 +19,10 @@ export default function(params) {
         width_texture_out: widthTextureOut,
         channel_out: channelOut,
         dim,
-        inputs_dim: inputsDim
+        inputs_dim: inputsDim,
+        binding_origin: bindingOrigin,
+        binding_counter: bindingCounter,
+        binding_out: bindingOut
     } = params;
 
     return  `
@@ -46,15 +49,15 @@ export default function(params) {
     const int channel_out = ${channelOut};
 
 
-    layout(std430, set = 0, binding = BINDING_ORIGIN) readonly buffer OriginMatrix {
+    layout(std430, set = 0, binding = ${bindingOrigin}) readonly buffer OriginMatrix {
         float numbers[];
     } originMatrix;
     
-    layout(std430, set = 0, binding = BINDING_COUNTER) readonly buffer CounterMatrix {
+    layout(std430, set = 0, binding = ${bindingCounter}) readonly buffer CounterMatrix {
         float numbers[];
     } counterMatrix;
     
-    layout(std430, set = 0, binding = BINDING_OUT) buffer ResultMatrix {
+    layout(std430, set = 0, binding = ${bindingOut}) buffer ResultMatrix {
         float numbers[];
     } resultMatrix;
 

@@ -3,9 +3,9 @@
  * @author zhangjingyuan02
  */
 
- /* globals GPUMapMode GPUShaderStage */
-
 import { PaddlejsBackend } from 'paddlejs-core/src/index';
+
+ /* globals GPUMapMode GPUShaderStage */
 export default class WebGPUBackend extends PaddlejsBackend {
     constructor() {
         super();
@@ -26,6 +26,7 @@ export default class WebGPUBackend extends PaddlejsBackend {
         this.glslang = null;
         this.querySet = null;
     }
+
     async init() {
         if (!this.device) {
             const adapter = await navigator.gpu.requestAdapter();
@@ -34,19 +35,22 @@ export default class WebGPUBackend extends PaddlejsBackend {
         if (!this.queue) {
             this.queue = this.device.defaultQueue;
         }
-        if (this.glslang) return this.glslang;
+        if (this.glslang) {
+            return;
+        }
+
         const glslangModule = await import(/* webpackIgnore: true */ 'https://unpkg.com/@webgpu/glslang@0.0.15/dist/web-devel/glslang.js');
         const glslang = await glslangModule.default();
         this.glslang = glslang;
     }
-    buildMappedBuffer(tensor, iLayer) {
+
+    buildMappedBuffer(tensor) {
         const tensorId = tensor.tensorId;
-        if (tensor.data && this.inputLayersMap[`${iLayer}`] && this.inputLayersMap[`${iLayer}`][tensorId]) {
+        if (tensor.data && this.inputLayersMap[tensorId]) {
             return;
         }
         else if (!tensor.data) {
-            this.inputLayersMap[`${iLayer}`] = this.inputLayersMap[`${iLayer}`] || {};
-            this.inputLayersMap[`${iLayer}`][tensorId] = {
+            this.inputLayersMap[tensorId] = {
                 buffer: this.outputLayersMap[tensorId].buffer,
                 binding: tensor.binding
             };
@@ -57,11 +61,11 @@ export default class WebGPUBackend extends PaddlejsBackend {
             size: tensorByteLength,
             data: tensor.data,
             binding: tensor.binding,
-            iLayer,
             tensorId
         });
     }
-    createBufferMapped({size, usage, data, binding, iLayer, tensorId}) {
+
+    createBufferMapped({size, usage, data, binding, tensorId}) {
         const gpuMappedBufferMatrix = this.device.createBuffer({
             mappedAtCreation: true,
             size: size || this.size,
@@ -69,8 +73,7 @@ export default class WebGPUBackend extends PaddlejsBackend {
         });
         const arrayBufferMatrix = gpuMappedBufferMatrix.getMappedRange();
         if (data) {
-            this.inputLayersMap[`${iLayer}`] = this.inputLayersMap[`${iLayer}`] || {};
-            this.inputLayersMap[`${iLayer}`][`${tensorId}`] = {
+            this.inputLayersMap[tensorId] = {
                 buffer: gpuMappedBufferMatrix,
                 binding
             };
@@ -82,23 +85,24 @@ export default class WebGPUBackend extends PaddlejsBackend {
         new Float32Array(arrayBufferMatrix).set(data);
         gpuMappedBufferMatrix.unmap();
     }
-    buildOutputBuffer(tensor, iLayer) {
+
+    buildOutputBuffer(tensor) {
         const tensorId = tensor.tensorId;
         const tensorByteLength = tensor.shape.reduce((acc, cur) => acc * cur, tensor.shape[0]) * 4;
         this.createBuffer({
             size: tensorByteLength,
             usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
             binding: tensor.binding,
-            iLayer,
             tensorId
         });
     }
-    createBuffer({size, usage, binding, iLayer, tensorId}) {
+
+    createBuffer({size, usage, binding, tensorId}) {
         const resultMatrixBuffer = this.device.createBuffer({
             size: size || this.size,
             usage: usage || this.usage
         });
-        this.outputLayersMap[`${tensorId}`] = {
+        this.outputLayersMap[tensorId] = {
             buffer: resultMatrixBuffer,
             binding
         };
@@ -113,12 +117,12 @@ export default class WebGPUBackend extends PaddlejsBackend {
             usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
         });
     }
-    createBindGroupLayout(iLayer, outTensorIds) {
-        const buffersKeys = [...Object.keys(this.inputLayersMap[`${iLayer}`]), ...outTensorIds];
+    createBindGroupLayout(inputTensorIds, outTensorIds) {
+        const buffersKeys = [...inputTensorIds, ...outTensorIds];
         const formattedEntries = buffersKeys.map(key => {
-            if (this.inputLayersMap[`${iLayer}`][key]) {
+            if (this.inputLayersMap[key]) {
                 return {
-                    binding: this.inputLayersMap[`${iLayer}`][key].binding,
+                    binding: this.inputLayersMap[key].binding,
                     visibility: GPUShaderStage.COMPUTE,
                     type: 'readonly-storage-buffer'
                 };
@@ -141,10 +145,10 @@ export default class WebGPUBackend extends PaddlejsBackend {
             entries: formattedEntries
         });
     }
-    createBindGroup(iLayer, outTensorIds) {
-        const buffersKeys = [...Object.keys(this.inputLayersMap[`${iLayer}`]), ...outTensorIds];
+    createBindGroup(inputTensorIds, outTensorIds) {
+        const buffersKeys = [...inputTensorIds, ...outTensorIds];
         const entries = buffersKeys.map(key => {
-            const input = this.inputLayersMap[`${iLayer}`][key];
+            const input = this.inputLayersMap[key];
             if (input) {
                 return {
                     binding: input.binding,

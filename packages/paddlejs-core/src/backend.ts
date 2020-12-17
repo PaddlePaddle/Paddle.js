@@ -3,18 +3,18 @@
  */
 
 // @ts-nocheck
-import { OpData, ModelVar as fetchInfo } from './commons/interface';
+import { OpData, ModelVar as FetchInfo } from './commons/interface';
 
 export default class PaddlejsBackend {
     createProgram(opts: object): string {
         return notYetImplemented('createProgram');
     }
 
-    runProgram(type: string, opData: OpData, isRendered: boolean): void {
+    runProgram(opData: OpData, type: string, isRendered: boolean): void {
         notYetImplemented('runProgram');
     }
 
-    read(fetchInfo: fetchInfo): Float32Array | number[] {
+    read(fetchInfo: FetchInfo): Float32Array | number[] {
         return notYetImplemented('read');
     }
 }

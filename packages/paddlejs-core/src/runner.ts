@@ -83,7 +83,7 @@ export default class Runner {
     }
 
     genGraph() {
-        this.graphGenerator = new Graph(this.model);
+        this.graphGenerator = new Graph(this.model.ops);
         this.weightMap = this.graphGenerator.createGraph();
     }
 
@@ -156,7 +156,8 @@ export default class Runner {
     }
 
     async read() {
-        const fetchInfo: ModelVar = this.graphGenerator.getFetchExecutorInfo();
+        const fetchOp = this.graphGenerator.getFetchExecutor();
+        const fetchInfo = this.model.vars.find(item => item.name === fetchOp.inputs.X[0]) as ModelVar;
         return await GLOBALS.backendInstance.read(fetchInfo);
     }
 

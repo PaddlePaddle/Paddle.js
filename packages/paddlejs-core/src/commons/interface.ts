@@ -47,10 +47,6 @@ export interface OpExecutor {
     execute: Function;
 }
 
-export interface Tensor {
-
-}
-
 interface Behavior {
     [key: string]: Function;
 }

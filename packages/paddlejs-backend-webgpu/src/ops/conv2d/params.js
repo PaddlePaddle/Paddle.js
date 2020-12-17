@@ -22,7 +22,11 @@ export default function(params) {
         strides,
         paddings,
         dilations,
-        groups
+        groups,
+        binding_origin: bindingOrigin,
+        binding_filter: bindingFilter,
+        binding_out: bindingOut,
+        binding_bias: bindingBias
     } = params;
 
     return `
@@ -63,19 +67,19 @@ export default function(params) {
     // groups
     const int groups = ${groups};
 
-    layout(std430, set = 0, binding = BINDING_BIAS) readonly buffer BiasMatrix {
+    layout(std430, set = 0, binding = ${bindingBias}) readonly buffer BiasMatrix {
         float numbers[];
     } biasMatrix;
 
-    layout(std430, set = 0, binding = BINDING_ORIGIN) readonly buffer Origin {
+    layout(std430, set = 0, binding = ${bindingOrigin}) readonly buffer Origin {
         float numbers[];
     } originMatrix;
 
-    layout(std430, set = 0, binding = BINDING_FILTER) readonly buffer Filter {
+    layout(std430, set = 0, binding = ${bindingFilter}) readonly buffer Filter {
         float numbers[];
     } filterMatrix;
 
-    layout(std430, set = 0, binding = BINDING_OUT) buffer Out {
+    layout(std430, set = 0, binding = ${bindingOut}) buffer Out {
         float numbers[];
     } outMatrix;
 

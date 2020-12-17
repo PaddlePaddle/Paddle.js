@@ -2,9 +2,13 @@
  * @file webgpu 计算
  * @author zhangjingyuan02
  */
+
  /* globals GPUMapMode GPUShaderStage */
- export default class WebGPUBackend {
+
+import { PaddlejsBackend } from 'paddlejs-core/src/index';
+export default class WebGPUBackend extends PaddlejsBackend {
     constructor() {
+        super();
         this.queue = null;
         this.commandQueue = [];
         this.encoder = null;

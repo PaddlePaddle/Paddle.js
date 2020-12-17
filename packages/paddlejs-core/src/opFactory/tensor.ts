@@ -5,8 +5,17 @@
 
 import * as Utils from './utils';
 
+interface TensorParams {
+    type: string;
+    name: string;
+    shape: number[];
+    data: Float32Array | number[] | null;
+    isPacked?: boolean;
+    binding?: number
+}
+
 export default class Tensor {
-    opts: any = {};
+    opts: TensorParams = {} as TensorParams;
     packedData: Float32Array | number[] = [];
     isPacked: boolean = false;
     name: string = '';
@@ -19,7 +28,7 @@ export default class Tensor {
     exceedMax: boolean = false;
     data: Float32Array | number[] | null = null;
 
-    constructor(opts: any = {}) {
+    constructor(opts: TensorParams) {
         this.opts = opts;
         this.packedData = [];
         // 数据存储方式
@@ -48,49 +57,38 @@ export default class Tensor {
         if (opts.type === 'image' || opts.type === 'x') {
             // this.data = opts.data;
             this.data = Utils.padOpData(
-                opts.data,
+                opts.data as Float32Array,
                 [shape[0], shape[1] * (this.isPacked ? 4 : 1), shape[2], shape[3]],
                 this.isPacked
             );
         }
         else if (opts.data && opts.data.length) {
             const packedData = opts.data;
-            if (!opts.notCompressed) {
-                let nhwcData: Float32Array | number[] = Utils.nchw2nhwc(
-                    opts.data,
-                    [shape[0], shape[1] * (this.isPacked ? 4 : 1), shape[2], shape[3]]
+            let nhwcData: Float32Array | number[] = Utils.nchw2nhwc(
+                opts.data,
+                [shape[0], shape[1] * (this.isPacked ? 4 : 1), shape[2], shape[3]]
+            );
+            this.data = new Float32Array(nhwcData);
+            if (this.shape_texture_packed.length > 0) {
+                // this.packedData = new Float32Array(Utils.nchw2nhwc(packedData, [shape[0], this.shape_packed[1] * 4, shape[2], shape[3]]));
+                // let packedData = opts.data;
+                const nhwcPackedData = Utils.nchw2nhwc(
+                    packedData,
+                    [shape[0], this.shape_packed[1] * 4, shape[2], shape[3]]
                 );
-                this.data = new Float32Array(nhwcData);
-                if (this.shape_texture_packed.length > 0) {
-                    // this.packedData = new Float32Array(Utils.nchw2nhwc(packedData, [shape[0], this.shape_packed[1] * 4, shape[2], shape[3]]));
-                    // let packedData = opts.data;
-                    const nhwcPackedData = Utils.nchw2nhwc(
-                        packedData,
-                        [shape[0], this.shape_packed[1] * 4, shape[2], shape[3]]
-                    );
-                    this.packedData = new Float32Array(nhwcPackedData);
-                }
-                else {
-                    // let nhwcData = Utils.nchw2nhwc(opts.data, [shape[0], shape[1] * (this.isPacked ? 4 : 1),shape[2], shape[3]]);
-                    nhwcData = Utils.padOpData(
-                        nhwcData,
-                        [shape[0], shape[1] * (this.isPacked ? 4 : 1), shape[2], shape[3]],
-                        this.isPacked
-                    );
-                    this.data = new Float32Array(nhwcData);
-                    this.packedData = this.data;
-                }
+                this.packedData = new Float32Array(nhwcPackedData);
             }
             else {
-                // batchnorm的scale
-                this.shape_texture = [4, 1, this.total / 4];
-                // data = [].concat(opts.data);
-                this.data = new Float32Array(opts.data);
+                // let nhwcData = Utils.nchw2nhwc(opts.data, [shape[0], shape[1] * (this.isPacked ? 4 : 1),shape[2], shape[3]]);
+                nhwcData = Utils.padOpData(
+                    nhwcData,
+                    [shape[0], shape[1] * (this.isPacked ? 4 : 1), shape[2], shape[3]],
+                    this.isPacked
+                );
+                this.data = new Float32Array(nhwcData);
+                this.packedData = this.data;
             }
 
-            // this.data = new Float32Array(data);
-            // console.log('this.data.length', this.data.length);
-            // 清理缓存
             opts.data = null;
         }
     }
@@ -140,7 +138,7 @@ export default class Tensor {
      * @return {Array} 和shape长度相等的对应个数
      */
     get numbers_shape() {
-        const numbers: any = [];
+        const numbers: number[] = [];
         const sLen = this.shape.length;
         for (let i = 0; i < (sLen - 1); i++) {
             const number = this.shape.slice(i + 1).reduce((total, num) => total * num);

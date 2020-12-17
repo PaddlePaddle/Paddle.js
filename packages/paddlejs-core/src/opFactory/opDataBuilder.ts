@@ -11,7 +11,7 @@ export default class OpData {
     input: OpInputs = {} as OpInputs;
     output: OpOutputs = {} as OpOutputs;
     data: AttrsData = {};
-    attrs: any = {};
+    attrs: object = {};
     inputTensors: Tensor[] = [];
     outputTensors: Tensor[] = [];
     fShaderParams: object[] = [];
@@ -20,6 +20,7 @@ export default class OpData {
     program: string[] = [];
     renderData: object[] = [];
     inputFeed: InputFeed[] = [];
+    tensorData: ModelVar[] = [];
 
     constructor(op: OpExecutor, iLayer: number, vars: ModelVar[], feed: InputFeed[]) {
         const {
@@ -33,45 +34,40 @@ export default class OpData {
         this.attrs = attrs;
         this.name = type;
         this.isPackedOp = isPacked;
-        this.checkMergeOp();
         this.vars = vars;
         this.iLayer = iLayer;
         this.inputFeed = feed;
+        this.input = inputs;
+        this.output = outputs;
+        // op数据, 当前不扩展
+        this.data = {
+            active_function: 'scale',
+            multi_value: '1.0',
+            bias_value: '0.0',
+            fuse_relu: false
+        };
 
-        const isPass = this.checkIsPass();
-        if (isPass) {
-            this.input = inputs;
-            this.output = outputs;
-            // op数据, 当前不扩展
-            this.data = {
-                active_function: 'scale',
-                multi_value: '1.0',
-                bias_value: '0.0',
-                fuse_relu: false
-            };
+        // tensor数据
+        this.inputTensors = [];
+        this.outputTensors = [];
+        this.fShaderParams = [];
+        this.program = [];
+        this.renderData = [];
 
-            // tensor数据
-            this.inputTensors = [];
-            this.outputTensors = [];
-            this.fShaderParams = [];
-            this.program = [];
-            this.renderData = [];
-
-            this.constructData();
-            this.buildTensor();
-            this.buildShaderParams();
-            this.buildProgram();
-        }
-
+        this.constructTensorData();
+        this.buildTensor();
+        this.buildShaderParams();
+        this.buildProgram();
 
     }
 
-    constructData() {
+    constructTensorData() {
         Object.keys(this.output).forEach(key => {
             this.output[key].forEach((name: string, index: number) => {
                 this.output[key][index] = this.getTensorAttr(name)[0];
             });
         });
+
         Object.keys(this.input).forEach(key => {
             if (this.input[key][0] === 'image') {
                 this.input[key] = this.inputFeed;
@@ -80,6 +76,50 @@ export default class OpData {
                 this.input[key] = this.getTensorAttr(this.input[key][0]);
             }
         });
+        for (const key in this.output) {
+            if (Object.prototype.hasOwnProperty.call(this.output, key)) {
+                // 默认取第一个数据
+                const data = this.output[key] || [{}];
+                const tensorName = this.getExactTensorName(key);
+                if (tensorName) {
+                    data.forEach((item: ModelVar) => {
+                        item.tensorName = tensorName;
+                        this.tensorData.push(item);
+                    });
+                }
+            }
+        }
+        for (const key in this.input) {
+            if (Object.prototype.hasOwnProperty.call(this.input, key)) {
+                const data = this.input[key] || [{}];
+                // 默认取第一个数据
+                const tensorName = this.getExactTensorName(key);
+                if (tensorName) {
+                    const tensor = data[0];
+                    tensor.tensorName = tensorName;
+                    this.tensorData.push(tensor);
+                }
+            }
+        }
+    }
+
+    getExactTensorName(name) {
+        // name map
+        const tensorName = {
+            input: 'origin',
+            x: 'origin',
+            filter: 'filter',
+            y: 'counter',
+            z: 'appender',
+            output: 'out',
+            out: 'out',
+            scale: 'scale',
+            bias: 'bias',
+            mean: 'mean',
+            variance: 'variance',
+            w: 'weight'
+        };
+        return tensorName[name.toLowerCase()];
     }
 
     getTensorAttr(name: string) {
@@ -104,52 +144,9 @@ export default class OpData {
         }
     }
 
-    buildTensor() {
-        // todo: 是否需要形状对齐
-        // todo: 是否需要广播tensor
-        const tensorName: any = {
-            input: 'origin',
-            x: 'origin',
-            filter: 'filter',
-            y: 'counter',
-            z: 'appender',
-            output: 'out',
-            out: 'out',
-            scale: 'scale',
-            bias: 'bias',
-            mean: 'mean',
-            variance: 'variance',
-            w: 'weight'
-        };
-        const tensorData: any = [];
-        for (const key in this.input) {
-            if (Object.prototype.hasOwnProperty.call(this.input, key)) {
-                const data = this.input[key] || [{}];
-                // 默认取第一个数据
-                if (tensorName[key.toLowerCase()]) {
-                    const tensor = data[0];
-                    tensor.tensorName = tensorName[key.toLowerCase()];
-                    tensorData.push(tensor);
-                }
-            }
-        }
-        // debugger
-        // todo: 临时删除output里的Y
-        delete this.output.Y;
-        // 输出tensor
-        for (const key in this.output) {
-            if (Object.prototype.hasOwnProperty.call(this.output, key)) {
-                // 默认取第一个数据
-                const data = this.output[key] || [{}];
-                if (tensorName[key.toLowerCase()]) {
-                    data.forEach((item: any) => {
-                        item.tensorName = tensorName[key.toLowerCase()];
-                        tensorData.push(item);
-                    });
-                }
-            }
-        }
-
+    // process op tensorData and attrs according to op behaviors
+    processTensorDataAndAttrs() {
+        const tensorData: ModelVar[] = this.tensorData;
         // unique behavior
         const opKey = `${GLOBALS.backend}_${this.name}`;
         const behaviorKeys = GLOBALS.opRegistry.ops[opKey]
@@ -158,36 +155,27 @@ export default class OpData {
         behaviorKeys.forEach(key => {
             opBehaviors[key].call(this, tensorData);
         });
+    }
 
+    buildTensor() {
+        this.processTensorDataAndAttrs();
+        const tensorData: ModelVar[] = this.tensorData;
         // 生成tensor对象
-        tensorData.forEach((data: any, index: number) => {
-            if (data) {
-                let tensor: any = null;
-                const tensorName = data.tensorName;
-                if (data.notTensor) {
-                    tensor = {
-                        name: tensorName,
-                        data: new Float32Array(data.data),
-                        total_shape: data.data.length
-                    };
-                }
-                else {
-                    tensor = new Tensor({
-                        type: data.name,
-                        name: tensorName,
-                        shape: data.shape,
-                        data: data.data,
-                        notCompressed: data.notCompressed || false,
-                        isPacked: this.isPackedOp || false,
-                        binding: index
-                    });
-                }
-                if (tensorName === 'out') {
-                    this.outputTensors.push(tensor);
-                }
-                else {
-                    this.inputTensors.push(tensor);
-                }
+        tensorData.forEach((data: ModelVar, index: number) => {
+            const tensorName = data.tensorName as string;
+            const tensor = new Tensor({
+                type: data.name,
+                name: tensorName,
+                shape: data.shape,
+                data: data.data || null,
+                isPacked: this.isPackedOp || false,
+                binding: index
+            });
+            if (tensorName === 'out') {
+                this.outputTensors.push(tensor);
+            }
+            else {
+                this.inputTensors.push(tensor);
             }
         });
     }
@@ -213,14 +201,14 @@ export default class OpData {
             }
         }
         // 遍历 获取input tensor的数据
-        this.inputTensors.forEach((inputTensor: any) => {
+        this.inputTensors.forEach((inputTensor: Tensor) => {
             tensorAttrs.forEach(attr => {
                 this.data[attr + '_' + inputTensor.name] = inputTensor[attr];
             });
         });
 
         // 根据out tensor 个数 生成对应的 fShader 个数
-        this.outputTensors.forEach((outTensor: any) => {
+        this.outputTensors.forEach((outTensor: Tensor) => {
             const params = JSON.parse(JSON.stringify(this.data));
             // 获取output tensor的数据
 
@@ -229,30 +217,5 @@ export default class OpData {
             });
             this.fShaderParams.push(params);
         });
-    }
-
-    checkMergeOp() {
-        const mergeType = 'conv2d-elementwise_add';
-        if (this.name.indexOf(mergeType) > -1
-            && Object.prototype.toString.apply(this.attrs) === '[object Array]') {
-            // 第一个融合op
-            this.name = 'conv2d_elementwise_add';
-        }
-    }
-
-    checkIsPass() {
-        if (this.name === 'dropout') {
-            if (this.attrs['dropout_implementation'] === 'downgrade_in_infer') {
-                this.name = 'scale';
-                this.attrs['scale'] = this.attrs['dropout_prob'];
-                this.attrs['bias'] = 0.0;
-                return true;
-            }
-            return false;
-        }
-        if (this.name === 'depthwise_conv2d') {
-            this.name = 'conv2d';
-        }
-        return true;
     }
 }

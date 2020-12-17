@@ -6,37 +6,36 @@ import {registerOp, registerBackend} from 'paddlejs-core/src/index';
 
 /* global GPUBufferUsage */
 
-WebGPUBackend.prototype.createProgram = function (opts) {
-    const {
-        name,
-        runtime,
-        shaderParams
-    } = opts;
+WebGPUBackend.prototype.createProgram = function ({
+    name,
+    runtime,
+    shaderParams
+}) {
     return buildShader(name, {
         ...shaderParams,
         runtime
     });
 };
 
-WebGPUBackend.prototype.runProgram = function (type, opData, isRendered) {
-    const {
-        iLayer,
-        inputTensors,
-        outputTensors,
-        program
-    } = opData;
+WebGPUBackend.prototype.runProgram = function ({
+    inputTensors,
+    outputTensors,
+    program
+}) {
     const outTensorIds = [];
+    const inputTensorIds = [];
     inputTensors.forEach(tensor => {
-        this.buildMappedBuffer(tensor, iLayer);
+        this.buildMappedBuffer(tensor);
+        inputTensorIds.push(tensor.tensorId);
     });
     outputTensors.forEach(tensor => {
-        this.buildOutputBuffer(tensor, iLayer);
+        this.buildOutputBuffer(tensor);
         outTensorIds.push(tensor.tensorId);
     });
     program.forEach((shader, index) => {
-        this.createBindGroupLayout(iLayer, outTensorIds);
+        this.createBindGroupLayout(inputTensorIds, outTensorIds);
         this.createComputePipeline(shader);
-        this.createBindGroup(iLayer, outTensorIds);
+        this.createBindGroup(inputTensorIds, outTensorIds);
         this.execute(outputTensors[index].shape_texture);
         this.submitEncodedCommands();
     });

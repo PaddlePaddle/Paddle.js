@@ -10,6 +10,7 @@ module.exports = {
     },
     devtool: 'inline-source-map',
     devServer: {
+        host: '0.0.0.0',
         port: 9000
     },
     plugins: [
@@ -30,6 +31,9 @@ module.exports = {
     resolve: {
         // Add ".ts" and ".tsx" as resolvable extensions.
         extensions: [".ts", ".js"],
+        alias: {
+            glslangModule$: '@webgpu/glslang/dist/web-devel/glslang.js'
+        }
     },
     module: {
         rules: [

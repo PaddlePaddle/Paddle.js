@@ -2,25 +2,15 @@
  * @file ModelGraph，graph 生成器
  */
 
-import { Model, ModelVar, ModelOp } from './commons/interface';
-import dataProcess from './dataProcess';
+import { ModelOp } from './commons/interface';
 import OpExecutor from './opFactory/opExecutor';
-import packedOpConditions from './opFactory/packedOpConditions';
-import { createUnpacked2packedOp, createPacked2unpackedOp, transformOriginOp } from './opFactory/utils';
 
 export default class ModelGraph {
     weightMap: OpExecutor[] = [];
-    formatLayout: string = 'NCHW';
     ops: ModelOp[] = [] as ModelOp[];
-    vars: ModelVar[] = [] as ModelVar[];
 
-    constructor(model: Model) {
-        const {
-            ops,
-            vars
-        } = model;
+    constructor(ops: ModelOp[]) {
         this.ops = ops;
-        this.vars = vars;
     }
 
     /**
@@ -28,22 +18,10 @@ export default class ModelGraph {
      * @returns {object} weightMap
      */
     createGraph(): OpExecutor[] {
-        this.formatWeight();
         this.createOpsMap();
         this.constructOpsMap();
         this.arrangeMap();
         return this.weightMap;
-    }
-
-
-    private formatWeight() {
-        if (this.formatLayout === 'NHWC') {
-            this.vars.forEach((item: ModelVar) => {
-                if (item.data && item.shape) {
-                    item.data = dataProcess.nhwc2nchw(item.data, item.shape);
-                }
-            });
-        }
     }
 
     /**
@@ -52,44 +30,9 @@ export default class ModelGraph {
     private createOpsMap() {
         const opsMap: OpExecutor[] = [];
         this.ops.forEach(item => {
-            let idx = opsMap.length;
+            const idx = opsMap.length;
             const opExecutor = new OpExecutor(item, idx);
-            // add unpacked2packedOP and packed2unpackedOp
-            // current: only support one input case
-            // todo: support multi inputs
-
-            // op which unsupports packed
-            if (!packedOpConditions[opExecutor.type]
-                || !packedOpConditions[opExecutor.type](item, this.vars)
-            ) {
-
-                opsMap.push(opExecutor);
-                return;
-            }
-            const {
-                inputsName,
-                outputsName
-            } = opExecutor;
-            // deal with unpacked2packed op
-            const unpacked2packedOp = createUnpacked2packedOp({
-                inputName: inputsName[0],
-                outputName: `${inputsName[0]}_packed`
-            });
-            idx = opsMap.length;
-            opsMap.push(new OpExecutor(unpacked2packedOp, idx));
-
-            // deal with origin packed op
-            const transformedOp = transformOriginOp(item);
-            idx = opsMap.length;
-            opsMap.push(new OpExecutor(transformedOp, idx, true));
-
-            // deal with packed2unpacked op
-            const packed2unpackedOp = createPacked2unpackedOp({
-                inputName: `${outputsName[0]}_packed`,
-                outputName: outputsName[0]
-            });
-            idx = opsMap.length;
-            opsMap.push(new OpExecutor(packed2unpackedOp, idx));
+            opsMap.push(opExecutor);
 
         });
 
@@ -189,17 +132,16 @@ export default class ModelGraph {
      * Get weightMap start Node FEED
      * @returns {OpExecutor}
      */
-    getFeedExecutor() : OpExecutor | undefined {
-        return this.weightMap.find((item: OpExecutor) => item.type === 'feed');
+    getFeedExecutor() : OpExecutor {
+        return this.weightMap.find((item: OpExecutor) => item.type === 'feed') as OpExecutor;
     }
 
     /**
      * Get weightMap end Node FETCH
-     * @returns {ModelVar}
+     * @returns {OpExecutor}
      */
-    getFetchExecutorInfo() : ModelVar {
-        const fetchOp: OpExecutor = this.weightMap.find((item: OpExecutor) => item.type === 'fetch') as OpExecutor;
-        return this.vars.find(item => item.name === fetchOp.inputs.X[0]) as ModelVar;
+    getFetchExecutor() : OpExecutor {
+        return this.weightMap.find((item: OpExecutor) => item.type === 'fetch') as OpExecutor;
     }
 
     /**
@@ -207,7 +149,7 @@ export default class ModelGraph {
      * @param id
      * @returns {OpExecutor}
      */
-    getExecutorById(id: string): OpExecutor | undefined {
-        return this.weightMap.find((op: OpExecutor) => op.id === id);
+    getExecutorById(id: string): OpExecutor {
+        return this.weightMap.find((op: OpExecutor) => op.id === id) as OpExecutor;
     }
 }

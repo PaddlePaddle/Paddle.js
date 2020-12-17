@@ -14,11 +14,11 @@ export default class OpData {
     attrs: any = {};
     inputTensors: Tensor[] = [];
     outputTensors: Tensor[] = [];
-    fShaderParams: any = [];
+    fShaderParams: object[] = [];
     vars: ModelVar[] = [];
     iLayer: number = 0;
-    program: any[] = [];
-    renderData: any[] = [];
+    program: string[] = [];
+    renderData: object[] = [];
     inputFeed: InputFeed[] = [];
 
     constructor(op: OpExecutor, iLayer: number, vars: ModelVar[], feed: InputFeed[]) {

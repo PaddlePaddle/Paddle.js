@@ -1,6 +1,6 @@
 import Loader from './loader';
 import Graph from './graph';
-import { Model, InputFeed } from './commons/interface';
+import { Model, InputFeed, ModelVar } from './commons/interface';
 import OpData from './opFactory/opDataBuilder';
 import { GLOBALS } from './globals';
 import MediaProcessor from './mediaProcessor';
@@ -15,7 +15,7 @@ interface ModelConfig {
         fw: number;
         fh: number;
     };
-    targetSize: { // { height: fw, width: fh}
+    targetSize: {
         height: number;
         width: number;
     }
@@ -64,7 +64,7 @@ export default class Runner {
 
     async init() {
         if (!GLOBALS.backendInstance) {
-            console.error('ERROR: Havent register backend');
+            console.error('ERROR: Haven\'t register backend');
             return;
         }
         await GLOBALS.backendInstance.init();
@@ -156,7 +156,7 @@ export default class Runner {
     }
 
     async read() {
-        const fetchInfo = this.graphGenerator.getFetchExecutorInfo();
+        const fetchInfo: ModelVar = this.graphGenerator.getFetchExecutorInfo();
         return await GLOBALS.backendInstance.read(fetchInfo);
     }
 

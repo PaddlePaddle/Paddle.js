@@ -1,3 +1,7 @@
+/**
+ * @file ModelGraph，graph 生成器
+ */
+
 import { Model, ModelVar, ModelOp } from './commons/interface';
 import dataProcess from './dataProcess';
 import OpExecutor from './opFactory/opExecutor';

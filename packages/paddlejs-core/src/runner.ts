@@ -25,7 +25,6 @@ interface ModelConfig {
     std?: number[];
     bgr?: boolean;
     inputType?: string; // image | video
-    needPreheat?: boolean; // 是否需要预热
 }
 
 
@@ -54,7 +53,6 @@ export default class Runner {
 
     constructor(options: ModelConfig | null) {
         const opts = {
-            needPreheat: true,
             inputType: 'image',
             fill: '#fff'
         };

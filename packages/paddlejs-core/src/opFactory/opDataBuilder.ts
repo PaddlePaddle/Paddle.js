@@ -39,14 +39,6 @@ export default class OpData {
         this.inputFeed = feed;
         this.input = inputs;
         this.output = outputs;
-        // op数据, 当前不扩展
-        this.data = {
-            active_function: 'scale',
-            multi_value: '1.0',
-            bias_value: '0.0',
-            fuse_relu: false
-        };
-
         // tensor数据
         this.inputTensors = [];
         this.outputTensors = [];

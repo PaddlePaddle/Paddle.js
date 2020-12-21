@@ -10,7 +10,7 @@ export default class PaddlejsBackend {
         return notYetImplemented('createProgram');
     }
 
-    runProgram(opData: OpData, type: string, isRendered: boolean): void {
+    runProgram(opData: OpData, isRendered: boolean): void {
         notYetImplemented('runProgram');
     }
 

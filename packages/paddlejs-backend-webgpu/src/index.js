@@ -1,10 +1,7 @@
+import { registerOp, registerBackend } from 'paddlejs-core/src/index';
 import WebGPUBackend from './gpu';
 import buildShader from './buildShader';
-import {ops} from './ops';
-import {registerOp, registerBackend} from 'paddlejs-core/src/index';
-
-
-/* global GPUBufferUsage */
+import { ops } from './ops';
 
 WebGPUBackend.prototype.createProgram = function ({
     name,
@@ -39,7 +36,7 @@ WebGPUBackend.prototype.runProgram = function ({
         this.execute(outputTensors[index].shape_texture);
         this.submitEncodedCommands();
     });
-}
+};
 
 WebGPUBackend.prototype.read = async function (fetchInfo) {
     const fetchId = fetchInfo.name;

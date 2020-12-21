@@ -1,7 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
- 
+
 module.exports = {
     mode: 'development',
     entry: {
@@ -30,7 +30,7 @@ module.exports = {
     ],
     resolve: {
         // Add ".ts" and ".tsx" as resolvable extensions.
-        extensions: [".ts", ".js"],
+        extensions: ['.ts', '.js'],
         alias: {
             glslangModule$: '@webgpu/glslang/dist/web-devel/glslang.js'
         }

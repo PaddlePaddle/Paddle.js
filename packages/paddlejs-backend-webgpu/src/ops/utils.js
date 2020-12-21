@@ -13,4 +13,4 @@ function getExactOpName(name, attrs) {
 
 export {
     getExactOpName
-}
+};

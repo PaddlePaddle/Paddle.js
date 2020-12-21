@@ -63,7 +63,7 @@ export default class OpExecutor {
      */
     execute(isRendered) {
         if (this.type !== 'feed') {
-            GLOBALS.backendInstance.runProgram(this.opData, this.type, isRendered);
+            GLOBALS.backendInstance.runProgram(this.opData, isRendered);
         }
 
     }

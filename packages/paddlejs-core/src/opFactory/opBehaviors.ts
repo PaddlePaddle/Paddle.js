@@ -237,19 +237,6 @@ const behaviors : Behaviors = {
             input.shape = shape;
         }
 
-    },
-
-    mergeTensor(tensorData = []) {
-        // 融合scale、bias、variance、mean
-        const constants = ['scale', 'bias', 'variance', 'mean'];
-        const result = {};
-        tensorData.forEach((tensor, index) => {
-            result[tensor.tensorName] = tensor;
-            result[tensor.tensorName + 'Index'] = index;
-        });
-        for (let i = 0; i < constants.length; i++) {
-            tensorData[result[constants[i] + 'Index']].data = result[constants[i]].data;
-        }
     }
 };
 

@@ -1,6 +1,6 @@
 /**
  * @file op文件
- * @author zhangjingyuan02
+ * @author zhangjingyuan
  */
 
 import * as utils from './utils';

@@ -5,7 +5,9 @@
 
 import { PaddlejsBackend } from 'paddlejs-core/src/index';
 
- /* globals GPUMapMode GPUShaderStage */
+/* global GPUMapMode, GPUShaderStage, GPUBufferUsage */
+
+/* eslint-disable no-bitwise */
 export default class WebGPUBackend extends PaddlejsBackend {
     constructor() {
         super();
@@ -65,7 +67,7 @@ export default class WebGPUBackend extends PaddlejsBackend {
         });
     }
 
-    createBufferMapped({size, usage, data, binding, tensorId}) {
+    createBufferMapped({ size, usage, data, binding, tensorId }) {
         const gpuMappedBufferMatrix = this.device.createBuffer({
             mappedAtCreation: true,
             size: size || this.size,
@@ -97,7 +99,7 @@ export default class WebGPUBackend extends PaddlejsBackend {
         });
     }
 
-    createBuffer({size, usage, binding, tensorId}) {
+    createBuffer({ size, usage, binding, tensorId }) {
         const resultMatrixBuffer = this.device.createBuffer({
             size: size || this.size,
             usage: usage || this.usage
@@ -111,12 +113,14 @@ export default class WebGPUBackend extends PaddlejsBackend {
         //     binding
         // });
     }
-    createReadBuffer({size}) {
+
+    createReadBuffer({ size }) {
         this.readBuffer = this.device.createBuffer({
             size: size || this.size,
             usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
         });
     }
+
     createBindGroupLayout(inputTensorIds, outTensorIds) {
         const buffersKeys = [...inputTensorIds, ...outTensorIds];
         const formattedEntries = buffersKeys.map(key => {
@@ -145,6 +149,7 @@ export default class WebGPUBackend extends PaddlejsBackend {
             entries: formattedEntries
         });
     }
+
     createBindGroup(inputTensorIds, outTensorIds) {
         const buffersKeys = [...inputTensorIds, ...outTensorIds];
         const entries = buffersKeys.map(key => {
@@ -181,6 +186,7 @@ export default class WebGPUBackend extends PaddlejsBackend {
         // });
         this.bindGroup = bindGroup;
     }
+
     createComputePipeline(computeShaderCode) {
         const computePipeline = this.device.createComputePipeline({
             layout: this.device.createPipelineLayout({
@@ -195,6 +201,7 @@ export default class WebGPUBackend extends PaddlejsBackend {
         });
         this.pipeline = computePipeline;
     }
+
     execute(outputShape) {
         this.encoder = this.device.createCommandEncoder();
         const passEncoder = this.encoder.beginComputePass();
@@ -203,7 +210,8 @@ export default class WebGPUBackend extends PaddlejsBackend {
         passEncoder.dispatch(outputShape[outputShape.length - 2], outputShape[outputShape.length - 1]);
         passEncoder.endPass();
     }
-    copyBufferToBuffer(srcBuffer, destBuffer, srcOffset = 0, destOffset = 0, destSize) {
+
+    copyBufferToBuffer(srcBuffer, destBuffer, srcOffset = 0, destOffset = 0, destSize = 0) {
         const encoder = this.device.createCommandEncoder({});
         encoder.copyBufferToBuffer(
             srcBuffer /* source buffer */,
@@ -215,10 +223,12 @@ export default class WebGPUBackend extends PaddlejsBackend {
         const copyCommands = encoder.finish();
         this.queue.submit([copyCommands]);
     }
+
     submitEncodedCommands() {
         const copyCommands = this.encoder.finish();
         this.queue.submit([copyCommands]);
     }
+
     dispose() {
         this.commandQueue = [];
         this.bindGroupLayout = null;
@@ -231,6 +241,7 @@ export default class WebGPUBackend extends PaddlejsBackend {
         // this.outputBuffers = [];
         this.readBuffer = null;
     }
+
     async readData() {
         await this.readBuffer.mapAsync(GPUMapMode.READ);
         const copyArrayBuffer = this.readBuffer.getMappedRange();

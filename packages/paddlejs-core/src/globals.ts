@@ -5,10 +5,6 @@ interface OpRegistry {
         // key => backend_name
         [key: string]: OpInfo;
     };
-    opsBehavior?: {
-        // key => backend_hehavior
-        [key: string]: Function;
-    };
 }
 
 interface GLOBALS_INTERFACE {
@@ -27,10 +23,6 @@ export const GLOBALS: GLOBALS_INTERFACE = {
     backendInstance: null
 };
 
-
-export function registerOpsBehaviors(opsBehavior) {
-    GLOBALS.opRegistry.opsBehavior = opsBehavior;
-}
 
 export function registerOp(opInfo: OpInfo, key: string) {
     const {

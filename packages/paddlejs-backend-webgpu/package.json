@@ -5,7 +5,6 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack serve"
   },
   "author": "",
@@ -13,13 +12,10 @@
   "devDependencies": {
     "clean-webpack-plugin": "^3.0.0",
     "html-webpack-plugin": "^4.5.0",
-    "ts-jest": "^26.4.4",
     "ts-loader": "^8.0.11",
     "webpack": "^5.6.0",
     "webpack-cli": "^4.2.0",
-    "webpack-dev-server": "^3.11.0"
-  },
-  "dependencies": {
-    "paddlejs-core": "^0.0.1"
+    "webpack-dev-server": "^3.11.0",
+    "paddlejs-core": "file:../paddlejs-core"
   }
 }

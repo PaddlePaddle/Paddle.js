@@ -223,15 +223,6 @@
         "@typescript-eslint/prefer-function-type": "error",
         "import/default": "error",
         "import/export": "off",
-        "import/extensions": [
-            "error",
-            {
-                ".js": "never",
-                ".jsx": "never",
-                ".es": "never"
-            }
-        ],
-
         "import/max-dependencies": "off",
         "import/named": "error",
         "import/namespace": "error",

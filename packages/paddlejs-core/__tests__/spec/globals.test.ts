@@ -1,11 +1,11 @@
 import { ops } from '../../../paddlejs-backend-webgpu/src/ops';
 import { GLOBALS, registerOp, registerBackend } from '../../src/globals';
-import PaddlejsBackend from '../../src/backend';
+import Backend from '../env/mock/backend';
 
 describe('test globals', () => {
     registerBackend(
         'webgpu',
-        new PaddlejsBackend()
+        new Backend()
     );
     Object.keys(ops).forEach(key => {
         registerOp(ops[key], key);

@@ -2,7 +2,7 @@ import fetch from 'jest-fetch-mock';
 import Loader from '../../src/loader';
 import modelInfo from '../env/mock/model.json';
 
-describe('test loader ', () => {
+describe('test loader', () => {
 
     // enable fetch mock
     fetch.mockResponseOnce(JSON.stringify(modelInfo));

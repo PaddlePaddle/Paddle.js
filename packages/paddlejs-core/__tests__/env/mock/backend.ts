@@ -1,14 +1,14 @@
 import PaddlejsBackend from '../../../src/backend';
 
 export default class MockBackend extends PaddlejsBackend {
-    device: object | null = null;
+    status: string = 'unready';
 
     constructor() {
         super();
     }
 
-    init() {
-        this.device = null;
+    init(): void {
+        this.status = 'init';
     }
 
     createProgram(): string {
@@ -16,11 +16,11 @@ export default class MockBackend extends PaddlejsBackend {
     }
 
     runProgram(): void {
-
+        throw Error('not working');
     }
 
     read(): Float32Array | number[] {
-        return [1, 1, 1];
+        throw Error('nothing to read');
     }
 
 }

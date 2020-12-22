@@ -6,6 +6,10 @@
 import { OpData, ModelVar as FetchInfo } from './commons/interface';
 
 export default class PaddlejsBackend {
+    init(): void {
+        notYetImplemented('init');
+    }
+
     createProgram(opts: object): string {
         return notYetImplemented('createProgram');
     }

@@ -61,7 +61,6 @@ export default class ModelLoader {
 
     async load() {
         const modelInfo: any = await this.fetchModel();
-        this.chunkNum = modelInfo.chunkNum;
         if (this.multipart === true) {
             if (this.dataType === 'binary') {
                 await this.fetchChunks()

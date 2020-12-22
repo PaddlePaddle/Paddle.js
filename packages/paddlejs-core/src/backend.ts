@@ -1,31 +1,16 @@
 /**
- * @file backend，backend 抽象类
+ * @file backend 抽象类
  */
 
 // @ts-nocheck
 import { OpData, ModelVar as FetchInfo } from './commons/interface';
 
-export default class PaddlejsBackend {
-    init(): void {
-        notYetImplemented('init');
-    }
+export default abstract class PaddlejsBackend {
+    abstract init(): void;
 
-    createProgram(opts: object): string {
-        return notYetImplemented('createProgram');
-    }
+    abstract createProgram(opts: object): string;
 
-    runProgram(opData: OpData, isRendered: boolean): void {
-        notYetImplemented('runProgram');
-    }
+    abstract runProgram(opData: OpData, isRendered: boolean): void;
 
-    read(fetchInfo: FetchInfo): Float32Array | number[] {
-        return notYetImplemented('read');
-    }
-}
-
-
-function notYetImplemented(name: string): never {
-    throw new Error(
-        `Method '${name}' not yet implemented or not found in the registry. `
-        + 'This method should be supported by the backend you have chosen');
+    abstract read(fetchInfo: FetchInfo): Float32Array | number[];
 }

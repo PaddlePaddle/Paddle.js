@@ -2,7 +2,7 @@
   "name": "paddlejs-backend-webgpu",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.ts",
   "private": true,
   "scripts": {
     "start": "webpack serve"
@@ -15,7 +15,11 @@
     "ts-loader": "^8.0.11",
     "webpack": "^5.6.0",
     "webpack-cli": "^4.2.0",
-    "webpack-dev-server": "^3.11.0",
+    "webpack-dev-server": "^3.11.0"
+  },
+  "dependencies": {
+    "@webgpu/glslang": "0.0.12",
+    "@webgpu/types": "0.0.32",
     "paddlejs-core": "file:../paddlejs-core"
   }
 }

@@ -1,7 +1,8 @@
 /**
  * @file mul主函数
- * @author zhangjingyuan02
+ * @author zhangjingyuan
  */
+
 export default `
 void main() {
     ivec2 resultCell = ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);

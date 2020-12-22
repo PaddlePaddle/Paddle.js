@@ -42,7 +42,11 @@ const OP_INFO_MAP = {
 
 async function run() {
     const runner = new Runner({
-        modelPath
+        modelPath,
+        feedShape: {
+            fw: 3,
+            fh: 3
+        }
     });
     await runner.init();
     runner.genOpData();

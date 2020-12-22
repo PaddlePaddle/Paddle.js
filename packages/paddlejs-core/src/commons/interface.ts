@@ -20,15 +20,15 @@ export interface Model {
 }
 
 export interface OpInputs {
-    [key: string]: any[];
+    [key: string]: any;
 }
 
 export interface OpOutputs {
-    [key: string]: any[]
+    [key: string]: any;
 }
 
 export interface OpAttrs {
-    [key: string]: any[]
+    [key: string]: any
 }
 
 export interface OpExecutor {

@@ -15,11 +15,11 @@ interface ModelConfig {
         fw: number;
         fh: number;
     };
-    targetSize: {
+    targetSize?: {
         height: number;
         width: number;
     }
-    fileCount: number; // 参数分片chunk_*.dat 个数
+    fileCount?: number; // 参数分片chunk_*.dat 个数
     fill?: string; // 缩放后用什么颜色填充不足方形部分
     mean?: number[];
     std?: number[];
@@ -136,8 +136,8 @@ export default class Runner {
         if (!this.isExecuted) {
             this.genOpData();
         }
-        const FeedOp = this.graphGenerator.getFeedExecutor() as OpExecutor;
-        this.executeOp(FeedOp);
+        const feedOp = this.graphGenerator.getFeedExecutor() as OpExecutor;
+        this.executeOp(feedOp);
         return await this.read();
     }
 

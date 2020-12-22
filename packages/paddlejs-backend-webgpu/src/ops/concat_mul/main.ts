@@ -23,8 +23,8 @@ void main(void) {
         res = getValueFromTensorPos_appender(oPos.r, oPos.g, oPos.b, oPos.a);
     }
     
-	ivec2 resultCell = ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
+    ivec2 resultCell = ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
     int index = resultCell.y + resultCell.x * width_texture_out;
-	resultMatrix.numbers[index] = res;
+    resultMatrix.numbers[index] = res;
 }
 `;

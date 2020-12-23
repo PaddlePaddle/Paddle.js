@@ -1,6 +1,7 @@
 /**
  * @file mul参数文件
  */
+
 export default function(params) {
     const {
         width_texture_counter: widthTextureCounter,

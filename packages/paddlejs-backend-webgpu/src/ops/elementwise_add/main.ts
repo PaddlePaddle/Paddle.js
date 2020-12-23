@@ -6,9 +6,8 @@ export default `
 void main(void) {
     ivec4 oPos = getOutputTensorPos();
     float o = getValueFromTensorPos_origin(oPos.r, oPos.g, oPos.b, oPos.a);
-	float c = 0.0;
-
-	if (axis == 1) {
+    float c = 0.0;
+    if (axis == 1) {
         c = getValueFromTensorPos_counter(0, oPos.r, oPos.g, oPos.b);
     }
     else if (axis == 2){
@@ -21,9 +20,9 @@ void main(void) {
         c = getValueFromTensorPos_counter(oPos.r, oPos.g, oPos.b, oPos.a);
     }
     float res = c + o;
-
+    
     ivec2 resultCell = ivec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
     int index = resultCell.y + resultCell.x * width_texture_origin;
-	resultMatrix.numbers[index] = (res);
+    resultMatrix.numbers[index] = (res);
 }
 `;

@@ -5,8 +5,8 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 module.exports = {
     mode: 'development',
     entry: {
-        op: './test/op/opTest.js',
-        model: './test/model/modelTest.js'
+        op: './test/op/opTest.ts',
+        model: './test/model/modelTest.ts'
     },
     devtool: 'inline-source-map',
     devServer: {
@@ -30,10 +30,7 @@ module.exports = {
     ],
     resolve: {
         // Add ".ts" and ".tsx" as resolvable extensions.
-        extensions: ['.ts', '.js'],
-        alias: {
-            glslangModule$: '@webgpu/glslang/dist/web-devel/glslang.js'
-        }
+        extensions: ['.ts', '.js']
     },
     module: {
         rules: [

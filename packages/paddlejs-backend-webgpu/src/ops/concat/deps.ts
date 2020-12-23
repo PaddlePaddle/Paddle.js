@@ -1,6 +1,7 @@
 /**
- * @file conv2d deps
+ * @file deps
  */
+
 export default [
     {
         func: 'transferFromNHWCtoNCHW'
@@ -17,13 +18,7 @@ export default [
     {
         func: 'getValueFromTensorPos',
         conf: {
-            TENSOR_NAME: 'filter'
-        }
-    },
-    {
-        func: 'getValueFromTensorPos',
-        conf: {
-            TENSOR_NAME: 'bias'
+            TENSOR_NAME: 'counter'
         }
     }
 ];

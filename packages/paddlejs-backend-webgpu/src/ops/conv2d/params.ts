@@ -2,7 +2,7 @@
  * @file conv2d params
  */
 
-export default function(params) {
+export default function (params) {
     const {
         width_shape_filter: widthShapeFilter,
         height_shape_filter: heightShapeFilter,

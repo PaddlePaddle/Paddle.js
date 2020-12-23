@@ -19,6 +19,7 @@ const behaviors : Behaviors = {
             }
         }
     },
+
     inferShape() {
         const inputShape = this.input.X[0].shape;
         if (this.attrs.new_shape.toString() === this.output.Out[0].shape.toString()) {
@@ -44,8 +45,9 @@ const behaviors : Behaviors = {
         }
         this.output.Out[0].shape = targetShape;
     },
+
     setPerm() {
-        let arrayPerm : number[] = this.attrs['axis'];
+        const arrayPerm : number[] = this.attrs['axis'];
         const length = arrayPerm.length;
         if (length > 4) {
             throw Error(`op transpoes2 axis length exceeds maximum length 4, get ${length}`);
@@ -60,6 +62,7 @@ const behaviors : Behaviors = {
         }
         this.data['perm_size'] = length;
     },
+
     isGlobalPooling() {
         const counter = this.input.X[0] || {};
         const length = (counter.shape && counter.shape.length) || 0;
@@ -67,48 +70,42 @@ const behaviors : Behaviors = {
             this.attrs.ksize = [counter.shape[length - 2], counter.shape[length - 1]];
         }
     },
+
     mergeAttrs() {
         this.attrs = this.subAttrs.reduce((attrs, item) => {
             return Object.assign(attrs, item);
         }, {});
     },
+
     isApplySeparableConv(tensorData = []) {
-        if (this.isPackedOp) {
-            return;
-        }
         const groups = this.attrs.groups;
+        let hasBias = false;
+        let outC;
         const filter = tensorData.filter(item => {
             const { shape, tensorName } = item;
-            const [b, c] = shape;
-            return (b === groups) && (c === 1) && (tensorName === 'filter');
+            if (tensorName === 'bias') {
+                hasBias = true;
+            }
+            const [b, c, , ] = shape;
+            if (!hasBias && !outC && tensorName === 'out') {
+                outC = c;
+            }
+
+            return (b === groups) && (c === 1) && (item.tensorName === 'filter');
         });
         if (filter && filter.length) {
             // 可以执行separable conv
             this.name += '_depthwise';
         }
-    },
-    processBias(tensorData = []) {
-        const bias = tensorData.find(item => item.tensorName === 'bias');
-        if (bias && this.isPackedOp) {
-            bias.packed = true;
-            const shape = bias.shape;
-            const newShape = [shape[shape.length - 1] / 4, 1, 1];
-            bias.shape = newShape;
-        }
-        else if (!bias) {
-            const outShape = Utils.formatShape(tensorData.find(item => item.tensorName === 'out').shape);
-            const outC = outShape[outShape.length - 3];
-            const biasShape = this.isPackedOp ? [outC, 1, 1] : [outC];
-            const biasDataLength = this.isPackedOp ? outC * 4 : outC;
-            tensorData.push({
-                name: 'conv1_scale_offset_custom',
-                packed: this.isPackedOp,
-                persistable: true,
-                shape: biasShape,
-                data: Array.from(new Float32Array(biasDataLength), () => 0),
-                tensorName: 'bias'
-            });
-        }
+
+        !hasBias && tensorData.push({
+            name: 'conv1_scale_offset',
+            needBatch: true,
+            persistable: true,
+            shape: [outC],
+            data: Array.from(new Float32Array(outC), () => 0),
+            tensorName: 'bias'
+        });
     },
 
     batchComputeConv2d() {
@@ -165,6 +162,7 @@ const behaviors : Behaviors = {
         this.attrs.inputs_dim = origin_shape[axis];
         this.attrs.dim = 4 - origin_shape.length + axis;
     },
+
     normalizeDim2() {
         const origin_shape = this.input.Y[0].shape;
         const axis = this.attrs.axis > -1 ? this.attrs.axis : origin_shape.length + this.attrs.axis;
@@ -209,7 +207,6 @@ const behaviors : Behaviors = {
             const shape = Utils.getReshapeInPaddle(input.shape, out.shape);
             input.shape = shape;
         }
-
     }
 };
 

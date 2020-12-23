@@ -2,7 +2,7 @@
  * @file params
  */
 
-export default function(params) {
+export default function (params) {
 
     const {
         width_shape_counter: widthShapeCounter,
@@ -25,7 +25,7 @@ export default function(params) {
         binding_out: bindingOut
     } = params;
 
-    return  `
+    return `
     // 输入数据
     const int dim = ${dim};
     const int inputs_dim = ${inputsDim};

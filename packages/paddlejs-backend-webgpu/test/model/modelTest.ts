@@ -1,7 +1,7 @@
 import { Runner } from 'paddlejs-core/src/index';
 import registerWebGPUBackend from '../../src/index';
 
-const modelDir = `/test/model/mock/`;
+const modelDir = '/test/model/mock/';
 const modelPath = `${modelDir}model.json`;
 
 async function run() {

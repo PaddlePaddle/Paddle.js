@@ -3,13 +3,13 @@
  * @author zhangjingyuan02
  */
 
-/// <reference types="@webgpu/types" />
+// / <reference types="@webgpu/types" />
 
 import { PaddlejsBackend } from 'paddlejs-core/src/index';
 import glslangModule from '@webgpu/glslang/dist/web-devel/glslang.onefile';
+import type { Glslang } from '@webgpu/glslang/dist/web-devel/glslang.onefile';
 import buildShader from './buildShader';
 
-import type {Glslang} from '@webgpu/glslang/dist/web-devel/glslang.onefile';
 
 /* global GPUMapMode, GPUShaderStage, GPUBufferUsage, navigator */
 
@@ -285,5 +285,5 @@ export default class WebGPUBackend extends PaddlejsBackend {
             fetchByteLength);
         return await this.readData();
     }
-    
+
 }

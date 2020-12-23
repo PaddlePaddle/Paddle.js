@@ -16,21 +16,17 @@ interface TensorParams {
 
 export default class Tensor {
     opts: TensorParams = {} as TensorParams;
-    packedData: Float32Array | number[] = [];
     isPacked: boolean = false;
     name: string = '';
     tensorId: string = '';
     total: number = 1;
     shape: number[] = [];
     shape_texture: number[] = [];
-    shape_texture_packed: number[] = [];
-    shape_packed: number[] = [];
     exceedMax: boolean = false;
     data: Float32Array | number[] | null = null;
 
     constructor(opts: TensorParams) {
         this.opts = opts;
-        this.packedData = [];
         // 数据存储方式
         this.isPacked = opts.isPacked || false;
         // 设置tensor名字
@@ -45,50 +41,20 @@ export default class Tensor {
         // 获取转换到texture后的信息
         const {
             exceedMax,
-            shape: shape_texture,
-            packedShape = [],
-            packedTextureShape = []
+            shape: shape_texture
         } = Utils.getTextureInfoFromTensorShape(shape, opts.isPacked);
         this.shape_texture = shape_texture;
-        this.shape_texture_packed = packedTextureShape;
-        this.shape_packed = packedShape;
         this.exceedMax = exceedMax;
         // tensor数据
-        if (opts.type === 'image' || opts.type === 'x') {
-            // this.data = opts.data;
-            this.data = Utils.padOpData(
-                opts.data as Float32Array,
-                [shape[0], shape[1] * (this.isPacked ? 4 : 1), shape[2], shape[3]],
-                this.isPacked
-            );
+        if (opts.type === 'image') {
+            this.data = opts.data;
         }
         else if (opts.data && opts.data.length) {
-            const packedData = opts.data;
             let nhwcData: Float32Array | number[] = Utils.nchw2nhwc(
                 opts.data,
                 [shape[0], shape[1] * (this.isPacked ? 4 : 1), shape[2], shape[3]]
             );
             this.data = new Float32Array(nhwcData);
-            if (this.shape_texture_packed.length > 0) {
-                // this.packedData = new Float32Array(Utils.nchw2nhwc(packedData, [shape[0], this.shape_packed[1] * 4, shape[2], shape[3]]));
-                // let packedData = opts.data;
-                const nhwcPackedData = Utils.nchw2nhwc(
-                    packedData,
-                    [shape[0], this.shape_packed[1] * 4, shape[2], shape[3]]
-                );
-                this.packedData = new Float32Array(nhwcPackedData);
-            }
-            else {
-                // let nhwcData = Utils.nchw2nhwc(opts.data, [shape[0], shape[1] * (this.isPacked ? 4 : 1),shape[2], shape[3]]);
-                nhwcData = Utils.padOpData(
-                    nhwcData,
-                    [shape[0], shape[1] * (this.isPacked ? 4 : 1), shape[2], shape[3]],
-                    this.isPacked
-                );
-                this.data = new Float32Array(nhwcData);
-                this.packedData = this.data;
-            }
-
             opts.data = null;
         }
     }
@@ -115,10 +81,7 @@ export default class Tensor {
 
     get channel() {
         const length = this.shape.length;
-        if (length >= 3) {
-            return this.shape[length - 3];
-        }
-        return 0;
+        return this.shape[length - 3];
     }
 
     get binding() {
@@ -133,30 +96,8 @@ export default class Tensor {
         return this.shape.length || 0;
     }
 
-    /**
-     * 获取shape对应的个数
-     * @return {Array} 和shape长度相等的对应个数
-     */
-    get numbers_shape() {
-        const numbers: number[] = [];
-        const sLen = this.shape.length;
-        for (let i = 0; i < (sLen - 1); i++) {
-            const number = this.shape.slice(i + 1).reduce((total, num) => total * num);
-            numbers.push(number);
-        }
-        // 和shape长度保持一致
-        numbers.push(1);
-        return numbers;
-    }
-
     get total_shape() {
         return this.total;
-    }
-
-    dispose() {
-        if (this.data) {
-            this.data = null;
-        }
     }
 }
 

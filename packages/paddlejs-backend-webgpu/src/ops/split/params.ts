@@ -1,7 +1,7 @@
 /**
  * @file split参数文件
  */
-export default function(params) {
+export default function (params) {
 
     const {
         total_shape_origin: totalShapeOrigin,

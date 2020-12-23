@@ -1,10 +1,10 @@
 import behaviors from '../../src/opFactory/opBehaviors';
-import { OpData } from '../../src/commons/interface';
+import { OpData, ModelVar } from '../../src/commons/interface';
 
 const conv2d = {
     attrs: {
         paddings: [0, 1]
-    }     
+    }
 };
 
 const reshape = {
@@ -105,7 +105,7 @@ const mulOp = {
             shape: [4]
         }
     ]
-}
+};
 
 const mulOp2 = {
     tensorData: [
@@ -122,7 +122,7 @@ const mulOp2 = {
             shape: [4]
         }
     ]
-}
+};
 
 const concatOp = {
     attrs: {
@@ -136,6 +136,26 @@ const concatOp = {
             shape: [2, 1, 2]
         }]
     }
+};
+
+const conv2dOp = {
+    name: 'conv2d',
+    input: {
+        Filter: [{
+            tensorName: 'filter',
+            shape: [1, 1, 32, 32]
+        }]
+    },
+    attrs: {
+        groups: 1
+    },
+    tensorData: [{
+        tensorName: 'filter',
+        shape: [1, 1, 32, 32]
+    }, {
+        tensorName: 'out',
+        shape: [1, 1, 2, 2]
+    }]
 };
 
 describe('test op behaviors', () => {
@@ -176,7 +196,7 @@ describe('test op behaviors', () => {
         behaviors.setPerm.call(transpose2 as unknown as OpData, []);
         const temp1: number[] = [];
         for (let i = 0; i < 4; i++) {
-            temp1[i] = transpose2.data[`perm_${i}`]  as number;
+            temp1[i] = transpose2.data[`perm_${i}`] as number;
         }
         expect(temp1).toEqual([1, 2, 0, 0]);
 
@@ -265,5 +285,22 @@ describe('test op behaviors', () => {
     it('test behavior normalizeDim2', () => {
         behaviors.normalizeDim2.call(concatOp as unknown as OpData, []);
         expect(concatOp.attrs.append_num).toBe(1);
+    });
+
+    it('test behavior isApplySeparableConv', () => {
+        behaviors.isApplySeparableConv.call(conv2dOp as unknown as OpData, conv2dOp.tensorData);
+        expect(conv2dOp.name).toBe('conv2d_depthwise');
+        const bias = conv2dOp.tensorData.find(item => item.tensorName === 'bias') as ModelVar;
+        expect(bias.shape).toEqual([1]);
+
+        bias.shape = [10];
+        behaviors.isApplySeparableConv.call(conv2dOp as unknown as OpData, conv2dOp.tensorData);
+        expect(bias.shape).toEqual([10]);
+    });
+
+    it('test behavior batchComputeConv2d', () => {
+        behaviors.batchComputeConv2d.call(conv2dOp as unknown as OpData, conv2dOp.tensorData);
+        expect(conv2dOp.attrs['filter_nearest_vec4']).toBe(0);
+        expect(conv2dOp.attrs['filter_remainder_vec4']).toBe(1);
     });
 });

@@ -3,7 +3,7 @@
  * @author zhangjingyuan
  */
 
-import {ops, atoms, utils} from './ops';
+import { ops, atoms, utils } from './ops';
 
 /**
  * build op shader
@@ -59,7 +59,7 @@ function genDepsCode(opName): string {
         .reduce((code, dep) => {
             const func = dep.func;
             const conf = dep.conf;
-            let importFunc = atoms[func];
+            const importFunc = atoms[func];
             return code + populateData(importFunc, conf);
         }, '');
 }
@@ -72,7 +72,7 @@ function genDepsCode(opName): string {
  */
 function populateData(content, data): string {
     let code = content;
-    for (let key in data) {
+    for (const key in data) {
         code = code.replace(new RegExp(key.toUpperCase(), 'g'),
             ((typeof data[key]) === 'undefined') ? 1 : data[key]);
     }

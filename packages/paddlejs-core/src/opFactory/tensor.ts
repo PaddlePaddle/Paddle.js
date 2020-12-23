@@ -50,7 +50,7 @@ export default class Tensor {
             this.data = opts.data;
         }
         else if (opts.data && opts.data.length) {
-            let nhwcData: Float32Array | number[] = Utils.nchw2nhwc(
+            const nhwcData: Float32Array | number[] = Utils.nchw2nhwc(
                 opts.data,
                 [shape[0], shape[1] * (this.isPacked ? 4 : 1), shape[2], shape[3]]
             );

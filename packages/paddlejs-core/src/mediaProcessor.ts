@@ -141,8 +141,7 @@ export default class MediaProcessor {
             }
         }
         // 转成 GPU 加速 NCHW 格式
-        const tmp = green.concat(blue);
-        return red.concat(tmp);
+        return red.concat(green.concat(blue));
     }
 
     /**

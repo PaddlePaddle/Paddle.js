@@ -9,5 +9,9 @@
     "test": "jest"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "base64-img": "^1.0.4"
+  },
+  "devDependencies": {}
 }

@@ -47,7 +47,7 @@
   },
   "lint-staged": {
     "*.ts": [
-      "eslint --fix"
+      "eslint"
     ],
     "packages/**/*.js": [
       "eslint --fix"

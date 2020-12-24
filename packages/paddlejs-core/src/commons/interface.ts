@@ -70,6 +70,7 @@ export interface OpData {
     input: OpInputs;
     output: OpOutputs;
     attrs: any;
+    subAttrs: object[];
     data: AttrsData;
     inputTensors: any;
     outputTensors: any;

@@ -16,11 +16,14 @@ export default class MockBackend extends PaddlejsBackend {
     }
 
     runProgram(): void {
-        throw Error('not working');
+        // throw Error('not working');
+        this.status = 'run op program';
     }
 
     read(): Float32Array | number[] {
-        throw Error('nothing to read');
+        // throw Error('nothing to read');
+        this.status = 'complete';
+        return [1, 1, 1, 1];
     }
 
 }

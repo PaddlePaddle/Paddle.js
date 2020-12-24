@@ -12,6 +12,7 @@ export default class OpData {
     output: OpOutputs = {} as OpOutputs;
     data: AttrsData = {};
     attrs: object = {};
+    subAttrs: object[] = [];
     inputTensors: Tensor[] = [];
     outputTensors: Tensor[] = [];
     fShaderParams: object[] = [];
@@ -32,6 +33,7 @@ export default class OpData {
         } = op;
 
         this.attrs = attrs;
+        this.subAttrs = op.subAttrs;
         this.name = type;
         this.isPackedOp = isPacked;
         this.vars = vars;

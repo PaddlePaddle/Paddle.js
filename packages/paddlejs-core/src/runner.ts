@@ -66,6 +66,7 @@ export default class Runner {
             return;
         }
         await GLOBALS.backendInstance.init();
+        this.isExecuted = false;
         await this.load();
         this.genGraph();
     }
@@ -111,7 +112,7 @@ export default class Runner {
         return result;
     }
 
-    private async checkModelLoaded() {
+    async checkModelLoaded() {
         if (this.weightMap.length === 0) {
             console.info('It\'s better to preheat the model before running.');
             await this.load();

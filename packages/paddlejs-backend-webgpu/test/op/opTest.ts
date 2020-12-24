@@ -2,11 +2,11 @@ import { Runner } from 'paddlejs-core/src/index';
 import registerWebGPUBackend from '../../src/index';
 
 const opName = 'elementwise_add';
-const modelDir = `/test/op/data/`;
+const modelDir = '/test/op/data/';
 const modelPath = `${modelDir}${opName}.json`;
 
 const OP_INFO_MAP = {
-    'conv2d': {
+    conv2d: {
         name: 'conv2d_0.tmp_0',
         shape: [
             1,
@@ -15,26 +15,25 @@ const OP_INFO_MAP = {
             2
         ]
     },
-    'elementwise_add': {
+    elementwise_add: {
         name: 'fc_0.tmp_1',
         shape: [
-            3, 2 ,2
+            3, 2, 2
         ]
     },
-    'mul': {
+    mul: {
         name: 'fc_0.tmp_0',
         shape: [2, 3]
     },
-    'concat': {
-        name: "concat.tmp_2",
+    concat: {
+        name: 'concat.tmp_2',
         shape: [2, 4, 2]
-    }
-    ,
-    'concat_mul': {
-        name: "concat.tmp_3",
+    },
+    concat_mul: {
+        name: 'concat.tmp_3',
         shape: [2, 2, 5]
     },
-    'split': {
+    split: {
         name: 'split_1.tmp_1',
         shape: [2, 2, 1, 3]
     }

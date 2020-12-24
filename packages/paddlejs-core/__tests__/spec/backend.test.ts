@@ -13,15 +13,14 @@ describe('test backend', () => {
     });
 
     it('test api runProgram', () => {
-        expect(() => {
-            backend.runProgram();
-        }).toThrow();
+        backend.runProgram();
+        expect(backend.status).toBe('run op program');
     });
 
     it('test api runProgram', () => {
-        expect(() => {
-            backend.read();
-        }).toThrow();
+        const res = backend.read();
+        expect(backend.status).toBe('complete');
+        expect(res).toEqual([1, 1, 1, 1]);
     });
 
 });

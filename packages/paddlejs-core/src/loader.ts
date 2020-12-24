@@ -66,9 +66,6 @@ export default class ModelLoader {
                 await this.fetchChunks()
                     .then(allChunksData => this.traverse(modelInfo.vars, allChunksData));
             }
-            else {
-                await this.fetchAllData(modelInfo.vars);
-            }
         }
         return modelInfo;
     }
@@ -120,33 +117,6 @@ export default class ModelLoader {
         });
     }
 
-    fetchData(name: string) {
-        const path = this.urlConf.dir + name + '.json';
-        const load = new Promise((resolve, reject) => {
-            fetch(path, {
-                method: 'get',
-                mode: 'cors',
-                credentials: 'include',
-                headers: { 'Content-Type': 'application/json;charset=utf-8' }
-            })
-                .then(response => response.json())
-                .then(responseData => resolve(responseData))
-                .then(err => reject(err));
-        });
-        return load;
-    }
-
-    async fetchAllData(arr: ModelVars[]) {
-        const requesterArr = arr.map(item => {
-            if (item.name) {
-                return this.fetchData(item.name).then((data: any) => {
-                    item.data = data;
-                });
-            }
-            return Promise.resolve();
-        });
-        return Promise.all(requesterArr);
-    }
 
     traverse(arr: ModelVars[], allChunksData: Float32Array) {
         let marker = 0; // 读到哪个位置了
@@ -179,27 +149,8 @@ export default class ModelLoader {
         const params = this.params;
         const path = this.urlConf.dir + this.urlConf.main;
         let load: any = null;
-        // jsonp请求方式
-        if (params && params.type === 'jsonp') {
-            let jsonData: object = {};
-            const script = document.createElement('script');
-            script.src = path + '&jsonpCallback=fetchCallback';
-            (window as any).fetchCallback = (data: object) => {
-                jsonData = data;
-            };
-            // 当script被插入文档中时，src中的资源就会开始加载
-            document.body.appendChild(script);
-            load = new Promise((resolve, reject) => {
-                script.onload = () => {
-                    resolve(jsonData);
-                };
-                script.onerror = () => {
-                    reject(jsonData);
-                };
-            });
-        }
         // 原生fetch
-        else if (params.type === 'fetch') {
+        if (params.type === 'fetch') {
             load = new Promise((resolve, reject) => {
                 this.fetch(path, params)
                     .then(response => response.json())

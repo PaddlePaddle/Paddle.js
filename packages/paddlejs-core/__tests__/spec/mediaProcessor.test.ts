@@ -100,28 +100,3 @@ describe('test mediaProcessor with scale and targetSize', () => {
     });
 });
 
-
-
-// console.log(base64);
-
-// const dom = new JSDOM('<img src="godaddy.com">', { includeNodeLocations: true });
-
-// // console.log(dom.window._document.querySelector("img") instanceof HTMLImageElement);
-// const grayPx = "data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==";
-// const image = new dom.window.Image();
-// console.log(typeof image);
-// console.log(image instanceof HTMLImageElement);
-// // image.addEventListener("load", onLoad);
-
-// image.src = base64;
-// const processror = new MediaProcessor();
-// const data = processror.resizeAndFitTargetSize(image, {
-//     gapFillWith: "#000",
-//     mean: [0.485, 0.456, 0.406],
-//     scale: 256,
-//     std: [0.229, 0.224, 0.225],
-//     targetShape: [1, 3, 224, 224],
-//     targetSize: {height: 224, width: 224}
-// });
-
-// console.log(data);

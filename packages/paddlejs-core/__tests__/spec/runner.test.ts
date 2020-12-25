@@ -1,18 +1,20 @@
 import fetch from 'jest-fetch-mock';
 import { Runner, registerBackend } from '../../src';
 import Backend from '../env/mock/backend';
+import modelInfo from '../env/mock/model.json';
 
-fetch.mockResponseOnce(JSON.stringify({
-    data: 1
-}));
-const modelPath = 'https://paddlejs.cdn.bcebos.com/models/mobileNetV2Opt/model.json';
+// enabal mock fetch & return model.json
+fetch.enableMocks();
+fetch.resetMocks();
+fetch.mockResponse(JSON.stringify(modelInfo));
+const modelPath = 'https://mobileNetV2Opt/model.json';
 const runner = new Runner({
     modelPath,
     feedShape: {
         fw: 5,
         fh: 3
     },
-    fileCount: 4
+    fileCount: 1
 });
 
 it('test case: unregister backend', async () => {
@@ -30,13 +32,13 @@ describe('test runnrer', () => {
     });
 
     it('test runner init', () => {
-        expect(runner.weightMap.length).toBe(68);
+        expect(runner.weightMap.length).toBe(7);
     });
 
     it('test runner api checkModelLoaded', async () => {
         runner.weightMap = [];
         await runner.preheat();
-        expect(runner.weightMap.length).toBe(68);
+        expect(runner.weightMap.length).toBe(7);
     });
 
     it('test runner preheat', async () => {

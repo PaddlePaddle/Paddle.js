@@ -22,8 +22,9 @@ export default class OpData {
     renderData: object[] = [];
     inputFeed: InputFeed[] = [];
     tensorData: ModelVar[] = [];
+    isFinalOp: boolean = false;
 
-    constructor(op: OpExecutor, iLayer: number, vars: ModelVar[], feed: InputFeed[]) {
+    constructor(op: OpExecutor, iLayer: number, vars: ModelVar[], feed: InputFeed[], isFinalOp: boolean) {
         const {
             type,
             inputs,
@@ -38,6 +39,7 @@ export default class OpData {
         this.isPackedOp = isPacked;
         this.vars = vars;
         this.iLayer = iLayer;
+        this.isFinalOp = isFinalOp;
         this.inputFeed = feed;
         this.input = inputs;
         this.output = outputs;
@@ -72,22 +74,28 @@ export default class OpData {
         });
         for (const key in this.output) {
             if (Object.prototype.hasOwnProperty.call(this.output, key)) {
-                // 默认取第一个数据
-                const data = this.output[key] || [{}];
-                const tensorName = this.getExactTensorName(key);
-                if (tensorName) {
-                    data.forEach((item: ModelVar) => {
-                        item.tensorName = tensorName;
-                        this.tensorData.push(item);
-                    });
+                try {
+                    // 默认取第一个数据
+                    const data = this.output[key] || [{}];
+                    const tensorName = this.getExactTensorName(key, 'output');
+                    if (tensorName) {
+                        data.forEach((item: ModelVar) => {
+                            item.tensorName = tensorName;
+                            this.tensorData.push(item);
+                        });
+                    }
                 }
+                catch (e) {
+                    console.log(e);
+                }
+
             }
         }
         for (const key in this.input) {
             if (Object.prototype.hasOwnProperty.call(this.input, key)) {
                 const data = this.input[key] || [{}];
                 // 默认取第一个数据
-                const tensorName = this.getExactTensorName(key);
+                const tensorName = this.getExactTensorName(key, 'input');
                 if (tensorName) {
                     const tensor = data[0];
                     tensor.tensorName = tensorName;
@@ -97,15 +105,17 @@ export default class OpData {
         }
     }
 
-    getExactTensorName(name) {
+    getExactTensorName(name, type) {
         // name map
-        const tensorName = {
+        const intputTensorName = {
             input: 'origin',
             x: 'origin',
             filter: 'filter',
             y: 'counter',
             z: 'appender',
             output: 'out',
+            Output: 'out',
+            Y: 'out',
             out: 'out',
             scale: 'scale',
             bias: 'bias',
@@ -113,7 +123,19 @@ export default class OpData {
             variance: 'variance',
             w: 'weight'
         };
-        return tensorName[name.toLowerCase()];
+
+        const outTensorName = {
+            output: 'out',
+            y: 'out',
+            out: 'out',
+            scale: 'scale',
+            bias: 'bias',
+            mean: 'mean',
+            variance: 'variance'
+        };
+
+
+        return type === 'input' ? intputTensorName[name.toLowerCase()] : outTensorName[name.toLowerCase()];
     }
 
     getTensorAttr(name: string) {
@@ -122,9 +144,11 @@ export default class OpData {
 
     buildProgram() {
         const name = this.name;
+        const inputTensors = this.inputTensors;
         this.program = this.outputTensors.map((outTensor, index) => GLOBALS.backendInstance.createProgram({
             name,
             outTensor,
+            inputTensors,
             shaderParams: this.fShaderParams[index],
             runtime: index,
             isPacked: this.isPackedOp || false
@@ -140,15 +164,21 @@ export default class OpData {
 
     // process op tensorData and attrs according to op behaviors
     processTensorDataAndAttrs() {
-        const tensorData: ModelVar[] = this.tensorData;
-        // unique behavior
-        const opKey = `${GLOBALS.backend}_${this.name}`;
-        const behaviorKeys = GLOBALS.opRegistry.ops[opKey]
-            ? GLOBALS.opRegistry.ops[opKey].behaviors || []
-            : [];
-        behaviorKeys.forEach(key => {
-            opBehaviors[key].call(this, tensorData);
-        });
+        try {
+            const tensorData: ModelVar[] = this.tensorData;
+            // unique behavior
+            const opKey = `${GLOBALS.backend}_${this.name}`;
+            const behaviorKeys = GLOBALS.opRegistry.ops[opKey]
+                ? GLOBALS.opRegistry.ops[opKey].behaviors || []
+                : [];
+            behaviorKeys.forEach(key => {
+                opBehaviors[key].call(this, tensorData);
+            });
+        }
+        catch (e) {
+            console.log(e);
+        }
+
     }
 
     buildTensor() {

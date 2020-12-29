@@ -1,4 +1,4 @@
-import { Runner } from 'paddlejs-core/src/index';
+import { Runner } from 'paddlejs-core';
 import registerWebGPUBackend from '../../src/index';
 
 const modelDir = '/test/model/mock/';

@@ -3,7 +3,7 @@
  * @author yueshuangyan
  */
 
-import { registerOp, registerBackend } from 'paddlejs-core/src/index';
+import { registerBackend } from 'paddlejs-core';
 import WebGLBackend from './backend';
 import { ops } from './ops';
 
@@ -12,11 +12,9 @@ const glInstance = new WebGLBackend();
 function registerWebGLBackend() {
     registerBackend(
         'webgl',
-        glInstance
+        glInstance,
+        ops
     );
-    Object.keys(ops).forEach(key => {
-        registerOp(ops[key], key);
-    });
     return glInstance;
 }
 

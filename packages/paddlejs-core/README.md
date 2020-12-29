@@ -1,7 +1,7 @@
 [中文](./README_cn.md)
 
 # Paddle.js Core
-A core part of the Paddle.js ecosystem, this repo hosts `@paddlejs/paddlejs-core`,
+As the core part of the Paddle.js ecosystem, this package hosts `@paddlejs/paddlejs-core`,
 which is responsible for the operation of the inference process of the entire engine, 
 and provides interfaces for backend registration and environment variable registration.
 
@@ -12,7 +12,7 @@ You can install this package via npm., `@paddlejs/paddlejs-core`
 import { registerBackend, Runner } from '@paddlejs/paddlejs-core';
 
 const runner = new Runner({
-    modelPath: '/model/mobilenetv2', // model path, eg http://xx.cc/path, http://xx.cc/path/model.json, /localModelDir/model.json, /localModelDir
+    modelPath: '/model/mobilenetv2', // model path, e.g. http://xx.cc/path, http://xx.cc/path/model.json, /localModelDir/model.json, /localModelDir
     fileCount?: 4, // model data file count, default value is 1
     feedShape: {  // input shape
         fw: 256,
@@ -23,9 +23,9 @@ const runner = new Runner({
     inputType?: 'image' // whether is image or video, default value is image
 });
 
-// You need to register backend and ops before initing runner
+// You need to register backend and ops before initializing runner
 registerBackend(
-    'webgpu', // 'webgl', 'webgpu', you can name it yourself
+    'webgpu', // 'webgl', 'webgpu', you can name it by yourself
     backend, // backend instance
     ops // backend ops
 );

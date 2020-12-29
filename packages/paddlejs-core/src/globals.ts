@@ -1,10 +1,13 @@
 import { OpInfo } from './commons/interface';
 
+
+interface Ops {
+    // key => backend_name
+    [key: string]: OpInfo;
+}
+
 interface OpRegistry {
-    ops: {
-        // key => backend_name
-        [key: string]: OpInfo;
-    };
+    ops: Ops;
 }
 
 interface GLOBALS_INTERFACE {
@@ -24,7 +27,7 @@ export const GLOBALS: GLOBALS_INTERFACE = {
 };
 
 
-export function registerOp(opInfo: OpInfo, key: string) {
+function registerOp(opInfo: OpInfo, key: string) {
     const {
         conf,
         params,
@@ -52,14 +55,18 @@ export function registerOp(opInfo: OpInfo, key: string) {
     };
 }
 
-export function registerBackend(backend: string, backendInstance: any, version?: number) {
+export function registerBackend(backend: string, backendInstance: any, ops: Ops) {
     if (backend) {
         GLOBALS.backend = backend;
     }
-    if (version) {
-        GLOBALS.backendVersion = version;
-    }
+
     if (backendInstance) {
         GLOBALS.backendInstance = backendInstance;
+    }
+
+    if (ops) {
+        Object.keys(ops).forEach(key => {
+            registerOp(ops[key], key);
+        });
     }
 }

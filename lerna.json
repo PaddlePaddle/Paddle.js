@@ -4,7 +4,10 @@
     ],
     "command": {
         "bootstrap": {
-            "npmClientArgs": ["--no-package-lock"]
+            "hoist": true,
+            "npmClientArgs": [
+                "--no-package-lock"
+            ]
         }
     },
     "version": "0.0.0"

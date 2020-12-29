@@ -71,6 +71,18 @@ const behaviors : Behaviors = {
         }
     },
 
+    setPacked(tensorData = []) {
+        const isPacked = this.attrs.ispacked;
+        tensorData.forEach(item => {
+            if (item.tensorName === 'origin' && isPacked) {
+                item.isPacked = true;
+                if (this.name.indexOf('pool') > -1) {
+                    this.name += '_winograd';
+                }
+            }
+        });
+    },
+
     mergeAttrs() {
         this.attrs = this.subAttrs.reduce((attrs, item) => {
             return Object.assign(attrs, item);
@@ -86,18 +98,20 @@ const behaviors : Behaviors = {
             if (tensorName === 'bias') {
                 hasBias = true;
             }
-            const [b, c, , ] = shape;
+            const [b, c] = shape;
             if (!hasBias && !outC && tensorName === 'out') {
                 outC = c;
             }
 
             return (b === groups) && (c === 1) && (item.tensorName === 'filter');
         });
+        if (this.name === 'depthwise_conv2d') {
+            this.name = 'conv2d';
+        }
         if (filter && filter.length) {
             // 可以执行separable conv
             this.name += '_depthwise';
         }
-
         !hasBias && tensorData.push({
             name: 'conv1_scale_offset',
             needBatch: true,
@@ -109,10 +123,15 @@ const behaviors : Behaviors = {
     },
 
     batchComputeConv2d() {
-        const origin_shape_temp = this.input.Filter[0].shape;
-        const inChannels = origin_shape_temp[1];
-        this.attrs.filter_nearest_vec4 = Math.floor(inChannels / 4) * 4;
-        this.attrs.filter_remainder_vec4 = inChannels % 4;
+        try {
+            const origin_shape_temp = this.input.Filter[0].shape;
+            const inChannels = origin_shape_temp[1];
+            this.attrs.filter_nearest_vec4 = Math.floor(inChannels / 4) * 4;
+            this.attrs.filter_remainder_vec4 = inChannels % 4;
+        }
+        catch (e) {
+            console.log(e);
+        }
     },
 
     isMax() {
@@ -146,6 +165,14 @@ const behaviors : Behaviors = {
         if (suffix === 'leaky_relu') {
             this.data['multi_value'] = this.attrs.alpha;
             this.data['active_function'] = 'leakyRelu';
+        }
+
+        else if (suffix === 'softmax') {
+            this.data['active_function'] = 'softmax';
+        }
+
+        else if (suffix === 'scale') {
+            this.data['active_function'] = 'scale';
         }
     },
 

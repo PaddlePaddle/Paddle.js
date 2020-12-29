@@ -9,7 +9,7 @@
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "init": "npm install & lerna bootstrap",
     "webgl": "lerna run start  --scope=paddlejs-backend-webgl  --stream",
-    "webgpu": "lerna run start  --scope=paddlejs-backend-gpu  --stream"
+    "webgpu": "lerna run start  --scope=paddlejs-backend-webgpu  --stream"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.12.11",

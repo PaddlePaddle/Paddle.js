@@ -3,6 +3,8 @@
  * @author zhangjingyuan
  */
 
+import { GLOBALS } from '../globals';
+
 /**
  * 获取texture形状和补0个数
  * @param {Array} shape tensor的形状
@@ -10,7 +12,7 @@
  * @returns {Object} texture信息
  */
 export function getTextureInfoFromTensorShape(shape: number[] = [], isPacked = false) {
-    const GPU_TEXTURE_MAX_SIZE = 4096;
+    const GPU_TEXTURE_MAX_SIZE = GLOBALS.backendInstance.MAX_TEXTURE_SIZE || 4096;
     const b = shape[0];
     const c = shape[1];
     const h = shape[2];

@@ -89,11 +89,12 @@ export default class Runner {
     genOpData() {
         const vars = this.model.vars;
         let iLayer = 0;
-        this.weightMap.forEach((op: OpExecutor) => {
+        this.weightMap.forEach((op: OpExecutor, index: number) => {
             const type = op.type;
             if (type !== 'feed' && type !== 'fetch') {
                 iLayer++;
-                const opData = new OpData(op, iLayer, vars, this.feedData);
+                const isFinalOp = index === this.weightMap.length - 2;
+                const opData = new OpData(op, iLayer, vars, this.feedData, isFinalOp);
                 op.opData = opData;
             }
         });

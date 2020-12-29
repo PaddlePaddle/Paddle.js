@@ -158,6 +158,7 @@ const conv2dOp = {
     }]
 };
 
+/* eslint-disable max-lines-per-function */
 describe('test op behaviors', () => {
     it('test behavior adaptPaddings', () => {
         behaviors.adaptPaddings.call(conv2d as OpData, []);

@@ -1,4 +1,4 @@
-import { registerOp, registerBackend } from 'paddlejs-core/src/index';
+import { registerBackend } from 'paddlejs-core';
 import WebGPUBackend from './gpu';
 import { ops } from './ops';
 
@@ -7,11 +7,9 @@ const gpuInstance = new WebGPUBackend();
 function registerWebGPUBackend() {
     registerBackend(
         'webgpu',
-        gpuInstance
+        gpuInstance,
+        ops
     );
-    Object.keys(ops).forEach(key => {
-        registerOp(ops[key], key);
-    });
     return gpuInstance;
 }
 

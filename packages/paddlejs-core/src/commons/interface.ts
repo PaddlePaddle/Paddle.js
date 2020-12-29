@@ -52,15 +52,19 @@ interface Behavior {
 }
 
 export interface OpInfo {
-    name: string;
-    conf: object;
-    inputsName: string[];
-    outputsName: string[];
-    params: string;
-    main: string;
+    params: string[] | Function;
+    main?: string;
+    mainFunc?: Function;
+    textureFuncConf?: {
+        [key: string]: string[];
+    },
+    name?: string;
+    conf?: object;
+    inputsName?: string[];
+    outputsName?: string[];
     main_packed?: string;
     behavior?: Behavior;
-    behaviors?: string[]
+    behaviors?: string[];
 }
 
 

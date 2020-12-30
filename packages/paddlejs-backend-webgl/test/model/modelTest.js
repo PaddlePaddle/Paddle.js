@@ -3,18 +3,18 @@ import registerWebGLBackend from '../../src/index';
 
 async function run() {
     const runner = new Runner({
-        modelPath: 'https://paddlejs.cdn.bcebos.com/models/wine/model.json',
-        fileCount: 3,
+        modelPath: 'https://paddlejs.cdn.bcebos.com/models/tinyYolo/model.json',
+        fileCount: 1,
         feedShape: {
-            fw: 224,
-            fh: 224
+            fw: 320,
+            fh: 320
         },
-        fetchShape: [1, 40, 1, 1],
+        fetchShape: [1, 25, 10, 10],
         fill: '#000',
-        scale: 256,
-        targetSize: { height: 224, width: 224 },
-        mean: [0.485, 0.456, 0.406],
-        std: [0.229, 0.224, 0.225]
+        scale: 192,
+        targetSize: { height: 320, width: 320 },
+        mean: [117.001 / 255, 114.697 / 255, 97.404 / 255],
+        std: [1.0, 1.0, 1.0]
     });
     await runner.init();
     console.log(await runner.preheat());

@@ -1,8 +1,7 @@
 [English](./README.md)
+# paddlejs-backend-webgl
 
-# Paddle.js webgl backend
-
-Paddle.js webgl后端使用GPU加速进行模型预测，需要在调用paddlejs-core包中的predict api前完成注册
+paddlejs的webgl后端利用GPU加速进行模型预测，需要在调用[paddlejs-core](../paddlejs-core/README_cn.md)中的predict api前完成注册。
 
 ## 通过NPM引入
 

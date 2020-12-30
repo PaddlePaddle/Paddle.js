@@ -7,6 +7,7 @@ import opBehaviors from './opBehaviors';
 
 export default class OpData {
     name: string = '';
+    realName: string = '';
     isPackedOp: boolean = false;
     input: OpInputs = {} as OpInputs;
     output: OpOutputs = {} as OpOutputs;
@@ -36,6 +37,7 @@ export default class OpData {
         this.attrs = attrs;
         this.subAttrs = op.subAttrs;
         this.name = type;
+        this.realName = type;
         this.isPackedOp = isPacked;
         this.vars = vars;
         this.iLayer = iLayer;
@@ -113,10 +115,6 @@ export default class OpData {
             filter: 'filter',
             y: 'counter',
             z: 'appender',
-            output: 'out',
-            Output: 'out',
-            Y: 'out',
-            out: 'out',
             scale: 'scale',
             bias: 'bias',
             mean: 'mean',
@@ -165,6 +163,10 @@ export default class OpData {
     // process op tensorData and attrs according to op behaviors
     processTensorDataAndAttrs() {
         try {
+            // checkIsMerge
+            if (this.name.indexOf('conv2d-elementwise_add') > -1) {
+                this.name = 'conv2d_elementwise_add';
+            }
             const tensorData: ModelVar[] = this.tensorData;
             // unique behavior
             const opKey = `${GLOBALS.backend}_${this.name}`;

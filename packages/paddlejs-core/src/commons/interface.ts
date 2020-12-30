@@ -70,6 +70,7 @@ export interface OpInfo {
 
 export interface OpData {
     name: string;
+    realName: string;
     isPackedOp: boolean;
     input: OpInputs;
     output: OpOutputs;

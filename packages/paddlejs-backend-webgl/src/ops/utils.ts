@@ -41,7 +41,6 @@ const baseParams = {
     ]
 };
 
-
 function getTensorParams(inputTensors: Tensor[], ownParams: [], fShaderParams: object): opInfo {
     const tensorsParams = {};
     const opParams = {};
@@ -50,7 +49,6 @@ function getTensorParams(inputTensors: Tensor[], ownParams: [], fShaderParams: o
     // inputParams
     for (const tensor of inputTensors) {
         const name = tensor.name;
-
         // 提取inputParams
         const inputVars = {};
         for (const param of inputParams) {
@@ -100,10 +98,14 @@ function getTensorParams(inputTensors: Tensor[], ownParams: [], fShaderParams: o
 }
 
 
-function getExactOpName(name, attrs) {
-    if (name === 'concat' && attrs['binding_appender']) {
+function getExactOpName(name, params) {
+    if (name.indexOf('conv2d-elementwise_add') > -1) {
+        return 'conv2d_elementwise_add';
+    }
+    else if (name === 'concat' && params['binding_appender']) {
         return 'concat_mul';
     }
+
     return name;
 }
 

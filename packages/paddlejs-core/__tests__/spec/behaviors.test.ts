@@ -65,7 +65,8 @@ const mergedOp = {
     }],
     attrs: {} as any,
     data: {},
-    name: 'conv2d-elementwise_add-leaky_relu'
+    realName: 'conv2d-elementwise_add-leaky_relu',
+    name: 'conv2d-elementwise_add'
 };
 
 const elementwiseAddOp = {

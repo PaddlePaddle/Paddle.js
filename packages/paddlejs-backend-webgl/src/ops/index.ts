@@ -48,7 +48,8 @@ const ops = {
     relu6: dynamic('relu6'),
     leakyRelu: dynamic('leakyRelu'),
     scale: dynamic('scale'),
-    sigmoid: dynamic('sigmoid')
+    sigmoid: dynamic('sigmoid'),
+    relu: dynamic('relu')
 };
 export {
     ops

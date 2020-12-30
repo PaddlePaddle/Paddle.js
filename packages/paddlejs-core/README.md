@@ -9,7 +9,10 @@ and provides interfaces for backend registration and environment variable regist
 You can install this package via npm., `@paddlejs/paddlejs-core`
 
 ```js
+// Import @paddlejs/paddlejs-core
 import { registerBackend, Runner } from '@paddlejs/paddlejs-core';
+// Import the WebGL backend and ops
+import { backend, ops } from '@paddlejs/paddlejs-backend-webgl';
 
 const runner = new Runner({
     modelPath: '/model/mobilenetv2', // model path, e.g. http://xx.cc/path, http://xx.cc/path/model.json, /localModelDir/model.json, /localModelDir
@@ -18,14 +21,13 @@ const runner = new Runner({
         fw: 256,
         fh: 256
     },
-    fetchShape: [1, 1, 1920, 10],  // output shape
     fill?: '#fff',   // fill color when resize image, default value is #fff
     inputType?: 'image' // whether is image or video, default value is image
 });
 
-// You need to register backend and ops before initializing runner
+// Register the WebGL backend to the global backend registry before initializing runner
 registerBackend(
-    'webgpu', // 'webgl', 'webgpu', you can name it by yourself
+    'webgl', // 'webgl', 'webgpu', you can name it by yourself
     backend, // backend instance
     ops // backend ops
 );

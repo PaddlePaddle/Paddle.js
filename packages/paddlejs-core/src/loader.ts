@@ -54,7 +54,7 @@ export default class ModelLoader {
             main: filename // 主文件
         };
 
-        this.multipart = fileCount > 1;
+        this.multipart = fileCount > 0;
         this.dataType = 'binary';
         this.chunkNum = fileCount;
     }

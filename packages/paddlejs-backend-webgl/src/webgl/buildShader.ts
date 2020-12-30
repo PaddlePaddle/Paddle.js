@@ -5,7 +5,7 @@
 
 import { env } from 'paddlejs-core/src';
 import { ops } from '../ops';
-import { getTensorParams } from '../ops/utils';
+import { getTensorParams, getExactOpName } from '../ops/utils';
 import genPrefixCode from '../ops/atom/prefix';
 import genSuffixCode from '../ops/atom/suffix';
 import * as commonFunc from '../ops/atom/common_func';
@@ -14,7 +14,10 @@ import * as textureFunc from '../ops/atom/common_func_with_texture';
 export default function buildShader(textureConf, type, inputTensors, fShaderParams, runtime: number) {
     let code = '';
     try {
-        const { params = {}, mainFunc, textureFuncConf = {}, commonFuncConf } = ops[type];
+
+        const opName = getExactOpName(type, fShaderParams);
+
+        const { params = {}, mainFunc, textureFuncConf = {}, commonFuncConf } = ops[opName];
 
         // textureList: [filter, origin, bias]
         const { textureParams, opParams, active_function } = getTensorParams(inputTensors, params, fShaderParams);

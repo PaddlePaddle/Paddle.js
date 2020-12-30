@@ -161,18 +161,18 @@ const behaviors : Behaviors = {
     setActiveFunc() {
         // 用于融合op
         const mergeType = 'conv2d-elementwise_add';
-        const suffix = this.name.replace(mergeType + '-', '');
+        const suffix = this.realName.replace(mergeType + '-', '');
+
+        this.data = Object.assign({
+            'active_function': 'scale',
+            'multi_value': '1.0',
+            'bias_value': '0.0',
+            'fuse_relu': false
+        }, this.data);
+
         if (suffix === 'leaky_relu') {
             this.data['multi_value'] = this.attrs.alpha;
             this.data['active_function'] = 'leakyRelu';
-        }
-
-        else if (suffix === 'softmax') {
-            this.data['active_function'] = 'softmax';
-        }
-
-        else if (suffix === 'scale') {
-            this.data['active_function'] = 'scale';
         }
     },
 
@@ -233,6 +233,16 @@ const behaviors : Behaviors = {
         if (input.shape.length > 2 && counter.shape.length === 2) {
             const shape = Utils.getReshapeInPaddle(input.shape, out.shape);
             input.shape = shape;
+        }
+    },
+
+    checkIsMerge() {
+        const mergeType = 'conv2d-elementwise_add';
+        const suffix = this.realName.replace(mergeType + '-', '');
+        this.name = 'conv2d_elementwise_add';
+        if (suffix === 'leaky_relu') {
+            this.data['multi_value'] = this.attrs.alpha;
+            this.data['active_function'] = 'leakyRelu';
         }
     }
 };

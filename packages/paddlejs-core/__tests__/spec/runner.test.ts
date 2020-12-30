@@ -1,6 +1,7 @@
 import fetch from 'jest-fetch-mock';
 import { Runner, registerBackend } from '../../src';
 import Backend from '../env/mock/backend';
+import * as ops from '../env/mock/ops';
 import modelInfo from '../env/mock/model.json';
 
 // enabal mock fetch & return model.json
@@ -14,7 +15,7 @@ const runner = new Runner({
         fw: 5,
         fh: 3
     },
-    fileCount: 1
+    fileCount: 0
 });
 
 it('test case: unregister backend', async () => {
@@ -26,7 +27,8 @@ describe('test runnrer', () => {
     beforeEach(async () => {
         registerBackend(
             'webgpu',
-            new Backend()
+            new Backend(),
+            ops as any
         );
         await runner.init();
     });

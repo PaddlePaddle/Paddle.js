@@ -1,8 +1,8 @@
 [中文版](./README_cn.md)
 
-# Paddle.js webgl backend
+# paddlejs-backend-webgl
 
-This package is WebGL backend accelerated by GPU registered before preheat api calling in paddlejs-core pacakge
+This package is WebGL backend accelerated by GPU registered before preheat api calling in [paddlejs-core](../paddlejs-core/README.md) package.
 
 ## Via NPM
 

@@ -33,7 +33,6 @@ export default class ModelGraph {
             const idx = opsMap.length;
             const opExecutor = new OpExecutor(item, idx);
             opsMap.push(opExecutor);
-
         });
 
         this.weightMap = opsMap;

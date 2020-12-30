@@ -3,7 +3,7 @@
  */
 
 function mainFunc(
-    { origin, filter, out },
+    { origin, filter, out, counter },
     { active_function, groups = 1, axis, strides = [], paddings = [], dilations = [], multi_value, bias_value }
 ) {
     const [stride_v = 1, stride_h = 1] = strides;
@@ -11,6 +11,12 @@ function mainFunc(
     const [dilation_v = 1, dilation_h = 1] = dilations;
     return `
     // start函数
+
+    float getValueFromCounter(int index) {
+        float xPos = float(index) / float(${counter.width_shape});
+        vec4 pixels = TEXTURE2D(texture_counter, vec2(xPos, 0.5));
+        return pixels.r;
+    }
     void main(void) {
         ivec4 oPos = getOutputTensorPos();
 
@@ -69,10 +75,12 @@ export default {
     ],
     textureFuncConf: {
         filter: ['getValueFromTensorPos'],
-        origin: ['getValueFromTensorPos']
+        origin: ['getValueFromTensorPos'],
+        counter: ['getValueFromTensorPos']
     },
     behaviors: [
         'mergeAttrs',
+        'checkIsMerge',
         'setActiveFunc'
     ]
 }; ;

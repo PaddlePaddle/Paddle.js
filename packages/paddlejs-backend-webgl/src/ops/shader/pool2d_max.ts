@@ -3,11 +3,12 @@
  */
 
 function mainFunc(
-    { origin, pool },
-    { strides = [], paddings = [] }
+    { origin },
+    { strides = [], paddings = [], ksize }
 ) {
     const [stride_v = 1, stride_h = 1] = strides;
     const [padTop = 0, padLeft = 0] = paddings;
+    const [ksize_x, ksize_y] = ksize;
     return `
     // start函数
     void main(void) {
@@ -21,7 +22,7 @@ function mainFunc(
         // X、Y方向的移动步长
         int oy_base = out_pos[2] * ${stride_v} - ${padTop};
         int ox_base = out_pos[3] * ${stride_h} - ${padLeft};
-        for (int fy = 0; fy < ${pool.height_shape}; fy++) {
+        for (int fy = 0; fy < ${ksize_y}; fy++) {
             int oy = oy_base + fy;
             if (oy >= ${origin.height_shape}) {
                 break;
@@ -29,7 +30,7 @@ function mainFunc(
             if (oy < 0) {
                 continue;
             }
-            for (int fx = 0; fx < ${pool.width_shape}; fx++) {
+            for (int fx = 0; fx < ${ksize_x}; fx++) {
                 int ox = ox_base + fx;
                 if (ox >= ${origin.width_shape}) {
                     break;
@@ -50,7 +51,8 @@ export default {
     mainFunc,
     params: [
         'strides',
-        'paddings'
+        'paddings',
+        'ksize'
     ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos']

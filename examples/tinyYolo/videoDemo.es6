@@ -1,72 +1,48 @@
 import 'babel-polyfill';
 import Runner from '../../src/executor/runner';
 import Camera from '../../src/executor/camera';
-// 调试工具
-// import vConsole from 'vconsole';
-// const theConsole = new vConsole();
-let startBtn = document.getElementById('start');
-let stopBtn = document.getElementById('stop')
-// 模型输出shape
-const outputShapes = {
-    '608': {
-        from: [19, 19, 25, 1],
-        to: [19, 19, 5, 5]
-    },
-    '320': {
-        from: [10, 10, 25, 1],
-        to: [10, 10, 5, 5]
-    },
-    '320fused': {
-        from: [10, 10, 25, 1],
-        to: [10, 10, 5, 5]
-    },
-    'tinyYolo': {
-        from: [10, 10, 25, 1],
-        to: [10, 10, 5, 5]
-    }
-};
-// 模型feed数据
-const feedShape = {
-    '608': {
-        fw: 608,
-        fh: 608
-    },
-    '320': {
-        fw: 320,
-        fh: 320
-    },
-    '320fused': {
-        fw: 320,
-        fh: 320
-    },
-    'tinyYolo': {
-        fw: 320,
-        fh: 320
-    }
-};
-const modelPath = {
-    'tinyYolo': 'https://paddlejs.cdn.bcebos.com/models/tinyYolo'
-};
-const modelType = 'tinyYolo';
-const path = modelPath[modelType];
+import postProcess from './util';
 
-const runner = new Runner({
+/* 循环跑模型 */
+let loopFlag = true;
+const startBtn = document.getElementById('start');
+const stopBtn = document.getElementById('stop');
+
+const outputShape = {
+    from: [10, 10, 25, 1],
+    to: [10, 10, 5, 5]
+}
+// 模型feed数据
+const fw = 320;
+const fh = 320;
+const feedShape = {fw, fh};
+
+const paddlejs = new Runner({
     // 用哪个模型
-    modelName: modelType, // '608' | '320' | '320fused' | 'separate'
-    modelPath: path,
-    feedShape: feedShape[modelType],
-    outputShapes: outputShapes[modelType],
-    inputType: 'video'
+    fileCount: 1,
+    modelPath: 'https://paddlejs.cdn.bcebos.com/models/tinyYolo',
+    fill: '#000', // 缩放后用什么填充不足方形部分
+    targetSize: {
+        height: fw,
+        width: fh
+    },
+    targetShape: [1, 3, fw, fh], // 目标形状 为了兼容之前的逻辑所以改个名
+    feedShape,
+    fetchShape: [1, 25, 10, 10],
+    mean: [117.001 / 255, 114.697 / 255, 97.404 / 255], // 预设期望
+    std: [1, 1, 1],
+    needBatch: true,
+    needPostProcess: false
 });
-startBtn.disabled = true;
-runner.preheat()
+
+paddlejs.loadModel()
     .then(() =>{
         startBtn.disabled = false;
     });
 
 const domElement = document.getElementById('video');
-const myCanvas = document.getElementById('myDiv');
 const videoSelect = document.getElementById('videoSelect');
+
 let camera = new Camera({
     // 用来显示摄像头图像的dom
     videoDom: domElement
@@ -88,17 +64,28 @@ camera.getDevices().then(devices => {
         camera.run();
     }
 });
-const handleDiv = function (data) {
-    myCanvas.style.width = (data ? data[0] : 0) + 'px';
-    myCanvas.style.height = (data ? data[0] : 0) + 'px';
-    myCanvas.style.left = (data ? data[2] : 0) + 'px';
-    myCanvas.style.top = (data ? data[3] : 0) + 'px';
-}
+
 startBtn.addEventListener('click', function () {
     startBtn.disabled = true;
-    runner.predict(() => camera.curVideo, handleDiv);
+    loopFlag = true;
+    loop();
 });
 stopBtn.addEventListener('click', function () {
     startBtn.disabled = false;
-    runner.stopStream();
+    loopFlag = false;
 });
+
+async function loop() {
+    let input = camera.curVideo;
+    console.log(input)
+    if (loopFlag) {
+        await run(input);
+    }
+}
+
+async function run(input) {
+    await paddlejs.predict(input, (data) => {
+        postProcess(data, input, fw, outputShape, [10, -100]);
+        loop();
+    });
+}

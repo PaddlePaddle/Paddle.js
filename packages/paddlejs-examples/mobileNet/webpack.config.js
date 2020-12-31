@@ -3,8 +3,8 @@ const os = require('os');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-// 定义自动获取本地ip的方法开始
 
+// 定义自动获取本地ip的方法开始
 function getNetworkIp() {
     // 打开的host
     let needHost = '';
@@ -52,7 +52,7 @@ module.exports = {
     ],
     resolve: {
         // Add ".ts" and ".tsx" as resolvable extensions.
-        extensions: ['.ts', '.js', '.es6', '.json']
+        extensions: ['.ts', '.js', '.json']
     },
     module: {
         rules: [
@@ -75,14 +75,6 @@ module.exports = {
             {
                 test: /\.(eot|woff|woff2|ttf|svg|png|jpg)$/,
                 loader: 'url-loader?limit=30000&name=[name].[ext]'
-            },
-            {
-                test: /\.less$/,
-                exclude: /node_modules/,
-                loader: ExtractTextPlugin.extract([
-                    { loader: 'css-loader' },
-                    { loader: 'less-loader' }
-                ])
             }
         ]
     },

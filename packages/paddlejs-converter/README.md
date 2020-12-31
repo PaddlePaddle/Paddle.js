@@ -1,13 +1,13 @@
 [中文版](./README_cn.md)
 # paddlejs-converter
 
-paddlejs-converter is a model transformation tool suitable for paddlejs. Its function is to convert paddlepadle model (or fluid model) to Paddle.js model. This browser friendly format is used for loading to predict in browser and other environments by Paddle.js. In addition, paddlejs-converter also provides powerful model optimization capabilities to help developers optimize model structure and improve runtime performance.
+paddlejs-converter is a model transformation tool for Paddle.js. Its role is to convert PaddlePaddle models (also known as fluid models) into a browser-friendly format that Paddle.js can use to load and predict usage in browsers as well as other environments. In addition, paddlejs-converter provides powerful model optimization capabilities to help developers optimize the model structure and improve runtime performance.
 
 ## 1. Tutorial
 
 ### 1.1. Environment Construction
 #### Python Version
-Confirm whether the python environment and version of the running platform meet the requirements. If Python 3 is used, you may need to change the `python3` in subsequent commands to `python3`:
+Confirm whether the python environment and version of the running platform meet the requirements. If Python 3 is used, you may need to change the `python` in subsequent commands to `python3`:
 - Python3： 3.5.1+ / 3.6 / 3.7
 - Python2： 2.7.15+
 
@@ -32,42 +32,41 @@ activate <your_env_name>
 ```
 
 #### Installation Dependency
-- 如果`不需要`使用优化模型的能力，执行命令：
+- If you don't need to optimize model, execute the command：
 ``` bash
 python -m pip install paddlepaddle -i https://mirror.baidu.com/pypi/simple
 ```
-- 如果`需要`使用优化模型的能力，执行命令：
+- otherwise，execute the command：
 ``` bash
 python -m pip install paddlepaddle paddlelite==2.6.0 -i https://mirror.baidu.com/pypi/simple
 ```
 
 ### 1.2. Get Start
-- 如果待转换的 fluid 模型为`合并参数文件`，即一个模型对应一个参数文件：
+- if the weight file of fluid model to be converted is merged format which means one model corresponds to one weight file, then execute:
 ``` bash
 python convertToPaddleJSModel.py --modelPath=<fluid_model_file_path> --paramPath=<fluid_param_file_path> --outputDir=<paddlejs_model_directory>
 ```
-- 如果待转换的 fluid 模型为`分片参数文件`，即一个模型文件对应多个参数文件：
+- otherwise，execute：
 ``` bash
-# 注意，使用这种方式调用转换器，需要保证 inputDir 中，模型文件名为'__model__'
+# Note that in this way, you need to ensure the model file name in inputdir is '__ model__ '
 python convertToPaddleJSModel.py --inputDir=<fluid_model_directory> --outputDir=<paddlejs_model_directory>
 ````
-模型转换器将生成以下两种类型的文件以供 Paddle.js 使用：
+The model converter generates the following two types of files for Paddle.js:
 
-- model.json (模型结构与参数清单)
-- chunk_\*.dat (二进制参数文件集合)
+- model.json (Contains the model structure and parameter list)
+- chunk_\*.dat (The collection of binary weight files)
 
 ## 2. Detailed Documentation
 
-参数 |  描述
+Parameter | description
 :-: | :-:
---inputDir | fluid 模型所在目录，当且仅当使用分片参数文件时使用该参数，将忽略 `modelPath` 和 `paramPath` 参数，且模型文件名必须为`__model__`
---modelPath | fluid 模型文件所在路径，使用合并参数文件时使用该参数
---paramPath | fluid 参数文件所在路径，使用合并参数文件时使用该参数
---outputDir | `必要参数`， paddleJS 模型输出路径
---optimize | 是否进行模型优化， `0` 为关闭优化，`1` 为开启优化（需安装 PaddleLite ），默认关闭优化
---logModelInfo | 是否打印模型结构信息， `0` 为不打印， `1` 为打印，默认不打印
---sliceDataSize | 分片输出 Paddle.js 参数文件时，每片文件的大小，单位：KB，默认 4096
+--inputDir | The fluid model directory, If and only if weight files are not merged format, `modelPath` and `paramPath` below will be ignored，and the model file name should be `__model__`.
+--modelPath | The model file path, used when the weight file is merged.
+--paramPath | The weight file path，used when the weight file is merged.
+--outputDir | `Necessary`, the output model directory generated after converting.
+--optimize | Whether to optimize model, `1`is to optimize(need to install PaddleLite), `0`is not, default 0.
+--logModelInfo | Whether to print model structure information， `0` means not to print, `1` means to print, default 0.
+--sliceDataSize |Shard size (in KB) of each weight file. Default size is 4096.
 
 ## 3. Other information
-若需要转换的模型为 `TensorFlow/Caffe/ONNX` 格式，可使用 PaddlePaddle 项目下的 `X2Paddle`工具，将其他格式的模型转为 fluid 模型后，再使用本工具转化为 Paddle.js 模型。
-详细请参考 [X2Paddle 项目](https://github.com/PaddlePaddle/X2Paddle)
+If the model format is `tensorflow / Cafe / onnx` to be converted, there is [X2Paddle](https://github.com/PaddlePaddle/X2Paddle) tool in PaddlePaddle program to convert other format model to fluid model, and then you can use paddlejs-converter to get a Paddle.js model.

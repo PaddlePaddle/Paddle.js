@@ -3,8 +3,7 @@ import Paddle from '../../src/paddle/paddle';
 import IO from '../../src/feed/imageFeed';
 import Utils from '../../src/utils/utils';
 import Camera from '../../src/executor/camera';
-import Runner from '../../src/executor/runner';
-import cv from '../../opencv.js';
+import cv from '../lib/opencv.js';
 
 function thresholdMask(img, threshBg, threshFg) {
     for (let i = 0; i < img.data.length / 4; i++) {

@@ -67,7 +67,6 @@ export default class Runner {
         });
 
         this.model = await paddle.load();
-        console.log('needPreheat', options.needPreheat)
         if (!options.needPreheat) {
             return;
         }

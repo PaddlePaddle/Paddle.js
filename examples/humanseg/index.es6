@@ -2,7 +2,7 @@ import 'babel-polyfill';
 import Paddle from '../../src/paddle/paddle';
 import IO from '../../src/feed/imageFeed';
 import Utils from '../../src/utils/utils';
-import cv from '../../opencv.js';
+import cv from '../lib/opencv.js';
 const fileDownload = require('js-file-download');
 
 /**

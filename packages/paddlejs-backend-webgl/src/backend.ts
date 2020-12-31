@@ -295,8 +295,7 @@ export default class WebGLBackend extends PaddlejsBackend {
         }
         else {
             // texture = gl.createTexture();
-            if (isRendered && (iLayer > 0 || (iLayer === 0 && tensorName !== 'origin'))) {
-
+            if (isRendered && (iLayer > 1 || (iLayer === 1 && tensorName !== 'image'))) {
                 const tData = this.cacheTextures['' + iLayer];
                 texture = tData['texture_' + tensorName];
             }
@@ -310,7 +309,7 @@ export default class WebGLBackend extends PaddlejsBackend {
         gl.activeTexture(gl[`TEXTURE${index}`]);
         gl.bindTexture(gl.TEXTURE_2D, texture);
 
-        if (item.data && (!isRendered || (isRendered && iLayer === 0 && tensorName === 'origin'))) {
+        if (item.data && (!isRendered || (isRendered && iLayer === 1 && tensorName === 'image'))) {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);

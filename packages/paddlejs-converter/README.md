@@ -36,19 +36,19 @@ activate <your_env_name>
 ``` bash
 python -m pip install paddlepaddle -i https://mirror.baidu.com/pypi/simple
 ```
-- otherwise，execute the command：
+- Otherwise，execute the command：
 ``` bash
 python -m pip install paddlepaddle paddlelite==2.6.0 -i https://mirror.baidu.com/pypi/simple
 ```
 
 ### 1.2. Get Start
-- if the weight file of fluid model to be converted is merged format which means one model corresponds to one weight file, then execute:
+- If the weight file of fluid model to be converted is merged format which means one model corresponds to one weight file, then execute:
 ``` bash
 python convertToPaddleJSModel.py --modelPath=<fluid_model_file_path> --paramPath=<fluid_param_file_path> --outputDir=<paddlejs_model_directory>
 ```
-- otherwise，execute：
+- Otherwise，execute：
 ``` bash
-# Note that in this way, you need to ensure the model file name in inputdir is '__ model__ '
+# Note that in this way, you need to ensure that the model file name '__ model__ ' in the inputDir
 python convertToPaddleJSModel.py --inputDir=<fluid_model_directory> --outputDir=<paddlejs_model_directory>
 ````
 The model converter generates the following two types of files for Paddle.js:
@@ -69,4 +69,4 @@ Parameter | description
 --sliceDataSize |Shard size (in KB) of each weight file. Default size is 4096.
 
 ## 3. Other information
-If the model format is `tensorflow / Cafe / onnx` to be converted, there is [X2Paddle](https://github.com/PaddlePaddle/X2Paddle) tool in PaddlePaddle program to convert other format model to fluid model, and then you can use paddlejs-converter to get a Paddle.js model.
+If the model to be converted is in `tensorflow / Cafe / onnx` format, there is [X2Paddle](https://github.com/PaddlePaddle/X2Paddle) tool in PaddlePaddle program for converting other models with different formats to fluid model, and then you can use paddlejs-converter to get a Paddle.js model.

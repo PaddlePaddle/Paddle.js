@@ -1,17 +1,16 @@
 {
-  "name": "paddlejs-backend-webgpu",
-  "version": "0.0.1",
+  "name": "@paddlejs/paddlejs-backend-webgpu",
+  "version": "0.0.2-beta.3",
   "description": "",
-  "main": "src/index.ts",
-  "private": true,
+  "main": "lib/index",
   "scripts": {
-    "start": "webpack serve"
+    "build": "webpack --config webpack.prod.js",
+    "start": "webpack serve --config webpack.dev.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@webgpu/glslang": "0.0.12",
-    "@webgpu/types": "0.0.32",
-    "paddlejs-core": "file:../paddlejs-core"
+    "@webgpu/types": "0.0.32"
   }
 }

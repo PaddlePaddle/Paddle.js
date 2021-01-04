@@ -24,6 +24,7 @@ interface ModelConfig {
     mean?: number[];
     std?: number[];
     bgr?: boolean;
+    scale?: number;
     inputType?: string; // image | video
 }
 
@@ -54,7 +55,8 @@ export default class Runner {
     constructor(options: ModelConfig | null) {
         const opts = {
             inputType: 'image',
-            fill: '#fff'
+            fill: '#fff',
+            scale: 256
         };
         this.modelConfig = Object.assign(opts, options);
         this.weightMap = [];
@@ -65,10 +67,12 @@ export default class Runner {
             console.error('ERROR: Haven\'t register backend');
             return;
         }
+
         await GLOBALS.backendInstance.init();
         this.isExecuted = false;
         await this.load();
         this.genGraph();
+        await this.preheat();
     }
 
     async load() {
@@ -118,8 +122,10 @@ export default class Runner {
             console.info('It\'s better to preheat the model before running.');
             await this.load();
             this.genGraph();
+            this.isExecuted = false;
         }
     }
+
 
     async predict(media, callback?: Function) {
         // deal with input, such as image, video
@@ -133,10 +139,25 @@ export default class Runner {
             : result;
     }
 
+    updateFeedData(feed) {
+        const imageOp = this.weightMap.find(item => {
+            if (!item.opData) {
+                return null;
+            }
+            const tensorData = item.opData.inputTensors;
+            return tensorData.find(tensor => tensor.tensorId === 'image');
+        }) as OpExecutor;
+        const imageData = imageOp.opData.inputTensors.find(tensor => tensor.tensorId === 'image');
+        imageData.data = feed[0].data;
+    }
+
     async execute(feed) {
         this.feedData = feed;
         if (!this.isExecuted) {
             this.genOpData();
+        }
+        else {
+            this.updateFeedData(feed);
         }
         const feedOp = this.graphGenerator.getFeedExecutor() as OpExecutor;
         this.executeOp(feedOp);

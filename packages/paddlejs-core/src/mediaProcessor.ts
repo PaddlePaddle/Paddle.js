@@ -26,7 +26,7 @@ export default class MediaProcessor {
      * @param inputs
      */
     process(media, modelConfig): InputFeed[] {
-        const { inputType = 'image', feedShape, fill, targetSize, scale, mean, std } = modelConfig;
+        const { inputType, feedShape, fill, targetSize, scale, mean, std } = modelConfig;
         const { fh, fw } = feedShape;
 
         if (inputType === 'video') {
@@ -62,7 +62,7 @@ export default class MediaProcessor {
         const targetShape: number[] = opt.targetShape || [];
         const shape: number[] = opt.shape || [];
 
-        if (!(pixels instanceof HTMLImageElement && pixels instanceof HTMLVideoElement)) {
+        if (!(pixels instanceof HTMLImageElement || pixels instanceof HTMLVideoElement)) {
             return [{
                 data: data,
                 shape: shape || targetShape,
@@ -70,8 +70,8 @@ export default class MediaProcessor {
             }] as InputFeed[];
         }
 
-        this.pixelWidth = pixels.naturalWidth || pixels.videoWidth || pixels.width;
-        this.pixelHeight = pixels.naturalHeight || pixels.videoWidth || pixels.height;
+        this.pixelWidth = pixels.width;
+        this.pixelHeight = pixels.height;
 
         if (opt.scale && opt.targetSize) { // Moblienet的情况
             data = this.resizeAndFitTargetSize(pixels, opt);
@@ -102,7 +102,7 @@ export default class MediaProcessor {
 
         return [{
             data: data,
-            shape: shape || targetShape,
+            shape: targetShape || shape,
             name: 'image'
         }] as InputFeed[];
     }

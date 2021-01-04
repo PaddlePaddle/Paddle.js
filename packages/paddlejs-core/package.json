@@ -1,13 +1,13 @@
 {
-  "name": "paddlejs-core",
-  "version": "0.0.1",
+  "name": "@paddlejs/paddlejs-core",
+  "version": "0.0.2-beta.9",
   "description": "",
-  "private": true,
-  "main": "src/index.ts",
+  "main": "lib/index",
   "scripts": {
-    "build": "tsc",
+    "build": "webpack --config webpack.prod.js",
     "test": "jest"
   },
+  "sideEffects": false,
   "author": "",
   "license": "ISC"
 }

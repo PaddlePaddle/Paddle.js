@@ -1,13 +1,19 @@
 {
     "extends": "../../tsconfig",
     "include": [
-        "src/"
+        "src/",
+        "test/"
     ],
     "exclude": [
         "node_modules/"
     ],
     "compilerOptions": {
         "outDir": "dist",
-        "types": ["@webgpu/types", "node"]
+        "types": ["@webgpu/types", "node"],
+        "baseUrl": ".",
+        "paths": {
+            "@paddlejs/paddlejs-core": ["../paddlejs-core/src/index"],
+            "@paddlejs/paddlejs-backend-webgpu": ["src/index"]
+        }
     }
 }

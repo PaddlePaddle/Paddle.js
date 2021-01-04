@@ -13,19 +13,16 @@ interface OpRegistry {
 interface GLOBALS_INTERFACE {
     opRegistry: OpRegistry;
     backend: string;
-    backendVersion: number;
     backendInstance: any; // todo Class Backend
 }
 
-export const GLOBALS: GLOBALS_INTERFACE = {
+const GLOBALS: GLOBALS_INTERFACE = {
     opRegistry: {
         ops: {}
     },
     backend: '',
-    backendVersion: 2,
     backendInstance: null
 };
-
 
 function registerOp(opInfo: OpInfo, key: string) {
     const {
@@ -55,7 +52,7 @@ function registerOp(opInfo: OpInfo, key: string) {
     };
 }
 
-export function registerBackend(backend: string, backendInstance: any, ops: Ops) {
+function registerBackend(backend: string, backendInstance: any, ops: Ops) {
     if (backend) {
         GLOBALS.backend = backend;
     }
@@ -69,4 +66,11 @@ export function registerBackend(backend: string, backendInstance: any, ops: Ops)
             registerOp(ops[key], key);
         });
     }
+
 }
+
+
+export {
+    GLOBALS,
+    registerBackend
+};

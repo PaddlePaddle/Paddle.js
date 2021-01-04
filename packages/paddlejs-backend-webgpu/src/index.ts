@@ -1,10 +1,8 @@
-import { registerBackend } from 'paddlejs-core';
 import WebGPUBackend from './gpu';
 import { ops } from './ops';
 
 const gpuInstance = new WebGPUBackend();
-
-function registerWebGPUBackend() {
+function createWebGPUBackend(registerBackend: Function) {
     registerBackend(
         'webgpu',
         gpuInstance,
@@ -13,4 +11,4 @@ function registerWebGPUBackend() {
     return gpuInstance;
 }
 
-export default registerWebGPUBackend;
+export default createWebGPUBackend;

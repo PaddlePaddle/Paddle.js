@@ -5,7 +5,7 @@
 
 // / <reference types="@webgpu/types" />
 
-import { PaddlejsBackend } from 'paddlejs-core/src/index';
+import { PaddlejsBackend } from '@paddlejs/paddlejs-core';
 import glslangModule from '@webgpu/glslang/dist/web-devel/glslang.onefile';
 import type { Glslang } from '@webgpu/glslang/dist/web-devel/glslang.onefile';
 import buildShader from './buildShader';

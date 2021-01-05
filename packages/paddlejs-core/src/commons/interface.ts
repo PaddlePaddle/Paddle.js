@@ -84,6 +84,7 @@ export interface OpData {
     iLayer: number;
     program: any;
     renderData: any[];
+    tensorData: any[];
 }
 
 

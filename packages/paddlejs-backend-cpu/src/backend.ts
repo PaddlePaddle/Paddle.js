@@ -29,6 +29,14 @@ export default class CpuBackend extends PaddlejsBackend {
 
     runProgram(opData: OpData) {
         const program = this.program as Program;
+
+        // get out tensor data of prev layers from dataMap
+        for (const tensor of opData.tensorData) {
+            const { data, name } = tensor;
+            if (!data && this.dataMap[name]) {
+                tensor.data = this.dataMap[name];
+            }
+        }
         const data = program.main(opData);
         this.dataMap[program.outName] = data;
     }

@@ -8,8 +8,5 @@
     "start": "webpack serve --mode development"
   },
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "paddlejs-core": "file:../paddlejs-core"
-  }
+  "license": "ISC"
 }

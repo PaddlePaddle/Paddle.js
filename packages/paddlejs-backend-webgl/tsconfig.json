@@ -8,6 +8,9 @@
     ],
     "compilerOptions": {
         "outDir": "dist",
-        "types": ["@webgpu/types", "node"]
+        "baseUrl": ".",
+        "paths": {
+            "@paddlejs/paddlejs-core": ["../paddlejs-core/src/index"]
+        }
     }
 }

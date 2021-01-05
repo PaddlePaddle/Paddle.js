@@ -3,8 +3,6 @@
  * @author zhangjingyuan
  */
 
-// / <reference types="@webgpu/types" />
-
 import { PaddlejsBackend } from '@paddlejs/paddlejs-core';
 import glslangModule from '@webgpu/glslang/dist/web-devel/glslang.onefile';
 import type { Glslang } from '@webgpu/glslang/dist/web-devel/glslang.onefile';
@@ -33,10 +31,6 @@ export default class WebGPUBackend extends PaddlejsBackend {
     commandQueue: GPUCommandEncoder[] = [];
     inputLayersMap: BufferMap = {};
     outputLayersMap: BufferMap = {};
-
-    constructor() {
-        super();
-    }
 
     async init() {
         if (!this.device) {

@@ -13,19 +13,16 @@ interface OpRegistry {
 interface GLOBALS_INTERFACE {
     opRegistry: OpRegistry;
     backend: string;
-    backendVersion: number;
     backendInstance: any; // todo Class Backend
 }
 
-export const GLOBALS: GLOBALS_INTERFACE = {
+let GLOBALS: GLOBALS_INTERFACE = {
     opRegistry: {
         ops: {}
     },
     backend: '',
-    backendVersion: 2,
     backendInstance: null
 };
-
 
 function registerOp(opInfo: OpInfo, key: string) {
     const {
@@ -55,7 +52,7 @@ function registerOp(opInfo: OpInfo, key: string) {
     };
 }
 
-export function registerBackend(backend: string, backendInstance: any, ops: Ops) {
+function registerBackend(backend: string, backendInstance: any, ops: Ops) {
     if (backend) {
         GLOBALS.backend = backend;
     }
@@ -69,4 +66,38 @@ export function registerBackend(backend: string, backendInstance: any, ops: Ops)
             registerOp(ops[key], key);
         });
     }
+
 }
+
+function getGlobalNamespace(): any {
+    let ns: any;
+    if (typeof (window) !== 'undefined') {
+        ns = window;
+    }
+    else if (typeof (global) !== 'undefined') {
+        ns = global;
+    }
+    else if (typeof (self) !== 'undefined') {
+        ns = self;
+    }
+    else {
+        throw new Error('Could not find a global object');
+    }
+    return ns;
+}
+
+function getOrMakeGlobals(): GLOBALS_INTERFACE {
+    const globalNameSpace = getGlobalNamespace();
+    if (globalNameSpace.GLOBALS) {
+        return globalNameSpace.GLOBALS;
+    }
+    globalNameSpace.GLOBALS = GLOBALS;
+    return globalNameSpace.GLOBALS;
+}
+
+GLOBALS = getOrMakeGlobals();
+
+export {
+    GLOBALS,
+    registerBackend
+};

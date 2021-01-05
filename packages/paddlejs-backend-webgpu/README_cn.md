@@ -10,17 +10,9 @@ This package implements an experimental backend based on WebGPU for Paddle.js.
 
 ```js
 
-// Import @paddlejs/paddlejs-core
-import { registerBackend, Runner } from '@paddlejs/paddlejs-core';
-// Import the WebGPU backend and ops
-import { backend, ops } from '@paddlejs/paddlejs-backend-webgpu';
+// Import the registered WebGPU backend.
+import '@paddlejs/paddlejs-backend-webgpu';
 
-// Register the WebGPU backend to the global backend instance before initializing runner
-registerBackend(
-    'webgpu', // e.g. 'webgpu', you can name it by yourself
-    backend, // backend instance
-    ops // backend ops
-);
 ```
 
 **Note**: 如果你想要运行 webGPU 计算方案，需要在 Chrome Canary 浏览器上运行。

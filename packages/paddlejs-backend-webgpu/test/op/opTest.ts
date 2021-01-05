@@ -1,5 +1,6 @@
-import { Runner } from 'paddlejs-core/src/index';
-import registerWebGPUBackend from '../../src/index';
+import { Runner } from '@paddlejs/paddlejs-core';
+import backend from '@paddlejs/paddlejs-backend-webgpu';
+
 
 const opName = 'elementwise_add';
 const modelDir = '/test/op/data/';
@@ -51,8 +52,7 @@ async function run() {
     runner.genOpData();
     const executeOP = runner.weightMap[0];
     runner.executeOp(executeOP);
-    console.log(await gpuInstance.read(OP_INFO_MAP[opName]));
+    console.log(await backend.read(OP_INFO_MAP[opName]));
 }
 
-const gpuInstance = registerWebGPUBackend();
 run();

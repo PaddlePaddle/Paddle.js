@@ -1,16 +1,9 @@
-import { registerBackend } from 'paddlejs-core';
-import WebGPUBackend from './gpu';
-import { ops } from './ops';
+/**
+ * @file webgpu backend export
+ * @author zhangjingyuan
+ */
 
-const gpuInstance = new WebGPUBackend();
+import backend from './register';
 
-function registerWebGPUBackend() {
-    registerBackend(
-        'webgpu',
-        gpuInstance,
-        ops
-    );
-    return gpuInstance;
-}
 
-export default registerWebGPUBackend;
+export default backend;

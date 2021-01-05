@@ -66,9 +66,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "paddlejs-backend-webgl": "file:packages/paddlejs-backend-webgl",
-    "paddlejs-backend-webgpu": "file:packages/paddlejs-backend-webgpu",
-    "paddlejs-backend-cpu": "file:packages/paddlejs-backend-cpu",
-    "paddlejs-core": "file:packages/paddlejs-core"
+    "@paddlejs/paddlejs-backend-webgl": "file:packages/paddlejs-backend-webgl",
+    "@paddlejs/paddlejs-backend-webgpu": "file:packages/paddlejs-backend-webgpu",
+    "@paddlejs/paddlejs-backend-cpu": "file:packages/paddlejs-backend-cpu",
+    "@paddlejs/paddlejs-core": "file:packages/paddlejs-core"
   }
 }

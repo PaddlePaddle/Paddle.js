@@ -62,7 +62,8 @@ function padToFourDimShape(shape) {
     let fourDimShape = [] as number[];
     if (shape.length === 4) {
         fourDimShape = shape;
-    } else if (shape.length < 4) {
+    }
+    else if (shape.length < 4) {
         for (let i = 0; i < 4 - shape.length; i++) {
             fourDimShape.push(1);
         }

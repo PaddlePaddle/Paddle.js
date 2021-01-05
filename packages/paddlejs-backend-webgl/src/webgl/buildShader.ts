@@ -3,7 +3,7 @@
  * @author yueshuangyan
  */
 
-import { env } from 'paddlejs-core/src';
+import { env } from '@paddlejs/paddlejs-core';
 import { ops } from '../ops';
 import { getTensorParams, getExactOpName } from '../ops/utils';
 import genPrefixCode from '../ops/atom/prefix';

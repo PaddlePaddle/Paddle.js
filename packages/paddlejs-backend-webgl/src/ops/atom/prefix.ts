@@ -2,7 +2,7 @@
  * @file prefix code
  */
 
-import { env } from 'paddlejs-core/src';
+import { env } from '@paddlejs/paddlejs-core';
 import prefix_uint from './prefix_uint';
 import prefix_half from './prefix_half';
 

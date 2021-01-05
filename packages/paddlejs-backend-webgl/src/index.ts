@@ -3,7 +3,7 @@
  * @author yueshuangyan
  */
 
-import { registerBackend } from 'paddlejs-core';
+import { registerBackend } from '@paddlejs/paddlejs-core';
 import WebGLBackend from './backend';
 import { ops } from './ops';
 
@@ -18,4 +18,6 @@ function registerWebGLBackend() {
     return glInstance;
 }
 
-export default registerWebGLBackend;
+registerWebGLBackend();
+
+export default glInstance;

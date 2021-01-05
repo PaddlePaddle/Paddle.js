@@ -3,7 +3,7 @@
  * @author yueshuangyan
  */
 
-import { env } from 'paddlejs-core/src';
+import { env } from '@paddlejs/paddlejs-core';
 import { WebGLContextAttributes } from './webgl_types';
 
 // 枚举类

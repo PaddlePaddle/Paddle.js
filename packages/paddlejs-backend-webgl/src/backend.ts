@@ -3,8 +3,8 @@
  * @author yueshuangyan
  */
 
-import { PaddlejsBackend } from 'paddlejs-core/src/index';
-import { OpData } from 'paddlejs-core/src/commons/interface';
+import { PaddlejsBackend } from '@paddlejs/paddlejs-core';
+import { OpData } from './types';
 import { GLHelper, EShaderType } from './webgl/WebGLUtils';
 import { GLTexture, TextureConfig } from './webgl/WebGLTexture';
 import { vShaderSource, vShaderData } from './ops/vShader';
@@ -107,6 +107,7 @@ export default class WebGLBackend extends PaddlejsBackend {
     }
 
     runProgram(opData: OpData, isRendered: boolean) {
+
         // 设置gpu参数
         opData.program.forEach((program: GLProgram, index) => {
             const outTensor = opData.outputTensors[index];

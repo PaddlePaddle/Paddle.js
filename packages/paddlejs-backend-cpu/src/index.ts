@@ -3,7 +3,7 @@
  * @author yueshuangyan
  */
 
-import { registerBackend } from 'paddlejs-core';
+import { registerBackend } from '@paddlejs/paddlejs-core';
 import CpuBackend from './backend';
 import { ops } from './ops';
 
@@ -18,4 +18,6 @@ function registerCpuBackend() {
     return instance;
 }
 
-export default registerCpuBackend;
+registerCpuBackend();
+
+export default instance;

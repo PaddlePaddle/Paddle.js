@@ -1,4 +1,4 @@
-import { Runner } from 'paddlejs-core/src/index';
+import { Runner } from '@paddlejs/paddlejs-core';
 import registerWebGLBackend from '../../src/index';
 
 const opName = 'elementwise_add';

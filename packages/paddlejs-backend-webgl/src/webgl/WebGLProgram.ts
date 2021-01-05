@@ -3,7 +3,7 @@
  * @author yueshuangyan
  */
 
-import Tensor from 'paddlejs-core/src/opFactory/tensor';
+import { Tensor } from '../types';
 
 export default class GLProgram {
     // ps常用的uniform命名

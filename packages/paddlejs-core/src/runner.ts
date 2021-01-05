@@ -72,7 +72,7 @@ export default class Runner {
         this.isExecuted = false;
         await this.load();
         this.genGraph();
-        await this.preheat();
+        return await this.preheat();
     }
 
     async load() {

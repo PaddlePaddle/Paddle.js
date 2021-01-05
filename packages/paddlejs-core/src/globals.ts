@@ -16,7 +16,7 @@ interface GLOBALS_INTERFACE {
     backendInstance: any; // todo Class Backend
 }
 
-const GLOBALS: GLOBALS_INTERFACE = {
+let GLOBALS: GLOBALS_INTERFACE = {
     opRegistry: {
         ops: {}
     },
@@ -69,6 +69,33 @@ function registerBackend(backend: string, backendInstance: any, ops: Ops) {
 
 }
 
+function getGlobalNamespace(): any {
+    let ns: any;
+    if (typeof (window) !== 'undefined') {
+        ns = window;
+    }
+    else if (typeof (global) !== 'undefined') {
+        ns = global;
+    }
+    else if (typeof (self) !== 'undefined') {
+        ns = self;
+    }
+    else {
+        throw new Error('Could not find a global object');
+    }
+    return ns;
+}
+
+function getOrMakeGlobals(): GLOBALS_INTERFACE {
+    const globalNameSpace = getGlobalNamespace();
+    if (globalNameSpace.GLOBALS) {
+        return globalNameSpace.GLOBALS;
+    }
+    globalNameSpace.GLOBALS = GLOBALS;
+    return globalNameSpace.GLOBALS;
+}
+
+GLOBALS = getOrMakeGlobals();
 
 export {
     GLOBALS,

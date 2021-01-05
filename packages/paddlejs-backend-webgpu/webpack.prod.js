@@ -6,7 +6,6 @@ module.exports = {
     entry: {
         index: ['./src/index']
     },
-    devtool: 'source-map',
     resolve: {
         // Add ".ts" and ".tsx" as resolvable extensions.
         extensions: ['.ts', '.js'],

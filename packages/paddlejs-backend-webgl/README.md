@@ -2,7 +2,7 @@
 
 # paddlejs-backend-webgl
 
-This package is WebGL backend accelerated by GPU registered automatically after importing.[paddlejs-core](../paddlejs-core/README.md) package.
+This package is WebGL backend accelerated by GPU registered automatically after importing.
 
 ## Via NPM
 

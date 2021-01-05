@@ -1,5 +1,5 @@
-import { Runner } from 'paddlejs-core/src/index';
-import registerWebGLBackend from '../../src/index';
+import { Runner } from '@paddlejs/paddlejs-core';
+import '../../src/index';
 
 async function run() {
     const runner = new Runner({
@@ -19,5 +19,4 @@ async function run() {
     console.log(await runner.init());
 }
 
-registerWebGLBackend();
 run();

@@ -1,4 +1,4 @@
-import { env } from 'paddlejs-core/src';
+import { env } from '@paddlejs/paddlejs-core';
 
 export enum EGLTexWrapType {
     GL_REPEAT, // 设置为gl对应的常量

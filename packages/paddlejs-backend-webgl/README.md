@@ -2,23 +2,18 @@
 
 # paddlejs-backend-webgl
 
-This package is WebGL backend accelerated by GPU registered before preheat api calling in [paddlejs-core](../paddlejs-core/README.md) package.
+This package is WebGL backend accelerated by GPU registered automatically after importing.[paddlejs-core](../paddlejs-core/README.md) package.
 
 ## Via NPM
 
 ```js
-// register webgl backend.
-import registerWebGLBackend from '@paddlejs/paddlejs-backend-webgl';
-
-registerWebGLBackend();
+// import the registered webgl backend.
+import '@paddlejs/paddlejs-backend-webgl';
 ```
 
 ## Via a script tag
 
 ```html
-<!-- Import @paddlejs/paddlejs-core -->
-<script src="https://paddlejs.cdn.bcebos.com/paddlejs/paddlejs-core"></script>
-
-<!-- registry webgl backend-->
+<!-- import the registered webgl backend -->
 <script src="https://paddlejs.cdn.bcebos.com/paddlejs/paddlejs-backend-webgl"></script>
 ```

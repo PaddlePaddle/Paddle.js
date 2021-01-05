@@ -3,7 +3,7 @@
  * @author yueshuangyan
  */
 
-import Tensor from 'paddlejs-core/src/opFactory/tensor';
+import { Tensor } from '../types';
 
 interface opInfo {
     [key: string]: any
@@ -198,7 +198,8 @@ class TensorBuffer {
     locToIndex(locs: number[]): number {
         if (this.rank === 0) {
             return 0;
-        } else if (this.rank === 1) {
+        }
+        else if (this.rank === 1) {
             return locs[0];
         }
         let index = locs[locs.length - 1];
@@ -212,7 +213,8 @@ class TensorBuffer {
         let index = cur;
         if (this.rank === 0) {
             return [];
-        } else if (this.rank === 1) {
+        }
+        else if (this.rank === 1) {
             return [index];
         }
         const locs: number[] = new Array(this.shape.length);

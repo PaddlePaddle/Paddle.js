@@ -3,9 +3,9 @@
  * @author yueshuangyan
  */
 
-import { PaddlejsBackend } from 'paddlejs-core/src';
-import { OpData } from 'paddlejs-core/src/commons/interface';
+import { PaddlejsBackend } from '@paddlejs/paddlejs-core';
 import Program from './Program';
+import { OpData } from './types';
 
 export default class CpuBackend extends PaddlejsBackend {
     program?: Program;

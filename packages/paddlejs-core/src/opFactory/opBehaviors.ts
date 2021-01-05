@@ -164,10 +164,10 @@ const behaviors : Behaviors = {
         const suffix = this.realName.replace(mergeType + '-', '');
 
         this.data = Object.assign({
-            'active_function': 'scale',
-            'multi_value': '1.0',
-            'bias_value': '0.0',
-            'fuse_relu': false
+            active_function: 'scale',
+            multi_value: '1.0',
+            bias_value: '0.0',
+            fuse_relu: false
         }, this.data);
 
         if (suffix === 'leaky_relu') {

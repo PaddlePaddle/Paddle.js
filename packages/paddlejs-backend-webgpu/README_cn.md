@@ -10,7 +10,7 @@ This package implements an experimental backend based on WebGPU for Paddle.js.
 
 ```js
 
-// Import the WebGPU backend which has registered already.
+// Import the registered WebGPU backend.
 import '@paddlejs/paddlejs-backend-webgpu';
 
 ```

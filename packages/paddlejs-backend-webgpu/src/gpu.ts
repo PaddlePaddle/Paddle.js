@@ -1,6 +1,6 @@
 /**
  * @file webgpu 计算
- * @author zhangjingyuan02
+ * @author zhangjingyuan
  */
 
 // / <reference types="@webgpu/types" />

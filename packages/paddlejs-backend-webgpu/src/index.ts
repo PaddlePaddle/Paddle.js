@@ -1,14 +1,9 @@
-import WebGPUBackend from './gpu';
-import { ops } from './ops';
+/**
+ * @file webgpu backend export
+ * @author zhangjingyuan
+ */
 
-const gpuInstance = new WebGPUBackend();
-function createWebGPUBackend(registerBackend: Function) {
-    registerBackend(
-        'webgpu',
-        gpuInstance,
-        ops
-    );
-    return gpuInstance;
-}
+import backend from './register';
 
-export default createWebGPUBackend;
+
+export default backend;

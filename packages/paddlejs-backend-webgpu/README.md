@@ -11,13 +11,8 @@ You can install the backend package via npm. `@paddlejs/paddlejs-backend-webgpu`
 
 ```js
 
-// Import the WebGPU backend method createWebGPUBackend
-import createWebGPUBackend from '@paddlejs/paddlejs-backend-webgpu';
-// Import method registerBackend 
-import { registerBackend } from '@paddlejs/paddlejs-core';
-
-// Register the WebGPU backend to the global backend instance before initializing runner
-createWebGPUBackend(registerBackend);
+// Import the WebGPU backend which has registered already.
+import '@paddlejs/paddlejs-backend-webgpu';
 
 ```
 

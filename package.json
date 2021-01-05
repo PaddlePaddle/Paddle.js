@@ -8,9 +8,12 @@
     "lint": "eslint packages/**/*.ts --fix",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "init": "npm install & lerna bootstrap",
-    "webgl": "lerna run start  --scope=paddlejs-backend-webgl  --stream",
-    "webgpu": "lerna run start  --scope=paddlejs-backend-webgpu  --stream",
-    "cpu": "lerna run start  --scope=paddlejs-backend-cpu  --stream"
+    "cpu": "lerna run start  --scope=@paddlejs/paddlejs-backend-cpu  --stream",
+    "webgl": "lerna run start  --scope=@paddlejs/paddlejs-backend-webgl  --stream",
+    "webgpu": "lerna run start  --scope=@paddlejs/paddlejs-backend-webgpu  --stream",
+    "build:webgpu": "lerna run build  --scope=@paddlejs/paddlejs-backend-webgpu  --stream",
+    "build:webgl": "lerna run build  --scope=@paddlejs/paddlejs-backend-webgl  --stream",
+    "build:core": "lerna run build  --scope=@paddlejs/paddlejs-core  --stream"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.12.11",
@@ -19,6 +22,7 @@
     "@types/jest": "^26.0.19",
     "@typescript-eslint/eslint-plugin": "^4.7.0",
     "@typescript-eslint/parser": "^4.7.0",
+    "@webgpu/types": "0.0.32",
     "babel-jest": "^27.0.0-next.1",
     "base64-img": "^1.0.4",
     "canvas": "^2.6.1",

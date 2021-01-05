@@ -5,10 +5,17 @@
         "es6": true,
         "node": true,
         "browser": true,
-        "mocha": true
+        "jest": true
     },
     "globals": {
-        "expect": true
+        "GPUBuffer": true,
+        "GPUDevice": true,
+        "GPUQueue": true,
+        "GPUAdapter": true,
+        "GPUComputePipeline": true,
+        "GPUCommandEncoder": true,
+        "GPUBindGroupLayout": true,
+        "GPUBindGroup": true
     },
     "plugins": [
         "standard",

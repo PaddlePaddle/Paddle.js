@@ -59,6 +59,7 @@ export default class OpExecutor {
 
     /**
      * 将输入数据和具体op进行关联，触发执行具体每一个op
+     * @param opData op data
      * @param isRendered
      */
     execute(isRendered) {

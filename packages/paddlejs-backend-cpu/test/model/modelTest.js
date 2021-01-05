@@ -3,8 +3,8 @@ import registerWebGLBackend from '../../src/index';
 
 async function run() {
     const runner = new Runner({
-        modelPath: 'https://paddlejs.cdn.bcebos.com/models/tinyYolo/model.json',
-        fileCount: 1,
+        modelPath: '/test/model/mock/model.json',
+        fileCount: 0,
         feedShape: {
             fw: 320,
             fh: 320

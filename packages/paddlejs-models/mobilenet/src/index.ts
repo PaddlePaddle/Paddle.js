@@ -4,28 +4,49 @@
 
 import { Runner } from '@paddlejs/paddlejs-core';
 import '@paddlejs/paddlejs-backend-webgl';
-import map from './map.json';
 
-const path = 'https://paddlejs.cdn.bcebos.com/models/mobileNetV2/model.json';
-const runner = new Runner({
-    modelPath: path,
-    fileCount: 4,
-    feedShape: {
-        fw: 224,
-        fh: 224
-    },
-    fill: '#fff',
-    inputType: 'image',
-    targetSize: {
-        height: 224,
-        width: 224
-    },
-    mean: [0.485, 0.456, 0.406],
-    std: [0.229, 0.224, 0.225]
-});
+interface ModelConfig {
+    path: string;
+    fileCount: number;
+    mean?: number[];
+    std?: number[];
+}
 
-export async function load() {
+interface MobilenetMap {
+    [key: string]: string
+}
+
+let mobilenetMap = null as any;
+let runner = null as Runner;
+
+export async function load(config: ModelConfig, map: string[] | MobilenetMap) {
+    mobilenetMap = map;
+
+    const {
+        path,
+        fileCount,
+        mean,
+        std
+    } = config;
+
+    runner = new Runner({
+        modelPath: path,
+        fileCount: fileCount || 1,
+        feedShape: {
+            fw: 224,
+            fh: 224
+        },
+        fill: '#fff',
+        inputType: 'image',
+        targetSize: {
+            height: 224,
+            width: 224
+        },
+        mean: mean || [],
+        std: std || []
+    });
     await runner.init();
+
 }
 
 // 获取数组中的最大值索引
@@ -39,7 +60,7 @@ function getMaxItem(datas: number[] = []) {
 export async function classify(image) {
     const res = await runner.predict(image);
     const maxItem = getMaxItem(res);
-    const result = map[`${maxItem}`];
+    const result = mobilenetMap[`${maxItem}`];
     return result;
 }
 

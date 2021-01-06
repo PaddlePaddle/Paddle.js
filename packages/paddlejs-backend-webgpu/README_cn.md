@@ -1,3 +1,5 @@
+[English](./README.md)
+
 # paddlejs-backend-webgpu
 
 This package implements an experimental backend based on WebGPU for Paddle.js.

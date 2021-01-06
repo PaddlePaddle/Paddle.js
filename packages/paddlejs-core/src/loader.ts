@@ -42,7 +42,7 @@ export default class ModelLoader {
             filename = modelPath.substr(dirPosIndex);
         }
         else if (modelPath.charAt(modelPath.length - 1) !== '/') {
-            modelDir += '/';
+            modelDir = `${modelPath}/`;
         }
 
         this.urlConf = {

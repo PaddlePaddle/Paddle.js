@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>paddlejs mobilenet demo</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+        .demo-nav {
+            background-color: #2932e1;
+            color: #fff;
+        }
+        .paddle-demo-card {
+            margin-right: 0;
+            margin-left: 0;
+            background-color: #fff;
+            border: 1px solid #ddd;
+        }
+        .infobox {
+            background-color: #fff;
+            border-radius: 6px;
+            margin-bottom: 30px;
+            padding: 20px;
+            position: relative;
+            min-height: 350px;
+            box-sizing: border-box;
+            color: #707070;
+        }
+        </style>
+    </head>
+    <body>
+        <header class="navbar navbar-static-top bs-docs-nav demo-nav">
+            <div class="container">
+                <div class="navbar-header">
+                    <div class="navbar-brand">paddlejs mobilenet demo</div>
+                </div>
+            </div>
+        </header>
+        <div class="container">
+            <div class="col-xs-12">
+                <div class="row">
+
+                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12 continfobox">
+                        <div class="paddle-demo-card infobox text-center">
+                            <div class="flip-container">
+                                <div class="paddle-demo-block-wrapper">
+                                    <div class="h2">操作面板：</div><input type="file" id="uploadImg">
+                                    <p class="help-block">点击按钮，选择图片触发计算.</p>
+                                    <div class="paddle-demo-block-wrapper">
+                                        <img id="image" src="https://mms-voice.cdn.bcebos.com/mumstory/banana.jpg" style="height: 50px" alt="Responsive image">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12 continfobox">
+                        <div class="paddle-demo-card infobox text-center">
+                            <div class="flip-container">
+                                <div class="paddle-demo-block-wrapper">
+                                    <div class="h2">预测结果：</div><div id="txt">...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

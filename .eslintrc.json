@@ -160,6 +160,7 @@
             }
         ],
         "no-multi-str": "warn",
+        "eol-last": 0,
         "no-multiple-empty-lines": [
             "error",
             {

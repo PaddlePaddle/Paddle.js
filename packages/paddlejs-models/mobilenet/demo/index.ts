@@ -1,10 +1,16 @@
-import * as mobilenet from '../lib';
+import * as mobilenet from '../src/index';
+import map from './map.json';
 
-// 统计参数
 let loaded = false;
+const path = 'https://paddlejs.cdn.bcebos.com/models/mobileNetV2/model.json';
 async function run(input: HTMLElement) {
     if (!loaded) {
-        await mobilenet.load();
+        await mobilenet.load({
+            path,
+            fileCount: 4,
+            mean: [0.485, 0.456, 0.406],
+            std: [0.229, 0.224, 0.225]
+        }, map);
         loaded = true;
     }
     const res = await mobilenet.classify(input);

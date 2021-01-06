@@ -1,10 +1,14 @@
+[中文版](./README_cn.md)
+
 # mobilenet
 
 mobilenet model can classify img. It provides simple interfaces to use. You can use your own category model to classify img.
 
+
 # Usage
 
-```
+```js
+
 import * as mobilenet from '@paddlejs-models/mobilenet';
 
 // You need to specify your model path and the binary file count

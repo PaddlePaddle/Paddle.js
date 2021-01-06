@@ -2,6 +2,8 @@
  * @file Loader，model加载器
  */
 
+import env from './env';
+
 interface UrlConf {
     dir: string;
     main: string;
@@ -33,6 +35,9 @@ export default class ModelLoader {
         type: 'fetch'
     };
 
+    inNode = false;
+    realFetch = null;
+
     constructor(modelPath: string, fileCount: number = 1) {
         let modelDir = '';
         let filename = 'model.json';
@@ -42,29 +47,33 @@ export default class ModelLoader {
             filename = modelPath.substr(dirPosIndex);
         }
         else if (modelPath.charAt(modelPath.length - 1) !== '/') {
-            modelDir = `${modelPath}/`;
+            modelDir += '/';
         }
 
         this.urlConf = {
-            dir: modelDir.indexOf('http') === 0 // 存放模型的文件夹
-                ? modelDir
-                : modelDir.charAt(0) === '/'
-                    ? `${modelDir}`
-                    : `/${modelDir}`,
+            dir:
+                modelDir.indexOf('http') === 0 // 存放模型的文件夹
+                    ? modelDir
+                    : modelDir.charAt(0) === '/'
+                        ? `${modelDir}`
+                        : `/${modelDir}`,
             main: filename // 主文件
         };
 
         this.multipart = fileCount > 0;
         this.dataType = 'binary';
         this.chunkNum = fileCount;
+        this.inNode = env.get('platform') === 'node';
+        this.realFetch = this.inNode ? require('node-fetch') : fetch;
     }
 
     async load() {
         const modelInfo: any = await this.fetchModel();
         if (this.multipart === true) {
             if (this.dataType === 'binary') {
-                await this.fetchChunks()
-                    .then(allChunksData => this.traverse(modelInfo.vars, allChunksData));
+                await this.fetchChunks().then(allChunksData =>
+                    this.traverse(modelInfo.vars, allChunksData)
+                );
             }
         }
         return modelInfo;
@@ -82,7 +91,8 @@ export default class ModelLoader {
         });
     }
 
-    getFileName(i: number | string) { // 获取第i个文件的名称
+    getFileName(i: number | string) {
+        // 获取第i个文件的名称
         return `chunk_${i}.dat`;
     }
 
@@ -117,29 +127,29 @@ export default class ModelLoader {
         });
     }
 
-
     traverse(arr: ModelVars[], allChunksData: Float32Array) {
         let marker = 0; // 读到哪个位置了
         let len; // 当前op长度
         arr.filter(item => {
             return item.name;
-        })
-            .forEach(item => {
-                len = item.shape.reduce((a, b) => a * b); // 长度为shape的乘积
-                // 为了减少模型体积，模型转换工具不会导出非persistable的数据，这里只需要读取persistable的数据
-                if (item.persistable) {
-                    item.data = allChunksData.slice(marker, marker + len);
-                    marker += len;
-                }
-            });
+        }).forEach(item => {
+            len = item.shape.reduce((a, b) => a * b); // 长度为shape的乘积
+            // 为了减少模型体积，模型转换工具不会导出非persistable的数据，这里只需要读取persistable的数据
+            if (item.persistable) {
+                item.data = allChunksData.slice(marker, marker + len);
+                marker += len;
+            }
+        });
     }
 
     fetch(path: string, params?: FetchParams) {
         const fetchParams = params || this.params;
         const method = fetchParams.method || 'get';
-
-        const myHeaders = new Headers();
-        return fetch(path, {
+        const HeadersClass = this.inNode
+            ? require('node-fetch').Headers
+            : Headers;
+        const myHeaders = new HeadersClass();
+        return this.realFetch(path, {
             method: method,
             headers: myHeaders
         });
@@ -161,6 +171,4 @@ export default class ModelLoader {
 
         return load;
     }
-
 }
-

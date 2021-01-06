@@ -4,10 +4,9 @@ import { Model, InputFeed, ModelVar } from './commons/interface';
 import OpData from './opFactory/opDataBuilder';
 import { GLOBALS } from './globals';
 import MediaProcessor from './mediaProcessor';
+import env from './env';
 
 import type OpExecutor from './opFactory/opExecutor';
-
-const mediaProcessor = new MediaProcessor();
 
 interface ModelConfig {
     modelPath: string; // 模型路径
@@ -18,7 +17,7 @@ interface ModelConfig {
     targetSize?: {
         height: number;
         width: number;
-    }
+    };
     fileCount?: number; // 参数分片chunk_*.dat 个数
     fill?: string; // 缩放后用什么颜色填充不足方形部分
     mean?: number[];
@@ -27,7 +26,6 @@ interface ModelConfig {
     scale?: number;
     inputType?: string; // image | video
 }
-
 
 export default class Runner {
     // instance field
@@ -51,6 +49,7 @@ export default class Runner {
     test: boolean = false;
     graphGenerator: Graph = {} as Graph;
     feedData: InputFeed[] = [];
+    mediaProcessor: MediaProcessor | null = null;
 
     constructor(options: ModelConfig | null) {
         const opts = {
@@ -60,6 +59,9 @@ export default class Runner {
         };
         this.modelConfig = Object.assign(opts, options);
         this.weightMap = [];
+        if (env.get('platform') !== 'node') {
+            this.mediaProcessor = new MediaProcessor();
+        }
     }
 
     async init() {
@@ -76,10 +78,7 @@ export default class Runner {
     }
 
     async load() {
-        const {
-            modelPath,
-            fileCount
-        } = this.modelConfig;
+        const { modelPath, fileCount } = this.modelConfig;
 
         const loader = new Loader(modelPath, fileCount);
         this.model = await loader.load();
@@ -98,7 +97,13 @@ export default class Runner {
             if (type !== 'feed' && type !== 'fetch') {
                 iLayer++;
                 const isFinalOp = index === this.weightMap.length - 2;
-                const opData = new OpData(op, iLayer, vars, this.feedData, isFinalOp);
+                const opData = new OpData(
+                    op,
+                    iLayer,
+                    vars,
+                    this.feedData,
+                    isFinalOp
+                );
                 op.opData = opData;
             }
         });
@@ -107,11 +112,13 @@ export default class Runner {
     async preheat() {
         await this.checkModelLoaded();
         const { fh, fw } = this.modelConfig.feedShape;
-        const preheatFeed: InputFeed[] = [{
-            data: new Float32Array(3 * fh * fw).fill(1.0),
-            name: 'image',
-            shape: [1, 3, fh, fw]
-        }];
+        const preheatFeed: InputFeed[] = [
+            {
+                data: new Float32Array(3 * fh * fw).fill(1.0),
+                name: 'image',
+                shape: [1, 3, fh, fw]
+            }
+        ];
         const result = await this.execute(preheatFeed);
         this.isExecuted = true;
         return result;
@@ -126,17 +133,17 @@ export default class Runner {
         }
     }
 
-
     async predict(media, callback?: Function) {
         // deal with input, such as image, video
-        if (this.isPaused) {
+        if (this.isPaused || !this.mediaProcessor) {
             return;
         }
-        const inputFeed: InputFeed[] = mediaProcessor.process(media, this.modelConfig);
+        const inputFeed: InputFeed[] = this.mediaProcessor.process(
+            media,
+            this.modelConfig
+        );
         const result = await this.execute(inputFeed);
-        return callback
-            ? callback(result)
-            : result;
+        return callback ? callback(result) : result;
     }
 
     updateFeedData(feed) {
@@ -147,7 +154,9 @@ export default class Runner {
             const tensorData = item.opData.inputTensors;
             return tensorData.find(tensor => tensor.tensorId === 'image');
         }) as OpExecutor;
-        const imageData = imageOp.opData.inputTensors.find(tensor => tensor.tensorId === 'image');
+        const imageData = imageOp.opData.inputTensors.find(
+            tensor => tensor.tensorId === 'image'
+        );
         imageData.data = feed[0].data;
     }
 
@@ -178,11 +187,13 @@ export default class Runner {
 
     async read() {
         const fetchOp = this.graphGenerator.getFetchExecutor();
-        const fetchInfo = this.model.vars.find(item => item.name === fetchOp.inputs.X[0]) as ModelVar;
+        const fetchInfo = this.model.vars.find(
+            item => item.name === fetchOp.inputs.X[0]
+        ) as ModelVar;
         return await GLOBALS.backendInstance.read(fetchInfo);
     }
 
     stopPredict() {
         this.isPaused = true;
     }
-};
+}

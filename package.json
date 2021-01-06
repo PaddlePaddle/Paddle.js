@@ -7,7 +7,7 @@
     "test": "lerna run test",
     "lint": "eslint packages/**/*.ts --fix",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
-    "init": "npm install & lerna bootstrap",
+    "init": "npm install && lerna bootstrap",
     "cpu": "lerna run start  --scope=@paddlejs/paddlejs-backend-cpu  --stream",
     "webgl": "lerna run start  --scope=@paddlejs/paddlejs-backend-webgl  --stream",
     "webgpu": "lerna run start  --scope=@paddlejs/paddlejs-backend-webgpu  --stream",

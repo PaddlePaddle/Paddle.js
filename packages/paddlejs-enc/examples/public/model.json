@@ -1,0 +1,97 @@
+{
+    "ops": [
+        {
+            "attrs": {
+                "__@kernel_type_attr@__": "feed/def/1/4/2"
+            },
+            "inputs": {
+                "X": [
+                    "feed"
+                ]
+            },
+            "outputs": {
+                "Out": [
+                    "image"
+                ]
+            },
+            "type": "feed"
+        },
+        {
+            "attrs": {
+                "Scale_in": 1.0,
+                "Scale_in_eltwise": 1.0,
+                "Scale_out": 1.0,
+                "Scale_weights": [
+                    1.0
+                ],
+                "data_format": "AnyLayout",
+                "dilations": [
+                    1,
+                    1
+                ],
+                "exhaustive_search": false,
+                "force_fp32_output": false,
+                "fuse_relu": false,
+                "fuse_relu_before_depthwise_conv": false,
+                "fuse_residual_connection": false,
+                "groups": 2,
+                "is_test": 1,
+                "paddings": [
+                    0,
+                    0
+                ],
+                "strides": [
+                    1,
+                    1
+                ],
+                "use_cudnn": true,
+                "use_mkldnn": false,
+                "workspace_size_MB": 4096
+            },
+            "inputs": {
+                "Filter": [
+                    "conv2d_0.w_0"
+                ],
+                "Input": [
+                    "image"
+                ]
+            },
+            "outputs": {
+                "Output": [
+                    "conv2d_0.tmp_0"
+                ]
+            },
+            "type": "conv2d"
+        },
+        {
+            "attrs": {
+                "__@kernel_type_attr@__": "fetch/def/1/4/2",
+                "data_type": 1
+            },
+            "inputs": {
+                "X": [
+                    "conv2d_0.tmp_0"
+                ]
+            },
+            "outputs": {
+                "Out": [
+                    "fetch"
+                ]
+            },
+            "type": "fetch"
+        }
+    ],
+    "vars": [
+        {
+            "name": "conv2d_0.tmp_0",
+            "persistable": false,
+            "shape": [1, 1, 2, 4]
+        },
+        {
+            "name": "conv2d_0.w_0",
+            "persistable": true,
+            "shape": [3, 2, 2],
+            "data": [1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1]
+        }
+    ]
+}

@@ -2,7 +2,7 @@ import * as mobilenet from '../src/index';
 import map from './map.json';
 
 let loaded = false;
-const path = 'https://paddlejs.cdn.bcebos.com/models/mobileNetV2/model.json';
+const path = 'https://paddlejs.cdn.bcebos.com/models/mobileNetV2';
 async function run(input: HTMLElement) {
     if (!loaded) {
         await mobilenet.load({

@@ -1,4 +1,4 @@
-import { ModelVar, OpExecutor, OpInputs, OpOutputs, AttrsData, InputFeed } from '../commons/interface';
+import { ModelVar, OpExecutor, OpInputs, OpOutputs, AttrsData } from '../commons/interface';
 import { GLOBALS } from '../globals';
 import Tensor from './tensor';
 import opBehaviors from './opBehaviors';
@@ -21,11 +21,10 @@ export default class OpData {
     iLayer: number = 0;
     program: string[] = [];
     renderData: object[] = [];
-    inputFeed: InputFeed[] = [];
     tensorData: ModelVar[] = [];
     isFinalOp: boolean = false;
 
-    constructor(op: OpExecutor, iLayer: number, vars: ModelVar[], feed: InputFeed[], isFinalOp: boolean) {
+    constructor(op: OpExecutor, iLayer: number, vars: ModelVar[], isFinalOp: boolean) {
         const {
             type,
             inputs,
@@ -42,7 +41,6 @@ export default class OpData {
         this.vars = vars;
         this.iLayer = iLayer;
         this.isFinalOp = isFinalOp;
-        this.inputFeed = feed;
         this.input = inputs;
         this.output = outputs;
         // tensor数据
@@ -67,13 +65,9 @@ export default class OpData {
         });
 
         Object.keys(this.input).forEach(key => {
-            if (this.input[key][0] === 'image') {
-                this.input[key] = this.inputFeed;
-            }
-            else {
-                this.input[key] = this.getTensorAttr(this.input[key][0]);
-            }
+            this.input[key] = this.getTensorAttr(this.input[key][0]);
         });
+
         for (const key in this.output) {
             if (Object.prototype.hasOwnProperty.call(this.output, key)) {
                 try {
@@ -90,12 +84,12 @@ export default class OpData {
                 catch (e) {
                     console.log(e);
                 }
-
             }
         }
+
         for (const key in this.input) {
             if (Object.prototype.hasOwnProperty.call(this.input, key)) {
-                const data = this.input[key] || [{}];
+                const data = this.input[key].length > 0 ? this.input[key] : [{}];
                 // 默认取第一个数据
                 const tensorName = this.getExactTensorName(key, 'input');
                 if (tensorName) {

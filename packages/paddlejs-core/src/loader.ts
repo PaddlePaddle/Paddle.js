@@ -36,7 +36,9 @@ export default class ModelLoader {
     };
 
     inNode = false;
-    realFetch = null;
+    realFetch: Function = function () {
+        throw new Error('ERROR: empty fetch funciton');
+    };
 
     constructor(modelPath: string, fileCount: number = 1) {
         let modelDir = '';
@@ -47,7 +49,7 @@ export default class ModelLoader {
             filename = modelPath.substr(dirPosIndex);
         }
         else if (modelPath.charAt(modelPath.length - 1) !== '/') {
-            modelDir += '/';
+            modelDir = `${modelPath}/`;
         }
 
         this.urlConf = {
@@ -64,7 +66,6 @@ export default class ModelLoader {
         this.dataType = 'binary';
         this.chunkNum = fileCount;
         this.inNode = env.get('platform') === 'node';
-        this.realFetch = this.inNode ? require('node-fetch') : fetch;
     }
 
     async load() {
@@ -149,6 +150,9 @@ export default class ModelLoader {
             ? require('node-fetch').Headers
             : Headers;
         const myHeaders = new HeadersClass();
+
+        this.realFetch = this.inNode ? require('node-fetch') : window.fetch.bind(window);
+
         return this.realFetch(path, {
             method: method,
             headers: myHeaders

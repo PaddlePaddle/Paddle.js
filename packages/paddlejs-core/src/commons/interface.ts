@@ -98,3 +98,9 @@ export interface InputFeed {
     shape: number[];
     name: string;
 }
+
+
+export enum GraphType {
+    SingleOutput = 'single',
+    MultipleOutput = 'multiple'
+}

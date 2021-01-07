@@ -3,8 +3,9 @@ const os = require('os');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
-// 定义自动获取本地ip的方法开始
+// 定义自动获取本地ip
 function getNetworkIp() {
     // 打开的host
     let needHost = '';
@@ -30,11 +31,11 @@ function getNetworkIp() {
 module.exports = {
     mode: 'development',
     devtool: 'inline-source-map',
-    entry: './index.ts',
+    entry: './index.js',
     devServer: {
         hot: true,
         host: getNetworkIp(),
-        port: 9000
+        port: 9001
     },
     plugins: [
         new CleanWebpackPlugin({
@@ -48,7 +49,8 @@ module.exports = {
         }),
         new ExtractTextPlugin({
             filename: 'index.css'
-        })
+        }),
+        new VueLoaderPlugin()
     ],
     resolve: {
         // Add ".ts" and ".tsx" as resolvable extensions.
@@ -57,12 +59,11 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.ts$/,
-                loader: 'ts-loader',
-                exclude: /node_modules/
+                test: /\.css$/,
+                loader: 'style-loader!css-loader'
             },
             {
-                test: /\.(es6|js)$/,
+                test: /\.js$/,
                 exclude: /node_modules/,
                 use: {
                     loader: 'babel-loader',
@@ -75,11 +76,27 @@ module.exports = {
             {
                 test: /\.(eot|woff|woff2|ttf|svg|png|jpg)$/,
                 loader: 'url-loader?limit=30000&name=[name].[ext]'
+            },
+            {
+                test: /\.less$/,
+                exclude: /node_modules/,
+                loader: ExtractTextPlugin.extract([
+                    { loader: 'css-loader' },
+                    { loader: 'less-loader' }
+                ])
+            },
+            {
+                test: /\.vue$/,
+                loader: 'vue-loader'
+            },
+            {
+                test: /\.pug$/,
+                loader: 'pug-plain-loader'
             }
         ]
     },
     output: {
-        filename: 'index.js',
+        filename: '[name].js',
         path: path.resolve(__dirname, 'dist')
     }
 };

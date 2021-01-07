@@ -1,17 +1,20 @@
 import { Runner } from '@paddlejs/paddlejs-core';
 import registerWebGLBackend from '@paddlejs/paddlejs-backend-webgl';
 import map from './data/map.json';
-// Register the WebGL backend to the global backend registry before initializing runner
+
 registerWebGLBackend();
 
 declare let window: Window & {
     statistic: any
 };
-window.statistic = [];
+window.statistic = {};
+let runner;
 
-async function run(input: HTMLElement) {
+load();
+
+async function load() {
     const path = 'https://paddlejs.cdn.bcebos.com/models/mobileNetV2/model.json';
-    const runner = new Runner({
+    runner = new Runner({
         modelPath: path,
         fileCount: 4,
         feedShape: {
@@ -27,8 +30,12 @@ async function run(input: HTMLElement) {
         mean: [0.485, 0.456, 0.406],
         std: [0.229, 0.224, 0.225]
     });
-    window.statistic.startTime = (+new Date());
     await runner.init();
+    document.getElementById('loading')!.style.display = 'none';
+}
+
+async function run(input: HTMLElement) {
+    window.statistic.startTime = (+new Date());
     const res = await runner.predict(input);
     window.statistic.endTime = (+new Date()) - window.statistic.startTime;
     const maxItem = getMaxItem(res);
@@ -46,6 +53,9 @@ function selectImage(file) {
         return;
     }
     const reader = new FileReader();
+    const initInnerHTML: string = '...';
+    document.getElementById('txt')!.innerHTML = initInnerHTML;
+    document.getElementById('all-performance-time')!.innerHTML = initInnerHTML;
     reader.onload = function (evt) {
         const img = document.getElementById('image') as HTMLImageElement;
         if (evt.target && typeof evt.target.result === 'string') {

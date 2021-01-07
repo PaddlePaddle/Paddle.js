@@ -16,11 +16,9 @@
 </template>
 
 <script>
-import 'regenerator-runtime/runtime'
-import Map from './data/wine.map.json';
-import { Runner } from '@paddlejs/paddlejs-core';
-import registerWebGLBackend from '@paddlejs/paddlejs-backend-webgl';
-registerWebGLBackend();
+import 'regenerator-runtime/runtime';
+import map from './data/wine.map.json';
+import * as mobilenet from '@paddlejs-models/mobilenet';
 
 export default {
     data() {
@@ -38,8 +36,7 @@ export default {
             curImgIndex: 0,
             autoPlay: true,
             isLoading: true,
-            isPredicting: false,
-            runner: null
+            isPredicting: false
         }
     },
     methods: {
@@ -55,38 +52,18 @@ export default {
             this.isPredicting = false;
         },
         async load() {
-            this.runner = new Runner({
-                inputType: 'image',
-                modelPath: 'https://paddlejs.cdn.bcebos.com/models/wine/model.json',
+            const path = 'https://paddlejs.cdn.bcebos.com/models/wine';
+            await mobilenet.load({
+                path,
                 fileCount: 3,
-                feedShape: {
-                    fw: 224,
-                    fh: 224
-                },
-                fetchShape: [1, 40, 1, 1],
-                fill: '#000',
-                scale: 256,
-                targetSize: { height: 224, width: 224 },
                 mean: [0.485, 0.456, 0.406],
                 std: [0.229, 0.224, 0.225]
-            });
-            await this.runner.init();
+            }, map);
             this.isLoading = false;
         },
         async predictModel(img, curIndex) {
-            const res = await this.runner.predict(img);
-            this.process(res, curIndex);
-        },
-        process(data, curIndex) {
-            let maxItem = this.getMaxItem(data);
-            const result = Map[maxItem.index];
-            console.log(result);
-            this.result[curIndex] = result || '无结果'
-        },
-        getMaxItem(data) {
-            const max = Math.max.apply(null, data);
-            const index = data.indexOf(max);
-            return { value: max, index };
+            const res = await mobilenet.classify(img);
+            this.result[curIndex] = res || '无结果';
         }
     },
     mounted() {

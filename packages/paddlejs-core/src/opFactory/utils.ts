@@ -112,3 +112,25 @@ export function getReshapeInPaddle(inputShape: number[] = [], outShape: number[]
     return [outShape[0], total / outShape[0]];
 
 }
+
+
+/**
+ * pack op data
+ *
+ * @param {Object} opData - op origin data
+ * @param {string} packedName - op packed name
+ * @returns {Object} packed data
+ */
+export function packOpData(opData, packedName) {
+    const [b, c, h, w] = opData.shape.length === 3 ? [1, ...opData.shape] : opData.shape;
+    const packedOpData = Object.assign({}, opData);
+    packedOpData.name = packedName;
+    packedOpData.packed = false;
+    if (c % 4 === 0) {
+        // 紧凑布局
+        const packed_c = c / 4;
+        packedOpData.packed = true;
+        packedOpData.shape = [b, packed_c, h, w];
+    }
+    return packedOpData;
+}

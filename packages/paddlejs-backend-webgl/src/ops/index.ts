@@ -4,6 +4,7 @@
  */
 
 import conv2d from './shader/conv2d';
+import conv2d_packing from './shader/conv2d_packing';
 import conv2d_transpose from './shader/conv2d_transpose';
 import conv2d_depthwise from './shader/conv2d_depthwise';
 import depthwise_conv2d from './shader/depthwise_conv2d';
@@ -23,9 +24,12 @@ import bilinear_interp from './shader/bilinear_interp';
 import transpose2 from './shader/transpose2';
 import softmax from './shader/softmax';
 import dynamic from './shader/dynamic';
+import unpacked_2_packed from './shader/unpacked_2_packed';
+import packed_2_unpacked from './shader/packed_2_unpacked';
 
 const ops = {
     conv2d,
+    conv2d_packing,
     conv2d_transpose,
     depthwise_conv2d,
     conv2d_depthwise,
@@ -44,6 +48,8 @@ const ops = {
     reshape2,
     bilinear_interp,
     transpose2,
+    unpacked_2_packed,
+    packed_2_unpacked,
     prelu: dynamic('prelu'),
     relu6: dynamic('relu6'),
     leakyRelu: dynamic('leakyRelu'),

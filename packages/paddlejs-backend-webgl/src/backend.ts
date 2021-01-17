@@ -91,9 +91,9 @@ export default class WebGLBackend extends PaddlejsBackend {
 
 
 
-    createProgram({ name, outTensor, inputTensors, shaderParams, runtime, isFinalOp }) {
+    createProgram({ name, outTensor, inputTensors, shaderParams, runtime, isFinalOp, isPacked }) {
         // genFscode  buildShader
-        const fsCode = buildShader(this.textureConf, name, inputTensors, shaderParams, runtime);
+        const fsCode = buildShader(this.textureConf, name, inputTensors, shaderParams, runtime, isPacked);
 
         const programInstance = new GLProgram(this.gl, this.vShader as WebGLShader, fsCode, outTensor);
         programInstance.fsCode = fsCode;
@@ -107,7 +107,7 @@ export default class WebGLBackend extends PaddlejsBackend {
     }
 
     runProgram(opData: OpData, isRendered: boolean) {
-
+        const isPacked = opData.isPackedOp;
         // 设置gpu参数
         opData.program.forEach((program: GLProgram, index) => {
             const outTensor = opData.outputTensors[index];
@@ -119,7 +119,7 @@ export default class WebGLBackend extends PaddlejsBackend {
             program.setProgram(this.gl, this.vertexBuffer, isRendered);
             this.program = program;
 
-            this.render(opData.inputTensors, opData.iLayer, isRendered, index);
+            this.render(opData.inputTensors, opData.iLayer, isRendered, index, isPacked);
         });
 
     }
@@ -268,7 +268,7 @@ export default class WebGLBackend extends PaddlejsBackend {
         return this.frameBuffer;
     }
 
-    render(data: any = [], iLayer: number = 0, isRendered: Boolean = false, index: number) {
+    render(data: any = [], iLayer: number = 0, isRendered: Boolean = false, index: number, isPacked: Boolean = false) {
         const gl = this.gl;
         const that = this;
         let textureIndex = 0;
@@ -277,7 +277,7 @@ export default class WebGLBackend extends PaddlejsBackend {
             if (!loc) {
                 return;
             }
-            that.initTexture(textureIndex, item, iLayer, isRendered);
+            that.initTexture(textureIndex, item, iLayer, isRendered, isPacked);
             gl.uniform1i(loc, textureIndex++);
         });
         // gl.clearColor(.0, .0, .0, 1);
@@ -285,7 +285,7 @@ export default class WebGLBackend extends PaddlejsBackend {
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
-    initTexture(index, item, iLayer, isRendered) {
+    initTexture(index, item, iLayer, isRendered, isPacked) {
         const gl = this.gl;
         const textureConf = this.textureConf as TextureConfig;
         const tensorName = item.opts.type;
@@ -316,13 +316,16 @@ export default class WebGLBackend extends PaddlejsBackend {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
             if (this.glVersion === 2) {
+                // @ts-ignore
+                const internalFormat = isPacked ? gl.RGBA16F : textureConf.internalFormat;
+                const textureFormat = isPacked ? gl.RGBA : textureConf.textureFormat;
                 gl.texImage2D(gl.TEXTURE_2D,
                     0,
-                    textureConf.internalFormat,
+                    internalFormat,
                     item.width_texture,
                     item.height_texture,
                     0,
-                    textureConf.textureFormat,
+                    textureFormat,
                     gl.FLOAT,
                     item.data
                 );
@@ -330,10 +333,16 @@ export default class WebGLBackend extends PaddlejsBackend {
             else {
                 const temp = new Float32Array(item.width_texture * item.height_texture * 4);
                 for (let i = 0; i < item.data.length; i++) {
-                    temp[i * 4] = (item.data[i]);
-                    temp[i * 4 + 1] = 0;
-                    temp[i * 4 + 2] = 0;
-                    temp[i * 4 + 3] = 0;
+                    if (isPacked) {
+                        temp[i] = item.data[i];
+                    }
+                    else {
+                        // 填充 r 通道数据，其他通道 为 0
+                        temp[i * 4] = item.data[i];
+                        temp[i * 4 + 1] = 0;
+                        temp[i * 4 + 2] = 0;
+                        temp[i * 4 + 3] = 0;
+                    }
                 }
                 gl.texImage2D(gl.TEXTURE_2D,
                     0,

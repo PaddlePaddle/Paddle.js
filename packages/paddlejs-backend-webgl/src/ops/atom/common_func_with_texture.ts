@@ -18,6 +18,25 @@ function getValueFromTensorPosNoLimit(textureName: string, { channel, height_sha
     }`;
 }
 
+function getValueFromTensorPosPackingNoLimit(
+    textureName: string,
+    { channel, height_shape, width_texture, height_texture }
+) {
+    return `
+    // 根据tensor坐标获取这个tensor位置的值
+    vec4 getValueFromTensorPosPacking_${textureName}(int r, int g, int b, int a) {
+        vec4 pixels = TEXTURE2D(texture_${textureName},
+            vec2(
+                (float(a * ${channel} + g) + 0.5) / float(${width_texture}),
+                (float(r * ${height_shape} + b) + 0.5) / float(${height_texture})
+            )
+        );
+        return pixels;
+    }`;
+}
+
+
+
 function getValueFromTensorPosLimit(
     textureName: string,
     { width_shape, height_shape, channel, width_texture, height_texture }
@@ -48,10 +67,47 @@ function getValueFromTensorPosLimit(
     }`;
 }
 
+function getValueFromTensorPosPackingLimit(
+    textureName: string,
+    { width_shape, height_shape, channel, width_texture, height_texture }
+) {
+    return `
+    // 超限布局根据tensor坐标获取这个tensor位置的值
+    float getValueFromTensorPosPackingLimit_${textureName}(int r, int g, int b, int a) {
+        float pieceW = ceil(float(${width_shape}) / 4.0);
+        int x = int(mod(float(a), pieceW));
+        int offsetY = 0;
+
+        if ((float(a) / pieceW) >= 3.0) {
+            offsetY = 3 * ${height_shape};
+        }
+        else if (float(a) / pieceW >= 2.0) {
+            offsetY = 2 * ${height_shape};
+        }
+        else if (float(a) >= pieceW) {
+            offsetY = ${height_shape};
+        }
+        vec4 pixels = TEXTURE2D(texture_${textureName},
+            vec2(
+                (float(x * ${channel} + g) + 0.5) / float(${width_texture}),
+                (float(r * 4 * ${height_shape} + b + offsetY) + 0.5) / float(${height_texture})
+            )
+        );
+        return pixels;
+    }`;
+}
+
 export function getValueFromTensorPos(textureName: string, textureParams, { limit }) {
     return limit
         ? getValueFromTensorPosLimit(textureName, textureParams)
         : getValueFromTensorPosNoLimit(textureName, textureParams);
+
+}
+
+export function getValueFromTensorPosPacking(textureName: string, textureParams, { limit }) {
+    return limit
+        ? getValueFromTensorPosPackingLimit(textureName, textureParams)
+        : getValueFromTensorPosPackingNoLimit(textureName, textureParams);
 
 }
 

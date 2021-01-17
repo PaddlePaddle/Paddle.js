@@ -25,5 +25,9 @@ export default `
             gl_FragColor.r = result;
         }
     }
+
+    void setPackedOutput(vec4 result) {
+        gl_FragColor = result;
+    }
 `;
 

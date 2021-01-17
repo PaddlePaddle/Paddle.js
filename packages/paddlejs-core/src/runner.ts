@@ -7,6 +7,7 @@ import MediaProcessor from './mediaProcessor';
 import env from './env';
 
 import type OpExecutor from './opFactory/opExecutor';
+import type Transformer from './transform/transformer';
 
 interface ModelConfig {
     modelPath: string;
@@ -26,6 +27,11 @@ interface ModelConfig {
     scale?: number;
     inputType?: string; // image | video,
     type?: GraphType; // model type
+    plugins?: { // tranform graph plugins
+        preTransforms?: Transformer[]; // before creating graph
+        transforms?: Transformer[]; // while traversing the ops map
+        postTransforms?: Transformer[]; // after creating graph
+    };
 }
 
 export default class Runner {
@@ -73,6 +79,7 @@ export default class Runner {
         await GLOBALS.backendInstance.init();
         this.isExecuted = false;
         await this.load();
+        this.genFeedData();
         this.genGraph();
         this.genOpData();
         return await this.preheat();
@@ -90,10 +97,6 @@ export default class Runner {
     }
 
     genOpData() {
-        const vars = this.model.vars;
-        const feedData = this.genFeedData();
-        vars.push(feedData);
-
         let iLayer = 0;
         this.weightMap.forEach((op: OpExecutor, index: number) => {
             const type = op.type;
@@ -103,7 +106,7 @@ export default class Runner {
                 const opData = new OpData(
                     op,
                     iLayer,
-                    vars,
+                    this.model.vars,
                     isFinalOp
                 );
                 op.opData = opData;
@@ -122,6 +125,7 @@ export default class Runner {
         if (this.weightMap.length === 0) {
             console.info('It\'s better to preheat the model before running.');
             await this.load();
+            this.genFeedData();
             this.genGraph();
             this.genOpData();
             this.isExecuted = false;
@@ -142,14 +146,15 @@ export default class Runner {
         return callback ? callback(result) : result;
     }
 
-    genFeedData(): InputFeed {
+    genFeedData() {
         const { fh, fw } = this.modelConfig.feedShape;
         const preheatFeedData: InputFeed = {
             data: new Float32Array(3 * fh * fw).fill(1.0),
             name: 'image',
             shape: [1, 3, fh, fw]
         };
-        return preheatFeedData;
+        const vars = this.model.vars;
+        vars.push(preheatFeedData);
     }
 
     updateFeedData(feed) {

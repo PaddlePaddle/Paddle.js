@@ -2,10 +2,8 @@ import Graph from '../../src/graph';
 import modelInfo from '../env/mock/model.json';
 
 describe('test graph', () => {
-    const {
-        ops
-    } = modelInfo;
-    const graphGenerator = new Graph(ops);
+
+    const graphGenerator = new Graph(modelInfo);
     const weightMap = graphGenerator.createGraph();
 
 

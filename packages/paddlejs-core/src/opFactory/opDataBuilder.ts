@@ -2,6 +2,7 @@ import { ModelVar, OpExecutor, OpInputs, OpOutputs, AttrsData } from '../commons
 import { GLOBALS } from '../globals';
 import Tensor from './tensor';
 import opBehaviors from './opBehaviors';
+import * as Utils from './utils';
 
 // model的名字和paddleJS的tensor名字mapping
 
@@ -60,12 +61,12 @@ export default class OpData {
     constructTensorData() {
         Object.keys(this.output).forEach(key => {
             this.output[key].forEach((name: string, index: number) => {
-                this.output[key][index] = this.getTensorAttr(name)[0];
+                this.output[key][index] = this.getTensorVar(name)[0];
             });
         });
 
         Object.keys(this.input).forEach(key => {
-            this.input[key] = this.getTensorAttr(this.input[key][0]);
+            this.input[key] = this.getTensorVar(this.input[key][0]);
         });
 
         for (const key in this.output) {
@@ -130,8 +131,13 @@ export default class OpData {
         return type === 'input' ? intputTensorName[name.toLowerCase()] : outTensorName[name.toLowerCase()];
     }
 
-    getTensorAttr(name: string) {
-        return this.vars.filter(item => item.name === name);
+    getTensorVar(name: string) {
+        const data = this.vars.filter(item => item.name === name || item.name === name.replace(/_packed$/, ''));
+        if (data.length > 0 && name.endsWith('_packed')) {
+            const packedData = Utils.packOpData(data[0], name);
+            return [packedData];
+        }
+        return data;
     }
 
     buildProgram() {

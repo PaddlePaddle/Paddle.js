@@ -19,6 +19,9 @@ const prefixV1
         void setOutput(float result) {
             gl_FragColor.r = result;
         }
+        void setPackedOutput(vec4 result) {
+            gl_FragColor = result;
+        }
 `;
 const prefixV2
 = `   #version 300 es
@@ -35,6 +38,9 @@ const prefixV2
     out vec4 outColor;
     void setOutput(float result) {
         outColor.r = result;
+    }
+    void setPackedOutput(vec4 result) {
+        outColor = result;
     }
 `;
 

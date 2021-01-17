@@ -2,15 +2,40 @@
  * @file ModelGraph，graph 生成器
  */
 
-import { ModelOp } from './commons/interface';
+import { ModelOp, GraphType, Model, ModelVar } from './commons/interface';
 import OpExecutor from './opFactory/opExecutor';
+import transformActions from './transform';
+
+import type Transformer from './transform/transformer';
+
+interface GraphPlugins {
+    [key: string]: Transformer[];
+}
+
+enum TransformName {
+    PreTransforms = 'preTransforms',
+    Transforms = 'transforms',
+    PostTransforms = 'postTransforms'
+}
+
+function pluckTransformFunction(plugins: GraphPlugins, name: TransformName): Transformer[] {
+    return plugins
+        ? plugins[name] || []
+        : [];
+}
 
 export default class ModelGraph {
     weightMap: OpExecutor[] = [];
-    ops: ModelOp[] = [] as ModelOp[];
+    ops: ModelOp[] = [];
+    vars: ModelVar[] = [];
+    type: GraphType = GraphType.SingleOutput;
+    plugins: GraphPlugins = null;
 
-    constructor(ops: ModelOp[]) {
-        this.ops = ops;
+    constructor(model: Model, type?: GraphType, plugins?: GraphPlugins) {
+        this.ops = model.ops;
+        this.vars = model.vars;
+        this.type = type || this.type;
+        this.plugins = plugins;
     }
 
     /**
@@ -18,10 +43,42 @@ export default class ModelGraph {
      * @returns {object} weightMap
      */
     createGraph(): OpExecutor[] {
+        this.preTransforms();
         this.createOpsMap();
         this.constructOpsMap();
         this.arrangeMap();
+        this.postTransforms();
         return this.weightMap;
+    }
+
+    /**
+     * Tranform Ops Map before Creating Ops Map
+     */
+    preTransforms(): void {
+        [...transformActions.preTransforms, ...pluckTransformFunction(this.plugins, TransformName.PreTransforms)]
+            .forEach(action => {
+                action.transform(this.ops, this.vars, this.type);
+            });
+    }
+
+    /**
+     * Tranform Op while Traversing the Ops Map
+     */
+    transforms(op: OpExecutor, opsMap: OpExecutor[]): void {
+        [...transformActions.transforms, ...pluckTransformFunction(this.plugins, TransformName.Transforms)]
+            .forEach(action => {
+                action.transform(op, this.vars, opsMap);
+            });
+    }
+
+    /**
+     * Tranform Weight Map after Arranging Map
+     */
+    postTransforms(): void {
+        [...transformActions.postTransforms, ...pluckTransformFunction(this.plugins, TransformName.PostTransforms)]
+            .forEach(action => {
+                action.transform(this.weightMap, this.vars, this.type);
+            });
     }
 
     /**
@@ -29,11 +86,14 @@ export default class ModelGraph {
      */
     private createOpsMap() {
         const opsMap: OpExecutor[] = [];
-        this.ops.forEach(item => {
+
+        for (let index = 0; index < this.ops.length; index++) {
             const idx = opsMap.length;
+            const item = this.ops[index];
             const opExecutor = new OpExecutor(item, idx);
+            this.transforms(opExecutor, opsMap);
             opsMap.push(opExecutor);
-        });
+        }
 
         this.weightMap = opsMap;
     }
@@ -42,26 +102,31 @@ export default class ModelGraph {
      * Construct Ops Relationship
      */
     private constructOpsMap() {
-        this.weightMap.forEach(item => {
+        for (let index = 0; index < this.weightMap.length; index++) {
+            const item = this.weightMap[index];
             const outputsName = item.outputsName[0];
             const next = this.getNextExecutor(this.weightMap, outputsName);
             if (next) {
                 item.next = next.id;
             }
-        });
+        }
     }
 
     private arrangeMap() {
         const executed: any = {};
         const inIndex: number[] = [];
         const idtoindex: any = {};
-        this.weightMap.forEach(item => {
-            item.outputsName.forEach(i => {
-                executed[i] = true;
-            });
-        });
 
-        this.weightMap.forEach((item, index) => {
+        for (let index = 0; index < this.weightMap.length; index++) {
+            const item = this.weightMap[index];
+            for (let index = 0; index < item.outputsName.length; index++) {
+                const output = item.outputsName[index];
+                executed[output] = true;
+            }
+        }
+
+        for (let index = 0; index < this.weightMap.length; index++) {
+            const item = this.weightMap[index];
             inIndex[index] = 0;
             idtoindex[item.id] = index;
             if (item.inputsName.length > 1) {
@@ -74,7 +139,7 @@ export default class ModelGraph {
             else {
                 inIndex[index] = item.inputsName.length;
             }
-        });
+        }
         this.topoSort(this.weightMap, inIndex, idtoindex);
     }
 

@@ -189,7 +189,15 @@ const behaviors : Behaviors = {
     },
 
     normalizeDim() {
-        const origin_shape = this.input.X[0].shape;
+        let origin_shape_temp = this.input.X[0].shape;
+        if (origin_shape_temp.length < 4) {
+            const batch = [];
+            for (let i = 0; i < (4 - origin_shape_temp.length); i++) {
+                batch.push(1);
+            }
+            origin_shape_temp = batch.concat(origin_shape_temp);
+        }
+        const origin_shape = origin_shape_temp;
         const axis = this.attrs.axis > -1 ? this.attrs.axis : origin_shape.length + this.attrs.axis;
         const dim_value: number[] = [];
         for (let index = 0; index < origin_shape[axis]; index++) {

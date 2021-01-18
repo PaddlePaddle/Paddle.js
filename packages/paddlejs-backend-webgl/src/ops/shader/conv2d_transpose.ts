@@ -13,7 +13,9 @@ function mainFunc({
     dilations = []
 }) {
     const [stride_v = 1, stride_h = 1] = strides;
-    const [padTop = 0, padLeft = 0] = paddings;
+    let [padLeft = 0, padTop = 0] = paddings;
+    padTop = filter.height_shape - padTop - 1;
+    padLeft = filter.width_shape - padLeft - 1;
     const [dilation_v = 1, dilation_h = 1] = dilations;
     return `
     // start函数

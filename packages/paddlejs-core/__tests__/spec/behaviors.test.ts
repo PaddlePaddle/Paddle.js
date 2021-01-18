@@ -281,7 +281,7 @@ describe('test op behaviors', () => {
 
     it('test behavior normalizeDim', () => {
         behaviors.normalizeDim.call(concatOp as unknown as OpData, []);
-        expect(concatOp.attrs.dim).toBe(2);
+        expect(concatOp.attrs.dim).toBe(1);
     });
 
     it('test behavior normalizeDim2', () => {

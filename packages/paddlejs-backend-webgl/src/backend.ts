@@ -128,7 +128,9 @@ export default class WebGLBackend extends PaddlejsBackend {
         const pbo = this.createPBO();
         await this.createAndWaitForFence();
         const result = this.downloadFoat32TensorFromBuffer(pbo);
-        return nhwc2nchw(result, (this.program as GLProgram).shape as number[]);
+        const [N, C, H, W] = (this.program as GLProgram).shape as number[];
+        const nhwcFetchShape = [N, H, W, C];
+        return nhwc2nchw(result, nhwcFetchShape);
     }
 
     createPBO() {

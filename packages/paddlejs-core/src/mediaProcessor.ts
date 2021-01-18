@@ -11,6 +11,7 @@ export default class MediaProcessor {
     gapFillWith: Color = '#000';
     mean: number[] = [0, 0, 0];
     std: number[] = [1, 1, 1];
+    bgr: boolean = false;
     result: Float32Array | number[] = [];
     pixelWidth: number = 224;
     pixelHeight: number = 224;
@@ -26,7 +27,7 @@ export default class MediaProcessor {
      * @param inputs
      */
     process(media, modelConfig): InputFeed[] {
-        const { inputType, feedShape, fill, targetSize, scale, mean, std } = modelConfig;
+        const { inputType, feedShape, fill, targetSize, scale, mean, std, bgr } = modelConfig;
         const { fh, fw } = feedShape;
 
         if (inputType === 'video') {
@@ -43,6 +44,7 @@ export default class MediaProcessor {
             gapFillWith: fill || this.gapFillWith,
             mean: mean || this.mean,
             std: std || this.std,
+            bgr: bgr || this.bgr,
             scale,
             targetSize,
             targetShape: [1, 3, fh, fw]

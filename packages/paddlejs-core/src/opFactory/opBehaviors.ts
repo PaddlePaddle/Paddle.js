@@ -90,21 +90,16 @@ const behaviors : Behaviors = {
     },
 
     isApplySeparableConv(tensorData = []) {
+        if (this.isPackedOp) {
+            return;
+        }
         const groups = this.attrs.groups;
-        let hasBias = false;
-        let outC;
         const filter = tensorData.filter(item => {
             const { shape, tensorName } = item;
-            if (tensorName === 'bias') {
-                hasBias = true;
-            }
             const [b, c] = shape;
-            if (!hasBias && !outC && tensorName === 'out') {
-                outC = c;
-            }
-
-            return (b === groups) && (c === 1) && (item.tensorName === 'filter');
+            return (b === groups) && (c === 1) && (tensorName === 'filter');
         });
+
         if (this.name === 'depthwise_conv2d') {
             this.name = 'conv2d';
         }
@@ -112,14 +107,6 @@ const behaviors : Behaviors = {
             // 可以执行separable conv
             this.name += '_depthwise';
         }
-        !hasBias && tensorData.push({
-            name: 'conv1_scale_offset',
-            needBatch: true,
-            persistable: true,
-            shape: [outC],
-            data: Array.from(new Float32Array(outC), () => 0),
-            tensorName: 'bias'
-        });
     },
 
     batchComputeConv2d() {
@@ -131,6 +118,31 @@ const behaviors : Behaviors = {
         }
         catch (e) {
             console.log(e);
+        }
+    },
+
+    processBias(tensorData = []) {
+        const bias = tensorData.find(item => item.tensorName === 'bias');
+        if (bias && this.isPackedOp) {
+            bias.packed = true;
+            const shape = bias.shape;
+            const newShape = [shape[shape.length - 1] / 4, 1, 1];
+            bias.shape = newShape;
+        }
+        else if (!bias) {
+            const outShape = tensorData.find(item => item.tensorName === 'out').shape;
+            const outC = outShape[outShape.length - 3];
+            const biasShape = this.isPackedOp ? [outC, 1, 1] : [outC];
+            const biasDataLength = this.isPackedOp ? outC * 4 : outC;
+            tensorData.push({
+                name: 'conv1_scale_offset_custom',
+                packed: this.isPackedOp,
+                needBatch: true,
+                persistable: true,
+                shape: biasShape,
+                data: Array.from(new Float32Array(biasDataLength), () => 0),
+                tensorName: 'bias'
+            });
         }
     },
 
@@ -177,7 +189,15 @@ const behaviors : Behaviors = {
     },
 
     normalizeDim() {
-        const origin_shape = this.input.X[0].shape;
+        let origin_shape_temp = this.input.X[0].shape;
+        if (origin_shape_temp.length < 4) {
+            const batch = [];
+            for (let i = 0; i < (4 - origin_shape_temp.length); i++) {
+                batch.push(1);
+            }
+            origin_shape_temp = batch.concat(origin_shape_temp);
+        }
+        const origin_shape = origin_shape_temp;
         const axis = this.attrs.axis > -1 ? this.attrs.axis : origin_shape.length + this.attrs.axis;
         const dim_value: number[] = [];
         for (let index = 0; index < origin_shape[axis]; index++) {

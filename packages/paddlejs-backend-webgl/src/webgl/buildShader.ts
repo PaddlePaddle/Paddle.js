@@ -11,11 +11,11 @@ import genSuffixCode from '../ops/atom/suffix';
 import * as commonFunc from '../ops/atom/common_func';
 import * as textureFunc from '../ops/atom/common_func_with_texture';
 
-export default function buildShader(textureConf, type, inputTensors, fShaderParams, runtime: number) {
+export default function buildShader(textureConf, type, inputTensors, fShaderParams, runtime: number, isPacked = false) {
     let code = '';
     try {
 
-        const opName = getExactOpName(type, fShaderParams);
+        const opName = getExactOpName(type, fShaderParams, isPacked);
 
         const { params = {}, mainFunc, textureFuncConf = {}, commonFuncConf } = ops[opName];
 

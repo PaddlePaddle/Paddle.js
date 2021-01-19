@@ -1,7 +1,8 @@
-import { ModelVar, OpExecutor, OpInputs, OpOutputs, AttrsData, InputFeed } from '../commons/interface';
+import { ModelVar, OpExecutor, OpInputs, OpOutputs, AttrsData } from '../commons/interface';
 import { GLOBALS } from '../globals';
 import Tensor from './tensor';
 import opBehaviors from './opBehaviors';
+import * as Utils from './utils';
 
 // model的名字和paddleJS的tensor名字mapping
 
@@ -21,11 +22,10 @@ export default class OpData {
     iLayer: number = 0;
     program: string[] = [];
     renderData: object[] = [];
-    inputFeed: InputFeed[] = [];
     tensorData: ModelVar[] = [];
     isFinalOp: boolean = false;
 
-    constructor(op: OpExecutor, iLayer: number, vars: ModelVar[], feed: InputFeed[], isFinalOp: boolean) {
+    constructor(op: OpExecutor, iLayer: number, vars: ModelVar[], isFinalOp: boolean) {
         const {
             type,
             inputs,
@@ -42,7 +42,6 @@ export default class OpData {
         this.vars = vars;
         this.iLayer = iLayer;
         this.isFinalOp = isFinalOp;
-        this.inputFeed = feed;
         this.input = inputs;
         this.output = outputs;
         // tensor数据
@@ -62,18 +61,14 @@ export default class OpData {
     constructTensorData() {
         Object.keys(this.output).forEach(key => {
             this.output[key].forEach((name: string, index: number) => {
-                this.output[key][index] = this.getTensorAttr(name)[0];
+                this.output[key][index] = this.getTensorVar(name)[0];
             });
         });
 
         Object.keys(this.input).forEach(key => {
-            if (this.input[key][0] === 'image') {
-                this.input[key] = this.inputFeed;
-            }
-            else {
-                this.input[key] = this.getTensorAttr(this.input[key][0]);
-            }
+            this.input[key] = this.getTensorVar(this.input[key][0]);
         });
+
         for (const key in this.output) {
             if (Object.prototype.hasOwnProperty.call(this.output, key)) {
                 try {
@@ -90,12 +85,12 @@ export default class OpData {
                 catch (e) {
                     console.log(e);
                 }
-
             }
         }
+
         for (const key in this.input) {
             if (Object.prototype.hasOwnProperty.call(this.input, key)) {
-                const data = this.input[key] || [{}];
+                const data = this.input[key].length > 0 ? this.input[key] : [{}];
                 // 默认取第一个数据
                 const tensorName = this.getExactTensorName(key, 'input');
                 if (tensorName) {
@@ -136,8 +131,13 @@ export default class OpData {
         return type === 'input' ? intputTensorName[name.toLowerCase()] : outTensorName[name.toLowerCase()];
     }
 
-    getTensorAttr(name: string) {
-        return this.vars.filter(item => item.name === name);
+    getTensorVar(name: string) {
+        const data = this.vars.filter(item => item.name === name || item.name === name.replace(/_packed$/, ''));
+        if (data.length > 0 && name.endsWith('_packed')) {
+            const packedData = Utils.packOpData(data[0], name);
+            return [packedData];
+        }
+        return data;
     }
 
     buildProgram() {

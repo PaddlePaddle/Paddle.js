@@ -20,16 +20,16 @@ function mainFunc(
         else if (${perm_size} == 2) {
             o = getValueFromTensorPos_origin(
                 oPos[0], oPos[1],
-                oPos[(2 + ${perm_0})>3?3:(2 + ${perm_0})],
-                oPos[(2 + ${perm_1})>3?3:(2 + ${perm_1})]
+                oPos[(2 + ${perm_0}) > 3 ? 3 : (2 + ${perm_0})],
+                oPos[(2 + ${perm_1}) > 3 ? 3 : (2 + ${perm_1})]
             );
         }
         else if (${perm_size} == 3) {
             o = getValueFromTensorPos_origin(
                 oPos[0],
-                oPos[(1 + ${perm_0})>3?3:(1 + ${perm_0})],
-                oPos[(1 + ${perm_1})>3?3:(1 + ${perm_1})],
-                oPos[(1 + ${perm_2})>3?3:(1 + ${perm_2})]
+                oPos[(1 + ${perm_0}) > 3 ? 3 : (1 + ${perm_0})],
+                oPos[(1 + ${perm_1}) > 3 ? 3 : (1 + ${perm_1})],
+                oPos[(1 + ${perm_2}) > 3 ? 3 : (1 + ${perm_2})]
             );
         }
         else if (${perm_size} == 4) {

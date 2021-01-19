@@ -25,7 +25,7 @@ export default class OpExecutor {
             type
         } = op;
 
-        this.id = +new Date() + type + Math.floor(Math.random() * 10 + 1) + idx;
+        this.id = `${type}_${+new Date()}_${idx}`;
         this.inputs = inputs;
         this.outputs = outputs;
         this.attrs = attrs;

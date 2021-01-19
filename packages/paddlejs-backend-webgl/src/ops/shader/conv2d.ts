@@ -129,7 +129,8 @@ export default {
     behaviors: [
         'adaptPaddings',
         'isApplySeparableConv',
-        'batchComputeConv2d'
+        'batchComputeConv2d',
+        'processBias'
     ]
 };
 

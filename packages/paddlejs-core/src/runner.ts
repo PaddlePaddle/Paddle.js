@@ -1,15 +1,16 @@
 import Loader from './loader';
 import Graph from './graph';
-import { Model, InputFeed, ModelVar } from './commons/interface';
+import { Model, InputFeed, ModelVar, GraphType } from './commons/interface';
 import OpData from './opFactory/opDataBuilder';
 import { GLOBALS } from './globals';
 import MediaProcessor from './mediaProcessor';
 import env from './env';
 
 import type OpExecutor from './opFactory/opExecutor';
+import type Transformer from './transform/transformer';
 
 interface ModelConfig {
-    modelPath: string; // 模型路径
+    modelPath: string;
     feedShape: {
         fw: number;
         fh: number;
@@ -24,7 +25,13 @@ interface ModelConfig {
     std?: number[];
     bgr?: boolean;
     scale?: number;
-    inputType?: string; // image | video
+    inputType?: string; // image | video,
+    type?: GraphType; // model type
+    plugins?: { // tranform graph plugins
+        preTransforms?: Transformer[]; // before creating graph
+        transforms?: Transformer[]; // while traversing the ops map
+        postTransforms?: Transformer[]; // after creating graph
+    };
 }
 
 export default class Runner {
@@ -48,7 +55,6 @@ export default class Runner {
     isExecuted: boolean = false;
     test: boolean = false;
     graphGenerator: Graph = {} as Graph;
-    feedData: InputFeed[] = [];
     mediaProcessor: MediaProcessor | null = null;
 
     constructor(options: ModelConfig | null) {
@@ -73,24 +79,24 @@ export default class Runner {
         await GLOBALS.backendInstance.init();
         this.isExecuted = false;
         await this.load();
+        this.genFeedData();
         this.genGraph();
+        this.genOpData();
         return await this.preheat();
     }
 
     async load() {
         const { modelPath, fileCount } = this.modelConfig;
-
         const loader = new Loader(modelPath, fileCount);
         this.model = await loader.load();
     }
 
     genGraph() {
-        this.graphGenerator = new Graph(this.model.ops);
+        this.graphGenerator = new Graph(this.model, this.modelConfig.type);
         this.weightMap = this.graphGenerator.createGraph();
     }
 
     genOpData() {
-        const vars = this.model.vars;
         let iLayer = 0;
         this.weightMap.forEach((op: OpExecutor, index: number) => {
             const type = op.type;
@@ -100,8 +106,7 @@ export default class Runner {
                 const opData = new OpData(
                     op,
                     iLayer,
-                    vars,
-                    this.feedData,
+                    this.model.vars,
                     isFinalOp
                 );
                 op.opData = opData;
@@ -111,15 +116,7 @@ export default class Runner {
 
     async preheat() {
         await this.checkModelLoaded();
-        const { fh, fw } = this.modelConfig.feedShape;
-        const preheatFeed: InputFeed[] = [
-            {
-                data: new Float32Array(3 * fh * fw).fill(1.0),
-                name: 'image',
-                shape: [1, 3, fh, fw]
-            }
-        ];
-        const result = await this.execute(preheatFeed);
+        const result = await this.execute();
         this.isExecuted = true;
         return result;
     }
@@ -128,7 +125,9 @@ export default class Runner {
         if (this.weightMap.length === 0) {
             console.info('It\'s better to preheat the model before running.');
             await this.load();
+            this.genFeedData();
             this.genGraph();
+            this.genOpData();
             this.isExecuted = false;
         }
     }
@@ -142,8 +141,20 @@ export default class Runner {
             media,
             this.modelConfig
         );
-        const result = await this.execute(inputFeed);
+        this.updateFeedData(inputFeed);
+        const result = await this.execute();
         return callback ? callback(result) : result;
+    }
+
+    genFeedData() {
+        const { fh, fw } = this.modelConfig.feedShape;
+        const preheatFeedData: InputFeed = {
+            data: new Float32Array(3 * fh * fw).fill(1.0),
+            name: 'image',
+            shape: [1, 3, fh, fw]
+        };
+        const vars = this.model.vars;
+        vars.push(preheatFeedData);
     }
 
     updateFeedData(feed) {
@@ -160,14 +171,7 @@ export default class Runner {
         imageData.data = feed[0].data;
     }
 
-    async execute(feed) {
-        this.feedData = feed;
-        if (!this.isExecuted) {
-            this.genOpData();
-        }
-        else {
-            this.updateFeedData(feed);
-        }
+    async execute() {
         const feedOp = this.graphGenerator.getFeedExecutor() as OpExecutor;
         this.executeOp(feedOp);
         return await this.read();

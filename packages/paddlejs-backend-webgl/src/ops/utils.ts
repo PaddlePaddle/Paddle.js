@@ -98,7 +98,7 @@ function getTensorParams(inputTensors: Tensor[], ownParams: [], fShaderParams: o
 }
 
 
-function getExactOpName(name, params) {
+function getExactOpName(name, params, isPacked) {
     if (name.indexOf('conv2d-elementwise_add') > -1) {
         return 'conv2d_elementwise_add';
     }
@@ -106,7 +106,7 @@ function getExactOpName(name, params) {
         return 'concat_mul';
     }
 
-    return name;
+    return isPacked ? `${name}_packing` : name;
 }
 
 export {

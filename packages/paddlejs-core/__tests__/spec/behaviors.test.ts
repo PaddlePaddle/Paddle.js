@@ -281,7 +281,7 @@ describe('test op behaviors', () => {
 
     it('test behavior normalizeDim', () => {
         behaviors.normalizeDim.call(concatOp as unknown as OpData, []);
-        expect(concatOp.attrs.dim).toBe(2);
+        expect(concatOp.attrs.dim).toBe(1);
     });
 
     it('test behavior normalizeDim2', () => {
@@ -292,11 +292,13 @@ describe('test op behaviors', () => {
     it('test behavior isApplySeparableConv', () => {
         behaviors.isApplySeparableConv.call(conv2dOp as unknown as OpData, conv2dOp.tensorData);
         expect(conv2dOp.name).toBe('conv2d_depthwise');
+    });
+
+    it('test behavior processBias', () => {
+        behaviors.processBias.call(conv2dOp as unknown as OpData, conv2dOp.tensorData);
         const bias = conv2dOp.tensorData.find(item => item.tensorName === 'bias') as ModelVar;
         expect(bias.shape).toEqual([1]);
-
         bias.shape = [10];
-        behaviors.isApplySeparableConv.call(conv2dOp as unknown as OpData, conv2dOp.tensorData);
         expect(bias.shape).toEqual([10]);
     });
 

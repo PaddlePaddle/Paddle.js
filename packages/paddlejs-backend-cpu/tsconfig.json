@@ -9,6 +9,8 @@
     "compilerOptions": {
         "outDir": "dist",
         "baseUrl": ".",
+        "lib": ["ESNext"],
+        "types": ["src/@types/definition.d.ts"],
         "paths": {
             "@paddlejs/paddlejs-core": ["../paddlejs-core/src/index"]
         }

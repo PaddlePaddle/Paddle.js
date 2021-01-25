@@ -1,0 +1,23 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jsonify": "0.0.0",
+    "ts-node": "^9.1.1"
+  },
+  "dependencies": {
+    "@paddlejs/paddlejs-core": "0.0.2-beta.13",
+    "aes-js": "^3.1.2",
+    "as-bind": "^0.5.0",
+    "ejs": "^3.1.5",
+    "express": "^4.17.1",
+    "node-fetch": "^2.6.1"
+  }
+}

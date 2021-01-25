@@ -11,7 +11,9 @@
     "cpu": "lerna run start  --scope=@paddlejs/paddlejs-backend-cpu  --stream",
     "webgl": "lerna run start  --scope=@paddlejs/paddlejs-backend-webgl  --stream",
     "webgpu": "lerna run start  --scope=@paddlejs/paddlejs-backend-webgpu  --stream",
+    "enc": "lerna run start  --scope=@paddlejs/paddlejs-enc --stream",
     "build:webgpu": "lerna run build  --scope=@paddlejs/paddlejs-backend-webgpu  --stream",
+    "build:cpu": "lerna run build  --scope=@paddlejs/paddlejs-backend-cpu  --stream",
     "build:webgl": "lerna run build  --scope=@paddlejs/paddlejs-backend-webgl  --stream",
     "build:core": "lerna run build  --scope=@paddlejs/paddlejs-core  --stream"
   },
@@ -70,9 +72,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@paddlejs/paddlejs-backend-cpu": "file:packages/paddlejs-backend-cpu",
     "@paddlejs/paddlejs-backend-webgl": "file:packages/paddlejs-backend-webgl",
     "@paddlejs/paddlejs-backend-webgpu": "file:packages/paddlejs-backend-webgpu",
-    "@paddlejs/paddlejs-backend-cpu": "file:packages/paddlejs-backend-cpu",
-    "@paddlejs/paddlejs-core": "file:packages/paddlejs-core"
+    "@paddlejs/paddlejs-core": "file:packages/paddlejs-core",
+    "@paddlejs/paddlejs-enc": "file:packages/paddlejs-enc"
   }
 }

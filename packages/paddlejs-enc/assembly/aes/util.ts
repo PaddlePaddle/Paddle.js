@@ -5,6 +5,8 @@
  * @LastEditTime: 2020-11-25 21:27:22
  */
 import { Hex } from './constants';
+import * as console from "../helper/outConsole";
+
 
 export function createArray(length: i32): u8[] {
     let ret: u8[] = [];
@@ -91,7 +93,11 @@ export function fromBytes(bytes: u8[]): string {
             out.push(u);
         }
     }
-    return out.reduce((prev, cur: i32) => prev + String.fromCharCode(cur), '');
+    const res = out.reduce((prev, cur: i32) => {
+        return prev + String.fromCharCode(cur);
+    }, '');
+
+    return res;
 }
 
 export function hex2Bytes(text: string): u8[] {

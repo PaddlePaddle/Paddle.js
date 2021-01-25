@@ -1,4 +1,4 @@
-import { JSON } from '../helper/json';
+import { JSON } from '../helper/json/JSON';
 
 function getStr(key: string, data: JSON.Obj): string {
     const str = data.get(key);

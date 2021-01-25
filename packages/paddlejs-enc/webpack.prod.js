@@ -4,11 +4,12 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 module.exports = {
     mode: 'production',
     entry: {
-        index: ['./src/index']
+        index: 'assembly/index.ts',
+        enc: './src/index'
     },
     resolve: {
         // Add ".ts" and ".tsx" as resolvable extensions.
-        extensions: ['.ts', '.js']
+        extensions: ['.ts', '.js'],
     },
     plugins: [
         new CleanWebpackPlugin({
@@ -17,6 +18,17 @@ module.exports = {
     ],
     module: {
         rules: [
+            {
+                test: /\.ts?$/,
+                loader: 'assemblyscript-typescript-loader',
+                include:/assemblyscript/,//to avoid a conflict with other ts file who use 'ts-load',so you can division them with prop 'include'
+                options: {
+                    limit: 1000,
+                    name: `build/[name].[hash:8].wasm`,
+                    sourceMap: true
+                },
+                inclue: /assembly/
+            },
             {
                 test: /\.ts$/,
                 loader: 'ts-loader',
@@ -27,7 +39,6 @@ module.exports = {
     output: {
         filename: '[name].js',
         path: path.resolve(__dirname, 'lib'),
-        globalObject: 'this',
         libraryTarget: 'umd'
     }
 };

@@ -1,5 +1,6 @@
 import { Tensor, Attrs, TensorMap } from './Tensor';
-import { JSON } from '../helper/json/index';
+import { JSON } from '../helper/json';
+import * as console from "../helper/outConsole";
 import { computeConv2DInfo, TensorBuffer, computeStrides } from './conv2d_utils';
 
 const tensorMap = new TensorMap();

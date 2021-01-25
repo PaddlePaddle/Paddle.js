@@ -3,7 +3,7 @@
  * @author yueshuangyan
  */
 
-import * as conv2d from './conv2d';
+import conv2d from './conv2d';
 
 const ops = {
     conv2d

@@ -1,10 +1,12 @@
 import * as humanseg from '../src/index';
 
-load();
+
 
 async function load() {
     await humanseg.load();
 }
+
+load();
 
 async function run(input) {
     const {

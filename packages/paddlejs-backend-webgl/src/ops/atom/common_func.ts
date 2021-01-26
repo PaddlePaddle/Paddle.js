@@ -40,11 +40,12 @@ float sigmoid(float x, float y, float z) {
     return result;
 }`;
 
-const softmax = `
-float softmax(float x, float p, float b) {
-    float result = exp(x) / (10.0 * exp(x));
-    return result;
-}`;
+const hardSigmoid = `
+    float hardSigmoid(float x, float slope, float offset) {
+        float result = max(0.0, min(1.0, slope * x + offset));
+        return result;
+    }
+`;
 
 export {
     prelu,
@@ -52,7 +53,7 @@ export {
     leakyRelu,
     scale,
     sigmoid,
-    softmax,
+    hardSigmoid,
     transferFromNHWCtoNCHW
 };
 

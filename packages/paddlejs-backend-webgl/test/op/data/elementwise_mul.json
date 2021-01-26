@@ -1,0 +1,66 @@
+{
+    "ops": [
+        {
+            "attrs": {
+                "axis": 0,
+                "use_mkldnn": false,
+                "x_data_format": "",
+                "y_data_format": ""
+            },
+            "inputs": {
+                "X": [
+                    "fc_0.tmp_0"
+                ],
+                "Y": [
+                    "fc7_offset"
+                ]
+            },
+            "outputs": {
+                "Out": [
+                    "fc_0.tmp_1"
+                ]
+            },
+            "type": "elementwise_mul"
+        }
+    ],
+    "vars": [
+        {
+            "data": [
+                1, 2, 3, 4,
+                1, 1, 2, 2,
+                1, 1, 1, 1
+            ],
+            "name": "fc_0.tmp_0",
+            "shape": [
+                3, 2 ,2
+            ]
+        },
+        {
+            "data": [
+                1, 2, 3, 4,
+                1, 1, 2, 2,
+                1, 1, 1, 1
+            ],
+            "name": "fc_0.tmp_Y",
+            "shape": [
+                3, 2 ,2
+            ]
+        },
+        {
+            "data": [
+                1, 2, 3
+            ],
+            "name": "fc7_offset",
+            "shape": [
+                3, 1, 1
+            ]
+        },
+        {
+            "data": [1, 2, 3, 4, 2, 2, 4, 4, 3, 3, 3, 3],
+            "name": "fc_0.tmp_1",
+            "shape": [
+                3, 2 ,2
+            ]
+        }
+    ]
+}

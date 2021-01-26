@@ -9,10 +9,10 @@ import { OpData } from './types';
 
 export default class CpuBackend extends PaddlejsBackend {
     program?: Program;
-    dataMap: object;
+    dataMap?: Map<string, number[]>;
     constructor() {
         super();
-        this.dataMap = {};
+        this.dataMap = new Map();
     }
 
     async init() {
@@ -31,18 +31,19 @@ export default class CpuBackend extends PaddlejsBackend {
         const program = this.program as Program;
 
         // get out tensor data of prev layers from dataMap
-        for (const tensor of opData.tensorData) {
-            const { data, name } = tensor;
-            if (!data && this.dataMap[name]) {
-                tensor.data = this.dataMap[name];
-            }
-        }
-        const data = program.main(opData);
-        this.dataMap[program.outName] = data;
+        // for (const tensor of opData.tensorData) {
+        //     const { data, name } = tensor;
+        //     if (!data && this.dataMap[name]) {
+        //         tensor.data = this.dataMap[name];
+        //     }
+        // }
+        // @ts-ignore
+        program.main(new Obj(opData), this.dataMap);
+        // this.dataMap[program.outName] = data;
     }
 
     async read({ name }) {
-        const data = this.dataMap[name];
+        const data = this.dataMap.get(name);
         if (!data) {
             console.error('未能预测出结果，请检查预测过程');
         }
@@ -50,6 +51,6 @@ export default class CpuBackend extends PaddlejsBackend {
     }
 
     dispose() {
-        this.dataMap = {};
+        this.dataMap = null;
     }
 }

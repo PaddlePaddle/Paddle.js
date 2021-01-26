@@ -8,8 +8,8 @@
 		"asbuild:untouched": "asc assembly/index.ts -b build/untouched.wasm -t build/untouched.wat --sourceMap --debug --runtime full",
 		"asbuild:optimized": "asc assembly/index.ts -b build/optimized.wasm -t build/optimized.wat --sourceMap --optimize --runtime full",
 		"asbuild": "npm run asbuild:untouched && npm run asbuild:optimized",
-        "asbuild:examples": "asc assembly/index.ts -b examples/public/optimized.wasm -t examples/public/optimized.wat --sourceMap --optimize --runtime full",
-        "asbuild:watch": "onchange -i 'assembly/**' -- npm run asbuild:optimized"
+		"asbuild:examples": "asc assembly/index.ts -b examples/public/optimized.wasm -t examples/public/optimized.wat --sourceMap --optimize --runtime full",
+		"asbuild:watch": "onchange -i 'assembly/**' -- npm run asbuild:optimized"
 	},
 	"author": "",
 	"license": "ISC",

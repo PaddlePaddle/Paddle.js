@@ -3,14 +3,19 @@
     "include": [
         "src/"
     ],
+    "paths": {
+        "*": ["types/*.d.ts"]
+    },
     "exclude": [
         "node_modules/"
     ],
     "compilerOptions": {
         "outDir": "dist",
         "baseUrl": ".",
-        "lib": ["ESNext"],
-        "types": ["src/@types/definition.d.ts"],
+        "lib": ["ESNext", "dom"],
+        "typeRoots": [
+            "src/@types"
+        ],
         "paths": {
             "@paddlejs/paddlejs-core": ["../paddlejs-core/src/index"]
         }

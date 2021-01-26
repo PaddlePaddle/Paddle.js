@@ -9,6 +9,7 @@ import * as console from "./helper/outConsole";
 import CTR from './aes/aes_CTR';
 import { toBytes, fromBytes, hex2Bytes } from './aes/util';
 import opExecutor from './opExecutor';
+import "./helper/json/JSON";
 
 export function loadModel(hex:string): void {
     const bytes = hex2Bytes(hex);

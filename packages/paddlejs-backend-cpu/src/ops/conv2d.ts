@@ -1,5 +1,4 @@
 import { Tensor, Attrs, TensorMap } from './Tensor';
-import { JSON } from '../helper/json/index';
 import { computeConv2DInfo, TensorBuffer, computeStrides } from './conv2d_utils';
 
 const tensorMap = new TensorMap();
@@ -95,13 +94,13 @@ function conv2d(tensorMap: TensorMap, attrs: Attrs): f32[] {
     return yVals;
 }
 
-function mainFunc(data: JSON.Obj, tensorDataMap: Map<string, f32[]>): f32[] {
-    const tensorDataList = ((data as JSON.Obj).get('tensorData') as JSON.Arr)._arr;
-    const attrs = new Attrs((data as JSON.Obj).get('attrs') as JSON.Obj);
+function mainFunc(data: Obj, tensorDataMap: Map<string, f32[]>): f32[] {
+    const tensorDataList = ((data as Obj).get('tensorData') as Arr)._arr;
+    const attrs = new Attrs((data as Obj).get('attrs') as Obj);
 
-    tensorDataList.forEach((tensor, index) => {
-        if (tensor instanceof JSON.Obj) {
-            const tensorObj = tensor as JSON.Obj;
+    (tensorDataList as Value[]).forEach((tensor) => {
+        // if (tensor instanceof Obj) {
+            const tensorObj = tensor as Obj;
 
             const opTensor = new Tensor(tensorObj);
             const tensorName = opTensor.tensorName;
@@ -121,7 +120,7 @@ function mainFunc(data: JSON.Obj, tensorDataMap: Map<string, f32[]>): f32[] {
             else if (tensorName == 'out') {
                 tensorMap.out = opTensor;
             }
-        }
+        // }
     });
 
     const result = conv2d(tensorMap, attrs);

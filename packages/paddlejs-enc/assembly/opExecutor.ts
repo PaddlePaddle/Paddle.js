@@ -1,14 +1,17 @@
-import { JSON } from "./helper/json/index";
-import { mainFunc } from './ops/conv2d';
+// import { JSON } from "./helper/json";
+import { mainFunc } from '../../paddlejs-backend-cpu/src/ops/conv2d';
 
 const tensorDataMap = new Map<string, f32[]>();
 function opExecutor(weightMapStr: string, fetchTensorName: string): f32[] {
     const jsonObj = JSON.parse(weightMapStr);
 
-    const opDataList = (jsonObj as JSON.Arr)._arr;
+    // @ts-ignore
+    const opDataList = ((jsonObj as Arr)._arr as Value[]);
+
 
     opDataList.forEach((opData, index) => {
-        const opInfo = opData as JSON.Obj;
+        // @ts-ignore
+        const opInfo = opData as Obj;
         mainFunc(opInfo, tensorDataMap);
     });
 

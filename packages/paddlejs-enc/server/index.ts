@@ -1,7 +1,8 @@
-import { Runner } from "@paddlejs/paddlejs-core/src";
+/// <reference types="./@types/definition" />
+
+import { Runner, env } from "../../paddlejs-core/src";
 import { GLOBALS } from '@paddlejs/paddlejs-core/src/globals';
 import '../../paddlejs-backend-cpu/src/index';
-import env from "@paddlejs/paddlejs-core/src/env";
 import * as express from 'express';
 import * as aes from  'aes-js';
 import { join } from 'path';
@@ -13,6 +14,7 @@ app.use(express.static(join(__dirname, 'public')));
 // const modelPath = 'https://paddlejs.cdn.bcebos.com/models/tinyYolo/model.json';
 const modelPath = 'http://localhost:3000/model.json';
 
+// @ts-ignore
 app.all('*', function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
@@ -70,10 +72,9 @@ app.get('/model', async function(_, res) {
     //         return [1, 1, 1, 1];
     //     }
     // };
+    // await runner.init();
 
-	await runner.load();
-    await runner.genGraph();
-    await runner.preheat();
+    await runner.init();
 
 	const key = new Uint8Array([ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ]);
     const iv = new Uint8Array([ 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34,35, 36 ]);
@@ -92,7 +93,7 @@ function connectOps(weightMap) {
     }).map(op => {
         const tensorData = op.opData.tensorData.map(tensor => {
             if (tensor.data) {
-                tensor.data =  Array.from(tensor.data);
+                tensor.data = Array.from(tensor.data);
             }
 
             if (tensor.tensorName === 'filter') {

@@ -52,7 +52,7 @@ interface Behavior {
 }
 
 export interface OpInfo {
-    params: string[] | Function;
+    params?: string[] | Function;
     main?: string;
     mainFunc?: Function;
     textureFuncConf?: {

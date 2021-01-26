@@ -1,4 +1,3 @@
-import { JSON } from '../helper/json';
 import {getIntArray, getFloatArray, getStr} from './utils';
 
 function padToFourDimShape(shape: i32[]): i32[] {
@@ -21,7 +20,7 @@ class Tensor {
     data: f32[] = [];
     tensorName: string = '';
 
-    constructor(data: JSON.Obj) {
+    constructor(data: Obj) {
         this.name = getStr('name', data);
         this.tensorName = getStr('tensorName', data);
         this.shape = padToFourDimShape(getIntArray('shape', data));
@@ -33,7 +32,7 @@ class Attrs {
     strides: i32[] = [];
     paddings: i32[] = [];
     dilations: i32[] = [];
-    constructor (data: JSON.Obj) {
+    constructor (data: Obj) {
         this.strides = getIntArray('strides', data);
         this.paddings = getIntArray('paddings', data);
         this.dilations = getIntArray('dilations', data);
@@ -47,7 +46,7 @@ class TensorMap {
     out: Tensor;
 
     constructor() {
-        const initialObj = new JSON.Obj();
+        const initialObj = new Obj();
         initialObj.set('name', '');
         initialObj.set('shape', []);
         initialObj.set('data', []);

@@ -128,7 +128,7 @@ class TensorBuffer {
     constructor(shape: i32[]) {
         this.shape = shape;
         this.size = sizeFromShape(shape);
-        this.values = new Array<f32>(this.size);
+        this.values = new Array<f32>(this.size).fill(0.0);
         this.strides = computeStrides(shape);
     }
 
@@ -160,7 +160,7 @@ class TensorBuffer {
             locList = [0];
         }
         let i = 0;
-        locList.forEach((loc, index) => {
+        locList.forEach((loc) => {
             if (loc < 0 || loc >= this.shape[i]) {
                 const msg = `Requested out of range element at ${locList}.
                         Buffer shape=${this.shape}`;

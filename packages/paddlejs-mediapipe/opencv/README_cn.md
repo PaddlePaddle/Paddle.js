@@ -3,6 +3,7 @@
 # opencv_blur.js
 
 一个轻量级 opencv 库，目前包含模块 **core imgproc js video**，主要用于边缘模糊处理。
+修改 [opencv](/https://github.com/opencv/opencv) build_js 构建脚本，打包少量模块和api。
 
 # 模块
 

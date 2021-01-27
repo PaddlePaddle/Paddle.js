@@ -4,6 +4,7 @@
 
 import { Runner } from '@paddlejs/paddlejs-core';
 import '@paddlejs/paddlejs-backend-webgl';
+import cv from '@paddlejs-mediapipe/opencv/library/opencv_blur';
 
 let runner = null as Runner;
 let inputImage = null;
@@ -51,7 +52,6 @@ export async function getGrayValue(image: HTMLImageElement) {
  * @param {Array} gray_values gray_values of the input image
  */
 export function drawHumanSeg(canvas: HTMLCanvasElement, gray_values: number[]) {
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     const {
         naturalWidth,
         naturalHeight
@@ -69,8 +69,17 @@ export function drawHumanSeg(canvas: HTMLCanvasElement, gray_values: number[]) {
         tempData.data[i * 4 + 2] = 255;
         tempData.data[i * 4 + 3] = gray_values[i] * 255;
     }
+    // threshold mask
+    thresholdMask(tempData, 0.4, 0.8);
+    // blur border
+    tempContext.putImageData(tempData, 0, 0);
+    const out = blurBorder(tempCanvas);
+    for (let i = 0; i < WIDTH * HEIGHT; i++) {
+        tempData.data[i * 4 + 3] = out.data[i * 4 + 3];
+    }
     tempContext.putImageData(tempData, 0, 0);
     // stretch origin canvas to image size
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     ctx.drawImage(tempCanvas, 0, 0, naturalWidth, naturalHeight);
     const tempScaleData = ctx.getImageData(0, 0, naturalWidth, naturalHeight);
 
@@ -94,7 +103,6 @@ export function drawHumanSeg(canvas: HTMLCanvasElement, gray_values: number[]) {
  * @param {Object} dark use dark mode
  */
 export function drawMask(canvas: HTMLCanvasElement, gray_values: number[], dark?: boolean) {
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     const {
         naturalWidth,
         naturalHeight
@@ -112,8 +120,18 @@ export function drawMask(canvas: HTMLCanvasElement, gray_values: number[], dark?
         tempData.data[i * 4 + 2] = 255;
         tempData.data[i * 4 + 3] = 255 - gray_values[i] * 255;
     }
+
+    // threshold mask
+    thresholdMask(tempData, 0.4, 0.8);
+    // blur border
+    tempContext.putImageData(tempData, 0, 0);
+    const out = blurBorder(tempCanvas);
+    for (let i = 0; i < WIDTH * HEIGHT; i++) {
+        tempData.data[i * 4 + 3] = out.data[i * 4 + 3];
+    }
     tempContext.putImageData(tempData, 0, 0);
     // stretch origin canvas to image size
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     ctx.drawImage(tempCanvas, 0, 0, naturalWidth, naturalHeight);
     const tempScaleData = ctx.getImageData(0, 0, naturalWidth, naturalHeight);
 
@@ -128,4 +146,28 @@ export function drawMask(canvas: HTMLCanvasElement, gray_values: number[], dark?
     }
     tempContext.clearRect(0, 0, naturalWidth, naturalHeight);
     ctx.putImageData(tempScaleData, 0, 0);
+}
+
+function thresholdMask(img, threshBg, threshFg) {
+    for (let i = 0; i < img.data.length; i++) {
+        const tmp = (img.data[i] - threshBg * 255.0) / (threshFg - threshBg);
+        if (tmp < 0) {
+            img.data[i] = 0;
+        }
+        else if (tmp > 255) {
+            img.data[i] = 255;
+        }
+        else {
+            img.data[i] = tmp;
+        }
+    }
+}
+
+function blurBorder(canvas: HTMLCanvasElement) {
+    const logit = cv.imread(canvas);
+    const dst = new cv.Mat();
+    const ksize = new cv.Size(5, 5);
+    const anchor = new cv.Point(-1, -1);
+    cv.blur(logit, dst, ksize, anchor, cv.BORDER_DEFAULT);
+    return dst;
 }

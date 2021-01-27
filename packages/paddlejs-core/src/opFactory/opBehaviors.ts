@@ -164,10 +164,22 @@ const behaviors : Behaviors = {
         this.data['active_function'] = 'relu6';
     },
 
+    transToHardSigmoid() {
+        this.data['multi_value'] = this.attrs['slope'] || 0.2;
+        this.data['bias_value'] = this.attrs['offset'] || 0.5;
+        this.data['active_function'] = 'hardSigmoid';
+    },
+
     transToLeakyrelu() {
         this.data['multi_value'] = this.attrs.alpha;
         this.data['active_function'] = 'leakyRelu';
         this.name = 'relu';
+    },
+
+    transToScale() {
+        this.data['multi_value'] = this.attrs['scale'] || 1;
+        this.data['bias_value'] = this.attrs['bias'] || 0;
+        this.data['active_function'] = 'scale';
     },
 
     setActiveFunc() {

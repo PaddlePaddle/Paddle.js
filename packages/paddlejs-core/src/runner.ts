@@ -27,6 +27,7 @@ interface ModelConfig {
     scale?: number;
     inputType?: string; // image | video,
     type?: GraphType; // model type
+    needPreheat?: boolean;
     plugins?: { // tranform graph plugins
         preTransforms?: Transformer[]; // before creating graph
         transforms?: Transformer[]; // while traversing the ops map
@@ -36,19 +37,7 @@ interface ModelConfig {
 
 export default class Runner {
     // instance field
-    modelConfig: ModelConfig = {
-        modelPath: '',
-        feedShape: {
-            fw: 224,
-            fh: 224
-        },
-        targetSize: {
-            height: 224,
-            width: 224
-        },
-        fileCount: 1
-    };
-
+    modelConfig: ModelConfig = {} as ModelConfig;
     isPaused: boolean = false;
     model: Model = {} as Model;
     weightMap: OpExecutor[] = [];
@@ -56,6 +45,7 @@ export default class Runner {
     test: boolean = false;
     graphGenerator: Graph = {} as Graph;
     mediaProcessor: MediaProcessor | null = null;
+    needPreheat: boolean = true;
 
     constructor(options: ModelConfig | null) {
         const opts = {
@@ -64,6 +54,7 @@ export default class Runner {
             scale: 256
         };
         this.modelConfig = Object.assign(opts, options);
+        this.needPreheat = options.needPreheat === undefined ? true : options.needPreheat;
         this.weightMap = [];
         if (env.get('platform') !== 'node') {
             this.mediaProcessor = new MediaProcessor();
@@ -82,7 +73,10 @@ export default class Runner {
         this.genFeedData();
         this.genGraph();
         this.genOpData();
-        return await this.preheat();
+        if (this.needPreheat) {
+            console.log('loaded');
+            return await this.preheat();
+        }
     }
 
     async load() {
@@ -143,6 +137,7 @@ export default class Runner {
         );
         this.updateFeedData(inputFeed);
         const result = await this.execute();
+        this.isExecuted = true;
         return callback ? callback(result) : result;
     }
 

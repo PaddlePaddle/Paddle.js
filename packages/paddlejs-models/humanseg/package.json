@@ -10,8 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@paddlejs/paddlejs-core": "0.0.2-beta.10",
-    "@paddlejs/paddlejs-backend-webgl": "0.0.2-beta.4"
+    "@paddlejs-mediapipe/opencv": "^1.0.0",
+    "@paddlejs/paddlejs-backend-webgl": "0.0.2-beta.4",
+    "@paddlejs/paddlejs-core": "0.0.2-beta.10"
   },
   "devDependencies": {
     "html-webpack-plugin": "^3.2.0",

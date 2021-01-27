@@ -7,9 +7,9 @@ const commonFuncBehaviors = {
     relu6: ['transToRelu6'],
     leaky_relu: ['transToLeakyrelu'],
     transToLeakyrelu: ['transToLeakyrelu'],
-    scale: ['setActiveFunc'],
+    scale: ['transToScale'],
     sigmoid: ['transToSigmoid'],
-    softmax: ['setActiveFunc']
+    hard_sigmoid: ['transToHardSigmoid']
 };
 
 function mainFunc(

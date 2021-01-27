@@ -15,6 +15,7 @@ import pool2d_winograd from './shader/pool2d_winograd';
 import elementwise_add from './shader/elementwise_add';
 import mul from './shader/mul';
 import fc from './shader/fc';
+import dropout from './shader/dropout';
 import concat from './shader/concat';
 import concat_mul from './shader/concat_mul';
 import split from './shader/split';
@@ -26,6 +27,8 @@ import softmax from './shader/softmax';
 import dynamic from './shader/dynamic';
 import unpacked_2_packed from './shader/unpacked_2_packed';
 import packed_2_unpacked from './shader/packed_2_unpacked';
+import elementwise_mul from './shader/elementwise_mul';
+import elementwise_div from './shader/elementwise_div';
 
 const ops = {
     conv2d,
@@ -38,8 +41,11 @@ const ops = {
     pool2d_max,
     pool2d_winograd,
     elementwise_add,
+    elementwise_mul,
+    elementwise_div,
     mul,
     fc,
+    dropout,
     concat,
     concat_mul,
     split,
@@ -55,7 +61,8 @@ const ops = {
     leakyRelu: dynamic('leakyRelu'),
     scale: dynamic('scale'),
     sigmoid: dynamic('sigmoid'),
-    relu: dynamic('relu')
+    relu: dynamic('relu'),
+    hard_sigmoid: dynamic('hard_sigmoid')
 };
 export {
     ops

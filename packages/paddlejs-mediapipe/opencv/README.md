@@ -3,6 +3,7 @@
 # opencv_blur.js
 
 A lightweight npm package which just includes modules **core imgproc js video**.
+Modify the [opencv](/https://github.com/opencv/opencv) build_js script to package a few modules and api.
 
 # modules 
 OpenCV modules:

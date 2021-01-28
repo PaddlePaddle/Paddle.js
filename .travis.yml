@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+    - 10
+install:
+|
+    npm --version
+    npm install --registry http://registry.npmjs.org
+script:
+    - npm run test

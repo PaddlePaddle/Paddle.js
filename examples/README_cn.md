@@ -17,13 +17,7 @@
 ## 构建部署
 
 ```bash
-cd web                        # 进入根目录
-npm i                         # 安装依赖
-mkdir dist                    # 创建资源目录
-cd dist                       # 进入资源目录
-git clone https://github.com/DerekYangMing/Paddle-Web-Models.git # 获取模型
-mv Paddle-Web-Models/separablemodel .                            # 移动模型到制定地点
-cd ..                         # 返回根目录
+npm install                         # 安装依赖
 npm run tinyYolo              # 启动 tinyYolo 在线推理服务
 ```
 

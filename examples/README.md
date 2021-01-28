@@ -16,14 +16,8 @@ At present, tiny Yolo model can run within 30ms for web project, which is enough
 ## Building deployment
 
 ```bash
-cd web                        # Go to root
-npm i                         # Installation dependency
-mkdir dist                    # Create resource directory
-cd dist                       # Enter resource directory
-git clone https://github.com/DerekYangMing/Paddle-Web-Models.git # Get models
-mv Paddle-Web-Models/separablemodel .                            # Move the model to the designated location
-cd ..                         # Root directory
-npm run tinyYolo              # run tinyYolo 
+npm install                         # Installation dependency
+npm run tinyYolo              # run tinyYolo
 ```
 
 ## Preview

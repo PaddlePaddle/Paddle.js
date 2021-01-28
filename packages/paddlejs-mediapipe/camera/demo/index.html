@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>paddle web camera demo - humanseg</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            body {
+                margin: 0 auto;
+                position: fixed;
+                width: 100%;
+                height: 100%;
+            }
+            video {
+                width: 100%;
+            }
+            #videoSelect::before {
+                content: "请选择设备摄像头：";
+            }
+            #video-tool {
+                display: flex;
+                justify-content: space-around;
+            }
+            #isLoading {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, .5);
+            }
+            #isLoading .loading-text {
+                color: #fff;
+                font-size: 24px;
+            }
+            .center {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                -webkit-transform: translate(-50%, -50%);
+                transform: translate(-50%, -50%);
+            }
+            .hidden {
+                display: none;
+            }
+            .show {
+                display: block;
+            }
+            .flex {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: -moz-box;
+                display: -moz-flex;
+                display: flex;
+            }
+        </style>
+    </head>
+    <body>
+        <video id="video"></video>
+        <div id="tool">
+            <input type="file" id="uploadImg">
+            <div id="video-tool" class="flex">
+                <div>设备摄像头:<select id="videoSelect"></select></div>
+                <button id="start" type="btn" disabled>模型loading中</button>
+                <button id="shot" type="btn" disabled>截图</button>
+                <button id="end" type="btn" disabled>暂停</button>
+            </div>
+        </div>
+        <canvas id="demo"></canvas>
+        <div id="isLoading">
+            <p class="loading-text center">loading中……</p>
+        </div>
+    </body>
+</html>
+
+

@@ -61,4 +61,4 @@ export default {
     behaviors: [
         'setPerm'
     ]
-}; ;
+};

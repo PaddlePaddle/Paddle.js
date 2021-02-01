@@ -2,7 +2,6 @@
  * @file 视频流类
  * @author xxx
  */
-import $ from 'webpack-zepto';
 
 export default class Camera {
     private option: any;
@@ -105,10 +104,10 @@ export default class Camera {
         domElement.addEventListener('loadeddata', () => {
             // 设置视频流高度
             if (this.option.height) {
-                domElement.width = $(domElement).width();
+                domElement.width = domElement.clientWidth;
             }
             else {
-                domElement.height = $(domElement).height();
+                domElement.height = domElement.clientHeight;
             }
             domElement.play();
             callback && callback();

@@ -237,6 +237,9 @@ const behaviors : Behaviors = {
         if (axis_temp === -1) {
             this.attrs['axis'] = shape_x.length - shape_y.length;
         }
+        else if (shape_x.length === shape_y.length) {
+            this.attrs['axis'] = 0;
+        }
         else {
             this.attrs['axis'] = 4 - shape_y.length - axis_temp;
         }

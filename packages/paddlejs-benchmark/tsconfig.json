@@ -1,0 +1,26 @@
+{
+    "extends": "../../tsconfig",
+    "include": [
+        "./src/**/*",
+        "typings"
+    ],
+    "exclude": [
+        "node_modules/"
+    ],
+    "compilerOptions": {
+        "outDir": "dist",
+        "baseUrl": ".",
+        "paths": {
+            "@paddlejs/paddlejs-core": ["../paddlejs-core/src/index"]
+        },
+        "sourceMap": true,
+        "strict": true,
+        "module": "es2015",
+        "moduleResolution": "node",
+        "target": "es5",
+        "experimentalDecorators": true,
+        "allowJs": true,
+        "checkJs": true,
+        "types": ["@types/node", "@types/webpack-env", "./typings"]
+    }
+}

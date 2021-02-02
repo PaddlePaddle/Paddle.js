@@ -40,18 +40,7 @@
                 -webkit-transform: translate(-50%, -50%);
                 transform: translate(-50%, -50%);
             }
-            .hidden {
-                display: none;
-            }
-            .show {
-                display: block;
-            }
             .flex {
-                display: -webkit-box;
-                display: -webkit-flex;
-                display: -ms-flexbox;
-                display: -moz-box;
-                display: -moz-flex;
                 display: flex;
             }
         </style>
@@ -60,10 +49,9 @@
         <video id="video"></video>
         <div id="tool">
             <div id="video-tool" class="flex">
-                <div>设备摄像头:<select id="videoSelect"></select></div>
-                <button id="start" type="btn" disabled>模型loading中</button>
-                <button id="shot" type="btn" disabled>截图</button>
-                <button id="end" type="btn" disabled>暂停</button>
+                <button id="start" type="btn">开始</button>
+                <button id="pause" type="btn">暂停</button>
+                <button id="stop" type="btn">停止</button>
             </div>
         </div>
         <canvas id="demo"></canvas>

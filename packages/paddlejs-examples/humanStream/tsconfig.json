@@ -1,0 +1,18 @@
+{
+    "extends": "../../../tsconfig",
+    "include": [
+        "./index.ts"
+    ],
+    "exclude": [
+        "node_modules/"
+    ],
+    "compilerOptions": {
+        "outDir": "dist",
+        "types": ["jest", "webrtc", "node"],
+        "baseUrl": ".",
+        "paths": {
+            "@paddlejs-models/humanseg": ["../../paddlejs-models/humanseg/src/index"],
+            "@paddlejs-mediapipe/camera": ["../../paddlejs-mediapipe/camera/src/index"]
+        }
+    }
+}

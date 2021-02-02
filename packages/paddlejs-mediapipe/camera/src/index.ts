@@ -56,7 +56,7 @@ export default class Camera {
         else if (navigator.getUserMedia) {
             navigator.getUserMedia({
                 video: true
-            }, (stream) => {
+            }, stream => {
                this.streamCallback(stream);
             }, this.options.onError);
         } else {

@@ -1,0 +1,25 @@
+{
+  "name": "humanstream",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack-dev-server",
+    "build": "webpack"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "html-webpack-plugin": "^3.2.0",
+    "@types/webrtc": "0.0.26",
+    "jest": "^26.0.1",
+    "ts-jest": "^26.4.4",
+    "ts-loader": "^8.0.12",
+    "typescript": "^3.9.5",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0",
+    "webpack-dev-server": "^3.2.1"
+  }
+}

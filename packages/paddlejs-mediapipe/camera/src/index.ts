@@ -102,6 +102,7 @@ export default class Camera {
     private videoRequestAnimationFrame() {
         if (this.requestAnimationId) {
             cancelAnimationFrame(this.requestAnimationId);
+            this.requestAnimationId = null;
         }
         this.requestAnimationId = requestAnimationFrame(() => {
             try {
@@ -128,6 +129,7 @@ export default class Camera {
     public pause() {
         if (this.requestAnimationId) {
             cancelAnimationFrame(this.requestAnimationId);
+            this.requestAnimationId = null;
         }
         this.video.pause();
     }

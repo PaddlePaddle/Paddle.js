@@ -2,39 +2,50 @@
  * @file 视频流类
  * @author xxx
  */
-import * as _ from "lodash";
 
-export default class WebCamera {
+interface cameraOption {
+    width?: number;
+    height?: number;
+    /** 是否镜像 */
+    mirror?: boolean;
+    /** 目标canvas DOM对象 */
+    targetCanvas?: HTMLCanvasElement;
+    onSuccess: () => void;
+    onError: NavigatorUserMediaErrorCallback;
+    onNotSupported: () => void;
+    onFrame: (canvas: HTMLCanvasElement) => void;
+}
+
+export default class Camera {
     constructor(videoElement: HTMLVideoElement, opt: Partial<cameraOption> = {}) {
         this.video = videoElement;
-        this.options = _.merge({}, this.defaultOption, opt);
+        this.options = Object.assign(this.defaultOption, opt);
         this.initVideoStream();
     }
 
-    private noop = function () { };
+    private noop = () => {};
     /** 默认配置对象 */
     private defaultOption: cameraOption = {
-        fps: 30,
         mirror: false,
         targetCanvas: <any>null,
         onSuccess: this.noop,
         onError: this.noop,
         onNotSupported: this.noop,
-        onFrame: this.noop,
+        onFrame: this.noop
     };
     private options: cameraOption;
     private video: HTMLVideoElement;
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
-    private renderTimer;
+    private requestAnimationId;
 
     private initVideoStream() {
         this.video.width = this.options.width || this.video.clientWidth;
         if (this.options.height) {
             this.video.height = this.options.height;
         }
-
-        // navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+        // @ts-ignore
+        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia({
                 video: true
@@ -88,16 +99,25 @@ export default class WebCamera {
         }
     }
 
-    public start() {
-        this.video.play();
-        this.renderTimer = setInterval(() => {
+    private videoRequestAnimationFrame() {
+        if (this.requestAnimationId) {
+            cancelAnimationFrame(this.requestAnimationId);
+        }
+        this.requestAnimationId = requestAnimationFrame(() => {
             try {
                 this.context.drawImage(this.video, 0, 0, this.video.width, this.video.height);
                 this.options.onFrame(this.canvas);
+                this.videoRequestAnimationFrame();
+
             } catch (e) {
                 console.log(e);
             }
-        }, Math.round(1000 / this.options.fps));
+        });
+    }
+
+    public start() {
+        this.video.play();
+        this.videoRequestAnimationFrame();
     }
 
     public stop() {
@@ -106,33 +126,9 @@ export default class WebCamera {
     }
 
     public pause() {
-        if (this.renderTimer) {
-            clearInterval(this.renderTimer);
+        if (this.requestAnimationId) {
+            cancelAnimationFrame(this.requestAnimationId);
         }
         this.video.pause();
     }
-
-    public static async getMediaDevices(): Promise<MediaDeviceInfo[]> {
-        return await navigator.mediaDevices.enumerateDevices();
-    }
-
-    public static async getSupportedConstraints(): Promise<MediaTrackSupportedConstraints> {
-        return navigator.mediaDevices.getSupportedConstraints();
-    }
-
-}
-
-interface cameraOption {
-    /** 帧率 */
-    fps?: number;
-    width?: number;
-    height?: number;
-    /** 是否镜像 */
-    mirror?: boolean;
-    /** 目标canvas DOM对象 */
-    targetCanvas?: HTMLCanvasElement;
-    onSuccess: () => void;
-    onError: NavigatorUserMediaErrorCallback;
-    onNotSupported: () => void;
-    onFrame: (canvas: HTMLCanvasElement) => void;
 }

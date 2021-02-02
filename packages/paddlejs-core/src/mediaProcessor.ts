@@ -52,12 +52,11 @@ export default class MediaProcessor {
     fromPixels(pixels, opt): InputFeed[] {
         let data: ImageData | number[] = [];
         let scaleSize;
-        const targetShape: number[] = opt.targetShape || [];
 
         if (!(pixels instanceof HTMLImageElement || pixels instanceof HTMLVideoElement)) {
             return [{
                 data: data,
-                shape: opt.shape || targetShape,
+                shape: opt.shape || opt.targetShape,
                 name: 'image'
             }] as InputFeed[];
         }
@@ -88,13 +87,13 @@ export default class MediaProcessor {
         if (opt.bgr) {
             data = this.allReshapeToBGR(data, opt) as number[];
         }
-        else if (targetShape) {
+        else if (opt.targetShape) {
             data = this.allReshapeToRGB(data, opt) as number[];
         }
 
         return [{
             data: data,
-            shape: targetShape || opt.shape,
+            shape: opt.targetShape || opt.shape,
             name: 'image'
         }] as InputFeed[];
     }

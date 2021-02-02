@@ -2,164 +2,137 @@
  * @file 视频流类
  * @author xxx
  */
+import * as _ from "lodash";
 
-export default class Camera {
-    private option: any;
-    private video: HTMLCanvasElement;
-    private haveDevice: boolean;
-    private deviceInfos: any[];
-    private constraints: any;
-    constructor(option) {
-        this.option = option;
-        this.video = option.videoDom;
-        // 标志是否可以切换摄像头
-        this.haveDevice = false;
-        // 设置视频流宽度
-        if (option.width) {
-            this.video.width = option.width;
-        }
-        else if (option.height) {
-            this.video.height = option.height;
-        }
-        else {
-            this.video.width = window.innerWidth;
-        }
-        this.deviceInfos = [];
-        if(navigator.mediaDevices) {
-            this.haveDevice = true;
-        }
-        if (option.constraints) {
-            this.constraints = option.constraints;
-        }
+export default class WebCamera {
+    constructor(videoElement: HTMLVideoElement, opt: Partial<cameraOption> = {}) {
+        this.video = videoElement;
+        this.options = _.merge({}, this.defaultOption, opt);
+        this.initVideoStream();
     }
 
-    // 访问用户媒体设备的兼容方法
-    // safari在getusermedia之后 才能拿到deviceid
-    run(deviceId, callback) {
-        // @ts-ignore
-        if (window.stream) {
-            // @ts-ignore
-            window.stream.getTracks().forEach(function (track) {
-                track.stop();
-            });
+    private noop = function () { };
+    /** 默认配置对象 */
+    private defaultOption: cameraOption = {
+        fps: 30,
+        mirror: false,
+        targetCanvas: <any>null,
+        onSuccess: this.noop,
+        onError: this.noop,
+        onNotSupported: this.noop,
+        onFrame: this.noop,
+    };
+    private options: cameraOption;
+    private video: HTMLVideoElement;
+    private canvas: HTMLCanvasElement;
+    private context: CanvasRenderingContext2D;
+    private renderTimer;
+
+    private initVideoStream() {
+        this.video.width = this.options.width || this.video.clientWidth;
+        if (this.options.height) {
+            this.video.height = this.options.height;
         }
-        let constraints = {
-            video: {}
-        } as any;
-        const success = stream => {
-            this.success(stream, callback);
-        };
-        const error = this.error.bind(this);
-        if (this.deviceInfos.length) {
-            constraints.video.deviceId =  {exact: deviceId || this.deviceInfos[0].deviceId};
-        }
-        if (!(constraints.video.deviceId && constraints.video.deviceId.exact)) {
-            constraints = {
-                video: true
-            };
-        }
+
+        // navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            // 最新的标准API
-            navigator.mediaDevices.getUserMedia(constraints).then(success).catch(error);
-        }
-        // @ts-ignore
-        else if (navigator.webkitGetUserMedia) {
-            // webkit核心浏览器
-            // @ts-ignore
-            navigator.webkitGetUserMedia(constraints, success, error);
-        }
-        // @ts-ignore
-        else if (navigator.mozGetUserMedia) {
-            // firfox浏览器
-            // @ts-ignore
-            navigator.mozGetUserMedia(constraints, success, error);
+            navigator.mediaDevices.getUserMedia({
+                video: true
+            }).then(stream => {
+                this.streamCallback(stream);
+            }).catch(this.options.onError);
         }
         else if (navigator.getUserMedia) {
-            // 旧版API
-            navigator.getUserMedia(constraints, success, error);
-        }
-        else {
-            console.log('您的浏览器不支持获取视频流~');
+            navigator.getUserMedia({
+                video: true
+            }, (stream) => {
+               this.streamCallback(stream);
+            }, this.options.onError);
+        } else {
+            this.options.onNotSupported();
         }
     }
 
-    success(stream, callback) {
-        const domElement = this.video as any;
-        // @ts-ignore
-        window.stream = stream;
-        // 旧的浏览器可能没有srcObject
+    private streamCallback(stream) {
+        this.options.onSuccess();
         // @ts-ignore
         const URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
-        console.log(domElement, 'srcObject' in domElement, 'domElement');
-        if ('srcObject' in domElement) {
+        if ('srcObject' in this.video) {
             try {
-                domElement.srcObject = stream;
+                this.video.srcObject = stream;
             } catch (error) {
-                domElement.src = URL.createObjectURL(stream) || stream;
+                this.video.src = URL.createObjectURL(stream) || stream;
             }
-        } else {
-            // 防止再新的浏览器里使用它，应为它已经不再支持了
-            domElement.src = URL.createObjectURL(stream) || stream;
         }
-        domElement.addEventListener('loadeddata', () => {
+        this.video.addEventListener('loadeddata', () => {
             // 设置视频流高度
-            if (this.option.height) {
-                domElement.width = domElement.clientWidth;
+            if (this.options.height) {
+                this.video.width = this.video.clientWidth;
             }
             else {
-                domElement.height = domElement.clientHeight;
+                this.video.height = this.video.clientHeight;
             }
-            domElement.play();
-            callback && callback();
-        }, false);
-    }
-
-    error(error) {
-        alert(`访问用户媒体设备失败${error.name}, ${error.message}`);
-    }
-    // 处理摄像头列表
-    gotDevices(deviceInfos) {
-        const ua = navigator.userAgent;
-        const isIos = /iphone|ipod|ipad/ig.test(ua);
-
-        let delt = -1;
-        const range = deviceInfos.length;
-        let start = range - 1;
-        let end = - 1;
-        // ios机型camare顺序相反
-        if (isIos) {
-            delt = 1;
-            start = 0;
-            end = range;
-        }
-        for (let i = start; i !== end; i += delt) {
-            const deviceInfo = deviceInfos[i];
-            if (deviceInfo.kind === 'videoinput') {
-                this.deviceInfos.push(deviceInfos[i]);
-            }
-        }
-    }
-
-    get curVideo() {
-        return this.video;
-    }
-    getDevices() {
-        return new Promise(resolve => {
-            if (this.haveDevice) {
-                if (this.deviceInfos.length) {
-                    resolve(this.deviceInfos);
-                }
-                else {
-                    navigator.mediaDevices.enumerateDevices()
-                        .then(this.gotDevices.bind(this))
-                        .then(()=> {
-                            resolve(this.deviceInfos);
-                        });
-                }
-            }
-            else {
-                resolve([]);
-            }
+            this.initCanvas();
         });
     }
+
+    private initCanvas() {
+        this.canvas = this.options.targetCanvas || document.createElement("canvas");
+        this.canvas.width = this.video.width;
+        this.canvas.height = this.video.height;
+        this.context = this.canvas.getContext('2d');
+        // mirror video
+        if (this.options.mirror) {
+            this.context.translate(this.canvas.width, 0);
+            this.context.scale(-1, 1);
+        }
+    }
+
+    public start() {
+        this.video.play();
+        this.renderTimer = setInterval(() => {
+            try {
+                this.context.drawImage(this.video, 0, 0, this.video.width, this.video.height);
+                this.options.onFrame(this.canvas);
+            } catch (e) {
+                console.log(e);
+            }
+        }, Math.round(1000 / this.options.fps));
+    }
+
+    public stop() {
+        this.pause();
+        this.video.src = '';
+    }
+
+    public pause() {
+        if (this.renderTimer) {
+            clearInterval(this.renderTimer);
+        }
+        this.video.pause();
+    }
+
+    public static async getMediaDevices(): Promise<MediaDeviceInfo[]> {
+        return await navigator.mediaDevices.enumerateDevices();
+    }
+
+    public static async getSupportedConstraints(): Promise<MediaTrackSupportedConstraints> {
+        return navigator.mediaDevices.getSupportedConstraints();
+    }
+
+}
+
+interface cameraOption {
+    /** 帧率 */
+    fps?: number;
+    width?: number;
+    height?: number;
+    /** 是否镜像 */
+    mirror?: boolean;
+    /** 目标canvas DOM对象 */
+    targetCanvas?: HTMLCanvasElement;
+    onSuccess: () => void;
+    onError: NavigatorUserMediaErrorCallback;
+    onNotSupported: () => void;
+    onFrame: (canvas: HTMLCanvasElement) => void;
 }

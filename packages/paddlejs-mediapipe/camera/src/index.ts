@@ -19,7 +19,7 @@ interface cameraOption {
 export default class Camera {
     constructor(videoElement: HTMLVideoElement, opt: Partial<cameraOption> = {}) {
         this.video = videoElement;
-        this.options = Object.assign(this.defaultOption, opt);
+        this.options = Object.assign({}, this.defaultOption, opt);
         this.initVideoStream();
     }
 

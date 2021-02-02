@@ -100,24 +100,19 @@ export default class Camera {
     }
 
     private videoRequestAnimationFrame() {
-        if (this.requestAnimationId) {
-            cancelAnimationFrame(this.requestAnimationId);
-            this.requestAnimationId = null;
-        }
-        this.requestAnimationId = requestAnimationFrame(() => {
-            try {
-                this.context.drawImage(this.video, 0, 0, this.video.width, this.video.height);
-                this.options.onFrame(this.canvas);
-                this.videoRequestAnimationFrame();
-
-            } catch (e) {
-                console.log(e);
-            }
-        });
+        const drawImage = () => {
+            this.context.drawImage(this.video, 0, 0, this.video.width, this.video.height);
+            this.options.onFrame(this.canvas);
+            this.requestAnimationId = requestAnimationFrame(drawImage);
+        };
+        this.requestAnimationId = requestAnimationFrame(drawImage);
     }
 
     public start() {
         this.video.play();
+        if (this.requestAnimationId) {
+            return;
+        }
         this.videoRequestAnimationFrame();
     }
 

@@ -4,13 +4,14 @@
  */
 
 import { PaddlejsBackend } from '@paddlejs/paddlejs-core';
-import { OpData } from './types';
+import { OpData, Query } from './types';
 import { GLHelper, EShaderType } from './webgl/WebGLUtils';
 import { GLTexture, TextureConfig } from './webgl/WebGLTexture';
 import { vShaderSource, vShaderData } from './ops/vShader';
 import buildShader from './webgl/buildShader';
 import GLProgram from './webgl/WebGLProgram';
 import { nhwc2nchw } from './utils/dataProcess';
+import queryProcess from './utils/queryProcess';
 
 export default class WebGLBackend extends PaddlejsBackend {
     gl: WebGLRenderingContext;
@@ -35,6 +36,7 @@ export default class WebGLBackend extends PaddlejsBackend {
     total_shape: number;
     vShader?: WebGLShader;
     MAX_TEXTURE_SIZE: number;
+    queryList: Query[];
 
     constructor() {
         super();
@@ -48,6 +50,8 @@ export default class WebGLBackend extends PaddlejsBackend {
         this.uniformLocations = {};
         // texture buffer
         this.texturesMap = {};
+
+        this.queryList = [];
 
         // 上一个texture
         this.prevTexture = null;
@@ -107,6 +111,8 @@ export default class WebGLBackend extends PaddlejsBackend {
     }
 
     runProgram(opData: OpData, isRendered: boolean) {
+        let query = queryProcess.beginQuery(this.gl, this.glVersion);
+
         const isPacked = opData.isPackedOp;
         // 设置gpu参数
         opData.program.forEach((program: GLProgram, index) => {
@@ -122,6 +128,10 @@ export default class WebGLBackend extends PaddlejsBackend {
             this.render(opData.inputTensors, opData.iLayer, isRendered, index, isPacked);
         });
 
+        if (query) {
+            this.queryList.push({ name: opData.name, query, count: 1 });
+            query = queryProcess.endQuery(this.gl, this.glVersion, query);
+        }
     }
 
     async read(): Promise<number[]> {

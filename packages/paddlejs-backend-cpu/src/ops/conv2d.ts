@@ -3,6 +3,7 @@ import { computeConv2DInfo, TensorBuffer, computeStrides } from './conv2d_utils'
 
 const tensorMap = new TensorMap();
 
+/* eslint-disable max-statements */
 function conv2d(tensorMap: TensorMap, attrs: Attrs): f32[] {
     if (!tensorMap.origin || !tensorMap.filter || !tensorMap.out) {
         return [];
@@ -48,11 +49,6 @@ function conv2d(tensorMap: TensorMap, attrs: Attrs): f32[] {
     const wValLen = wVals.length;
     const yVals = y.values;
 
-    // console.log(convInfo.strideHeight.toString())
-    // console.log(convInfo.strideWidth.toString())
-    // console.log(convInfo.inChannels.toString())
-    // console.log(convInfo.outChannels.toString())
-
     for (let b = 0; b < convInfo.batchSize; ++b) {
         const xOffset1 = b * xBatchStride;
         const yOffset1 = b * yBatchStride;
@@ -66,6 +62,7 @@ function conv2d(tensorMap: TensorMap, attrs: Attrs): f32[] {
                 }
                 const wOffset1 = wR * filterStrides[0];
                 const xOffset2 = xOffset1 + xR * xRowStride;
+                /* eslint-disable max-depth */
                 for (let yC = 0; yC < convInfo.outWidth; ++yC) {
                     const yOffset3 = yOffset2 + yC * yColStride;
                     const xCCorner = yC * convInfo.strideWidth - padLeft;
@@ -87,40 +84,37 @@ function conv2d(tensorMap: TensorMap, attrs: Attrs): f32[] {
                         }
                     }
                 }
+                /* eslint-enable max-depth */
             }
         }
     }
 
     return yVals;
 }
+/* eslint-enable max-statements */
 
 function mainFunc(data: Obj, tensorDataMap: Map<string, f32[]>): f32[] {
     const tensorDataList = ((data as Obj).get('tensorData') as Arr)._arr;
     const attrs = new Attrs((data as Obj).get('attrs') as Obj);
 
-    (tensorDataList as Value[]).forEach((tensor) => {
-        // if (tensor instanceof Obj) {
-            const tensorObj = tensor as Obj;
+    (tensorDataList as Value[]).forEach(tensor => {
+        const tensorObj = tensor as Obj;
 
-            const opTensor = new Tensor(tensorObj);
-            const tensorName = opTensor.tensorName;
-            const name = opTensor.name;
-            const tensorData = opTensor.data;
+        const opTensor = new Tensor(tensorObj);
+        const tensorName = opTensor.tensorName;
 
-
-            if (tensorName == 'filter') {
-                tensorMap.filter = opTensor;
-            }
-            else if (tensorName == 'origin') {
-                tensorMap.origin = opTensor;
-            }
-            else if (tensorName == 'bias') {
-                tensorMap.bias = opTensor;
-            }
-            else if (tensorName == 'out') {
-                tensorMap.out = opTensor;
-            }
-        // }
+        if (tensorName === 'filter') {
+            tensorMap.filter = opTensor;
+        }
+        else if (tensorName === 'origin') {
+            tensorMap.origin = opTensor;
+        }
+        else if (tensorName === 'bias') {
+            tensorMap.bias = opTensor;
+        }
+        else if (tensorName === 'out') {
+            tensorMap.out = opTensor;
+        }
     });
 
     const result = conv2d(tensorMap, attrs);
@@ -142,7 +136,7 @@ function mainFunc(data: Obj, tensorDataMap: Map<string, f32[]>): f32[] {
 
 export {
     // params: [],
-    mainFunc,
+    mainFunc
     // behaviors: [
     //     'adaptPaddings',
     //     'isApplySeparableConv',

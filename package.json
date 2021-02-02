@@ -12,6 +12,7 @@
     "webgl": "lerna run start  --scope=@paddlejs/paddlejs-backend-webgl  --stream",
     "webgpu": "lerna run start  --scope=@paddlejs/paddlejs-backend-webgpu  --stream",
     "enc": "lerna run start  --scope=@paddlejs/paddlejs-enc --stream",
+    "benchmark": "lerna run start  --scope=@paddlejs/paddlejs-benchmark --stream",
     "build:webgpu": "lerna run build  --scope=@paddlejs/paddlejs-backend-webgpu  --stream",
     "build:cpu": "lerna run build  --scope=@paddlejs/paddlejs-backend-cpu  --stream",
     "build:webgl": "lerna run build  --scope=@paddlejs/paddlejs-backend-webgl  --stream",
@@ -22,6 +23,7 @@
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
     "@types/jest": "^26.0.19",
+    "@types/webpack-env": "^1.16.0",
     "@typescript-eslint/eslint-plugin": "^4.7.0",
     "@typescript-eslint/parser": "^4.7.0",
     "@webgpu/types": "0.0.32",
@@ -32,6 +34,7 @@
     "conventional-changelog-cli": "^2.1.1",
     "eslint": "^7.13.0",
     "eslint-config-standard": "^16.0.1",
+    "eslint-config-standard-vue-ts": "^1.0.9",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
@@ -76,6 +79,11 @@
     "@paddlejs/paddlejs-backend-webgl": "file:packages/paddlejs-backend-webgl",
     "@paddlejs/paddlejs-backend-webgpu": "file:packages/paddlejs-backend-webgpu",
     "@paddlejs/paddlejs-core": "file:packages/paddlejs-core",
-    "@paddlejs/paddlejs-enc": "file:packages/paddlejs-enc"
+    "@paddlejs/paddlejs-enc": "file:packages/paddlejs-enc",
+    "@paddlejs/paddlejs-benchmark": "file:packages/paddlejs-benchmark",
+    "css-loader": "^5.0.1",
+    "style-loader": "^2.0.0",
+    "vue-loader": "^15.9.6",
+    "vue-template-compiler": "^2.6.12"
   }
 }

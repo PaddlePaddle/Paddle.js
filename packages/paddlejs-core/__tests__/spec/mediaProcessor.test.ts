@@ -19,7 +19,7 @@ describe('test mediaProcessor with scale and targetSize', () => {
         mean: [0.485, 0.456, 0.406],
         scale: 256,
         std: [0.229, 0.224, 0.225],
-        feedShape: [224, 224],
+        feedShape: { fw: 224, fh: 224 },
         targetShape: [1, 3, 224, 224],
         targetSize: { height: 224, width: 224 },
         bgr: false
@@ -42,13 +42,13 @@ describe('test mediaProcessor with scale and targetSize', () => {
 
     test('test api reSize', () => {
         const res = processror.reSize(img, mediaParams);
-        expect(res.sw).toBe(341);
+        expect(res.sw).toBe(256);
         expect(res.sh).toBe(256);
         processror.pixelWidth = 600;
         processror.pixelHeight = 800;
         const res1 = processror.reSize(img, mediaParams);
         expect(res1.sw).toBe(256);
-        expect(res1.sh).toBe(341);
+        expect(res1.sh).toBe(256);
         processror.pixelWidth = 700;
         processror.pixelHeight = 700;
         const res2 = processror.reSize(img, mediaParams);
@@ -96,7 +96,7 @@ describe('test mediaProcessor with scale and targetSize', () => {
 
     test('test api process', () => {
         const data = processror.process(img, mediaParams);
-        expect(data).toEqual([{ data: [], shape: [], name: 'image' }]);
+        expect(data).toEqual([{ data: [], shape: [1, 3, 224, 224], name: 'image' }]);
     });
 });
 

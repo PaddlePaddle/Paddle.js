@@ -27,19 +27,10 @@ export default class MediaProcessor {
      * @param inputs
      */
     process(media, modelConfig): InputFeed[] {
-        const { inputType, feedShape, fill, targetSize, scale, mean, std, bgr } = modelConfig;
+        const { feedShape, fill, targetSize, scale, mean, std, bgr } = modelConfig;
         const { fh, fw } = feedShape;
-
-        if (inputType === 'video') {
-            return [
-                {
-                    data: media,
-                    shape: [1, 3, fh, fw],
-                    name: 'image'
-                }
-            ];
-        }
         const input = media;
+
         const params = {
             gapFillWith: fill || this.gapFillWith,
             mean: mean || this.mean,
@@ -62,12 +53,11 @@ export default class MediaProcessor {
         let data: ImageData | number[] = [];
         let scaleSize;
         const targetShape: number[] = opt.targetShape || [];
-        const shape: number[] = opt.shape || [];
 
         if (!(pixels instanceof HTMLImageElement || pixels instanceof HTMLVideoElement)) {
             return [{
                 data: data,
-                shape: shape || targetShape,
+                shape: opt.shape || targetShape,
                 name: 'image'
             }] as InputFeed[];
         }
@@ -104,7 +94,7 @@ export default class MediaProcessor {
 
         return [{
             data: data,
-            shape: targetShape || shape,
+            shape: targetShape || opt.shape,
             name: 'image'
         }] as InputFeed[];
     }
@@ -227,18 +217,7 @@ export default class MediaProcessor {
         // 缩放后的宽高
         let sw = width;
         let sh = height;
-        // 最小边缩放到scale
-        if (width < height) {
-            sw = params.scale || width;
-            sh = Math.round(sw * height / width);
-        }
-        else if (width > height) {
-            sh = params.scale || height;
-            sw = Math.round(sh * width / height);
-        }
-        else {
-            sw = sh = params.scale || width;
-        }
+        sw = sh = params.scale;
 
         this.targetContext.canvas.width = sw;
         this.targetContext.canvas.height = sh;

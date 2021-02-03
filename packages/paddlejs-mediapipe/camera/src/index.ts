@@ -33,6 +33,7 @@ export default class Camera {
         onNotSupported: this.noop,
         onFrame: this.noop
     };
+
     private options: cameraOption;
     private video: HTMLVideoElement;
     private canvas: HTMLCanvasElement;
@@ -45,7 +46,9 @@ export default class Camera {
             this.video.height = this.options.height;
         }
         // @ts-ignore
-        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia
+        || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia({
                 video: true
@@ -57,7 +60,7 @@ export default class Camera {
             navigator.getUserMedia({
                 video: true
             }, stream => {
-               this.streamCallback(stream);
+                this.streamCallback(stream);
             }, this.options.onError);
         } else {
             this.options.onNotSupported();
@@ -88,7 +91,7 @@ export default class Camera {
     }
 
     private initCanvas() {
-        this.canvas = this.options.targetCanvas || document.createElement("canvas");
+        this.canvas = this.options.targetCanvas || document.createElement('canvas');
         this.canvas.width = this.video.width;
         this.canvas.height = this.video.height;
         this.context = this.canvas.getContext('2d');

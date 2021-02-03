@@ -7,7 +7,7 @@ import '@paddlejs/paddlejs-backend-webgl';
 import cv from '@paddlejs-mediapipe/opencv/library/opencv_blur';
 
 let runner = null as Runner;
-let inputImage = null;
+let inputElement = null;
 const WIDTH = 192;
 const HEIGHT = 192;
 const SCALE = 192;
@@ -23,10 +23,6 @@ export async function load() {
             fh: HEIGHT
         },
         fill: '#000',
-        targetSize: {
-            height: HEIGHT,
-            width: WIDTH
-        },
         mean: [122.675, 116.669, 104.008],
         std: [1.0, 1.0, 1.0],
         scale: SCALE,
@@ -35,9 +31,9 @@ export async function load() {
     await runner.init();
 }
 
-export async function getGrayValue(image: HTMLImageElement) {
-    inputImage = image;
-    const res = await runner.predict(image);
+export async function getGrayValue(input: HTMLImageElement | HTMLVideoElement) {
+    inputElement = input;
+    const res = await runner.predict(input);
     const gray_values = res.slice(WIDTH * HEIGHT);
     return {
         width: WIDTH,
@@ -52,16 +48,14 @@ export async function getGrayValue(image: HTMLImageElement) {
  * @param {Array} gray_values gray_values of the input image
  */
 export function drawHumanSeg(canvas: HTMLCanvasElement, gray_values: number[]) {
-    const {
-        naturalWidth,
-        naturalHeight
-    } = inputImage;
+    const inputWidth = inputElement.naturalWidth || inputElement.width;
+    const inputHeight = inputElement.naturalHeight || inputElement.height;
     const tempCanvas = document.createElement('canvas') as HTMLCanvasElement;
     const tempContext = tempCanvas.getContext('2d') as CanvasRenderingContext2D;
     tempCanvas.width = WIDTH;
     tempCanvas.height = HEIGHT;
-    canvas.width = naturalWidth;
-    canvas.height = naturalHeight;
+    canvas.width = inputWidth;
+    canvas.height = inputHeight;
     const tempData = tempContext.createImageData(WIDTH, HEIGHT);
     for (let i = 0; i < WIDTH * HEIGHT; i++) {
         tempData.data[i * 4] = 255;
@@ -70,8 +64,8 @@ export function drawHumanSeg(canvas: HTMLCanvasElement, gray_values: number[]) {
         tempData.data[i * 4 + 3] = gray_values[i] * 255;
     }
     // threshold mask
-    thresholdMask(tempData, 0.4, 0.8);
-    // blur border
+    thresholdMask(tempData, 0.29, 0.8);
+    // // blur border
     tempContext.putImageData(tempData, 0, 0);
     const out = blurBorder(tempCanvas);
     for (let i = 0; i < WIDTH * HEIGHT; i++) {
@@ -80,19 +74,19 @@ export function drawHumanSeg(canvas: HTMLCanvasElement, gray_values: number[]) {
     tempContext.putImageData(tempData, 0, 0);
     // stretch origin canvas to image size
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-    ctx.drawImage(tempCanvas, 0, 0, naturalWidth, naturalHeight);
-    const tempScaleData = ctx.getImageData(0, 0, naturalWidth, naturalHeight);
+    ctx.drawImage(tempCanvas, 0, 0, inputWidth, inputHeight);
+    const tempScaleData = ctx.getImageData(0, 0, inputWidth, inputHeight);
 
-    tempCanvas.width = naturalWidth;
-    tempCanvas.height = naturalHeight;
-    tempContext.drawImage(inputImage, 0, 0);
-    const originImageData = tempContext.getImageData(0, 0, naturalWidth, naturalHeight);
-    for (let i = 0; i < naturalHeight * naturalWidth; i++) {
+    tempCanvas.width = inputWidth;
+    tempCanvas.height = inputHeight;
+    tempContext.drawImage(inputElement, 0, 0, inputWidth, inputHeight);
+    const originImageData = tempContext.getImageData(0, 0, inputWidth, inputHeight);
+    for (let i = 0; i < inputHeight * inputWidth; i++) {
         tempScaleData.data[i * 4] = originImageData.data[i * 4];
         tempScaleData.data[i * 4 + 1] = originImageData.data[i * 4 + 1];
         tempScaleData.data[i * 4 + 2] = originImageData.data[i * 4 + 2];
     }
-    tempContext.clearRect(0, 0, naturalWidth, naturalHeight);
+    tempContext.clearRect(0, 0, inputWidth, inputHeight);
     ctx.putImageData(tempScaleData, 0, 0);
 }
 
@@ -103,16 +97,14 @@ export function drawHumanSeg(canvas: HTMLCanvasElement, gray_values: number[]) {
  * @param {Object} dark use dark mode
  */
 export function drawMask(canvas: HTMLCanvasElement, gray_values: number[], dark?: boolean) {
-    const {
-        naturalWidth,
-        naturalHeight
-    } = inputImage;
+    const inputWidth = inputElement.naturalWidth || inputElement.width;
+    const inputHeight = inputElement.naturalHeight || inputElement.height;
     const tempCanvas = document.createElement('canvas') as HTMLCanvasElement;
     const tempContext = tempCanvas.getContext('2d') as CanvasRenderingContext2D;
     tempCanvas.width = WIDTH;
     tempCanvas.height = HEIGHT;
-    canvas.width = naturalWidth;
-    canvas.height = naturalHeight;
+    canvas.width = inputWidth;
+    canvas.height = inputHeight;
     const tempData = tempContext.createImageData(WIDTH, HEIGHT);
     for (let i = 0; i < WIDTH * HEIGHT; i++) {
         tempData.data[i * 4] = 255;
@@ -132,19 +124,19 @@ export function drawMask(canvas: HTMLCanvasElement, gray_values: number[], dark?
     tempContext.putImageData(tempData, 0, 0);
     // stretch origin canvas to image size
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-    ctx.drawImage(tempCanvas, 0, 0, naturalWidth, naturalHeight);
-    const tempScaleData = ctx.getImageData(0, 0, naturalWidth, naturalHeight);
+    ctx.drawImage(tempCanvas, 0, 0, inputWidth, inputHeight);
+    const tempScaleData = ctx.getImageData(0, 0, inputWidth, inputHeight);
 
-    tempCanvas.width = naturalWidth;
-    tempCanvas.height = naturalHeight;
-    tempContext.drawImage(inputImage, 0, 0);
-    const originImageData = tempContext.getImageData(0, 0, naturalWidth, naturalHeight);
-    for (let i = 0; i < naturalHeight * naturalWidth; i++) {
+    tempCanvas.width = inputWidth;
+    tempCanvas.height = inputHeight;
+    tempContext.drawImage(inputElement, 0, 0, inputWidth, inputHeight);
+    const originImageData = tempContext.getImageData(0, 0, inputWidth, inputHeight);
+    for (let i = 0; i < inputHeight * inputWidth; i++) {
         tempScaleData.data[i * 4] = dark ? 0 : originImageData.data[i * 4];
         tempScaleData.data[i * 4 + 1] = dark ? 0 : originImageData.data[i * 4 + 1];
         tempScaleData.data[i * 4 + 2] = dark ? 0 : originImageData.data[i * 4 + 2];
     }
-    tempContext.clearRect(0, 0, naturalWidth, naturalHeight);
+    tempContext.clearRect(0, 0, inputWidth, inputHeight);
     ctx.putImageData(tempScaleData, 0, 0);
 }
 

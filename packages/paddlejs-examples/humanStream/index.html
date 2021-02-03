@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>paddlejs humanStream demo</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            body {
+                margin: 0 auto;
+                position: fixed;
+                width: 100%;
+                height: 100%;
+            }
+            video {
+                width: 100%;
+            }
+            #videoSelect::before {
+                content: "请选择设备摄像头：";
+            }
+            #video-tool {
+                display: flex;
+                justify-content: space-around;
+            }
+            #isLoading {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, .5);
+            }
+            #isLoading .loading-text {
+                color: #fff;
+                font-size: 24px;
+            }
+            .center {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                -webkit-transform: translate(-50%, -50%);
+                transform: translate(-50%, -50%);
+            }
+            .flex {
+                display: flex;
+            }
+        </style>
+    </head>
+    <body>
+        <video id="video"></video>
+        <div id="tool">
+            <div id="video-tool" class="flex">
+                <button id="start" type="btn">开始</button>
+                <button id="pause" type="btn">暂停</button>
+                <button id="stop" type="btn">停止</button>
+            </div>
+        </div>
+        <canvas id="demo"></canvas>
+        <div id="isLoading">
+            <p class="loading-text center">loading中……</p>
+        </div>
+    </body>
+</html>
+
+

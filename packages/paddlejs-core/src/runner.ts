@@ -25,7 +25,6 @@ interface ModelConfig {
     std?: number[];
     bgr?: boolean;
     scale?: number;
-    inputType?: string; // image | video,
     type?: GraphType; // model type
     needPreheat?: boolean;
     plugins?: { // tranform graph plugins
@@ -49,7 +48,6 @@ export default class Runner {
 
     constructor(options: ModelConfig | null) {
         const opts = {
-            inputType: 'image',
             fill: '#fff',
             scale: 256
         };
@@ -143,12 +141,17 @@ export default class Runner {
 
     genFeedData() {
         const { fh, fw } = this.modelConfig.feedShape;
-        const preheatFeedData: InputFeed = {
+        const vars = this.model.vars;
+        let preheatFeedData = vars.find(item => item.name === 'image');
+        if (preheatFeedData) {
+            preheatFeedData.data = new Float32Array(3 * fh * fw).fill(1.0);
+            return;
+        }
+        preheatFeedData = {
             data: new Float32Array(3 * fh * fw).fill(1.0),
             name: 'image',
             shape: [1, 3, fh, fw]
         };
-        const vars = this.model.vars;
         vars.push(preheatFeedData);
     }
 

@@ -80,10 +80,6 @@
     "@paddlejs/paddlejs-backend-webgpu": "file:packages/paddlejs-backend-webgpu",
     "@paddlejs/paddlejs-core": "file:packages/paddlejs-core",
     "@paddlejs/paddlejs-enc": "file:packages/paddlejs-enc",
-    "@paddlejs/paddlejs-benchmark": "file:packages/paddlejs-benchmark",
-    "css-loader": "^5.0.1",
-    "style-loader": "^2.0.0",
-    "vue-loader": "^15.9.6",
-    "vue-template-compiler": "^2.6.12"
+    "@paddlejs/paddlejs-benchmark": "file:packages/paddlejs-benchmark"
   }
 }

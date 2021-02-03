@@ -1,0 +1,14 @@
+0 silly argv {
+0 silly argv   _: [ 'add' ],
+0 silly argv   globs: [],
+0 silly argv   lernaVersion: '3.22.1',
+0 silly argv   '$0': 'lerna',
+0 silly argv   pkg: 'packages/paddlejs-enc'
+0 silly argv }
+1 notice cli v3.22.1
+2 verbose rootPath /Users/yueshuangyan/Documents/project/Paddle.js
+3 info versioning independent
+4 error Error: exited with error code: 128
+4 error     at ChildProcess.<anonymous> (/Users/yueshuangyan/Documents/project/Paddle.js/node_modules/@evocateur/pacote/lib/util/finished.js:12:19)
+4 error     at ChildProcess.emit (events.js:314:20)
+4 error     at maybeClose (internal/child_process.js:1047:16)

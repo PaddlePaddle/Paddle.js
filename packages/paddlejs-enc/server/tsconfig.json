@@ -1,0 +1,14 @@
+{
+	"include": [
+		"**/*.js",
+		"**/*.ts"
+	],
+	"exclude": [
+		"node_modules/"
+    ],
+	"compilerOptions": {
+		"target": "es5",
+        "module": "commonjs",
+        "lib": ["ESNext", "dom"]
+	}
+}

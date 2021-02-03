@@ -3,12 +3,12 @@
  * @author yueshuangyan
  */
 
-import { registerBackend } from '@paddlejs/paddlejs-core';
+import "./global.ts";
+import { registerBackend, env } from '@paddlejs/paddlejs-core';
 import CpuBackend from './backend';
 import { ops } from './ops';
 
 const instance = new CpuBackend();
-
 function registerCpuBackend() {
     registerBackend(
         'cpu',
@@ -19,5 +19,7 @@ function registerCpuBackend() {
 }
 
 registerCpuBackend();
+
+env.set('platform', 'browser');
 
 export default instance;

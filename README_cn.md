@@ -4,6 +4,9 @@
 
 Paddle.js是百度Paddle的web方向子项目，是一个运行在浏览器中的开源深度学习框架。Paddle.js可以加载提前训练好的paddle模型，或者将paddle hub中的模型通过paddle.js的模型转换工具变成浏览器友好的模型进行在线推理预测使用。目前，paddle.js仅可以在支持webGL的浏览器中运行。
 
+[![Build Status](https://travis-ci.org/PaddlePaddle/Paddle.js.svg?branch=beta)](https://travis-ci.org/PaddlePaddle/Paddle.js.svg?branch=beta)
+
+
 ## 主要特点
 
 ### 模块化

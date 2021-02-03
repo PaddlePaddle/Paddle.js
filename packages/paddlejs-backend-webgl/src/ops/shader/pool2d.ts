@@ -71,4 +71,4 @@ export default {
         'setPacked',
         'isGlobalPooling'
     ]
-}; ;
+};

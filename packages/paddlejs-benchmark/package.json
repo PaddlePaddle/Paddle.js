@@ -1,0 +1,27 @@
+{
+  "name": "@paddlejs/paddlejs-benchmark",
+  "version": "0.0.1",
+  "description": "",
+  "main": "lib/index",
+  "scripts": {
+    "build": "webpack --config webpack.prod.js",
+    "start": "webpack serve"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-loader": "^8.2.2",
+    "css-loader": "^5.0.1",
+    "element-ui": "^2.15.0",
+    "file-loader": "^6.2.0",
+    "less": "^4.1.0",
+    "less-loader": "^7.3.0",
+    "pug": "^3.0.0",
+    "pug-plain-loader": "^1.1.0",
+    "style-loader": "^2.0.0",
+    "url-loader": "^4.1.1",
+    "vue": "^2.6.12",
+    "vue-loader": "^15.9.6",
+    "vue-style-loader": "^4.1.2"
+  }
+}

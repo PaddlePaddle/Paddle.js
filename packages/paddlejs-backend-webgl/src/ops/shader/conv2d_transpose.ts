@@ -93,4 +93,4 @@ export default {
         'batchComputeConv2d',
         'processBias'
     ]
-}; ;
+};

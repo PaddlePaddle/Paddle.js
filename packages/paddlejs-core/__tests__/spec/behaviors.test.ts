@@ -254,10 +254,6 @@ describe('test op behaviors', () => {
     it('test behavior processAxis', () => {
         behaviors.processAxis.call(elementwiseAddOp as unknown as OpData, []);
         expect(elementwiseAddOp.attrs.axis).toBe(0);
-
-        // axis = 0
-        behaviors.processAxis.call(elementwiseAddOp as unknown as OpData, []);
-        expect(elementwiseAddOp.attrs.axis).toBe(3);
     });
 
     it('test behavior flattenShape', () => {

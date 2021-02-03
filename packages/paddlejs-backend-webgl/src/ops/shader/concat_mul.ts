@@ -44,4 +44,4 @@ export default {
         'normalizeDim',
         'normalizeDim2'
     ]
-}; ;
+};

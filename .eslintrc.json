@@ -15,7 +15,12 @@
         "GPUComputePipeline": true,
         "GPUCommandEncoder": true,
         "GPUBindGroupLayout": true,
-        "GPUBindGroup": true
+        "GPUBindGroup": true,
+        "f32": true,
+        "i32": true,
+        "Obj": true,
+        "Value": true,
+        "Arr": true
     },
     "plugins": [
         "standard",

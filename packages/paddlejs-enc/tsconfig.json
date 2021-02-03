@@ -1,13 +1,16 @@
 {
     "extends": "../../tsconfig",
     "include": [
-      "src/"
+        "src/"
     ],
     "exclude": [
-      "node_modules/"
+        "node_modules/"
     ],
     "compilerOptions": {
-      "outDir": "dist"
+        "outDir": "dist",
+        "baseUrl": ".",
+        "paths": {
+            "@paddlejs/paddlejs-core": ["../paddlejs-core/src/index"]
+        }
     }
 }
-  

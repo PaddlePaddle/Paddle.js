@@ -1,5 +1,5 @@
 {
-  "name": "paddlejs-backend-cpu",
+  "name": "@paddlejs/paddlejs-backend-cpu",
   "version": "0.0.1",
   "description": "",
   "main": "index.js",

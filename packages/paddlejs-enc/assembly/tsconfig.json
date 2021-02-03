@@ -1,6 +1,10 @@
 {
-  "extends": "assemblyscript/std/assembly.json",
-  "include": [
-    "./**/*.ts"
-  ]
+    "extends": "assemblyscript/std/assembly.json",
+    "include": [
+        "./**/*.ts",
+        "./*.ts"
+    ],
+    "compilerOptions": {
+        "declaration": true
+    }
 }

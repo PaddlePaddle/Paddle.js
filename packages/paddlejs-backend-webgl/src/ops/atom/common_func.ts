@@ -17,20 +17,32 @@ float prelu(float x, float p, float b) {
 
 const relu6 = `
 float relu6(float x, float threshold, float b) {
-    float result = max(0.0,x);
-    result = min(result,threshold);
+    float result = max(0.0, x);
+    result = min(result, threshold);
     return result;
 }`;
 
 const leakyRelu = `
 float leakyRelu(float x, float p, float b) {
-    float result = max(x, x * p);
+    float result = 0.0
+    if (x > 0.0) {
+        result = x;
+    }
+    else {
+        result = p * x;
+    }
     return result;
 }`;
 
 const scale = `
 float scale(float x, float p, float b) {
     float result = p * x + b;
+    return result;
+}`;
+
+const scaleWidthBias = `
+float scaleWidthBias(float x, float p, float b) {
+    float result = p * (x + b);
     return result;
 }`;
 
@@ -54,6 +66,7 @@ export {
     scale,
     sigmoid,
     hardSigmoid,
+    scaleWidthBias,
     transferFromNHWCtoNCHW
 };
 

@@ -3,6 +3,7 @@
         {
             "attrs": {
                 "axis": 0,
+                "Scale_y": 1,
                 "use_mkldnn": false,
                 "x_data_format": "",
                 "y_data_format": ""
@@ -56,7 +57,7 @@
             ]
         },
         {
-            "data": [1, 2, 3, 4, 2, 2, 4, 4, 3, 3, 3, 3],
+            "data": [1, 2, 3, 4, 0.5, 0.5, 1, 1, 0.25, 0.25, 0.25, 0.25],
             "name": "fc_0.tmp_1",
             "shape": [
                 3, 2 ,2

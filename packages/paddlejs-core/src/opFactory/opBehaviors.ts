@@ -179,7 +179,10 @@ const behaviors : Behaviors = {
     transToScale() {
         this.data['multi_value'] = this.attrs['scale'] || 1;
         this.data['bias_value'] = this.attrs['bias'] || 0;
-        this.data['active_function'] = 'scale';
+        const bias_after_scale = this.attrs['bias_after_scale'];
+        this.data['active_function'] = (bias_after_scale || bias_after_scale === undefined)
+            ? 'scale'
+            : 'scaleWidthBias';
     },
 
     setActiveFunc() {

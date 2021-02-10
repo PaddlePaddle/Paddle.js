@@ -4,7 +4,12 @@
 
 function mainFunc(
     { counter },
-    { axis }
+    {
+        axis,
+        Scale_y = 1.0,
+        Scale_x = 1.0,
+        Scale_out = 1.0
+    }
 ) {
     return `
     ivec4 formatNCHW(int n, int c, int h, int w) {
@@ -48,7 +53,7 @@ function mainFunc(
         else {
             c = getValueFromTensorPos_counter(oPos.r, oPos.g, oPos.b, oPos.a);
         }
-        float res = o * c;
+        float res = float(${Scale_out / Scale_x}) * o * float(${1 / Scale_y}) * c;
         setOutput(float(res));
     }
     
@@ -57,7 +62,10 @@ function mainFunc(
 export default {
     mainFunc,
     params: [
-        'axis'
+        'axis',
+        'Scale_y',
+        'Scale_x',
+        'Scale_out'
     ],
     textureFuncConf: {
         counter: ['getValueFromTensorPos'],

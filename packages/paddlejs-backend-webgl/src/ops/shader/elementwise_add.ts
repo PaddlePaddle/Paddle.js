@@ -4,10 +4,15 @@
 
 function mainFunc(
     {},
-    { axis }
+    {
+        axis,
+        Scale_y = 1.0,
+        Scale_x = 1.0,
+        Scale_out = 1.0
+    }
 ) {
+
     return `
-    // start函数
     void main(void) {
         // 输出数据
         ivec4 oPos = getOutputTensorPos();
@@ -26,7 +31,7 @@ function mainFunc(
         else {
             c = getValueFromTensorPos_counter(oPos.r, oPos.g, oPos.b, oPos.a);
         }
-        float res = c + o;
+        float res = float(${Scale_out / Scale_y}) * c + float(${Scale_out / Scale_x}) * o;
         setOutput(float(res));
     }
     `;
@@ -34,7 +39,10 @@ function mainFunc(
 export default {
     mainFunc,
     params: [
-        'axis'
+        'axis',
+        'Scale_y',
+        'Scale_x',
+        'Scale_out'
     ],
     textureFuncConf: {
         counter: ['getValueFromTensorPos'],

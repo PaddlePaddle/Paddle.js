@@ -17,7 +17,7 @@ module.exports = {
         new HtmlWebpackPlugin({
             filename: 'index.html',
             template: './demo/index.html'
-        }),
+        })
     ],
     resolve: {
         // Add ".ts" and ".tsx" as resolvable extensions.

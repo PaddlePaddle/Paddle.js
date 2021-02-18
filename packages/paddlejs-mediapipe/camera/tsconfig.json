@@ -9,6 +9,11 @@
     ],
     "compilerOptions": {
         "outDir": "dist",
-        "allowJs": true
+        "allowJs": true,
+        "types": ["jest", "webrtc", "node"],
+        "baseUrl": ".",
+        "paths": {
+            "@paddlejs-models/humanseg": ["../../paddlejs-models/humanseg/src/index"]
+        }
     }
 }

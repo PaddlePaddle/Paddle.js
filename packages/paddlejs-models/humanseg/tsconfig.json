@@ -10,6 +10,9 @@
     ],
     "compilerOptions": {
         "outDir": "dist",
-        "allowJs": true
+        "baseUrl": ".",
+        "paths": {
+            "@paddlejs/paddlejs-core": ["../../paddlejs-core/src/index"]
+        }
     }
 }

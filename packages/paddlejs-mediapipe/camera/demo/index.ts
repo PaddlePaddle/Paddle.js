@@ -1,13 +1,9 @@
 import Camera from '../src/index';
 
 let camera = null;
-let loadingDom = document.getElementById("isLoading");
-let video = document.getElementById('video') as any;
+const loadingDom = document.getElementById('isLoading');
+const video = document.getElementById('video') as HTMLVideoElement;
 const videoToolDom = document.getElementById('video-tool');
-const startBtn = document.getElementById('start') as any;
-const pauseBtn = document.getElementById('pauseBtn') as any;
-const stopBtn = document.getElementById('stopBtn') as any;
-const canvas = document.getElementById('demo') as HTMLCanvasElement;
 
 load();
 
@@ -17,14 +13,15 @@ video && video.addEventListener('loadeddata', async function () {
 });
 
 // 点击视频控制按钮，实现视频播放/截图/暂停功能
-videoToolDom.addEventListener('click', function(e: any) {
-    if (e.target.id === 'start') {
+videoToolDom.addEventListener('click', function (e: Event) {
+    const target = e.target as HTMLElement;
+    if (target.id === 'start') {
         camera.start();
     }
-    if (e.target.id === 'pause') {
+    if (target.id === 'pause') {
         camera.pause();
     }
-    if (e.target.id === 'stop') {
+    if (target.id === 'stop') {
         camera.stop();
     }
 });
@@ -32,7 +29,7 @@ videoToolDom.addEventListener('click', function(e: any) {
 async function load() {
     camera = new Camera(video, {
         onFrame: canvas => {
-            console.log(canvas, 'canvas')
+            console.log(canvas, 'canvas');
         }
     });
 }

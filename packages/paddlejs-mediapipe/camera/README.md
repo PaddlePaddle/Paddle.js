@@ -14,6 +14,25 @@ npm install @paddlejs-mediapipe/camera
 ```javascript
 import Camera from '@paddlejs-mediapipe/camera';
 
+const option = {
+    // video width
+    width?: number,
+    // video height
+    height?: number,
+    // mirror or not
+    mirror?: boolean,
+    // canvas DOM
+    targetCanvas?: HTMLCanvasElement,
+    // video rendered successfully
+    onSuccess?: () => void,
+    // video rendering failed
+    onError?: NavigatorUserMediaErrorCallback,
+    // browser does not support the getusermedia API
+    onNotSupported?: () => void,
+    // get every frame of video
+    onFrame?: (canvas: HTMLCanvasElement) => void
+};
+
 const camera = new Camera(video, option);
 // video play
 camera.start();

@@ -10,10 +10,10 @@ interface cameraOption {
     mirror?: boolean;
     /** 目标canvas DOM对象 */
     targetCanvas?: HTMLCanvasElement;
-    onSuccess: () => void;
-    onError: NavigatorUserMediaErrorCallback;
-    onNotSupported: () => void;
-    onFrame: (canvas: HTMLCanvasElement) => void;
+    onSuccess?: () => void;
+    onError?: NavigatorUserMediaErrorCallback;
+    onNotSupported?: () => void;
+    onFrame?: (canvas: HTMLCanvasElement) => void;
 }
 
 export default class Camera {

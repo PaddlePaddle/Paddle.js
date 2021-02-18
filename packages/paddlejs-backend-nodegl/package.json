@@ -1,0 +1,18 @@
+{
+  "name": "@paddlejs/paddlejs-backend-nodegl",
+  "version": "1.0.0",
+  "description": "Node.js backend with a WebGL context for Paddle.js",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node --files test/op/opTest.ts"
+  },
+  "keywords": [
+    "webgl",
+    "headless"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "gl": "^4.9.0"
+  }
+}

@@ -2,71 +2,34 @@
 
 # Paddle.js
 
-Paddle.js是百度Paddle的web方向子项目，是一个运行在浏览器中的开源深度学习框架。Paddle.js可以加载提前训练好的paddle模型，或者将paddle hub中的模型通过paddle.js的模型转换工具变成浏览器友好的模型进行在线推理预测使用。目前，paddle.js仅可以在支持webGL的浏览器中运行。
+Paddle.js 是百度 PaddlePaddle 的 web 方向子项目，是一个运行在浏览器中的开源深度学习框架。Paddle.js 可以加载提前训练好的 paddle 模型，或者将 paddle hub 中的模型通过 Paddle.js 的模型转换工具 paddlejs-converter 变成浏览器友好的模型进行在线推理预测使用。目前，Paddle.js 可以在支持 webGL/webGPU 的浏览器中运行。
 
 [![Build Status](https://travis-ci.org/PaddlePaddle/Paddle.js.svg?branch=beta)](https://travis-ci.org/PaddlePaddle/Paddle.js.svg?branch=beta)
 
 
 ## 主要特点
 
-### 模块化
+### 模块
 
-Paddle.js项目基于Atom系统构建，该系统是一个通用框架，可支持WebGL上的GPGPU操作。 它非常模块化，可以通过利用WebGL来更快地执行计算任务。
+* [paddlejs-core](./packages/paddlejs-core/README_cn.md)，推理引擎的核心部分，负责整个引擎的推理流程运行
+* [paddlejs-converter](./packages/paddlejs-converter/README_cn.md)，模型转换工具，将 PaddlePaddle 模型（或称为 fluid 模型）转化为浏览器友好的格式
+* [paddlejs-models](./packages/paddlejs-models/)，封装好的模型工程库，提供简易 api 方便用户落地 AI 效果
+* [paddlejs-examples](./packages/paddlejs-examples/)，Paddle.js AI 效果样例
+* [paddlejs-mediapipe](./packages/paddlejs-mediapipe/)，数据流处理工具库，支持 webrtc 视频流、轻量 opencv 等工具
+
+### 计算方案
+* [paddlejs-backend-webgl](./packages/paddlejs-backend-webgl/README_cn.md)，webgl 方案，目前算子支持最多的方案，[算子支持列表](./packages/paddlejs-backend-webgl/src/ops/index.ts)
+
+* [paddlejs-backend-webgpu](./packages/paddlejs-backend-webgpu/README_cn.md)，webgpu 方案，该计算方案仍然是实验阶段，[**WebGPU** 仍处于草案阶段](https://gpuweb.github.io/gpuweb/) ，[算子支持列表](./packages/paddlejs-backend-webgpu/src/ops/index.ts)
+
+* [paddlejs-backend-cpu](./packages/paddlejs-backend-cpu/README_cn.md)，cpu 方案，[算子支持列表](./packages/paddlejs-backend-cpu/src/ops/index.ts)
 
 ### 浏览器覆盖范围
 
-* PC: Chrome, firefox
-* Mac: Chrome, Safari
-* Android: Baidu App , UC, Chrome and QQ Browser
+* PC浏览器: Chrome, Safari, firefox
+* 手机浏览器: Baidu App , Safari, Chrome , UC and QQ Browser
+* 小程序: 百度小程序、微信小程序
 
-### 支持的操作
-
-目前，Paddle.js只支持有限的一组算子操作。如果您的模型中使用了不支持的操作，那么padde.js将运行失败并提示您的模型中有哪些op算子目前还不支持。如果您的模型中存在目前Paddle.js不支持的算子，请提出问题，让我们知道你需要支持。
-[查看完整列表](./src/factory/fshader/README.md)
-
-
-## 加载和运行模型
-
-如果原始模型是浏览器友好的model格式, 使用 paddle.load()加载模型。
-
-```bash
-
-import {runner as Paddlejs} from 'paddlejs';
-
-const paddlejs = new Paddlejs({
-        modelPath: 'model/mobilenetv2', // model path
-        fileCount: 4, // model data file count 可以不填写
-        feedShape: {  // input shape
-            fw: 256,
-            fh: 256
-        },
-        fetchShape: [1, 1, 1920, 10],  // output shape
-        fill: '#fff',   // fill color when resize image
-        needBatch: true, // whether need to complete the shape to 4 dimension
-        inputType: 'image' // whether is image or video
-    });
-
-// load paddlejs model and preheat
-await paddlejs.loadModel();
-
-// run model
-await paddlejs.predict(img, postProcess);
-
-function postProcee(data) {
-    // data为预测结果
-    console.log(data);
-}
-
-```
-
-对于前输入处理的有关详细信息，请参阅feed文档。
-
-对于得到结果后输出处理的有关详细信息，请参阅fetch文档。
-
-
-## 运行Paddle.js提供的转换器脚本
-
-模型转换器需要输入一个Paddle格式的model，可以是Paddle Hub中的model，运行转换器将会得到paddle.js的JSON格式model。
 
 ## Web友好的model格式
 
@@ -74,15 +37,6 @@ function postProcee(data) {
 
  - model.json (数据流图和权重清单文件)
  - group1-shard\*of\* (二进制权重文件的集合)
-
-
-## 预览演示
-
-Paddle.js已经将一些模型转换成了Paddle.js支持的格式。在下面的URL中有一些演示，打开一个带有演示的浏览器页面。
-[查看更多](./examples/README.md)
-
-## 用户自定义算子
-请查看[算子开发流程文档](./tools/PaddlejsOpDevelopWalkthrough.md)，我们欢迎并期待着用户自定义算子，通过提交pr为Paddle.js的建设做出贡献！
 
 ## 反馈和社区支持
 - 在线视频课程 [开始学习](https://www.bilibili.com/video/BV1gZ4y1H7UA?p=6)

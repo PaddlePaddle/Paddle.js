@@ -2,7 +2,6 @@
 
 # paddlejs-backend-webgpu
 
-This package implements an experimental backend based on WebGPU for Paddle.js.
 实现了 Paddle.js 的基于 WebGPU 计算方案，但该计算方案仍然是实验阶段，**WebGPU** 仍处于草案阶段 (https://gpuweb.github.io/gpuweb/)
 
 ## 安装

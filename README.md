@@ -2,73 +2,33 @@
 
 # Paddle.js
 
-Paddle.js is a web project for Baidu Paddle, which is an open source deep learning framework running in the browser. Paddle.js can either load a pre-trained model, or transforming a model from paddle-hub with model transforming tools provided by Paddle.js. It could nearly run in every browser with WebGL supported.
+Paddle.js is a web project for Baidu Paddle, which is an open source deep learning framework running in the browser. Paddle.js can either load a pre-trained model, or transforming a model from paddle-hub with model transforming tools provided by Paddle.js. It could run in every browser with WebGL/WebGPU supported.
 
 [![Build Status](https://travis-ci.org/PaddlePaddle/Paddle.js.svg?branch=beta)](https://travis-ci.org/PaddlePaddle/Paddle.js.svg?branch=beta)
 
 ## Key Features
 
-### Modular
+### Module
 
-Web project is built on Atom system which is a versatile framework to support GPGPU operation on WebGL. It is quite modular and could be used to make computation tasks faster by utilizing WebGL.
+* [paddlejs-core](./packages/paddlejs-core/README.md), the core part of the Paddle.js ecosystem, which is responsible for the operation of the inference process of the entire engine.
 
-### High Performance
+* [paddlejs-converter](./packages/paddlejs-converter/README.md), model transformation tool for Paddle.js, convert PaddlePaddle models (also known as fluid models) into a browser-friendly format.
+* [paddlejs-models](./packages/paddlejs-models/), model projects, supply flexible low-level APIs for users to implement their AI scenario.
+* [paddlejs-examples](./packages/paddlejs-examples/), Paddle.js AI examples
+* [paddlejs-mediapipe](./packages/paddlejs-mediapipe/), tools for live and streaming media, support webrtc camera and a lightweight opencv package
+### Backends
+* [paddlejs-backend-webgl](./packages/paddlejs-backend-webgl/README.md), webgl backend, the main backend for Paddle.js, [ops supported](./packages/paddlejs-backend-webgl/src/ops/index.ts)
 
-Web project could run TinyYolo model in less than 30ms on chrome. This is fast enough to run deep learning models in many realtime scenarios.
+* [paddlejs-backend-webgpu](./packages/paddlejs-backend-webgpu/README.md)，webgpu backend, an experimental backend, [WebGPU draft](https://gpuweb.github.io/gpuweb/), [ops supported](./packages/paddlejs-backend-webgpu/src/ops/index.ts)
+
+* [paddlejs-backend-cpu](./packages/paddlejs-backend-cpu/README.md), cpu backend, [ops supported](./packages/paddlejs-backend-cpu/src/ops/index.ts)
 
 ### Browser Coverage
 
-* PC: Chrome, firefox
-* Mac: Chrome, Safari
-* Android: Baidu App , UC, Chrome and QQ Browser
+* PC: Chrome, Safari, firefox
+* Phone: Baidu App , Chrome , UC and QQ Browser
+* Smartprogram: Baidu Smartprogram, WX Smartprogram
 
-### Supported operations
-
-Currently Paddle.js only supports a limited set of Paddle Ops. See the full list. If your model uses unsupported ops, the Paddle.js script will fail and produce a list of the unsupported ops in your model. Please file issues to let us know what ops you need support with.
-
-[Supported operations Pages](./src/factory/fshader/README.md)
-
-
-## Loading and running in the browser
-
-```bash
-
-import {runner as Paddlejs} from 'paddlejs';
-
-const paddlejs = new Paddlejs({
-        modelPath: 'model/mobilenetv2', // model path
-        fileCount: 4, // model data file count
-        feedShape: {  // input shape
-            fw: 256,
-            fh: 256
-        },
-        fetchShape: [1, 1, 1920, 10],  // output shape
-        fill: '#fff',   // fill color when resize image
-        needBatch: true, // whether need to complete the shape to 4 dimension
-        inputType: 'image' // whether is image or video
-    });
-
-// load paddlejs model and preheat
-await paddlejs.loadModel();
-
-// run model
-await paddlejs.predict(img, postProcess);
-
-function postProcee(data) {
-    // data is predicted result
-    console.log(data);
-}
-
-```
-
-Please see feed documentation for details.
-
-Please see fetch documentation for details.
-
-
-## Run the converter script provided by the pip package:
-
-The converter expects a Paddlejs SavedModel, Paddle Hub module, paddle.js JSON format for input.
 
 
 ## Web-friendly format
@@ -77,13 +37,6 @@ The conversion script above produces 2 types of files:
 
  - model.json (the dataflow graph and weight manifest file)
  - group1-shard\*of\* (collection of binary weight files)
-
-
-## Preview Demo
-
-Paddle.js has some pre-converted models to Paddle.js format .There are some demos in the following URL, open a browser page with the demo.
-
-[Supported Demo Pages](./examples/README.md)
 
 
 ## Feedback and Community Support

@@ -36,6 +36,7 @@ export default class ModelLoader {
     };
 
     inNode = false;
+    isLocalFile: boolean = false;
     realFetch: Function = function () {
         throw new Error('ERROR: empty fetch funciton');
     };
@@ -52,13 +53,14 @@ export default class ModelLoader {
             modelDir = `${modelPath}/`;
         }
 
+        this.isLocalFile = modelDir.indexOf('http') !== 0;
+
         this.urlConf = {
-            dir:
-                modelDir.indexOf('http') === 0 // 存放模型的文件夹
-                    ? modelDir
-                    : modelDir.charAt(0) === '/'
-                        ? `${modelDir}`
-                        : `/${modelDir}`,
+            dir: this.isLocalFile
+                ? modelDir.charAt(0) === '/'
+                    ? `${modelDir}`
+                    : `/${modelDir}`
+                : modelDir,
             main: filename // 主文件
         };
 
@@ -150,12 +152,28 @@ export default class ModelLoader {
             ? require('node-fetch').Headers
             : Headers;
         const myHeaders = new HeadersClass();
-
-        this.realFetch = this.inNode ? require('node-fetch') : window.fetch.bind(window);
+        this.realFetch = this.inNode
+            ? this.isLocalFile
+                ? this.fetchLocalFile
+                : require('node-fetch')
+            : window.fetch.bind(window);
 
         return this.realFetch(path, {
             method: method,
             headers: myHeaders
+        });
+    }
+
+    fetchLocalFile(localPath) {
+        const fs = require('fs');
+        return new Promise((resolve, reject) => {
+            try {
+                const content = fs.readFileSync(localPath, 'utf8');
+                resolve(content);
+            }
+            catch (e) {
+                reject(e);
+            }
         });
     }
 
@@ -167,7 +185,11 @@ export default class ModelLoader {
         if (params.type === 'fetch') {
             load = new Promise((resolve, reject) => {
                 this.fetch(path, params)
-                    .then(response => response.json())
+                    .then(response => {
+                        return this.isLocalFile && this.inNode
+                            ? JSON.parse(response)
+                            : response.json();
+                    })
                     .then(responseData => resolve(responseData))
                     .then(err => reject(err));
             });

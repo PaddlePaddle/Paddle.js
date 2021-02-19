@@ -14,12 +14,23 @@
 * Mac: Chrome
 * Android: Baidu App and QQ Browser
 
-## 构建部署
-
+## 安装环境
 ```bash
-npm install                         # 安装依赖
-npm run tinyYolo              # 启动 tinyYolo 在线推理服务
+sudo npm install -g parcel-bundler
 ```
+
+## 构建并预览
+在项目根目录下运行
+```bash
+npm install # 安装依赖
+npm run tinyYolo              # 启动 tinyYolo 在线推理服务
+npm run humanStream     #动态人像抠图
+npm run wine    #酒名识别。识别结果在console里
+npm run benchmark   #各模型加载时间
+npm run humanseg    #人像照片抠图
+```
+打开命令运行后提示的网址：Server running at http://localhost:1234
+点击页面下方的开始识别按钮。
 
 ## 如何预览 demo
 
@@ -30,3 +41,18 @@ npm run tinyYolo              # 启动 tinyYolo 在线推理服务
 ## 效果
 
 ![image](./tinyYolo/demoshow.png)
+
+
+## 运行单个文件
+在项目根目录下运行
+```bash
+parcel examples/tinyYolo/videoDemo.html
+```
+打开其提示的网址：Server running at http://localhost:1234
+点击页面下方的开始识别按钮。
+
+## 生成生产环境可以使用的网页
+```bash
+parcel build examples/tinyYolo/videoDemo.html  --no-minify  --public-url ./
+```
+将dist文件夹传到您的网站

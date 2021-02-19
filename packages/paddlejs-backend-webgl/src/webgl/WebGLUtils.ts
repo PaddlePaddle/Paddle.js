@@ -75,6 +75,9 @@ export class GLHelper {
         failIfMajorPerformanceCaveat: true
     };
 
+    public static gl: WebGLRenderingContext = null;
+
+
     public static getWebglVersion() {
         return env.get('webglVersion');
     }
@@ -83,7 +86,24 @@ export class GLHelper {
         return document.createElement('canvas');
     }
 
+    public static setWebglVersion(version: number) {
+        env.set('webglVersion', version);
+    }
+
+    public static setWebGLRenderingContext(gl: WebGLRenderingContext): WebGLRenderingContext {
+        if (this.gl) {
+            return this.gl;
+        }
+
+        this.gl = gl;
+        return gl;
+    }
+
     public static getWebGLRenderingContext(): WebGLRenderingContext {
+        if (this.gl) {
+            return this.gl;
+        }
+
         const canvas = this.createCanvas();
 
         canvas.addEventListener('webglcontextlost', (ev: Event) => {

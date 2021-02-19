@@ -1,0 +1,14 @@
+{
+    "restartable": "rs",
+    "verbose": true,
+    "ignoreRoot": [
+        ".git",
+        ".svn",
+        "node_modules/**/node_modules"
+    ],
+    "watch": [
+        "src/",
+        "test/"
+    ],
+    "delay": "1000"
+}

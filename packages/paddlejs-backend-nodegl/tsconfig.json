@@ -1,0 +1,28 @@
+{
+    "extends": "../../tsconfig",
+    "include": [
+        "src/",
+        "test/"
+    ],
+    "exclude": [
+        "node_modules/"
+    ],
+    "ts-node": {
+        "transpileOnly": true
+    },
+    "compilerOptions": {
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "preserveConstEnums": true,
+        "strict": true,
+        "target": "es2017",
+        "outDir": "dist",
+        "types": ["node"],
+        "baseUrl": ".",
+        "paths": {
+            "@paddlejs/paddlejs-core": ["../paddlejs-core/src/index"],
+            "@paddlejs/paddlejs-backend-nodegl": ["src/index"],
+            "@paddlejs/paddlejs-backend-webgl": ["../paddlejs-backend-webgl/src/index"]
+        }
+    }
+}

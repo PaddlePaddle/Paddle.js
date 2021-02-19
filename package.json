@@ -12,6 +12,8 @@
     "webgl": "lerna run start  --scope=@paddlejs/paddlejs-backend-webgl  --stream",
     "webgpu": "lerna run start  --scope=@paddlejs/paddlejs-backend-webgpu  --stream",
     "enc": "lerna run start  --scope=@paddlejs/paddlejs-enc --stream",
+    "nodegl-op": "lerna run start  --scope=@paddlejs/paddlejs-backend-nodegl  --stream",
+    "nodegl-model": "lerna run dev-model --scope=@paddlejs/paddlejs-backend-nodegl  --stream",
     "benchmark": "lerna run start  --scope=@paddlejs/paddlejs-benchmark --stream",
     "build:webgpu": "lerna run build  --scope=@paddlejs/paddlejs-backend-webgpu  --stream",
     "build:cpu": "lerna run build  --scope=@paddlejs/paddlejs-backend-cpu  --stream",
@@ -45,8 +47,10 @@
     "jest-fetch-mock": "^3.0.3",
     "lerna": "^3.22.1",
     "lint-staged": "^10.5.1",
+    "nodemon": "^2.0.7",
     "ts-jest": "^26.4.4",
     "ts-loader": "^8.0.11",
+    "ts-node": "^9.1.1",
     "typescript": "^4.0.5",
     "webpack": "^5.6.0",
     "webpack-cli": "^4.2.0",
@@ -76,10 +80,11 @@
   "license": "ISC",
   "dependencies": {
     "@paddlejs/paddlejs-backend-cpu": "file:packages/paddlejs-backend-cpu",
+    "@paddlejs/paddlejs-backend-nodegl": "file:packages/paddlejs-backend-nodegl",
     "@paddlejs/paddlejs-backend-webgl": "file:packages/paddlejs-backend-webgl",
     "@paddlejs/paddlejs-backend-webgpu": "file:packages/paddlejs-backend-webgpu",
+    "@paddlejs/paddlejs-benchmark": "file:packages/paddlejs-benchmark",
     "@paddlejs/paddlejs-core": "file:packages/paddlejs-core",
-    "@paddlejs/paddlejs-enc": "file:packages/paddlejs-enc",
-    "@paddlejs/paddlejs-benchmark": "file:packages/paddlejs-benchmark"
+    "@paddlejs/paddlejs-enc": "file:packages/paddlejs-enc"
   }
 }

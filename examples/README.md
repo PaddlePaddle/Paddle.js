@@ -11,7 +11,7 @@ At present, tiny Yolo model can run within 30ms for web project, which is enough
 
 * PC: Chrome
 * Mac: Chrome
-* Android: Baidu App and QQ Browser
+* Android: Baidu App and QQ Browser and Chrome
 
 ## Building deployment
 

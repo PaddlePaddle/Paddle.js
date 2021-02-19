@@ -55,6 +55,9 @@ python convertToPaddleJSModel.py --inputDir=<fluid_model_directory> --outputDir=
 - model.json (模型结构与参数清单)
 - chunk_\*.dat (二进制参数文件集合)
 
+样例：
+python convertToPaddleJSModel.py --modelPath="../infer_model/gesture_detect/__model__" --paramPath="../infer_model/gesture_detect/params" --outputDir="../tmp/"  
+
 ## 2. 详细文档
 参数 |  描述
 :-: | :-: 

@@ -2,9 +2,10 @@
   "name": "@paddlejs/paddlejs-backend-nodegl",
   "version": "1.0.0",
   "description": "Node.js backend with a WebGL context for Paddle.js",
-  "main": "index.js",
+  "main": "lib/index",
   "scripts": {
-    "start": "ts-node --files test/op/opTest.ts"
+    "start": "nodemon -e ts,tsx --config nodemon.json --exec ts-node test/op/opTest.ts",
+    "dev-model": "nodemon -e ts,tsx --config nodemon.json --exec ts-node test/model/modelTest.ts"
   },
   "keywords": [
     "webgl",

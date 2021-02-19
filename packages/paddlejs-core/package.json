@@ -9,5 +9,10 @@
   },
   "sideEffects": false,
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "browser": {
+      "fs": false,
+      "path": false,
+      "os": false
+  }
 }

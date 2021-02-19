@@ -52,6 +52,7 @@ if __name__ == "__main__":
         optimizedModelTempDir = None
         if enableOptimization == 1:
             optimizedModelTempDir = os.path.join(outputDir, "optimize")
+            os.makedirs(optimizedModelTempDir)
             if inputDir:
                 optimizeCmd = optimizeCmd + " --inputDir=" + inputDir
                 convertCmd = convertCmd + " --inputDir=" + optimizedModelTempDir
@@ -61,6 +62,7 @@ if __name__ == "__main__":
                 # optimizeParamPath, paramName = os.path.split(paramPath)
                 optimizeModelPath = os.path.join(optimizedModelTempDir, "model")
                 optimizeParamPath = os.path.join(optimizedModelTempDir, "params")
+
                 convertCmd = convertCmd + " --modelPath=" + optimizeModelPath + " --paramPath=" + optimizeParamPath
             optimizeCmd = optimizeCmd + " --outputDir=" + optimizedModelTempDir
         else:
@@ -82,7 +84,7 @@ if __name__ == "__main__":
         print("enableLogModelInfo: " + str(enableLogModelInfo))
         print("sliceDataSize:" + str(sliceDataSize))
 
-        pythonCmd = "python3"
+        pythonCmd = "python"
 
         print("Starting...")
         if enableOptimization:

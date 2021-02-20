@@ -28,6 +28,10 @@ npm run humanStream     #动态人像抠图
 npm run wine    #酒名识别。识别结果在console里
 npm run benchmark   #各模型加载时间
 npm run humanseg    #人像照片抠图
+npm run tinyYolo    #人脸位置
+npm run mobilenet    #三个物体的检测
+npm run mobilenetOpt    #优化版的三个物体的检测
+npm run terrorModel     #有bug运行不了
 ```
 打开命令运行后提示的网址：Server running at http://localhost:1234
 点击页面下方的开始识别按钮。

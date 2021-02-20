@@ -1,22 +1,20 @@
 import { Runner } from '@paddlejs/paddlejs-core';
 import '../../src/index';
 
+const modelDir = '/test/model/mock/';
+const modelPath = `${modelDir}model.json`;
+
 async function run() {
     const runner = new Runner({
-        modelPath: 'https://paddlejs.cdn.bcebos.com/models/tinyYolo/model.json',
-        fileCount: 1,
+        modelPath,
         feedShape: {
-            fw: 320,
-            fh: 320
+            fw: 5,
+            fh: 3
         },
-        fetchShape: [1, 25, 10, 10],
-        fill: '#000',
-        scale: 192,
-        targetSize: { height: 320, width: 320 },
-        mean: [117.001 / 255, 114.697 / 255, 97.404 / 255],
-        std: [1.0, 1.0, 1.0]
+        fileCount: 0
     });
-    console.log(await runner.init());
+    const preheatRes = await runner.init();
+    console.log(preheatRes);
 }
 
 run();

@@ -65,7 +65,9 @@ export const ops = {
         deps: conv2d_deps,
         behaviors: [
             'adaptPaddings',
-            'isApplySeparableConv'
+            'isApplySeparableConv',
+            'batchComputeConv2d',
+            'processBias'
         ]
     },
     elementwise_add: {

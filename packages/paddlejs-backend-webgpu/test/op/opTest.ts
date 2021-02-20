@@ -46,10 +46,11 @@ async function run() {
         feedShape: {
             fw: 3,
             fh: 3
-        }
+        },
+        fileCount: 0,
+        needPreheat: false
     });
     await runner.init();
-    runner.genOpData();
     const executeOP = runner.weightMap[0];
     runner.executeOp(executeOP);
     console.log(await backend.read(OP_INFO_MAP[opName]));

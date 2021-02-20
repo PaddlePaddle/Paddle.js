@@ -11,23 +11,22 @@ Paddle.js is a web project for Baidu PaddlePaddle, which is an open source deep 
 ### Module
 
 * [paddlejs-core](./packages/paddlejs-core/README.md), the core part of the Paddle.js ecosystem, which is responsible for the operation of the inference process of the entire engine.
-
 * [paddlejs-converter](./packages/paddlejs-converter/README.md), model transformation tool for Paddle.js, convert PaddlePaddle models (also known as fluid models) into a browser-friendly format.
 * [paddlejs-models](./packages/paddlejs-models/), model projects, supply flexible low-level APIs for users to implement their AI scenario.
 * [paddlejs-examples](./packages/paddlejs-examples/), Paddle.js AI examples
 * [paddlejs-mediapipe](./packages/paddlejs-mediapipe/), tools for live and streaming media, support webrtc camera and a lightweight opencv package
 ### Backends
 * [paddlejs-backend-webgl](./packages/paddlejs-backend-webgl/README.md), webgl backend, the main backend for Paddle.js, [ops supported](./packages/paddlejs-backend-webgl/src/ops/index.ts)
-
 * [paddlejs-backend-webgpu](./packages/paddlejs-backend-webgpu/README.md)，webgpu backend, an experimental backend, [WebGPU draft](https://gpuweb.github.io/gpuweb/), [ops supported](./packages/paddlejs-backend-webgpu/src/ops/index.ts)
-
 * [paddlejs-backend-cpu](./packages/paddlejs-backend-cpu/README.md), cpu backend, [ops supported](./packages/paddlejs-backend-cpu/src/ops/index.ts)
+* [paddlejs-backend-nodegl](./packages/paddlejs-backend-nodegl/README.md), nodegl backend, a backend in Node.js for Paddle.js, using the webgl backend ops. [ops supported](./packages/paddlejs-backend-webgl/src/ops/index.ts)
 
-### Browser Coverage
+### Browser/Platforms Coverage
 
 * PC: Chrome, Safari, firefox
 * Phone: Baidu App , Chrome , UC and QQ Browser
 * Smartprogram: Baidu Smartprogram, WX Smartprogram
+* Platform: macOS, Windows
 
 
 

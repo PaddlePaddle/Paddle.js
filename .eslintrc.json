@@ -20,7 +20,8 @@
         "i32": true,
         "Obj": true,
         "Value": true,
-        "Arr": true
+        "Arr": true,
+        "page": true
     },
     "plugins": [
         "standard",

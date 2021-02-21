@@ -4,7 +4,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 module.exports = {
     mode: 'production',
     entry: {
-        index: ['./src/index']
+        index: [path.resolve(__dirname, './src/index')]
     },
     resolve: {
         // Add ".ts" and ".tsx" as resolvable extensions.
@@ -28,6 +28,8 @@ module.exports = {
         filename: '[name].js',
         path: path.resolve(__dirname, 'lib'),
         globalObject: 'this',
-        libraryTarget: 'umd'
+        libraryTarget: 'umd',
+        library: 'paddlejsCore',
+        publicPath: '/'
     }
 };

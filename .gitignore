@@ -5,3 +5,6 @@ dist
 lib
 coverage
 .cache
+lerna-debug.log
+
+!e2e/dist

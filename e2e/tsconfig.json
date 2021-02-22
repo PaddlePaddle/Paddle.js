@@ -1,0 +1,14 @@
+{
+    "extends": "../tsconfig",
+    "include": [
+        "./tests/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules/"
+    ],
+    "compilerOptions": {
+        "outDir": "dist",
+        "target": "es2017", // must be es2017 or higher, see: https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#code-transpilation-issues
+        "types": ["jest", "node", "puppeteer", "expect-puppeteer", "jest-environment-puppeteer"]
+    }
+}

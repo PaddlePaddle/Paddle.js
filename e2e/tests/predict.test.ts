@@ -18,12 +18,13 @@ describe('e2e test custom model', () => {
         };
 
         page.on('console', msg => console.log('PAGE LOG:', msg.text()));
-        // @ts-ignore
+
         const res = await page.evaluate(async modelInfo => {
             const runner = new paddlejsCore.Runner(modelInfo);
             const preheatRes = await runner.init();
             return preheatRes;
         }, modelInfo);
+
         await expect(res).toEqual(expected);
     });
 });

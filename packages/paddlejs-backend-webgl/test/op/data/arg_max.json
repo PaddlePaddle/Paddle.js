@@ -1,0 +1,28 @@
+{
+    "ops": [
+        {
+            "attrs": {
+                "axis": -2,
+                "flatten": false
+            },
+            "inputs": {
+                "X": ["concat.tmp_0"]
+            },
+            "outputs": {
+                "Out": ["concat.tmp_2"]
+            },
+            "type": "arg_max"
+        }
+    ],
+    "vars": [
+        {
+            "data": [1, 5, 5, 2, 9, -6, 2, 8, -3, 7, -9, 1, -1, 5, -5, 2, 9, 6, 2, 8, 3, 7, 9, 1],
+            "name": "concat.tmp_0",
+            "shape": [2, 3, 4]
+        },
+        {
+            "name": "concat.tmp_2",
+            "shape": [2, 4]
+        }
+    ]
+}

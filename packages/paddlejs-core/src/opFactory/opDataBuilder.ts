@@ -153,13 +153,6 @@ export default class OpData {
         }));
     }
 
-    buildRenderData() {
-        const backendInstance = GLOBALS.backendInstance;
-        if (backendInstance.createRenderData) { // webgpu 不需要
-            this.renderData = backendInstance.createRenderData(this.inputTensors);
-        }
-    }
-
     // process op tensorData and attrs according to op behaviors
     processTensorDataAndAttrs() {
         try {

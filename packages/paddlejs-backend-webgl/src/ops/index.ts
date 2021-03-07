@@ -29,8 +29,12 @@ import unpacked_2_packed from './shader/unpacked_2_packed';
 import packed_2_unpacked from './shader/packed_2_unpacked';
 import elementwise_mul from './shader/elementwise_mul';
 import elementwise_div from './shader/elementwise_div';
+import arg_max from './shader/arg_max';
+import arg_min from './shader/arg_min';
 
 const ops = {
+    arg_max,
+    arg_min,
     conv2d,
     conv2d_packing,
     conv2d_transpose,

@@ -1,7 +1,7 @@
 import { Runner } from '@paddlejs/paddlejs-core';
 import backend from '../../src/index';
 
-const opName = 'elementwise_div';
+const opName = 'arg_max';
 const modelDir = '/test/op/data/';
 const modelPath = `${modelDir}${opName}.json`;
 

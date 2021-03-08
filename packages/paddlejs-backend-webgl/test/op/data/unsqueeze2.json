@@ -1,0 +1,27 @@
+{
+    "ops": [
+        {
+            "attrs": {
+                "axes": [1, 2]
+            },
+            "inputs": {
+                "X": ["concat.tmp_0"]
+            },
+            "outputs": {
+                "Out": ["concat.tmp_2"]
+            },
+            "type": "unsqueeze2"
+        }
+    ],
+    "vars": [
+        {
+            "data": [1, 5, 5, 2, 9, -6],
+            "name": "concat.tmp_0",
+            "shape": [2, 3]
+        },
+        {
+            "name": "concat.tmp_2",
+            "shape": [2, 1, 1, 3]
+        }
+    ]
+}

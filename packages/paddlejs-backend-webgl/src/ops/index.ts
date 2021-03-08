@@ -31,6 +31,7 @@ import elementwise_mul from './shader/elementwise_mul';
 import elementwise_div from './shader/elementwise_div';
 import arg_max from './shader/arg_max';
 import arg_min from './shader/arg_min';
+import unsqueeze2 from './shader/unsqueeze2';
 
 const ops = {
     arg_max,
@@ -60,6 +61,7 @@ const ops = {
     transpose2,
     unpacked_2_packed,
     packed_2_unpacked,
+    unsqueeze2,
     prelu: dynamic('prelu'),
     relu6: dynamic('relu6'),
     leakyRelu: dynamic('leakyRelu'),

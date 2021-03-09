@@ -40,4 +40,6 @@ camera.start();
 camera.pause();
 // 视频停止
 camera.stop();
+// 切换摄像头
+camera.switchCameras();
 ```

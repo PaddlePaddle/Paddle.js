@@ -40,4 +40,6 @@ camera.start();
 camera.pause();
 // video stop
 camera.stop();
+// cameras switch
+camera.switchCameras();
 ```

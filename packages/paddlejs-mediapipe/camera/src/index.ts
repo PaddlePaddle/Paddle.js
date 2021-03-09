@@ -20,6 +20,8 @@ export default class Camera {
     constructor(videoElement: HTMLVideoElement, opt: Partial<cameraOption> = {}) {
         this.video = videoElement;
         this.options = Object.assign({}, this.defaultOption, opt);
+        this.currentConstraints = 'user';
+        this.cameraNum = 0;
         this.initVideoStream();
     }
 
@@ -39,43 +41,69 @@ export default class Camera {
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
     private requestAnimationId;
+    private stream: any;
+    private currentConstraints: string;
+    private cameraNum: number;
 
     private initVideoStream() {
         this.video.width = this.options.width || this.video.clientWidth;
         if (this.options.height) {
             this.video.height = this.options.height;
         }
-        // @ts-ignore
-        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia
-        || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia({
-                video: true
-            }).then(stream => {
-                this.streamCallback(stream);
-            }).catch(this.options.onError);
-        }
-        else if (navigator.getUserMedia) {
-            navigator.getUserMedia({
-                video: true
-            }, stream => {
-                this.streamCallback(stream);
-            }, this.options.onError);
-        } else {
-            this.options.onNotSupported();
-        }
+        // 枚举设备摄像头
+        this.enumerateDevices();
+        // 处理视频流
+        this.handleStream();
     }
 
-    private streamCallback(stream) {
+    private handleStream() {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({video: {
+                facingMode: this.currentConstraints
+            }}).then(stream => {
+                this.stream = stream;
+                this.streamCallback();
+            }).catch(this.options.onError);
+            return;
+        }
+        // @ts-ignore
+        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+        if (navigator.getUserMedia) {
+            navigator.getUserMedia({video: {
+                    facingMode: this.currentConstraints
+                }}, stream => {
+                this.stream = stream;
+                this.streamCallback();
+            }, this.options.onError);
+            return;
+        }
+        this.options.onNotSupported();
+    }
+
+    private enumerateDevices() {
+        navigator.mediaDevices && navigator.mediaDevices.enumerateDevices()
+            .then(devices => {
+                devices.forEach(device => {
+                    if (device.kind === 'videoinput') {
+                        this.cameraNum++;
+                    }
+                });
+            })
+            .catch(err => {
+                console.log(err.name + ': ' + err.message);
+            });
+    }
+
+    private streamCallback() {
+        // console.log(stream, stream.getTracks(), 'stream');
         this.options.onSuccess();
         // @ts-ignore
         const URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
         if ('srcObject' in this.video) {
             try {
-                this.video.srcObject = stream;
+                this.video.srcObject = this.stream;
             } catch (error) {
-                this.video.src = URL.createObjectURL(stream) || stream;
+                this.video.src = URL.createObjectURL(this.stream) || this.stream;
             }
         }
         this.video.addEventListener('loadeddata', () => {
@@ -87,6 +115,12 @@ export default class Camera {
                 this.video.height = this.video.clientHeight;
             }
             this.initCanvas();
+        });
+    }
+
+    private stopMediaTracks() {
+        this.stream?.getTracks()?.forEach(track => {
+            track.stop();
         });
     }
 
@@ -130,5 +164,17 @@ export default class Camera {
             this.requestAnimationId = null;
         }
         this.video.pause();
+    }
+
+    public switchCameras() {
+        if (this.cameraNum < 2) {
+            return;
+        }
+        // 停止视频流播放
+        this.stopMediaTracks();
+        // 切换摄像头
+        this.currentConstraints = 'user' ? 'environment' : 'user';
+        // 重置视频流
+        this.handleStream();
     }
 }

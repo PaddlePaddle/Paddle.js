@@ -84,7 +84,9 @@ export default {
     border: 1px solid #f1f1f1;
 }
 .img {
+    display: block;
     width: 100%;
+    height: 380px;
 }
 .loading {
     position: fixed;

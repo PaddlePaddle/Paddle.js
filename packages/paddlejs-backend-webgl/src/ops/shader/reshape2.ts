@@ -36,7 +36,5 @@ export default {
         origin: ['getValueFromTensorPos']
     },
     commonFuncConf: ['transferFromNHWCtoNCHW'],
-    behaviors: [
-        'inferShape'
-    ]
+    behaviors: []
 };

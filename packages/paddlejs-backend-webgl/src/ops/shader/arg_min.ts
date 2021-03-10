@@ -5,7 +5,7 @@
 function mainFunc(
     { origin },
     {
-        axis,
+        axis = -1,
         flatten
     }
 ) {

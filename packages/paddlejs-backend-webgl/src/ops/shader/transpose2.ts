@@ -4,8 +4,35 @@
 
 function mainFunc(
     {},
-    { perm_0, perm_1, perm_2, perm_3, perm_size }
+    { axis }
 ) {
+
+    let arrayPerm : number[] = axis;
+    let length = arrayPerm.length;
+    if (length > 4) {
+        if (arrayPerm[0] === 0) {
+            arrayPerm = arrayPerm.slice(1).map(perm => perm - 1);
+        }
+        length = arrayPerm.length;
+        // throw Error(`op transpoes2 axis length exceeds maximum length 4, get ${length}`);
+    }
+    const temp = new Array(length).fill(0);
+    for (let i = 0; i < length; i++) {
+        const index = arrayPerm[i];
+        temp[index] = i;
+    }
+    const perm_arr = [];
+    for (let i = 0; i < 4; i++) {
+        perm_arr[i] = temp[i] || 0;
+    }
+    const [
+        perm_0,
+        perm_1,
+        perm_2,
+        perm_3
+    ] = perm_arr;
+    const perm_size = length;
+
     return `
     // start函数
     void main(void) {
@@ -49,16 +76,9 @@ function mainFunc(
 export default {
     mainFunc,
     params: [
-        'perm_0',
-        'perm_1',
-        'perm_2',
-        'perm_3',
-        'perm_size'
+        'axis'
     ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos']
-    },
-    behaviors: [
-        'setPerm'
-    ]
+    }
 };

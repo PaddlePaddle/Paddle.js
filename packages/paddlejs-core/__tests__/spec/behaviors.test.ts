@@ -7,28 +7,6 @@ const conv2d = {
     }
 };
 
-const reshape = {
-    name: 'reshape2',
-    attrs: {
-        new_shape: [-1, 0, 3, 2]
-    },
-    input: {
-        X: [{
-            name: 'transpose_3.tmp_0',
-            persistable: false,
-            shape: [2, 4, 6]
-        }]
-    },
-    output: {
-        Out: [{
-            name: 'transpose_out.tmp_0',
-            persistable: false,
-            shape: [2, 4, 3, 2]
-        }]
-    },
-    data: {}
-};
-
 const transpose2 = {
     attrs: {
         axis: [3, 0, 1, 2],
@@ -168,44 +146,6 @@ describe('test op behaviors', () => {
         conv2d.attrs.paddings = [1, 1];
         behaviors.adaptPaddings.call(conv2d as OpData, []);
         expect(conv2d.attrs.paddings).toEqual([1, 1]);
-    });
-
-    it('test behavior inferShape', () => {
-        behaviors.inferShape.call(reshape as unknown as OpData, []);
-        expect(reshape.output.Out[0].shape).toEqual([2, 4, 3, 2]);
-
-        reshape.attrs.new_shape = [6, 8];
-        reshape.input.X[0].shape = [2, 4, 6];
-        behaviors.inferShape.call(reshape as unknown as OpData, []);
-        expect(reshape.output.Out[0].shape).toEqual([6, 8]);
-
-        // case new_shape === Out[0].shape
-        behaviors.inferShape.call(reshape as unknown as OpData, []);
-        expect(reshape.output.Out[0].shape).toEqual([6, 8]);
-    });
-
-    it('test behavior setPerm', () => {
-        behaviors.setPerm.call(transpose2 as unknown as OpData, []);
-        expect(transpose2.data['perm_size']).toBe(4);
-
-        const temp: number[] = [];
-        for (let i = 0; i < 4; i++) {
-            temp[i] = transpose2.data[`perm_${i}`] as number;
-        }
-        expect(temp).toEqual([1, 2, 3, 0]);
-
-        transpose2.attrs.axis = [2, 0, 1];
-        behaviors.setPerm.call(transpose2 as unknown as OpData, []);
-        const temp1: number[] = [];
-        for (let i = 0; i < 4; i++) {
-            temp1[i] = transpose2.data[`perm_${i}`] as number;
-        }
-        expect(temp1).toEqual([1, 2, 0, 0]);
-
-        transpose2.attrs.axis = [2, 0, 1, 3, 4];
-        expect(() => {
-            behaviors.setPerm.call(transpose2 as unknown as OpData, []);
-        }).toThrow();
     });
 
     it('test behavior isGlobalPooling', () => {

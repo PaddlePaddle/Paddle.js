@@ -84,7 +84,7 @@ export default class Runner {
     }
 
     genGraph() {
-        this.graphGenerator = new Graph(this.model, this.modelConfig.type);
+        this.graphGenerator = new Graph(this.model, this.modelConfig.type, this.modelConfig.plugins);
         this.weightMap = this.graphGenerator.createGraph();
     }
 

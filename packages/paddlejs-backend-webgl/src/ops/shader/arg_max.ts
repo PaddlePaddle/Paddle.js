@@ -5,7 +5,7 @@
 function mainFunc(
     { origin },
     {
-        axis,
+        axis = -1,
         flatten
     }
 ) {
@@ -24,6 +24,7 @@ function mainFunc(
     let real_axis = axis < 0 ? 4 - origin_shape_start + axis : axis;
     real_axis = origin_shape_start + real_axis;
     const axis_shape = shape[real_axis];
+
     return `
 
     void main() {

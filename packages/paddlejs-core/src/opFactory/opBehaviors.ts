@@ -20,49 +20,6 @@ const behaviors : Behaviors = {
         }
     },
 
-    inferShape() {
-        const inputShape = this.input.X[0].shape;
-        if (this.attrs.new_shape.toString() === this.output.Out[0].shape.toString()) {
-            return;
-        }
-        const targetShape = this.attrs.new_shape;
-        for (let i = 0; i < targetShape.length; i++) {
-            if (targetShape[i] === 0) {
-                targetShape[i] = inputShape[i];
-            }
-        }
-        let total_length = inputShape.reduce((acc, cur) => acc * cur, 1);
-        let minusPos = -1;
-        for (let i = 0; i < targetShape.length; i++) {
-            if (targetShape[i] === -1) {
-                minusPos = i;
-                continue;
-            }
-            total_length /= targetShape[i];
-        }
-        if (minusPos !== -1) {
-            targetShape[minusPos] = total_length;
-        }
-        this.output.Out[0].shape = targetShape;
-    },
-
-    setPerm() {
-        const arrayPerm : number[] = this.attrs['axis'];
-        const length = arrayPerm.length;
-        if (length > 4) {
-            throw Error(`op transpoes2 axis length exceeds maximum length 4, get ${length}`);
-        }
-        const temp = new Array(length).fill(0);
-        for (let i = 0; i < length; i++) {
-            const index = arrayPerm[i];
-            temp[index] = i;
-        }
-        for (let i = 0; i < 4; i++) {
-            this.data[`perm_${i}`] = temp[i] || 0;
-        }
-        this.data['perm_size'] = length;
-    },
-
     isGlobalPooling() {
         const counter = this.input.X[0] || {};
         const length = (counter.shape && counter.shape.length) || 0;

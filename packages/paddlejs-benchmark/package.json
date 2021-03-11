@@ -16,7 +16,7 @@
     "file-loader": "^6.2.0",
     "less": "^4.1.0",
     "less-loader": "^7.3.0",
-    "pug": "^3.0.0",
+    "pug": "^3.0.1",
     "pug-plain-loader": "^1.1.0",
     "style-loader": "^2.0.0",
     "url-loader": "^4.1.1",

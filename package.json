@@ -39,6 +39,7 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "babel-runtime": "^6.26.0",
+    "cssnano": "^4.1.10",
     "gl": "^4.5.0",
     "jest": "^26.0.1",
     "less": "^3.11.1",
@@ -46,7 +47,7 @@
     "pre-push": "^0.1.1",
     "pug": "^3.0.0",
     "typescript": "^3.9.5",
-    "vue-template-compiler": "^2.6.11",
+    "vue-template-compiler": "^2.6.12",
     "webpack-cli": "^3.3.6"
   },
   "keywords": [],

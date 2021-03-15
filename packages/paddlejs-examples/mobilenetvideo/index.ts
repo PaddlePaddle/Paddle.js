@@ -1,14 +1,18 @@
-import Camera from '../src/index';
+import * as mobilenet from '@paddlejs-models/mobilenet';
+import Camera from '@paddlejs-mediapipe/camera';
+import map from './data/map.json';
 
 let camera = null;
 const loadingDom = document.getElementById('isLoading');
 const video = document.getElementById('video') as HTMLVideoElement;
 const videoToolDom = document.getElementById('video-tool');
+const text = document.getElementById('text');
 
 load();
 
-// 视频开始播放，loading消失
+// 视频loaded，loading消失
 video && video.addEventListener('loadeddata', async function () {
+    console.log('loadeddata');
     loadingDom && loadingDom.remove();
 });
 
@@ -30,10 +34,16 @@ videoToolDom.addEventListener('click', function (e: Event) {
 });
 
 async function load() {
+    await mobilenet.load({
+        path: 'https://paddlejs.cdn.bcebos.com/models/mobileNetV2',
+        fileCount: 4,
+        mean: [0.485, 0.456, 0.406],
+        std: [0.229, 0.224, 0.225]
+    }, map);
     camera = new Camera(video, {
-        onFrame: canvas => {
-            console.log(canvas, 'canvas');
+        onFrame: async () => {
+            const res = await mobilenet.classify(video);
+            text.innerHTML = res;
         }
     });
 }
-

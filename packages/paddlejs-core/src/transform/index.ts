@@ -1,5 +1,6 @@
 
 import TexturePacking from './texturePacking';
+import FormatInputsX from './formatInputsX';
 import type Transformer from './transformer';
 
 interface TransformerAction {
@@ -11,7 +12,8 @@ interface TransformerAction {
 const actions: TransformerAction = {
     preTransforms: [],
     transforms: [
-        new TexturePacking()
+        new TexturePacking(),
+        new FormatInputsX()
     ],
     postTransforms: []
 };

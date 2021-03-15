@@ -3,18 +3,27 @@
  */
 
 function mainFunc(
-    {},
-    { axis }
+    {
+        origin
+    },
+    {
+        axis
+    }
 ) {
 
+    const length_unformatted_shape = origin.length_unformatted_shape;
     let arrayPerm : number[] = axis;
     let length = arrayPerm.length;
-    if (length > 4) {
-        if (arrayPerm[0] === 0) {
-            arrayPerm = arrayPerm.slice(1).map(perm => perm - 1);
-        }
+
+    const diffLength = length - length_unformatted_shape;
+    if (diffLength > 0) {
+        arrayPerm = arrayPerm
+            .map(item => item - 1)
+            .filter(item => item >= 0);
         length = arrayPerm.length;
-        // throw Error(`op transpoes2 axis length exceeds maximum length 4, get ${length}`);
+    }
+    if (length > 4) {
+        throw Error(`op transpoes2 axis length exceeds maximum length 4, get ${length}`);
     }
     const temp = new Array(length).fill(0);
     for (let i = 0; i < length; i++) {

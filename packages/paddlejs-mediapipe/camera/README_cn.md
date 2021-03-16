@@ -30,7 +30,11 @@ const option = {
     // 浏览器不支持getUserMedia API
     onNotSupported?: () => void,
     // 获取视频流每一帧
-    onFrame?: (canvas: HTMLCanvasElement) => void
+    onFrame?: (canvas: HTMLCanvasElement) => void,
+    // 切换摄像头失败
+    switchError?: () => void,
+    // 视频加载结束
+    videoLoaded?: () => void
 };
 
 const camera = new Camera(video, option);
@@ -38,6 +42,6 @@ const camera = new Camera(video, option);
 camera.start();
 // 视频暂停
 camera.pause();
-// 视频停止
-camera.stop();
+// 切换摄像头
+camera.switchCameras();
 ```

@@ -30,7 +30,11 @@ const option = {
     // browser does not support the getusermedia API
     onNotSupported?: () => void,
     // get every frame of video
-    onFrame?: (canvas: HTMLCanvasElement) => void
+    onFrame?: (canvas: HTMLCanvasElement) => void,
+    // switch camera error
+    switchError?: () => void,
+    // video loadedData
+    videoLoaded?: () => void
 };
 
 const camera = new Camera(video, option);
@@ -38,6 +42,6 @@ const camera = new Camera(video, option);
 camera.start();
 // video pause
 camera.pause();
-// video stop
-camera.stop();
+// cameras switch
+camera.switchCameras();
 ```

@@ -7,16 +7,20 @@ const loadingDom = document.getElementById('isLoading');
 const video = document.getElementById('video') as HTMLVideoElement;
 const videoToolDom = document.getElementById('video-tool');
 const text = document.getElementById('text');
+const switchDom = document.getElementById('switch') as HTMLButtonElement;
+
+const switchError = () => {
+    switchDom.disabled = true;
+};
+
+const videoLoaded = () => {
+    loadingDom && loadingDom.remove();
+    camera && camera.start();
+};
 
 load();
 
-// 视频loaded，loading消失
-video && video.addEventListener('loadeddata', async function () {
-    console.log('loadeddata');
-    loadingDom && loadingDom.remove();
-});
-
-// 点击视频控制按钮，实现视频播放/截图/暂停功能
+// 点击视频控制按钮，实现视频播放/暂停/切换摄像头功能
 videoToolDom.addEventListener('click', function (e: Event) {
     const target = e.target as HTMLElement;
     if (target.id === 'start') {
@@ -24,9 +28,6 @@ videoToolDom.addEventListener('click', function (e: Event) {
     }
     if (target.id === 'pause') {
         camera.pause();
-    }
-    if (target.id === 'stop') {
-        camera.stop();
     }
     if (target.id === 'switch') {
         camera.switchCameras();
@@ -44,6 +45,8 @@ async function load() {
         onFrame: async () => {
             const res = await mobilenet.classify(video);
             text.innerHTML = res;
-        }
+        },
+        switchError,
+        videoLoaded
     });
 }

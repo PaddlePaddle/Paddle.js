@@ -6,14 +6,14 @@
 interface cameraOption {
     width?: number;
     height?: number;
-    /** 是否镜像 */
     mirror?: boolean;
-    /** 目标canvas DOM对象 */
     targetCanvas?: HTMLCanvasElement;
     onSuccess?: () => void;
     onError?: NavigatorUserMediaErrorCallback;
     onNotSupported?: () => void;
     onFrame?: (canvas: HTMLCanvasElement) => void;
+    switchError?: () => void;
+    videoLoaded?: () => void;
 }
 
 export default class Camera {
@@ -33,7 +33,9 @@ export default class Camera {
         onSuccess: this.noop,
         onError: this.noop,
         onNotSupported: this.noop,
-        onFrame: this.noop
+        onFrame: this.noop,
+        switchError: this.noop,
+        videoLoaded: this.noop
     };
 
     private options: cameraOption;
@@ -58,20 +60,25 @@ export default class Camera {
 
     private handleStream() {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia({video: {
+            navigator.mediaDevices.getUserMedia({
+                video: {
                     facingMode: this.currentConstraints
-                }}).then(stream => {
+                }
+            }).then(stream => {
                 this.stream = stream;
                 this.streamCallback();
             }).catch(this.options.onError);
             return;
         }
         // @ts-ignore
+        // eslint-disable-next-line max-len
         navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
         if (navigator.getUserMedia) {
-            navigator.getUserMedia({video: {
+            navigator.getUserMedia({
+                video: {
                     facingMode: this.currentConstraints
-                }}, stream => {
+                }
+            }, stream => {
                 this.stream = stream;
                 this.streamCallback();
             }, this.options.onError);
@@ -88,6 +95,9 @@ export default class Camera {
                         this.cameraNum++;
                     }
                 });
+                if (this.cameraNum < 2) {
+                    this.options.switchError && this.options.switchError();
+                }
             })
             .catch(err => {
                 console.log(err.name + ': ' + err.message);
@@ -113,6 +123,7 @@ export default class Camera {
             else {
                 this.video.height = this.video.clientHeight;
             }
+            this.options.videoLoaded && this.options.videoLoaded();
             this.initCanvas();
         });
     }
@@ -145,16 +156,11 @@ export default class Camera {
     }
 
     public start() {
-        this.video.play();
+        this.video && this.video.play();
         if (this.requestAnimationId) {
             return;
         }
         this.videoRequestAnimationFrame();
-    }
-
-    public stop() {
-        this.pause();
-        this.video.src = '';
     }
 
     public pause() {
@@ -172,7 +178,8 @@ export default class Camera {
         // 停止视频流播放
         this.stopMediaTracks();
         // 切换摄像头
-        this.currentConstraints = 'user' ? 'environment' : 'user';
+        const current = this.currentConstraints;
+        this.currentConstraints = current === 'user' ? 'environment' : 'user';
         // 重置视频流
         this.handleStream();
     }

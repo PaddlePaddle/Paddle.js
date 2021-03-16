@@ -11,6 +11,7 @@ interface opInfo {
 
 const inputParams = [
     'length_shape',
+    'length_unformatted_shape',
     'width_shape',
     'height_shape',
     'width_texture',

@@ -203,6 +203,7 @@ export default class OpData {
         // 从tensor对象中获取的数据
         const tensorAttrs = [
             'length_shape',
+            'length_unformatted_shape',
             'width_shape',
             'height_shape',
             'width_texture',

@@ -12,6 +12,7 @@ export interface ModelVar {
     data?: number[] | Float32Array;
     persistable?: boolean;
     tensorName?: string;
+    total?: number;
 }
 
 export interface Model {
@@ -53,7 +54,7 @@ interface Behavior {
 
 export interface OpInfo {
     params?: string[] | Function;
-    main?: string;
+    main?: Function;
     mainFunc?: Function;
     textureFuncConf?: {
         [key: string]: string[];
@@ -67,6 +68,10 @@ export interface OpInfo {
     behaviors?: string[];
 }
 
+export interface Ops {
+    // key => backend_name
+    [key: string]: OpInfo;
+}
 
 export interface OpData {
     name: string;
@@ -102,5 +107,6 @@ export interface InputFeed {
 
 export enum GraphType {
     SingleOutput = 'single',
-    MultipleOutput = 'multiple'
+    MultipleOutput = 'multiple',
+    MultipleInput = 'multipleInput'
 }

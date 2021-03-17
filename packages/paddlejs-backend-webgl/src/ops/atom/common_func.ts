@@ -59,6 +59,18 @@ const hardSigmoid = `
     }
 `;
 
+const sqrt = `
+    float sqrt(float x, float slope, float offset) {
+        return sqrt(x);
+    }
+`;
+
+const pow = `
+    float pow(float x, float factor, float offset) {
+        return pow(x, factor);
+    }
+`;
+
 export {
     prelu,
     relu6,
@@ -67,6 +79,8 @@ export {
     sigmoid,
     hardSigmoid,
     scaleWidthBias,
+    sqrt,
+    pow,
     transferFromNHWCtoNCHW
 };
 

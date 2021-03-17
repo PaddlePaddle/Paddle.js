@@ -19,12 +19,16 @@ export default class GLProgram {
     public constructor(context: WebGLRenderingContext, vShader: WebGLShader, fShaderCode: string, outTensor: Tensor) {
         const gl = context;
         this.vShader = vShader;
-        this.fShader = this.initShader(gl, fShaderCode, 'fragment');
-        this.shape = outTensor && outTensor.shape;
-        const program = this.program = gl.createProgram() as WebGLProgram;
-        gl.attachShader(program, this.vShader);
-        gl.attachShader(program, this.fShader);
-        gl.linkProgram(program);
+        try {
+            this.fShader = this.initShader(gl, fShaderCode, 'fragment');
+            this.shape = outTensor && outTensor.shape;
+            const program = this.program = gl.createProgram() as WebGLProgram;
+            gl.attachShader(program, this.vShader);
+            gl.attachShader(program, this.fShader);
+            gl.linkProgram(program);
+        }
+        catch (e) {
+        }
     }
 
     public initShader(gl, code: string, type = 'vertex') {

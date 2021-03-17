@@ -3,7 +3,7 @@
  * @author yueshuangyan
  */
 
-import { PaddlejsBackend } from '@paddlejs/paddlejs-core';
+import { PaddlejsBackend, env } from '@paddlejs/paddlejs-core';
 import { OpData, Query } from './types';
 import { GLHelper, EShaderType } from './webgl/WebGLUtils';
 import { GLTexture, TextureConfig } from './webgl/WebGLTexture';
@@ -12,6 +12,7 @@ import buildShader from './webgl/buildShader';
 import GLProgram from './webgl/WebGLProgram';
 import { nhwc2nchw } from './utils/dataProcess';
 import queryProcess from './utils/queryProcess';
+
 
 export default class WebGLBackend extends PaddlejsBackend {
     gl: WebGLRenderingContext;
@@ -138,7 +139,11 @@ export default class WebGLBackend extends PaddlejsBackend {
         const pbo = this.createPBO();
         await this.createAndWaitForFence();
         const result = this.downloadFoat32TensorFromBuffer(pbo);
-        const [N, C, H, W] = (this.program as GLProgram).shape as number[];
+        let shape = (this.program as GLProgram).shape as number[];
+        if (env.get('debug') && env.get('shape')) {
+            shape = env.get('shape');
+        }
+        const [N, C, H, W] = shape;
         const nhwcFetchShape = [N, H, W, C];
         return nhwc2nchw(result, nhwcFetchShape);
     }

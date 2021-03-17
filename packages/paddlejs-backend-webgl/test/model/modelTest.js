@@ -1,4 +1,4 @@
-import { Runner } from '@paddlejs/paddlejs-core';
+import { Runner, env } from '@paddlejs/paddlejs-core';
 import '../../src/index';
 
 const modelDir = '/test/model/mock/';
@@ -13,8 +13,11 @@ async function run() {
         },
         fileCount: 0
     });
+
+    env.set('debug', true);
     const preheatRes = await runner.init();
     console.log(preheatRes);
+    window.weightMap = runner.weightMap;
 }
 
 run();

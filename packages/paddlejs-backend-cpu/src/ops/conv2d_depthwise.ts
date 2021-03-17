@@ -1,7 +1,7 @@
 import { Tensor } from './Tensor';
-import { getIntArray, getInt, getBool } from './utils';
+import { getIntArray, getBool } from './utils';
 
-/* eslint-disable max-lines-per-function, max-statements, max-depth */
+/* eslint-disable max-statements, max-depth */
 function main(tensorMap: Map<string, Tensor>, attrs: Attrs): f32[] {
     const origin = tensorMap.get('origin') as Tensor;
     const filter = tensorMap.get('filter') as Tensor;
@@ -20,11 +20,9 @@ function main(tensorMap: Map<string, Tensor>, attrs: Attrs): f32[] {
     const filterData: f32[] = (filter as Tensor).data;
     const biasData: f32[] = (bias as Tensor).data;
 
-    const strides = attrs.strides || [1, 1];
-    const paddings = attrs.paddings || [0, 0];
-    const dilations = attrs.dilations || [1, 1];
-    const groups = attrs.groups || 1;
-
+    const strides = attrs.strides;
+    const paddings = attrs.paddings;
+    const dilations = attrs.dilations;
     const fuse_relu = attrs.fuse_relu;
 
     const stride_v = strides[0] || 1;
@@ -39,7 +37,6 @@ function main(tensorMap: Map<string, Tensor>, attrs: Attrs): f32[] {
     const outH = outShape[2];
     const outW = outShape[3];
 
-    const filterC = filterShape[1];
     const filterH = filterShape[2];
     const filterW = filterShape[3];
 
@@ -49,7 +46,6 @@ function main(tensorMap: Map<string, Tensor>, attrs: Attrs): f32[] {
     const result = new Array<f32>(out.total);
 
     const filterS0 = filterReducedShape[0];
-    const filterS1 = filterReducedShape[1];
     const filterS2 = filterReducedShape[2];
 
     const originS0 = originReducedShape[0];
@@ -61,8 +57,6 @@ function main(tensorMap: Map<string, Tensor>, attrs: Attrs): f32[] {
     const outS2 = outReducedShape[2];
 
     let res: f32 = 0.0;
-    let oTensorChannel: i32 = 0;
-    let oTensorChannelJ: i32 = 0;
     let bi: f32 = 0.0;
     let oyBase: i32 = 0;
     let oxBase: i32 = 0;
@@ -74,48 +68,39 @@ function main(tensorMap: Map<string, Tensor>, attrs: Attrs): f32[] {
     for (let n = 0; n < outB; n++) {
         for (let c = 0; c < outC; c++) {
             bi = biasData[c];
-            oTensorChannel = i32(Math.floor(c / (outC / groups)) * filterC);
-
             for (let h = 0; h < outH; h++) {
-                oyBase = h * stride_v - padTop;
                 for (let w = 0; w < outW; w++) {
                     res = 0.0;
-                    oxBase = w * stride_h - padLeft;
+                    oyBase = h * stride_v - padTop;
 
-                    for (let j = 0; j < filterC; j++) {
-                        oy = oyBase;
-                        oTensorChannelJ = oTensorChannel + j;
+                    for (let fy = 0; fy < filterH; fy++) {
+                        oy = oyBase + fy * dilation_v;
+                        if (oy >= originH) {
+                            break;
+                        }
+                        if (oy < 0) {
+                            continue;
+                        }
 
-                        for (let fy = 0; fy < filterH; fy++) {
-                            if (oy >= originH) {
+                        oxBase = w * stride_h - padLeft;
+
+                        for (let fx = 0; fx < filterW; fx++) {
+                            ox = oxBase + fx * dilation_h;
+                            if (ox >= originW) {
                                 break;
                             }
-                            if (oy < 0) {
-                                oy += dilation_v;
+                            if (ox < 0) {
                                 continue;
                             }
 
-                            ox = oxBase;
+                            f = filterData[c * filterS0 + fy * filterS2 + fx];
+                            o = originData[n * originS0 + c * originS1 + oy * originS2 + ox];
 
-                            for (let fx = 0; fx < filterW; fx++) {
-                                if (ox >= originW) {
-                                    break;
-                                }
-                                if (ox < 0) {
-                                    ox += dilation_h;
-                                    continue;
-                                }
-
-                                f = filterData[c * filterS0 + j * filterS1 + fy * filterS2 + fx];
-                                o = originData[n * originS0 + oTensorChannelJ * originS1 + oy * originS2 + ox];
-
-                                res += f * o;
-                                ox += dilation_h;
-                            }
-
-                            oy += dilation_v;
-
+                            res += f * o;
+                            ox += dilation_h;
                         }
+
+                        oy += dilation_v;
                     }
 
                     res += bi;
@@ -139,11 +124,9 @@ class Attrs {
     strides: i32[] = [];
     paddings: i32[] = [];
     dilations: i32[] = [];
-    groups: i32 = 1;
-    fuse_relu: bool = false;
+    fuse_relu: bool;
     constructor(data: Obj) {
         this.strides = getIntArray('strides', data);
-        this.groups = getInt('groups', data);
         this.fuse_relu = getBool('fuse_relu', data);
         this.paddings = getIntArray('paddings', data);
         this.dilations = getIntArray('dilations', data);
@@ -151,10 +134,6 @@ class Attrs {
 }
 
 const behaviors = [
-    'adaptPaddings',
-    'isApplySeparableConv',
-    'batchComputeConv2d',
-    'processBias'
 ];
 
 export {

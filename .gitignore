@@ -6,5 +6,5 @@ lib
 coverage
 .cache
 lerna-debug.log
-
+.vscode
 !e2e/dist

@@ -1,4 +1,4 @@
-import {getIntArray, getFloatArray, getStr} from './utils';
+import { getIntArray, getFloatArray, getStr, getInt, reduceShape } from './utils';
 
 function padToFourDimShape(shape: i32[]): i32[] {
     let fourDimShape = [] as i32[];
@@ -17,47 +17,21 @@ function padToFourDimShape(shape: i32[]): i32[] {
 class Tensor {
     name: string = '';
     shape: i32[] = [];
+    shapeReduced: i32[] = [];
     data: f32[] = [];
     tensorName: string = '';
+    total: i32 = 0;
 
     constructor(data: Obj) {
         this.name = getStr('name', data);
         this.tensorName = getStr('tensorName', data);
         this.shape = padToFourDimShape(getIntArray('shape', data));
+        this.shapeReduced = reduceShape(this.shape);
         this.data = getFloatArray('data', data);
+        this.total = getInt('total', data);
     }
 }
 
-class Attrs {
-    strides: i32[] = [];
-    paddings: i32[] = [];
-    dilations: i32[] = [];
-    constructor (data: Obj) {
-        this.strides = getIntArray('strides', data);
-        this.paddings = getIntArray('paddings', data);
-        this.dilations = getIntArray('dilations', data);
-    }
-}
 
-class TensorMap {
-    filter: Tensor;
-    origin: Tensor;
-    bias: Tensor;
-    out: Tensor;
-
-    constructor() {
-        const initialObj = new Obj();
-        initialObj.set('name', '');
-        initialObj.set('shape', []);
-        initialObj.set('data', []);
-        initialObj.set('tensorName', '');
-        const initialTensor = new Tensor(initialObj);
-        this.filter = initialTensor;
-        this.origin = initialTensor;
-        this.bias = initialTensor;
-        this.out = initialTensor;
-    }
-}
-
-export { Tensor, Attrs, TensorMap};
+export { Tensor, padToFourDimShape };
 

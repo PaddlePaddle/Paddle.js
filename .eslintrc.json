@@ -16,10 +16,13 @@
         "GPUCommandEncoder": true,
         "GPUBindGroupLayout": true,
         "GPUBindGroup": true,
+        "bool": true,
         "f32": true,
         "i32": true,
         "Obj": true,
         "Value": true,
+        "isString": true,
+        "isDefined": true,
         "Arr": true,
         "page": true
     },

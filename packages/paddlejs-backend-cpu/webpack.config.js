@@ -1,11 +1,11 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     mode: 'development',
     entry: {
-        op: './test/op/opTest.js',
         model: './test/model/modelTest.js'
     },
     devtool: 'inline-source-map',
@@ -22,10 +22,10 @@ module.exports = {
             chunks: ['model'],
             template: './test/model/index.html'
         }),
-        new HtmlWebpackPlugin({
-            filename: 'op.html',
-            chunks: ['op'],
-            template: './test/op/index.html'
+        new CopyWebpackPlugin({
+            patterns: [{
+                from: path.resolve(__dirname, '../../../models/convertedModels')
+            }]
         })
     ],
     resolve: {

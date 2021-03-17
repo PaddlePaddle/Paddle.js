@@ -24,7 +24,7 @@ Paddle.js 是百度 PaddlePaddle 的 web 方向子项目，是一个运行在浏
 * [paddlejs-backend-nodegl](./packages/paddlejs-backend-nodegl/README_cn.md), nodegl 方案, 在 Node.js 环境中执行预测, 使用 webgl 方案的算子 [算子支持列表](./packages/paddlejs-backend-webgl/src/ops/index.ts)
 ### 浏览器/系统覆盖范围
 
-* PC浏览器: Chrome、Safari、firefox
+* PC浏览器: Chrome、Safari、Firefox
 * 手机浏览器: Baidu App、Safari、Chrome、UC and QQ Browser
 * 小程序: 百度小程序、微信小程序
 * 系统: MacOS、Windows

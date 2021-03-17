@@ -23,7 +23,7 @@ Paddle.js is a web project for Baidu PaddlePaddle, which is an open source deep 
 
 ### Browser/Platforms Coverage
 
-* PC: Chrome, Safari, firefox
+* PC: Chrome, Safari, Firefox
 * Phone: Baidu App , Chrome , UC and QQ Browser
 * Smartprogram: Baidu Smartprogram, WX Smartprogram
 * Platform: macOS, Windows

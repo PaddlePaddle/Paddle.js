@@ -78,7 +78,7 @@ export default class OpData {
                     if (tensorName) {
                         data.forEach((item: ModelVar) => {
                             item.tensorName = tensorName;
-                            this.tensorData.push(item);
+                            this.tensorData.push({ ...item, tensorName });
                         });
                     }
                 }
@@ -96,7 +96,7 @@ export default class OpData {
                 if (tensorName) {
                     const tensor = data[0];
                     tensor.tensorName = tensorName;
-                    this.tensorData.push(tensor);
+                    this.tensorData.push({ ...tensor, tensorName });
                 }
             }
         }
@@ -128,7 +128,9 @@ export default class OpData {
         };
 
 
-        return type === 'input' ? intputTensorName[name.toLowerCase()] : outTensorName[name.toLowerCase()];
+        return type === 'input'
+            ? intputTensorName[name.toLowerCase()] || name.toLowerCase()
+            : outTensorName[name.toLowerCase()];
     }
 
     getTensorVar(name: string) {
@@ -188,7 +190,8 @@ export default class OpData {
                 shape: data.shape,
                 data: data.data || null,
                 isPacked: this.isPackedOp || false,
-                binding: index
+                binding: index,
+                noLayout: GLOBALS.backendInstance?.noLayout
             });
             if (tensorName === 'out') {
                 this.outputTensors.push(tensor);
@@ -196,6 +199,9 @@ export default class OpData {
             else {
                 this.inputTensors.push(tensor);
             }
+
+            data.shape = tensor.shape;
+            data.total = tensor.total;
         });
     }
 

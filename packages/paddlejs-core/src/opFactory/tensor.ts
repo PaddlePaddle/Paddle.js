@@ -11,7 +11,8 @@ interface TensorParams {
     shape: number[];
     data: Float32Array | number[] | null;
     isPacked?: boolean;
-    binding?: number
+    binding?: number;
+    noLayout?: boolean;
 }
 
 export default class Tensor {
@@ -41,6 +42,10 @@ export default class Tensor {
         const shape = this.shape;
         // 原始数据个数
         this.total = shape.reduce((all: number, num: number) => all * num);
+
+        if (opts.noLayout) {
+            return;
+        }
         // 获取转换到texture后的信息
         const {
             exceedMax,

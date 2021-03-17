@@ -133,6 +133,16 @@ const behaviors : Behaviors = {
         this.name = 'relu';
     },
 
+    transToPow() {
+        this.data['multi_value'] = this.attrs.factor || 2;
+        this.data['active_function'] = 'pow';
+        this.name = 'pow';
+    },
+
+    transToSigmoid() {
+        this.data['active_function'] = 'sigmoid';
+    },
+
     transToScale() {
         this.data['multi_value'] = this.attrs['scale'] || 1;
         this.data['bias_value'] = this.attrs['bias'] || 0;

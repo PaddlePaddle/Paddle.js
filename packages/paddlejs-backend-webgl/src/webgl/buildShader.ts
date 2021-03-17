@@ -49,7 +49,6 @@ export default function buildShader(textureConf, type, inputTensors, fShaderPara
     }
 
     catch (e) {
-        console.log(e);
     }
 
     return code;

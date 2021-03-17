@@ -15,7 +15,7 @@ function mainFunc(
         float o = 0.0;
         int dim_total = ${inputs_dim} + ${append_num};
 
-        if (oPos[${dim}] < ${inputs_dim} {
+        if (oPos[${dim}] < ${inputs_dim}) {
             o = getValueFromTensorPos_origin(oPos.r, oPos.g, oPos.b, oPos.a);
         }
         else if (oPos[${dim}] < dim_total) {

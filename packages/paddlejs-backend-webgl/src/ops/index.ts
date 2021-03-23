@@ -33,6 +33,7 @@ import elementwise_div from './shader/elementwise_div';
 import arg_max from './shader/arg_max';
 import arg_min from './shader/arg_min';
 import unsqueeze2 from './shader/unsqueeze2';
+import flatten_contiguous_range from './shader/flatten_contiguous_range';
 
 const ops = {
     arg_max,
@@ -64,6 +65,7 @@ const ops = {
     unpacked_2_packed,
     packed_2_unpacked,
     unsqueeze2,
+    flatten_contiguous_range,
     prelu: dynamic('prelu'),
     relu6: dynamic('relu6'),
     leakyRelu: dynamic('leakyRelu'),

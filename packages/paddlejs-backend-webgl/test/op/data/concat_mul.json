@@ -10,7 +10,7 @@
             "outputs": {
                 "Out": ["concat.tmp_out"]
             },
-            "type": "concat"
+            "type": "concat_mul"
         }
     ],
     "vars": [

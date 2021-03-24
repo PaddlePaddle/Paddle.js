@@ -116,11 +116,11 @@ def organizeModelVariableInfo():
 
         varShape = list(v.shape)
 
-        # FIXME:start paddlejs 不支持shape中为-1，这里需要手动过滤一下，支持了以后可以删除
         varShapeExcludeNegativeOne = []
         for s in varShape:
+            # 模型中 ？会自动转为 -1，需要单独处理成 1
             if s == -1:
-                continue
+                s = 1
             varShapeExcludeNegativeOne.append(s)
         varShape = varShapeExcludeNegativeOne
         # FIXME:end

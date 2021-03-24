@@ -15,7 +15,7 @@ export default function buildShader(textureConf, type, inputTensors, fShaderPara
     let code = '';
     try {
 
-        const opName = getExactOpName(type, fShaderParams, isPacked);
+        const opName = getExactOpName(type, isPacked);
 
         const { params = {}, mainFunc, textureFuncConf = {}, commonFuncConf } = ops[opName];
 
@@ -47,12 +47,10 @@ export default function buildShader(textureConf, type, inputTensors, fShaderPara
 
         code = populateData(code);
     }
-
     catch (e) {
     }
 
     return code;
-
 }
 
 function genRuntimeCode(runtime) {

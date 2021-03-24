@@ -105,14 +105,14 @@ const mulOp2 = {
 
 const concatOp = {
     attrs: {
-        axis: 1
+        axis: 2
     } as any,
     input: {
         X: [{
-            shape: [2, 2, 2]
+            shape: [1, 2, 2, 2]
         }],
         Y: [{
-            shape: [2, 1, 2]
+            shape: [1, 2, 1, 2]
         }]
     }
 };
@@ -217,7 +217,7 @@ describe('test op behaviors', () => {
 
     it('test behavior normalizeDim', () => {
         behaviors.normalizeDim.call(concatOp as unknown as OpData, []);
-        expect(concatOp.attrs.dim).toBe(1);
+        expect(concatOp.attrs.dim).toBe(2);
     });
 
     it('test behavior normalizeDim2', () => {

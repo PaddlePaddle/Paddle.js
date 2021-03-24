@@ -1,13 +1,15 @@
 /**
  * @file concat_mul
+ * @description concat inputs X supports no more than 4 tensors, eg. [a1, a2, a3, a4]
  */
 
 /* eslint-disable max-lines */
 function mainFunc(
     {},
-    { dim, inputs_dim, append_num }
+    { dim, inputs_dim, append_num, fourth_num = 0, fourInputs = false }
 ) {
     const dim_total = inputs_dim + append_num;
+    const z_total = inputs_dim + append_num + fourth_num;
     return `
     // start函数
     void main(void) {
@@ -23,8 +25,21 @@ function mainFunc(
             o = getValueFromTensorPos_counter(oPos.r, oPos.g, oPos.b, oPos.a);
         }
         else {
+            ${fourInputs
+        ? `
+            if (oPos[${dim}] < ${z_total}) {
+                oPos[${dim}] = oPos[${dim}] - ${dim_total};
+                o = getValueFromTensorPos_appender(oPos.r, oPos.g, oPos.b, oPos.a);
+            }
+            else {
+                oPos[${dim}] = oPos[${dim}] - ${z_total};
+                o = getValueFromTensorPos_fourth(oPos.r, oPos.g, oPos.b, oPos.a);
+            }
+        `
+        : `
             oPos[${dim}] = oPos[${dim}] - ${dim_total};
             o = getValueFromTensorPos_appender(oPos.r, oPos.g, oPos.b, oPos.a);
+        `}
         }
         setOutput(float(o));
     }
@@ -35,12 +50,15 @@ export default {
     params: [
         'dim',
         'inputs_dim',
-        'append_num'
+        'append_num',
+        'fourInputs',
+        'fourth_num'
     ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos'],
         counter: ['getValueFromTensorPos'],
-        appender: ['getValueFromTensorPos']
+        appender: ['getValueFromTensorPos'],
+        fourth: ['getValueFromTensorPos']
     },
     behaviors: [
         'normalizeDim',

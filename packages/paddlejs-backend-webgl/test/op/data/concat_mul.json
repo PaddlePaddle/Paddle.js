@@ -5,12 +5,10 @@
                 "axis": 3
             },
             "inputs": {
-                "X": ["concat.tmp_0"],
-                "Y": ["concat.tmp_1"],
-                "Z": ["concat.tmp_2"]
+                "X": ["concat.tmp_0", "concat.tmp_1", "concat.tmp_2"]
             },
             "outputs": {
-                "Out": ["concat.tmp_3"]
+                "Out": ["concat.tmp_out"]
             },
             "type": "concat_mul"
         }
@@ -32,8 +30,13 @@
             "shape": [1, 2, 2, 2]
         },
         {
-            "data": [1, 2, 11, 21, 31, 3, 4, 12, 22, 32, 5, 6, 13, 23, 33, 7, 8, 14, 24, 34],
+            "data": [111, 122, 133, 144],
             "name": "concat.tmp_3",
+            "shape": [1, 2, 2, 1]
+        },
+        {
+            "data": [1, 2, 11, 21, 31, 3, 4, 12, 22, 32, 5, 6, 13, 23, 33, 7, 8, 14, 24, 34],
+            "name": "concat.tmp_out",
             "shape": [1, 2, 2, 5]
         }
     ]

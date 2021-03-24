@@ -84,6 +84,9 @@ function genTextureFuncCode(textureFuncConf, textureParams, opParams) {
     let textureCode = '';
     let samplerCode = '';
     for (const textureName of Object.keys(textureFuncConf)) {
+        if (!textureParams[textureName]) {
+            continue;
+        }
         samplerCode += textureFunc['getSamplerCode'](textureName);
         const funcs = textureFuncConf[textureName];
         for (const funcName of funcs) {

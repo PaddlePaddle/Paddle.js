@@ -13,6 +13,7 @@ import stat
 import traceback
 import numpy as np
 import paddle.fluid as fluid
+import paddle as paddle
 
 
 # 输入模型所在目录
@@ -115,11 +116,11 @@ def organizeModelVariableInfo():
 
         varShape = list(v.shape)
 
-        # FIXME:start paddlejs 不支持shape中为-1，这里需要手动过滤一下，支持了以后可以删除
         varShapeExcludeNegativeOne = []
         for s in varShape:
+            # 模型中 ？会自动转为 -1，需要单独处理成 1
             if s == -1:
-                continue
+                s = 1
             varShapeExcludeNegativeOne.append(s)
         varShape = varShapeExcludeNegativeOne
         # FIXME:end
@@ -221,6 +222,11 @@ def addChunkNumToJson(paramValueList):
 
 def convertToPaddleJSModel():
     """ 转换fluid modle为paddleJS model """
+
+
+    #In PaddlePaddle 2.x, we turn on dynamic graph mode by default, and 'load_inference_model()' is only supported in static graph mode. So  call 'paddle.enable_static()' before this api to enter static graph mode.
+    paddle.enable_static()
+
     # 初始化fluid运行环境和配置
     exe = fluid.Executor(fluid.CPUPlace())
     result = fluid.io.load_inference_model(dirname=modelDir, executor=exe, model_filename=modelName, params_filename=paramsName)

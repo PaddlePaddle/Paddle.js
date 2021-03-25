@@ -18,10 +18,18 @@ const videoLoaded = () => {
     camera && camera.start();
 };
 
+const onNotSupported = () => {
+    loadingDom && loadingDom.remove();
+    alert('浏览器不支持webrtc');
+};
+
 load();
 
 // 点击视频控制按钮，实现视频播放/暂停/切换摄像头功能
 videoToolDom.addEventListener('click', function (e: Event) {
+    if (!camera) {
+        return;
+    }
     const target = e.target as HTMLElement;
     if (target.id === 'start') {
         camera.start();
@@ -47,6 +55,7 @@ async function load() {
             text.innerHTML = res;
         },
         switchError,
-        videoLoaded
+        videoLoaded,
+        onNotSupported
     });
 }

@@ -2,8 +2,8 @@
     "ops": [
         {
             "attrs": {
-                "x_num_col_dims": 1,
-                "y_num_col_dims": 1
+                "transpose_X": true,
+                "transpose_Y": true
             },
             "inputs": {
                 "X": ["pool2d_0.tmp_0"],
@@ -12,19 +12,19 @@
             "outputs": {
                 "Out": ["fc_0.tmp_0"]
             },
-            "type": "mul"
+            "type": "matmul"
         }
     ],
     "vars": [
         {
             "data": [1, 0 , 3, -1, 2, 1, 0, 2],
             "name": "pool2d_0.tmp_0",
-            "shape": [2, 4]
+            "shape": [4, 2]
         },
         {
             "data": [4, 1, 0, -1, 1, 3, 2, 0, 1, 1, 3, 4],
             "name": "fc7_weights",
-            "shape": [4, 3]
+            "shape": [3, 4]
         },
         {
             "name": "fc_0.tmp_0",

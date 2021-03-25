@@ -133,6 +133,16 @@ const behaviors : Behaviors = {
         this.name = 'relu';
     },
 
+    transToPow() {
+        this.data['multi_value'] = this.attrs.factor || 2;
+        this.data['active_function'] = 'pow';
+        this.name = 'pow';
+    },
+
+    transToSigmoid() {
+        this.data['active_function'] = 'sigmoid';
+    },
+
     transToScale() {
         this.data['multi_value'] = this.attrs['scale'] || 1;
         this.data['bias_value'] = this.attrs['bias'] || 0;
@@ -183,11 +193,33 @@ const behaviors : Behaviors = {
     },
 
     normalizeDim2() {
-        const origin_shape = this.input.Y[0].shape;
+        let y_shape_temp = this.input.Y[0].shape;
+        if (y_shape_temp.length < 4) {
+            const batch = [];
+            for (let i = 0; i < (4 - y_shape_temp.length); i++) {
+                batch.push(1);
+            }
+            y_shape_temp = batch.concat(y_shape_temp);
+        }
+        const origin_shape = y_shape_temp;
         const axis = this.attrs.axis > -1 ? this.attrs.axis : origin_shape.length + this.attrs.axis;
 
         // 保存 输入 tensor 对应dim 的长度
         this.attrs.append_num = origin_shape[axis];
+        if (this.input.M) {
+            this.attrs.fourInputs = true;
+            let z_shape_temp = this.input.Z[0].shape;
+            if (z_shape_temp.length < 4) {
+                const batch = [];
+                for (let i = 0; i < (4 - z_shape_temp.length); i++) {
+                    batch.push(1);
+                }
+                z_shape_temp = batch.concat(z_shape_temp);
+            }
+            const origin_shape = z_shape_temp;
+            const axis = this.attrs.axis > -1 ? this.attrs.axis : origin_shape.length + this.attrs.axis;
+            this.attrs.fourth_num = origin_shape[axis];
+        }
     },
 
     processAxis() {

@@ -14,6 +14,7 @@ import pool2d_max from './shader/pool2d_max';
 import pool2d_winograd from './shader/pool2d_winograd';
 import elementwise_add from './shader/elementwise_add';
 import mul from './shader/mul';
+import matmul from './shader/matmul';
 import fc from './shader/fc';
 import dropout from './shader/dropout';
 import concat from './shader/concat';
@@ -32,6 +33,10 @@ import elementwise_div from './shader/elementwise_div';
 import arg_max from './shader/arg_max';
 import arg_min from './shader/arg_min';
 import unsqueeze2 from './shader/unsqueeze2';
+import flatten_contiguous_range from './shader/flatten_contiguous_range';
+import greater_than from './shader/greater_than';
+import reduce_sum from './shader/reduce_sum';
+import where from './shader/where';
 
 const ops = {
     arg_max,
@@ -49,6 +54,7 @@ const ops = {
     elementwise_mul,
     elementwise_div,
     mul,
+    matmul,
     fc,
     dropout,
     concat,
@@ -62,13 +68,19 @@ const ops = {
     unpacked_2_packed,
     packed_2_unpacked,
     unsqueeze2,
+    flatten_contiguous_range,
+    greater_than,
+    reduce_sum,
+    where,
     prelu: dynamic('prelu'),
     relu6: dynamic('relu6'),
     leakyRelu: dynamic('leakyRelu'),
     scale: dynamic('scale'),
     sigmoid: dynamic('sigmoid'),
     relu: dynamic('relu'),
-    hard_sigmoid: dynamic('hard_sigmoid')
+    hard_sigmoid: dynamic('hard_sigmoid'),
+    pow: dynamic('pow'),
+    sqrt: dynamic('sqrt')
 };
 export {
     ops

@@ -11,7 +11,8 @@ interface TensorParams {
     shape: number[];
     data: Float32Array | number[] | null;
     isPacked?: boolean;
-    binding?: number
+    binding?: number;
+    noLayout?: boolean;
 }
 
 export default class Tensor {
@@ -21,6 +22,7 @@ export default class Tensor {
     tensorId: string = '';
     total: number = 1;
     shape: number[] = [];
+    unformattedShapeLength: number = 0;
     shape_texture: number[] = [];
     exceedMax: boolean = false;
     data: Float32Array | number[] | null = null;
@@ -33,11 +35,17 @@ export default class Tensor {
         this.name = opts.name;
         // 设置 tensorId
         this.tensorId = opts.type;
+        // 保留 model 原生 shape 长度
+        this.unformattedShapeLength = opts.shape.length;
         // tensor的形状
         this.shape = Utils.formatShape(opts.shape);
         const shape = this.shape;
         // 原始数据个数
         this.total = shape.reduce((all: number, num: number) => all * num);
+
+        if (opts.noLayout) {
+            return;
+        }
         // 获取转换到texture后的信息
         const {
             exceedMax,
@@ -94,6 +102,10 @@ export default class Tensor {
 
     get length_shape() {
         return this.shape.length || 0;
+    }
+
+    get length_unformatted_shape() {
+        return this.unformattedShapeLength || 0;
     }
 
     get total_shape() {

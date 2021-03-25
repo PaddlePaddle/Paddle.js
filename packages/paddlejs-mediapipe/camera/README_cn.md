@@ -19,7 +19,7 @@ const option = {
     width?: number,
     // 视频流高度
     height?: number,
-    // 是否镜像 
+    // 是否镜像
     mirror?: boolean,
     // 目标canvas DOM对象
     targetCanvas?: HTMLCanvasElement,

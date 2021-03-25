@@ -11,6 +11,7 @@ interface opInfo {
 
 const inputParams = [
     'length_shape',
+    'length_unformatted_shape',
     'width_shape',
     'height_shape',
     'width_texture',
@@ -98,14 +99,10 @@ function getTensorParams(inputTensors: Tensor[], ownParams: [], fShaderParams: o
 }
 
 
-function getExactOpName(name, params, isPacked) {
+function getExactOpName(name, isPacked) {
     if (name.indexOf('conv2d-elementwise_add') > -1) {
         return 'conv2d_elementwise_add';
     }
-    else if (name === 'concat' && params['binding_appender']) {
-        return 'concat_mul';
-    }
-
     return isPacked ? `${name}_packing` : name;
 }
 

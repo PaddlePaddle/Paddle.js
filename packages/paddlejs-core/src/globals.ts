@@ -1,10 +1,4 @@
-import { OpInfo } from './commons/interface';
-
-
-interface Ops {
-    // key => backend_name
-    [key: string]: OpInfo;
-}
+import { OpInfo, Ops } from './commons/interface';
 
 interface OpRegistry {
     ops: Ops;
@@ -66,7 +60,6 @@ function registerBackend(backend: string, backendInstance: any, ops: Ops) {
             registerOp(ops[key], key);
         });
     }
-
 }
 
 function getGlobalNamespace(): any {
@@ -99,5 +92,6 @@ GLOBALS = getOrMakeGlobals();
 
 export {
     GLOBALS,
-    registerBackend
+    registerBackend,
+    getGlobalNamespace
 };

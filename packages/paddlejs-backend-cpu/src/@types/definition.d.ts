@@ -5,6 +5,9 @@ type f64 = number;
 type bool = boolean;
 declare function i32(num: number): number;
 declare function f32(num: number): number;
+declare function bool(num: unknown): boolean;
+declare function isString(num): boolean;
+declare function isDefined(num): boolean;
 
 declare class Arr extends Array<number> {
     _arr: number[] | Obj[]

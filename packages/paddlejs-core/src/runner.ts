@@ -2,7 +2,7 @@ import Loader from './loader';
 import Graph from './graph';
 import { Model, InputFeed, ModelVar, GraphType } from './commons/interface';
 import OpData from './opFactory/opDataBuilder';
-import { GLOBALS } from './globals';
+import { GLOBALS, getGlobalNamespace } from './globals';
 import MediaProcessor from './mediaProcessor';
 import env from './env';
 
@@ -54,6 +54,8 @@ export default class Runner {
         this.modelConfig = Object.assign(opts, options);
         this.needPreheat = options.needPreheat === undefined ? true : options.needPreheat;
         this.weightMap = [];
+
+        env.set('ns', getGlobalNamespace());
         if (env.get('platform') !== 'node') {
             this.mediaProcessor = new MediaProcessor();
         }
@@ -72,7 +74,6 @@ export default class Runner {
         this.genGraph();
         this.genOpData();
         if (this.needPreheat) {
-            console.log('loaded');
             return await this.preheat();
         }
     }
@@ -140,18 +141,40 @@ export default class Runner {
     }
 
     genFeedData() {
-        const { fh, fw } = this.modelConfig.feedShape;
+        const { type, feedShape } = this.modelConfig;
+        const { fh, fw } = feedShape;
         const vars = this.model.vars;
-        let preheatFeedData = vars.find(item => item.name === 'image');
-        if (preheatFeedData) {
-            preheatFeedData.data = new Float32Array(3 * fh * fw).fill(1.0);
-            return;
+
+        let preheatFeedData;
+        if (type === 'multipleInput') {
+            // 默认第1个是输入op, 形为inputs: {X: [a, b]}
+            const feedOpInputs = this.model.ops && this.model.ops[0] && this.model.ops[0].inputs?.X;
+            if (feedOpInputs.length > 1) {
+                // 多输入
+                preheatFeedData = feedOpInputs.map(inputName => {
+                    const feedInfo = vars.find(item => item.name === inputName);
+                    const shape = feedInfo.shape;
+                    const [w, h, c = 3, n = 1] = shape.reverse();
+
+                    feedInfo.data = new Float32Array(n * c * h * w);
+                    return feedInfo;
+                });
+            }
         }
-        preheatFeedData = {
-            data: new Float32Array(3 * fh * fw).fill(1.0),
-            name: 'image',
-            shape: [1, 3, fh, fw]
-        };
+
+        else {
+            preheatFeedData = vars.find(item => item.name === 'image');
+            if (preheatFeedData) {
+                preheatFeedData.data = new Float32Array(3 * fh * fw).fill(1.0);
+                return;
+            }
+            preheatFeedData = {
+                data: new Float32Array(3 * fh * fw).fill(1.0),
+                name: 'image',
+                shape: [1, 3, fh, fw]
+            };
+        }
+
         vars.push(preheatFeedData);
     }
 
@@ -180,6 +203,13 @@ export default class Runner {
             return;
         }
         op.execute(this.isExecuted);
+        if (env.get('debug')
+            && op.opData?.outputTensors
+            && op.opData.outputTensors[0]
+            && op.opData.outputTensors[0].tensorId === env.get('ns').layerName) {
+            console.info(op.opData.name, 'runner op name');
+            return;
+        }
         if (op.next) {
             const id = op.next;
             const next = this.graphGenerator.getExecutorById(id) as OpExecutor;

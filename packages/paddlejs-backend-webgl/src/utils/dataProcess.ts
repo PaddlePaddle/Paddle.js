@@ -22,6 +22,20 @@ function nhwc2nchw(data: number[] | Float32Array, shape: number[]) {
     return nchwData;
 }
 
+function reduceShape(shape: number[]): number[] {
+    let len = shape.length;
+    const originShape = [...shape];
+    const s = [];
+    while (len > 1) {
+        originShape.splice(0, 1);
+        s.push(originShape.reduce((all, num) => all * num));
+        len--;
+    }
+
+    return s;
+}
+
 export {
-    nhwc2nchw
+    nhwc2nchw,
+    reduceShape
 };

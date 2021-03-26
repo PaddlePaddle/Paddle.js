@@ -37,7 +37,6 @@ export async function load(config: ModelConfig, map: string[] | MobilenetMap) {
             fh: 224
         },
         fill: '#fff',
-        inputType: 'image',
         targetSize: {
             height: 224,
             width: 224

@@ -146,7 +146,7 @@ export default class Runner {
         const vars = this.model.vars;
 
         let preheatFeedData;
-        if (type === 'multipleInput') {
+        if (type === GraphType.MultipleInput) {
             // 默认第1个是输入op, 形为inputs: {X: [a, b]}
             const feedOpInputs = this.model.ops && this.model.ops[0] && this.model.ops[0].inputs?.X;
             if (feedOpInputs.length > 1) {

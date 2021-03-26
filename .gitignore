@@ -8,6 +8,3 @@ coverage
 lerna-debug.log
 .vscode
 !e2e/dist
-packages/paddlejs-tools
-packages/paddlejs-assemblyscript
-packages/paddlejs-enc

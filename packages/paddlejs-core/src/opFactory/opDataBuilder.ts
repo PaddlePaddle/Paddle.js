@@ -110,6 +110,7 @@ export default class OpData {
             filter: 'filter',
             y: 'counter',
             z: 'appender',
+            m: 'fourth',
             scale: 'scale',
             bias: 'bias',
             mean: 'mean',

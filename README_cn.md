@@ -35,7 +35,7 @@ Paddle.js 是百度 PaddlePaddle 的 web 方向子项目，是一个运行在浏
 上面的转换脚本生成两种类型的文件：
 
  - model.json (数据流图和权重清单文件)
- - group1-shard\*of\* (二进制权重文件的集合)
+ - chunk_x.dat (二进制权重文件的集合)
 
 ## 反馈和社区支持
 - 在线视频课程 [开始学习](https://www.bilibili.com/video/BV1gZ4y1H7UA?p=6)

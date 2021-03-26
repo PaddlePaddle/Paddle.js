@@ -2,7 +2,7 @@
     "ops": [
         {
             "attrs": {
-                "axis": 1
+                "axis": 2
             },
             "inputs": {
                 "X": ["concat.tmp_0"],
@@ -18,17 +18,17 @@
         {
             "data": [1, 2, 3, 4, 5, 6, 7, 8],
             "name": "concat.tmp_0",
-            "shape": [2, 2, 2]
+            "shape": [1, 2, 2, 2]
         },
         {
             "data": [11, 12, 13, 14, 15, 16, 17, 18],
             "name": "concat.tmp_1",
-            "shape": [2, 2, 2]
+            "shape": [1, 2, 2, 2]
         },
         {
             "data": [1, 2, 11, 3, 4, 12, 5, 6, 13, 7, 8, 14],
             "name": "concat.tmp_2",
-            "shape": [2, 4, 2]
+            "shape": [1, 2, 4, 2]
         }
     ]
 }

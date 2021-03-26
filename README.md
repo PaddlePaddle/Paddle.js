@@ -35,7 +35,7 @@ Paddle.js is a web project for Baidu PaddlePaddle, which is an open source deep 
 The conversion script above produces 2 types of files:
 
  - model.json (the dataflow graph and weight manifest file)
- - group1-shard\*of\* (collection of binary weight files)
+ - chunk_x.dat (collection of binary weight files)
 
 
 ## Feedback and Community Support

@@ -22,13 +22,13 @@ export default class CpuBackend extends PaddlejsBackend {
     async init() {
     }
 
-    createProgram({ name, outTensor }) {
+    createProgram({ name, outTensor, runtime }) {
         const outName = outTensor.tensorId;
         if (!outName) {
             return false;
         }
 
-        this.program = new Program(name, outName);
+        this.program = new Program(name, outName, runtime);
         return this.program;
     }
 
@@ -37,22 +37,25 @@ export default class CpuBackend extends PaddlejsBackend {
         const tensorMap = new Map<string, Tensor>();
 
         const tensorDatas = tensorDataList as Value[];
+
         for (let i = 0, len = tensorDatas.length; i < len; i++) {
             // @ts-ignore
             const tensorObj = new Obj(tensorDatas[i]);
             const opTensor = new Tensor(tensorObj);
             const tensorName = opTensor.tensorName;
+            const runtime = opTensor.runtime;
             const tensorId = opTensor.name;
             if ((!opTensor.data || !opTensor.data.length) && this.dataMap.get(tensorId)) {
                 opTensor.data = this.dataMap.get(tensorId);
             }
-            tensorMap.set(tensorName, opTensor);
+            tensorMap.set(tensorName === 'out' ? tensorName + '_' + runtime : tensorName, opTensor);
         }
         // @ts-ignore
 
         opData.program.forEach((curProgram: Program) => {
+
             try {
-                const result = curProgram.main(tensorMap, opData.data);
+                const result = curProgram.main(tensorMap, opData.data, curProgram.runtime);
                 this.dataMap.set(curProgram.outName, result);
             }
             catch (e) {

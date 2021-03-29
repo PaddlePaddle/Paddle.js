@@ -10,13 +10,15 @@ export default class Program {
     main: Function;
     outName: string;
     Attrs: object;
+    runtime: number;
 
-    public constructor(opName, outName) {
+    public constructor(opName, outName, runtime) {
         try {
             const ops = GLOBALS.opRegistry.ops;
             const op = ops[GLOBALS.backend + '_' + opName];
-            this.main = op.main;
+            this.main = op.main as Function;
             this.outName = outName;
+            this.runtime = runtime;
         }
         catch (e) {
             // debugger;

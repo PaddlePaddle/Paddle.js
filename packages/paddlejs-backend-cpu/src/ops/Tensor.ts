@@ -21,6 +21,7 @@ class Tensor {
     data: f32[] = [];
     tensorName: string = '';
     total: i32 = 0;
+    runtime: i32 = 0;
 
     constructor(data: Obj) {
         this.name = getStr('name', data);
@@ -29,6 +30,7 @@ class Tensor {
         this.shapeReduced = reduceShape(this.shape);
         this.data = getFloatArray('data', data);
         this.total = getInt('total', data);
+        this.runtime = getInt('runtime', data);
     }
 }
 

@@ -10,13 +10,13 @@ class Attrs {
     }
 }
 
-function main(tensorMap: Map<string, Tensor>, attrs: Attrs): f32[] {
+function main(tensorMap: Map<string, Tensor>, attrs: Attrs, runtime: i32): f32[] {
     const scaleT = tensorMap.get('scale');
     const biasT = tensorMap.get('bias');
     const meanT = tensorMap.get('mean');
     const varianceT = tensorMap.get('variance');
     const origin = tensorMap.get('origin');
-    const outT = tensorMap.get('out');
+    const outT = tensorMap.get('out_' + runtime);
 
     const xLen = origin.total;
     const originWH = origin.shape[2] * origin.shape[3];

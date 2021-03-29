@@ -1,7 +1,7 @@
 import { Tensor } from './Tensor';
 import { getStr } from './utils';
 
-function main(tensorMap: Map<string, Tensor>, attrs: Attrs): f32[] {
+function main(tensorMap: Map<string, Tensor>, attrs: Attrs, runtime: i32): f32[] {
     let multi_value: f32 = 1.0;
 
     if (isDefined(attrs.multi_value)) {
@@ -12,7 +12,7 @@ function main(tensorMap: Map<string, Tensor>, attrs: Attrs): f32[] {
     const active_function: string = attrs.active_function;
 
     const origin = tensorMap.get('origin') as Tensor;
-    const out = tensorMap.get('out') as Tensor;
+    const out = tensorMap.get('out_' + runtime) as Tensor;
 
     const originData: f32[] = (origin as Tensor).data;
 

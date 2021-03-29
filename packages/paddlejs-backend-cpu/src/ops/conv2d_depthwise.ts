@@ -2,10 +2,10 @@ import { Tensor } from './Tensor';
 import { getIntArray, getBool } from './utils';
 
 /* eslint-disable max-statements, max-depth */
-function main(tensorMap: Map<string, Tensor>, attrs: Attrs): f32[] {
+function main(tensorMap: Map<string, Tensor>, attrs: Attrs, runtime: i32): f32[] {
     const origin = tensorMap.get('origin') as Tensor;
     const filter = tensorMap.get('filter') as Tensor;
-    const out = tensorMap.get('out') as Tensor;
+    const out = tensorMap.get('out_' + runtime) as Tensor;
     const bias = tensorMap.get('bias') as Tensor;
 
     const originShape: i32[] = (origin as Tensor).shape;

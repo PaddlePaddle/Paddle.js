@@ -6,6 +6,8 @@
 import { registerBackend } from '@paddlejs/paddlejs-core';
 import WebGLBackend from './backend';
 import { ops } from './ops';
+import { GLHelper } from './webgl/WebGLUtils';
+import * as webgl_types from './webgl/webgl_types';
 
 const glInstance = new WebGLBackend();
 
@@ -20,4 +22,8 @@ function registerWebGLBackend() {
 
 registerWebGLBackend();
 
-export default glInstance;
+export {
+    glInstance,
+    GLHelper,
+    webgl_types
+};

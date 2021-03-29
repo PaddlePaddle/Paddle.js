@@ -1,11 +1,12 @@
 {
   "name": "@paddlejs/paddlejs-backend-nodegl",
-  "version": "1.0.0",
+  "version": "0.0.2-beta.0",
   "description": "Node.js backend with a WebGL context for Paddle.js",
   "main": "lib/index",
   "scripts": {
     "start": "nodemon -e ts,tsx --config nodemon.json --exec ts-node test/op/opTest.ts",
-    "dev-model": "nodemon -e ts,tsx --config nodemon.json --exec ts-node test/model/modelTest.ts"
+    "dev-model": "nodemon -e ts,tsx --config nodemon.json --exec ts-node test/model/modelTest.ts",
+    "build": "tsc"
   },
   "keywords": [
     "webgl",
@@ -14,6 +15,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@paddlejs/paddlejs-backend-webgl": "^1.0.0",
+    "@paddlejs/paddlejs-core": "^2.0.0",
     "gl": "^4.9.0"
+  },
+  "engines": {
+    "node": ">=10.0.0"
   }
 }

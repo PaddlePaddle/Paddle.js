@@ -22,7 +22,7 @@ module.exports = {
             chunks: ['index'],
             template: './index.html'
         }),
-        new VueLoaderPlugin(),
+        new VueLoaderPlugin()
     ],
     resolve: {
         extensions: ['.ts', '.js', '.vue', '.json'],
@@ -35,7 +35,7 @@ module.exports = {
         rules: [
             {
                 test: /\.vue$/,
-                loader: 'vue-loader',
+                loader: 'vue-loader'
                 // exclude: /node_modules/
             },
             {
@@ -43,39 +43,37 @@ module.exports = {
                 loader: 'ts-loader',
                 exclude: /node_modules/,
                 options: {
-                  appendTsSuffixTo: [/\.vue$/],
+                    appendTsSuffixTo: [/\.vue$/]
                 }
             },
             {
                 test: /\.js$/,
-                loader: 'babel-loader',
+                loader: 'babel-loader'
             },
             {
                 test: /\.pug$/,
-                loader: 'pug-plain-loader',
+                loader: 'pug-plain-loader'
             },
             {
                 test: /\.less$/i,
                 use: [{
-                        loader: "vue-style-loader",
-                    },
-                    {
-                        loader: "css-loader",
-                    },
-                    {
-                        loader: "less-loader"
-                    },
-                ],
+                    loader: 'vue-style-loader'
+                },
+                {
+                    loader: 'css-loader'
+                },
+                {
+                    loader: 'less-loader'
+                }]
             },
             {
                 test: /\.css$/i,
                 use: [{
-                        loader: "style-loader",
-                    },
-                    {
-                        loader: "css-loader",
-                    }
-                ],
+                    loader: 'style-loader'
+                },
+                {
+                    loader: 'css-loader'
+                }]
             },
             {
                 test: /\.(png|jpg|svg)$/,

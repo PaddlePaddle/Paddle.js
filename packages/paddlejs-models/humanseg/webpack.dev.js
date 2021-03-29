@@ -20,11 +20,7 @@ module.exports = {
     ],
     resolve: {
         // Add ".ts" and ".tsx" as resolvable extensions.
-        extensions: ['.ts', '.js'],
-        alias: {
-            '@paddlejs/paddlejs-core': path.resolve(__dirname, '../../paddlejs-core/src/'),
-            '@paddlejs/paddlejs-backend-webgl': path.resolve(__dirname, '../../paddlejs-backend-webgl/src/')
-        }
+        extensions: ['.ts', '.js']
     },
     module: {
         rules: [

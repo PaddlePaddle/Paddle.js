@@ -10,10 +10,13 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "@paddlejs-mediapipe/camera": "^0.0.1",
+    "@paddlejs-models/humanseg": "^0.0.6"
+  },
   "devDependencies": {
-    "html-webpack-plugin": "^3.2.0",
     "@types/webrtc": "0.0.26",
+    "html-webpack-plugin": "^3.2.0",
     "jest": "^26.0.1",
     "ts-jest": "^26.4.4",
     "ts-loader": "^8.0.12",

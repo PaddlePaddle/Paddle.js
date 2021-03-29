@@ -6,6 +6,23 @@ const loadingDom = document.getElementById('isLoading');
 const video = document.getElementById('video') as HTMLVideoElement;
 const videoToolDom = document.getElementById('video-tool');
 
+
+const videoCanvas = document.querySelector('#demo') as HTMLCanvasElement;
+const bgElement = document.createElement('div') as HTMLDivElement;
+const container = document.querySelector('body');
+container.appendChild(bgElement);
+
+function makeBgDom() {
+    bgElement.style.width = `${videoCanvas.width}px`;
+    bgElement.style.height = `${videoCanvas.height}px`;
+
+    const imgURL = 'http://localhost:8866/bgImgs/bg.jpg';
+    bgElement.style.backgroundImage = 'url("' + imgURL + '")';
+    bgElement.style.backgroundRepeat = 'no-repeat';
+    bgElement.style.backgroundSize = 'cover';
+    bgElement.style.backgroundPosition = 'center';
+    bgElement.style.marginTop = `${-videoCanvas.height}px`;
+}
 load();
 
 // 视频开始播放，loading消失
@@ -22,9 +39,6 @@ videoToolDom.addEventListener('click', function (e: Event) {
     if (target.id === 'pause') {
         camera.pause();
     }
-    if (target.id === 'stop') {
-        camera.stop();
-    }
 });
 
 async function load() {
@@ -36,8 +50,8 @@ async function load() {
             } = await humanseg.getGrayValue(video);
             const canvas1 = document.getElementById('demo') as HTMLCanvasElement;
             humanseg.drawHumanSeg(canvas1, data);
+            makeBgDom();
         }
     });
-    console.log(camera);
 }
 

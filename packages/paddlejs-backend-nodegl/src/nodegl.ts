@@ -1,10 +1,10 @@
-import { GLHelper } from '../../paddlejs-backend-webgl/src/webgl/WebGLUtils';
-import { WebGLContextAttributes } from '../../paddlejs-backend-webgl/src/webgl/webgl_types';
-import { env } from '../../paddlejs-core/src/index';
+import { GLHelper, webgl_types } from '@paddlejs/paddlejs-backend-webgl';
+import { env } from '@paddlejs/paddlejs-core';
+
 
 const nodeglConstructor = require('gl');
 
-const WEBGL_CONF: WebGLContextAttributes = {
+const WEBGL_CONF: webgl_types.WebGLContextAttributes = {
     alpha: false,
     antialias: false,
     premultipliedAlpha: false,

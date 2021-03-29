@@ -2,7 +2,7 @@
  * @file humanseg model
  */
 
-import { Runner } from '@paddlejs/paddlejs-core';
+import { Runner, Transformer } from '@paddlejs/paddlejs-core';
 import '@paddlejs/paddlejs-backend-webgl';
 import cv from '@paddlejs-mediapipe/opencv/library/opencv_blur';
 
@@ -12,8 +12,25 @@ const WIDTH = 192;
 const HEIGHT = 192;
 const SCALE = 192;
 
+class OptModel extends Transformer {
+    constructor() {
+        super('OptModel');
+    }
+
+    transform(...args: any) {
+        const [ops] = args;
+        for (let opIndex = 0; opIndex < ops.length; opIndex++) {
+            const op = ops[opIndex];
+            if (op.type === 'fill_constant' || op.type === 'shape' || op.type === 'slice') {
+                ops.splice(opIndex, 1);
+                opIndex = opIndex - 1;
+            }
+        }
+    }
+}
+
 export async function load() {
-    const path = 'https://paddlejs.cdn.bcebos.com/models/humanseg';
+    const path = 'https://paddlejs.cdn.bcebos.com/models/humanseg_lite_opt';
 
     runner = new Runner({
         modelPath: path,
@@ -23,10 +40,12 @@ export async function load() {
             fh: HEIGHT
         },
         fill: '#000',
-        mean: [122.675, 116.669, 104.008],
-        std: [1.0, 1.0, 1.0],
+        mean: [0.5, 0.5, 0.5],
+        std: [0.5, 0.5, 0.5],
         scale: SCALE,
-        bgr: true
+        plugins: {
+            preTransforms: [new OptModel()]
+        }
     });
     await runner.init();
 }
@@ -34,7 +53,7 @@ export async function load() {
 export async function getGrayValue(input: HTMLImageElement | HTMLVideoElement) {
     inputElement = input;
     const res = await runner.predict(input);
-    const gray_values = res.slice(WIDTH * HEIGHT);
+    const gray_values = res;
     return {
         width: WIDTH,
         height: HEIGHT,
@@ -65,12 +84,14 @@ export function drawHumanSeg(canvas: HTMLCanvasElement, gray_values: number[]) {
     }
     // threshold mask
     thresholdMask(tempData, 0.29, 0.8);
-    // // blur border
+    // blur border
     tempContext.putImageData(tempData, 0, 0);
     const out = blurBorder(tempCanvas);
+
     for (let i = 0; i < WIDTH * HEIGHT; i++) {
         tempData.data[i * 4 + 3] = out.data[i * 4 + 3];
     }
+
     tempContext.putImageData(tempData, 0, 0);
     // stretch origin canvas to image size
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -158,7 +179,7 @@ function thresholdMask(img, threshBg, threshFg) {
 function blurBorder(canvas: HTMLCanvasElement) {
     const logit = cv.imread(canvas);
     const dst = new cv.Mat();
-    const ksize = new cv.Size(5, 5);
+    const ksize = new cv.Size(3, 3);
     const anchor = new cv.Point(-1, -1);
     cv.blur(logit, dst, ksize, anchor, cv.BORDER_DEFAULT);
     return dst;

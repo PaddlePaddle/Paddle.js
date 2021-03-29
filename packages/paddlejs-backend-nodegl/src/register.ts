@@ -4,6 +4,6 @@
  */
 
 import './nodegl';
-import glInstance from '../../paddlejs-backend-webgl/src/index';
+import { glInstance } from '@paddlejs/paddlejs-backend-webgl';
 
 export default glInstance;

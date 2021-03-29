@@ -19,6 +19,7 @@
     "build:cpu": "lerna run build  --scope=@paddlejs/paddlejs-backend-cpu  --stream",
     "build:webgl": "lerna run build  --scope=@paddlejs/paddlejs-backend-webgl  --stream",
     "build:core": "lerna run build  --scope=@paddlejs/paddlejs-core  --stream",
+    "build:nodegl": "lerna run build  --scope=@paddlejs/paddlejs-backend-nodegl  --stream",
     "e2e": "jest --config e2e/jest.config.js"
   },
   "devDependencies": {
@@ -92,7 +93,6 @@
     "@paddlejs/paddlejs-backend-webgl": "file:packages/paddlejs-backend-webgl",
     "@paddlejs/paddlejs-backend-webgpu": "file:packages/paddlejs-backend-webgpu",
     "@paddlejs/paddlejs-benchmark": "file:packages/paddlejs-benchmark",
-    "@paddlejs/paddlejs-core": "file:packages/paddlejs-core",
-    "@paddlejs/paddlejs-enc": "file:packages/paddlejs-enc"
+    "@paddlejs/paddlejs-core": "file:packages/paddlejs-core"
   }
 }

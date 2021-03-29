@@ -17,12 +17,11 @@ import '@paddlejs/paddlejs-backend-webgl';
 const runner = new Runner({
     modelPath: '/model/mobilenetv2', // model path, e.g. http://xx.cc/path, http://xx.cc/path/model.json, /localModelDir/model.json, /localModelDir
     fileCount?: 4, // model data file count, default value is 1
-    feedShape: {  // input shape
+    feedShape: { // input shape
         fw: 256,
         fh: 256
     },
-    fill?: '#fff',   // fill color when resize image, default value is #fff
-    inputType?: 'image' // whether is image or video, default value is image
+    fill?: '#fff' // fill color when resize image, default value is #fff
 });
 
 // init runner

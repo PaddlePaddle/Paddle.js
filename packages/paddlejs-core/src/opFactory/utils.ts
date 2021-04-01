@@ -99,18 +99,18 @@ export function formatShape(shape: number[]): number[] {
 }
 
 /**
- * tensor shape 标准化为 4维
- * @param {Array} shape tensor的形状
- * @returns {Array} 4维 shape
+ * calculate total length of shape
+ * @param {Array} shape shape of tensor
+ * @returns {number} total length of shape
  */
  export function accShape(shape: number[]): number {
     return shape.reduce((all, num) => all * num);
 }
 
 /**
- * tensor shape 标准化为 4维
- * @param {Array} shape tensor的形状
- * @returns {Array} 4维 shape
+ * calculate real axis
+ * @param {Array} shape shape of tensor
+ * @returns {number} real axis after shape format to 4D
  */
  export function formatAxis(shape: number[], axis): number {
     const shapeLen = shape.length;

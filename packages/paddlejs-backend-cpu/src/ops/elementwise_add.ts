@@ -1,10 +1,10 @@
 import { Tensor } from './Tensor';
 import { getInt, getFloat } from './utils';
 
-function main(tensorMap: Map<string, Tensor>, attrs: Attrs): f32[] {
+function main(tensorMap: Map<string, Tensor>, attrs: Attrs, runtime: i32): f32[] {
     const origin = tensorMap.get('origin') as Tensor;
     const counter = tensorMap.get('counter') as Tensor;
-    const out = tensorMap.get('out') as Tensor;
+    const out = tensorMap.get('out_' + runtime) as Tensor;
 
     const outShape: i32[] = (out as Tensor).shape;
 

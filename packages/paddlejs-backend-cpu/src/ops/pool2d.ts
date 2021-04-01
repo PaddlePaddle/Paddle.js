@@ -2,9 +2,9 @@ import { Tensor } from './Tensor';
 import { getIntArray, getInt } from './utils';
 
 /* eslint-disable max-statements, max-depth */
-function main(tensorMap: Map<string, Tensor>, attrs: Attrs): f32[] {
+function main(tensorMap: Map<string, Tensor>, attrs: Attrs, runtime: i32): f32[] {
     const origin = tensorMap.get('origin') as Tensor;
-    const out = tensorMap.get('out') as Tensor;
+    const out = tensorMap.get('out_' + runtime) as Tensor;
 
     const originShape: i32[] = (origin as Tensor).shape;
     const outShape: i32[] = (out as Tensor).shape;

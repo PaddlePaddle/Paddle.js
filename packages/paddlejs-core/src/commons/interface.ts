@@ -13,6 +13,7 @@ export interface ModelVar {
     persistable?: boolean;
     tensorName?: string;
     total?: number;
+    runtime?: number;
 }
 
 export interface Model {

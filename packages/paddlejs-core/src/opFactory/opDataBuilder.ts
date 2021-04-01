@@ -76,9 +76,9 @@ export default class OpData {
                     const data = this.output[key] || [{}];
                     const tensorName = this.getExactTensorName(key, 'output');
                     if (tensorName) {
-                        data.forEach((item: ModelVar) => {
+                        data.forEach((item: ModelVar, index: number) => {
                             item.tensorName = tensorName;
-                            this.tensorData.push({ ...item, tensorName });
+                            this.tensorData.push({ ...item, tensorName, runtime: index });
                         });
                     }
                 }

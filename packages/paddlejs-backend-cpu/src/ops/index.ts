@@ -10,6 +10,7 @@ import * as elementwise_add from './elementwise_add';
 import * as pool2d from './pool2d';
 import * as softmax from './softmax';
 import * as dynamic from './dynamic';
+import * as split from './split';
 
 export {
     conv2d,
@@ -18,6 +19,7 @@ export {
     pool2d,
     softmax,
     elementwise_add,
-    dynamic
+    dynamic,
+    split
 };
 

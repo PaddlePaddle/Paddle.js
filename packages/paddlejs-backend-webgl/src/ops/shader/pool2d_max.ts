@@ -12,7 +12,7 @@ function mainFunc(
     return `
     // start函数
     void main(void) {
-        float res = 0.0;
+        float res = -1. / 0.;
         // 获取output的坐标
         ivec4 out_pos = getOutputTensorPos();
         int b = out_pos[0];

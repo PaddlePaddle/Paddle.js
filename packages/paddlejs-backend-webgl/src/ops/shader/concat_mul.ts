@@ -61,7 +61,6 @@ export default {
         fourth: ['getValueFromTensorPos']
     },
     behaviors: [
-        'normalizeDim',
-        'normalizeDim2'
+        'normalizeDim'
     ]
 };

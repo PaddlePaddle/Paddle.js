@@ -37,6 +37,7 @@ import flatten_contiguous_range from './shader/flatten_contiguous_range';
 import greater_than from './shader/greater_than';
 import reduce_sum from './shader/reduce_sum';
 import where from './shader/where';
+import connect from './shader/connect';
 
 const ops = {
     arg_max,
@@ -72,6 +73,7 @@ const ops = {
     greater_than,
     reduce_sum,
     where,
+    connect,
     prelu: dynamic('prelu'),
     relu6: dynamic('relu6'),
     leakyRelu: dynamic('leakyRelu'),

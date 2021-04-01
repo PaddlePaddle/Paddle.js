@@ -111,5 +111,17 @@ export default class Tensor {
     get total_shape() {
         return this.total;
     }
+
+    get numbers_shape() {
+        let numbers = [];
+        let sLen = this.shape.length;
+        for (let i = 0; i < (sLen - 1); i++) {
+            let number = this.shape.slice(i + 1).reduce((total, num) => total * num);
+            numbers.push(number);
+        }
+        // 和shape长度保持一致
+        numbers.push(1);
+        return numbers;
+    }
 }
 

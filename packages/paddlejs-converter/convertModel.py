@@ -14,6 +14,7 @@ import traceback
 import numpy as np
 import paddle.fluid as fluid
 import paddle as paddle
+from functools import reduce
 
 
 # 输入模型所在目录
@@ -34,6 +35,27 @@ program = None
 modelInfo = {"vars": [], "ops": [], "chunkNum": 0}
 # 存放参数数值（未排序）
 paramValuesDict = {}
+
+def validateShape(shape, name):
+    """检验shape长度，超过4则截断"""
+    if len(shape) > 4:
+        newShape = shape[-4:]
+        print('\033[31m ' + name + ' tensor shape length > 4, 处理为丢弃头部shape \033[0m')
+        return newShape
+    if (name == 'reshape2_0.tmp_0'):
+        print(shape)
+    return shape
+
+def splitLargeNum(x):
+   """将x拆分成两个因数相乘"""
+   # 获取最小值
+   num = math.floor(math.sqrt(x))
+   while (num):
+        if x % num == 0:
+           return [num, int(x / num)]
+        num -= 1
+
+   return [1, x]
 
 def logModel(info):
     """ 打印信息 """
@@ -99,7 +121,17 @@ def mapToPaddleJSTypeName(fluidOPName):
         return "batchnorm"
     return fluidOPName
 
-def organizeModelVariableInfo():
+def excludeNegativeShape(shape):
+    varShape = list(shape)
+    varShapeExcludeNegativeOne = []
+    for s in varShape:
+        # 模型中 ？会自动转为 -1，需要单独处理成 1
+        if s == -1:
+            s = 1
+        varShapeExcludeNegativeOne.append(s)
+    return varShapeExcludeNegativeOne
+
+def organizeModelVariableInfo(result):
     """ 组织参数信息 """
     print("Organizing model variables info...")
     index = 0
@@ -114,15 +146,7 @@ def organizeModelVariableInfo():
         if "fetch" == v.name:
             continue
 
-        varShape = list(v.shape)
-
-        varShapeExcludeNegativeOne = []
-        for s in varShape:
-            # 模型中 ？会自动转为 -1，需要单独处理成 1
-            if s == -1:
-                s = 1
-            varShapeExcludeNegativeOne.append(s)
-        varShape = varShapeExcludeNegativeOne
+        varShape = excludeNegativeShape(v.shape)
         # FIXME:end
 
         # 存放variable信息，在dump成json时排序
@@ -143,6 +167,28 @@ def organizeModelVariableInfo():
         if v.persistable:
             data = np.array(fluid.global_scope().find_var(v.name).get_tensor()).flatten().tolist()
             paramValuesDict[v.name] = data
+
+    # shape推断校正
+    feed_target_names = result[1]
+    fetch_targets = result[2]
+    # 获取输入shape
+    feedData = {}
+    feeded_vars = [program.global_block().vars[varname] for varname in feed_target_names]
+    for feedItem in feeded_vars:
+        curShape = feedItem.shape
+        feedName = feedItem.name
+        feedData[feedName] = np.full(excludeNegativeShape(curShape), 1.0, "float32")
+
+    for v in program.list_vars():
+        if not v.persistable:
+            v.persistable = True
+    exe.run(program, feed=feedData, fetch_list=fetch_targets, return_numpy=False)
+
+    for varKey in varInfoDict:
+        var = fluid.global_scope().find_var(varKey)
+        varData = np.array(var.get_tensor())
+        varShape = list(varData.shape)
+        varInfoDict[varKey]['shape'] = validateShape(varShape, varKey)
 
     # 对var信息dict，按照key（var名）进行字母顺序排序
     varInfoOrderDict = sortDict(varInfoDict)
@@ -219,6 +265,65 @@ def addChunkNumToJson(paramValueList):
     modelInfo["chunkNum"] = math.ceil(count)
     print("Model chunkNum set successfully.")
 
+def appendConnectOp(fetch_targets):
+    targets = []
+    inputNames = []
+    totalShape = 0
+
+    # 从fetch_targets中提取输出算子信息
+    for target in fetch_targets:
+        name = target.name
+        curVar = fluid.global_scope().find_var(name)
+        curTensor = np.array(curVar.get_tensor())
+        shape = list(curTensor.shape)
+        totalShape += reduce(lambda x, y: x * y, shape)
+        targets.append({'name': name, 'shape': excludeNegativeShape(shape)})
+        inputNames.append(name)
+
+    # 构造connect算子
+    op = {
+        'attrs': {},
+        'inputs': {'X': inputNames},
+        'outputs': {'Out': ['connect_result']},
+        'type': 'connect'
+    }
+    # 构造输出var
+    outputVar = {'name': 'connect_result', 'shape': splitLargeNum(totalShape)}
+
+    ops = modelInfo['ops']
+    vars = modelInfo['vars']
+
+    # 收集要删除的算子index
+    delList = []
+    for index, item in enumerate(ops):
+        if item['type'] == 'fetch':
+            delList.append(index)
+
+    # 去除fetch算子
+    delCount = 0
+    for delIndex in delList:
+        del ops[delIndex - delCount]
+        delCount += 1
+
+    fetchOp = {
+        "attrs": {},
+        "inputs": {
+            "X": [
+                "connect_result"
+            ]
+        },
+        "outputs": {
+            "Out": [
+                "fetch"
+            ]
+        },
+        "type": "fetch"
+    }
+    ops.append(op)
+    ops.append(fetchOp)
+
+    vars.append(outputVar)
+    modelInfo['multiOutputs'] = targets
 
 def convertToPaddleJSModel():
     """ 转换fluid modle为paddleJS model """
@@ -228,16 +333,22 @@ def convertToPaddleJSModel():
     paddle.enable_static()
 
     # 初始化fluid运行环境和配置
+    global exe
     exe = fluid.Executor(fluid.CPUPlace())
     result = fluid.io.load_inference_model(dirname=modelDir, executor=exe, model_filename=modelName, params_filename=paramsName)
     global program
     program = result[0]
+    fetch_targets = result[2]
 
     # 获取program中所有的op，按op顺序加入到model info
     organizeModelOpInfo()
 
     # 获取program中所有的var，按照字母顺序加入到model info，同时读取参数数值
-    organizeModelVariableInfo()
+    organizeModelVariableInfo(result)
+
+    # 对多输出模型追加connect算子
+    if len(fetch_targets) > 1:
+        appendConnectOp(fetch_targets)
 
     # 对参数数值dict，按照key（参数名）进行字母顺序排序，并组合到一起
     paramValues = reorderParamsValue()

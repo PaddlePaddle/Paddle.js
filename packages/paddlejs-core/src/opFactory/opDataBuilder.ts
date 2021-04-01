@@ -163,6 +163,11 @@ export default class OpData {
             if (this.name.indexOf('conv2d-elementwise_add') > -1) {
                 this.name = 'conv2d_elementwise_add';
             }
+
+            if (this.name.indexOf('flatten2') > -1) {
+                this.name = 'reshape2';
+            }
+
             const tensorData: ModelVar[] = this.tensorData;
             // unique behavior
             const opKey = `${GLOBALS.backend}_${this.name}`;

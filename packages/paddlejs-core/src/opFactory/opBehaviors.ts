@@ -68,8 +68,8 @@ const behaviors : Behaviors = {
 
     batchComputeConv2d() {
         try {
-            const origin_shape_temp = this.input.Filter[0].shape;
-            const inChannels = origin_shape_temp[1];
+            const originShapeTemp = this.input.Filter[0].shape;
+            const inChannels = originShapeTemp[1];
             this.attrs.filter_nearest_vec4 = Math.floor(inChannels / 4) * 4;
             this.attrs.filter_remainder_vec4 = inChannels % 4;
         }
@@ -171,70 +171,59 @@ const behaviors : Behaviors = {
     },
 
     normalizeDim() {
-        let origin_shape_temp = this.input.X[0].shape;
-        if (origin_shape_temp.length < 4) {
-            const batch = [];
-            for (let i = 0; i < (4 - origin_shape_temp.length); i++) {
-                batch.push(1);
-            }
-            origin_shape_temp = batch.concat(origin_shape_temp);
-        }
-        const origin_shape = origin_shape_temp;
-        const axis = this.attrs.axis > -1 ? this.attrs.axis : origin_shape.length + this.attrs.axis;
+        const originShape = this.input.X[0].shape;
+        let shape = Utils.formatShape(originShape);
+        const axis = Utils.formatAxis(originShape, this.attrs.axis);
         const dim_value: number[] = [];
-        for (let index = 0; index < origin_shape[axis]; index++) {
+        for (let index = 0; index < shape[axis]; index++) {
             dim_value[index] = index;
         }
         this.attrs.target_length = dim_value.length;
         this.attrs.target_value = dim_value;
         // 保存 输入 tensor 对应dim 的长度
-        this.attrs.inputs_dim = origin_shape[axis];
-        this.attrs.dim = 4 - origin_shape.length + axis;
-    },
+        this.attrs.inputs_dim = shape[axis];
+        this.attrs.dim = axis;
 
-    normalizeDim2() {
-        let y_shape_temp = this.input.Y[0].shape;
-        if (y_shape_temp.length < 4) {
-            const batch = [];
-            for (let i = 0; i < (4 - y_shape_temp.length); i++) {
-                batch.push(1);
-            }
-            y_shape_temp = batch.concat(y_shape_temp);
+        if (this.input.Y) {
+            const yShape = Utils.formatShape(this.input.Y[0].shape);
+            this.attrs.append_num = yShape[axis];
         }
-        const origin_shape = y_shape_temp;
-        const axis = this.attrs.axis > -1 ? this.attrs.axis : origin_shape.length + this.attrs.axis;
 
-        // 保存 输入 tensor 对应dim 的长度
-        this.attrs.append_num = origin_shape[axis];
         if (this.input.M) {
             this.attrs.fourInputs = true;
-            let z_shape_temp = this.input.Z[0].shape;
-            if (z_shape_temp.length < 4) {
-                const batch = [];
-                for (let i = 0; i < (4 - z_shape_temp.length); i++) {
-                    batch.push(1);
-                }
-                z_shape_temp = batch.concat(z_shape_temp);
-            }
-            const origin_shape = z_shape_temp;
-            const axis = this.attrs.axis > -1 ? this.attrs.axis : origin_shape.length + this.attrs.axis;
-            this.attrs.fourth_num = origin_shape[axis];
+            const mShape = Utils.formatShape(this.input.M[0].shape);
+            this.attrs.fourth_num = mShape[axis];
         }
     },
 
     processAxis() {
         const shape_x = this.input.X[0].shape;
         const shape_y = this.input.Y[0].shape;
-        const axis_temp = this.attrs['axis'];
-        if (axis_temp === -1) {
-            this.attrs['axis'] = shape_x.length - shape_y.length;
-        }
-        else if (shape_x.length === shape_y.length) {
-            this.attrs['axis'] = 0;
+        let axis = this.attrs.axis || -1;
+
+        this.attrs.counterLen = shape_y.length;
+        // shape x === shape y
+        if (Utils.accShape(shape_x) === Utils.accShape(shape_y)) {
+            this.attrs.axis = 0;
+            this.attrs.counterLen = 4;
         }
         else {
-            this.attrs['axis'] = 4 - shape_y.length - axis_temp;
+            if (axis === -1) {
+                axis = shape_x.length - shape_y.length;
+            }
+            this.attrs.axis = Utils.formatAxis(shape_x, axis);
         }
+    },
+
+    genElementwiseCounterPos() {
+        const { counterLen, axis } = this.attrs;
+        const shape = ['0', '0', '0', '0']
+        let posIndex = axis;
+        for (let i = 4 - counterLen; i < 4; i++) {
+            shape[i] = `oPos[${posIndex++}]`;
+        }
+
+        this.attrs.counterPos = shape.join(',');
     },
 
     flattenShape(tensorData = []) {

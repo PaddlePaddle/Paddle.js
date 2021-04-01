@@ -30,9 +30,9 @@ export class GLTexture {
         if (env.get('webglVersion') === 2) {
             textureFloat = gl.getExtension('EXT_color_buffer_float');
             textureHalfFloat = null;
-            internalFormat = gl.R16F;
+            internalFormat = gl.R32F;
             textureFormat = gl.RED;
-            downloadInternalFormat = gl.RGBA16F;
+            downloadInternalFormat = gl.RGBA32F;
 
         }
         else {

@@ -220,11 +220,6 @@ describe('test op behaviors', () => {
         expect(concatOp.attrs.dim).toBe(2);
     });
 
-    it('test behavior normalizeDim2', () => {
-        behaviors.normalizeDim2.call(concatOp as unknown as OpData, []);
-        expect(concatOp.attrs.append_num).toBe(1);
-    });
-
     it('test behavior isApplySeparableConv', () => {
         behaviors.isApplySeparableConv.call(conv2dOp as unknown as OpData, conv2dOp.tensorData);
         expect(conv2dOp.name).toBe('conv2d_depthwise');

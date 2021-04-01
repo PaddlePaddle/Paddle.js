@@ -20,7 +20,8 @@ const inputParams = [
     'offset_y',
     'limit',
     'channel',
-    'total_shape'
+    'total_shape',
+    'numbers_shape',
 ];
 
 const outParams = [
@@ -29,7 +30,8 @@ const outParams = [
     'height_shape',
     'width_texture',
     'height_texture',
-    'channel'
+    'channel',
+    'limit'
 ];
 
 const baseParams = {

@@ -9,6 +9,8 @@ import env from './env';
 import type OpExecutor from './opFactory/opExecutor';
 import type Transformer from './transform/transformer';
 
+import { accShape } from './opFactory/utils';
+
 interface ModelConfig {
     modelPath: string;
     feedShape: {
@@ -195,7 +197,21 @@ export default class Runner {
     async execute() {
         const feedOp = this.graphGenerator.getFeedExecutor() as OpExecutor;
         this.executeOp(feedOp);
-        return await this.read();
+        const data = await this.read();
+
+        // 多输出数据拆分
+        const multiOutputs = this.model.multiOutputs;
+        if (multiOutputs) {
+            let sumVal = 0;
+            return multiOutputs.map(output => {
+                const totalShape = accShape(output.shape);
+                const curData = data.slice(sumVal, totalShape + sumVal);
+                sumVal += totalShape;
+                return { [output.name]: curData };
+            });
+        }
+
+        return data;
     }
 
     executeOp(op: OpExecutor) {
@@ -207,7 +223,7 @@ export default class Runner {
             && op.opData?.outputTensors
             && op.opData.outputTensors[0]
             && op.opData.outputTensors[0].tensorId === env.get('ns').layerName) {
-            console.info(op.opData.name, 'runner op name');
+            console.info(op.opData.name + '_' + op.opData.iLayer, 'runner op');
             return;
         }
         if (op.next) {

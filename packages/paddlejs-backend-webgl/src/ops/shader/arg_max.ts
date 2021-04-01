@@ -9,20 +9,11 @@ function mainFunc(
         flatten
     }
 ) {
-    const { total_shape, height_shape, width_shape, channel } = origin;
+    const { total_shape, height_shape, width_shape, channel, length_unformatted_shape } = origin;
     const batch_shape = total_shape / (width_shape * height_shape * channel);
     const shape = [batch_shape, channel, height_shape, width_shape];
 
-    let origin_shape_start = 0;
-    for (let index = 0; index < 4; index++) {
-        if (shape[index] > 1) {
-            break;
-        }
-        origin_shape_start++;
-    }
-
-    let real_axis = axis < 0 ? 4 - origin_shape_start + axis : axis;
-    real_axis = origin_shape_start + real_axis;
+    let real_axis = axis < 0 ? 3 : 4 - length_unformatted_shape + axis;
     const axis_shape = shape[real_axis];
 
     return `
@@ -60,7 +51,7 @@ function mainFunc(
                         tmp = o;
                         pos = index;
                     }
-                }     
+                }
             }
             else {
                 float tmp = getValueFromTensorPos_origin(0, oPos.g, oPos.b, oPos.a);

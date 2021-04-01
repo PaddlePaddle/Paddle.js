@@ -95,7 +95,27 @@ export function formatShape(shape: number[]): number[] {
         }
         return batch.concat(shape);
     }
-    return shape;
+    return [...shape];
+}
+
+/**
+ * tensor shape 标准化为 4维
+ * @param {Array} shape tensor的形状
+ * @returns {Array} 4维 shape
+ */
+ export function accShape(shape: number[]): number {
+    return shape.reduce((all, num) => all * num);
+}
+
+/**
+ * tensor shape 标准化为 4维
+ * @param {Array} shape tensor的形状
+ * @returns {Array} 4维 shape
+ */
+ export function formatAxis(shape: number[], axis): number {
+    const shapeLen = shape.length;
+    const axis_temp = axis > -1 ? axis : shapeLen + axis;
+    return 4 - shapeLen + axis_temp;
 }
 
 /**

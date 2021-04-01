@@ -8,6 +8,7 @@ interface OutParams {
     channel: number;
     width_texture: number;
     height_texture: number;
+    limit?: string;
 }
 
 function getOutputTensorPos({ height_shape, channel }: OutParams): string {
@@ -41,11 +42,11 @@ function getOutputTensorPosLimit({ height_shape, width_shape, channel }: OutPara
     `;
 }
 
-export default function genSuffix(params: OutParams, { limit = null } = {}) {
+export default function genSuffix(params: OutParams) {
     const header = `
     vec2 _2d_shape_texture_out = vec2(float(${params.width_texture}), float(${params.height_texture}));
     `;
-    const getOutputTensorPosFunc = limit ? getOutputTensorPosLimit(params) : getOutputTensorPos(params);
+    const getOutputTensorPosFunc = params.limit ? getOutputTensorPosLimit(params) : getOutputTensorPos(params);
 
     return `
         ${header}

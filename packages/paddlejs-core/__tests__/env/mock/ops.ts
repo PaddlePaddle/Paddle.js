@@ -11,8 +11,7 @@ export default {
         main: '',
         deps: {},
         behaviors: [
-            'normalizeDim',
-            'normalizeDim2'
+            'normalizeDim'
         ]
     },
     concat_mul: {
@@ -20,8 +19,7 @@ export default {
         main: '',
         deps: {},
         behaviors: [
-            'normalizeDim',
-            'normalizeDim2'
+            'normalizeDim'
         ]
     },
     conv2d: {

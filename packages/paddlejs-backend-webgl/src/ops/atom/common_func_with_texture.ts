@@ -43,7 +43,7 @@ function getValueFromTensorPosLimit(
 ) {
     return `
     // 超限布局根据tensor坐标获取这个tensor位置的值
-    float getValueFromTensorPosLimit_${textureName}(int r, int g, int b, int a) {
+    float getValueFromTensorPos_${textureName}(int r, int g, int b, int a) {
         float pieceW = ceil(float(${width_shape}) / 4.0);
         int x = int(mod(float(a), pieceW));
         int offsetY = 0;
@@ -73,7 +73,7 @@ function getValueFromTensorPosPackingLimit(
 ) {
     return `
     // 超限布局根据tensor坐标获取这个tensor位置的值
-    float getValueFromTensorPosPackingLimit_${textureName}(int r, int g, int b, int a) {
+    float getValueFromTensorPosPacking_${textureName}(int r, int g, int b, int a) {
         float pieceW = ceil(float(${width_shape}) / 4.0);
         int x = int(mod(float(a), pieceW));
         int offsetY = 0;
@@ -97,15 +97,14 @@ function getValueFromTensorPosPackingLimit(
     }`;
 }
 
-export function getValueFromTensorPos(textureName: string, textureParams, { limit }) {
-    return limit
+export function getValueFromTensorPos(textureName: string, textureParams) {
+    return textureParams.limit
         ? getValueFromTensorPosLimit(textureName, textureParams)
         : getValueFromTensorPosNoLimit(textureName, textureParams);
-
 }
 
-export function getValueFromTensorPosPacking(textureName: string, textureParams, { limit }) {
-    return limit
+export function getValueFromTensorPosPacking(textureName: string, textureParams) {
+    return textureParams.limit
         ? getValueFromTensorPosPackingLimit(textureName, textureParams)
         : getValueFromTensorPosPackingNoLimit(textureName, textureParams);
 
@@ -142,7 +141,35 @@ export function getValueFromTensorPosPacked(
     }`;
 }
 
+export function getTensorPosFromArrayIndex(
+    textureName: string,
+    {
+        numbers_shape,
+        length_shape
+    }
+) {
+    if (length_shape === 1) {
+        return `
+            int getTensorPosFromArrayIndex_${textureName}(int n) {
+                return int(mod(float(n), float(${numbers_shape[0]})));
+            }
+        `;
+    }
 
+    const shapeVec = `ivec${length_shape}(${numbers_shape.join(', ')})`
+    return `
+    ivec${length_shape} shapeVec_${textureName} = ${shapeVec};
+    ivec${length_shape} getTensorPosFromArrayIndex_${textureName}(int n) {
+        ivec${length_shape} pos;
+        pos[0] = n / shapeVec_${textureName}[0];
+        for (int i = 1; i < ${length_shape}; i++) {
+            n = int(mod(float(n), float(shapeVec_${textureName}[i - 1])));
+            pos[i] = n / shapeVec_${textureName}[i];
+        }
+        return pos;
+    }
+    `
+}
 export function getPixelsFromTexturePos(textureName: string) {
     return `
     #define getPixelsFromTexturePos_${textureName}(pos) TEXTURE2D(texture_${textureName}, pos)

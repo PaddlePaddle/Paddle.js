@@ -18,6 +18,7 @@ export interface ModelVar {
 export interface Model {
     ops: ModelOp[];
     vars: ModelVar[];
+    multiOutputs?: ModelVar[]
 }
 
 export interface OpInputs {
@@ -54,7 +55,7 @@ interface Behavior {
 
 export interface OpInfo {
     params?: string[] | Function;
-    main?: Function;
+    main?: Function | string;
     mainFunc?: Function;
     textureFuncConf?: {
         [key: string]: string[];

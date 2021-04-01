@@ -5,7 +5,7 @@
 function mainFunc(
     { counter },
     {
-        axis,
+        counterPos,
         Scale_y = 1.0,
         Scale_x = 1.0,
         Scale_out = 1.0
@@ -39,24 +39,12 @@ function mainFunc(
         ivec4 oPos1 = getOutputTensorPos();
         float o = getValueFromTensorPos_origin(oPos1.r, oPos1.g, oPos1.b, oPos1.a);
         ivec4 oPos = formatNCHW(oPos1.r, oPos1.g, oPos1.b, oPos1.a);
-        float c = 0.0;
 
-        if ( ${axis} == 1) {
-            c = getValueFromTensorPos_counter(0, oPos.g, oPos.b, oPos.a);
-        }
-        else if ( ${axis} == 2) {
-            c = getValueFromTensorPos_counter(0, 0, oPos.b, oPos.a);
-        }
-        else if ( ${axis} == 3) {
-            c = getValueFromTensorPos_counter(0, 0, 0, oPos.a);
-        }
-        else {
-            c = getValueFromTensorPos_counter(oPos.r, oPos.g, oPos.b, oPos.a);
-        }
+        float c = getValueFromTensorPos_counter(${counterPos});
         float res = float(${Scale_out}) * (float(${1 / Scale_x}) * o / (float(${1 / Scale_y}) * c));
         setOutput(float(res));
     }
-    
+
     `;
 }
 export default {
@@ -65,14 +53,16 @@ export default {
         'axis',
         'Scale_y',
         'Scale_x',
-        'Scale_out'
+        'Scale_out',
+        'counterPos'
     ],
     textureFuncConf: {
         counter: ['getValueFromTensorPos'],
         origin: ['getValueFromTensorPos']
     },
     behaviors: [
-        'processAxis'
+        'processAxis',
+        'genElementwiseCounterPos'
     ],
     inputsName: [
         'X',

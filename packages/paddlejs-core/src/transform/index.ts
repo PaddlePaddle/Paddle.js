@@ -3,6 +3,7 @@ import { GLOBALS } from '../globals';
 import TexturePacking from './texturePacking';
 import FormatInputsX from './formatInputsX';
 import type Transformer from './transformer';
+import SplitOp from './splitOp';
 
 interface TransformerAction {
     preTransforms: Transformer[];
@@ -11,7 +12,9 @@ interface TransformerAction {
 };
 
 const actions: TransformerAction = {
-    preTransforms: [],
+    preTransforms: [
+        new SplitOp()
+    ],
     transforms: [
         new FormatInputsX()
     ],

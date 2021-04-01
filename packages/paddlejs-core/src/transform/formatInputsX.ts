@@ -12,7 +12,7 @@ export default class FormatInputsX extends Transformer {
     transform(...args: any) {
         const [originOp] = args;
 
-        if (originOp.type !== 'concat') {
+        if (originOp.type !== 'concat' && originOp.type !== 'connect') {
             return;
         }
         const {

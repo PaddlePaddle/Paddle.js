@@ -28,7 +28,7 @@ export default function buildShader(textureConf, type, inputTensors, fShaderPara
 
         const runtimeCode = genRuntimeCode(runtime);
 
-        const suffixCode = genSuffixCode(textureParams['out'], opParams);
+        const suffixCode = genSuffixCode(textureParams['out']);
 
 
         const commonFuncCode = genCommonFuncCode(commonFuncConf);

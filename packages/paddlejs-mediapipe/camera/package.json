@@ -12,6 +12,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/webrtc": "0.0.26",
+    "canvas": "^2.7.0",
     "html-webpack-plugin": "^4.5.0",
     "husky": "^4.3.0",
     "jest": "^26.0.0",
@@ -35,5 +36,7 @@
       "^.+\\.js$": "babel-jest"
     }
   },
-  "dependencies": {}
+  "dependencies": {
+    "node-pre-gyp": "^0.17.0"
+  }
 }

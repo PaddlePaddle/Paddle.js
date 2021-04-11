@@ -20,6 +20,11 @@ const onNotSupported = () => {
     alert('浏览器不支持webrtc');
 };
 
+const onError = () => {
+    loadingDom && loadingDom.remove();
+    alert('error');
+};
+
 load();
 
 // 点击视频控制按钮，实现视频播放/截图/暂停功能
@@ -43,6 +48,7 @@ async function load() {
     camera = new Camera(video, {
         switchError,
         videoLoaded,
-        onNotSupported
+        onNotSupported,
+        onError
     });
 }

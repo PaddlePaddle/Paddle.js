@@ -113,9 +113,9 @@ export default class ModelGraph {
     }
 
     private arrangeMap() {
-        const executed: any = {};
+        const executed: object = {};
         const inIndex: number[] = [];
-        const idtoindex: any = {};
+        const idtoindex: object = {};
 
         for (let index = 0; index < this.weightMap.length; index++) {
             const item = this.weightMap[index];
@@ -140,14 +140,15 @@ export default class ModelGraph {
                 inIndex[index] = item.inputsName.length;
             }
         }
+
         this.topoSort(this.weightMap, inIndex, idtoindex);
     }
 
-    private topoSort(ops: OpExecutor[], inIndex: number[], idtoindex: any) {
-        const inline: any = [];
+    private topoSort(ops: OpExecutor[], inIndex: number[], idtoindex: object) {
+        const inline: OpExecutor[] = [];
         inline.push(ops[0]);
         const ops_temp = ops.slice(0);
-        let prev: any = null;
+        let prev: OpExecutor = null;
         let iterator: OpExecutor = ops[0];
         while (inline.length > 0) {
             if (prev != null) {

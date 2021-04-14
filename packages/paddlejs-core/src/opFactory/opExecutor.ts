@@ -36,24 +36,18 @@ export default class OpExecutor {
         this.next = null;
         this.opData = null;
         this.isPacked = false;
-
     }
 
     get inputsName() {
-        const opKey = `${GLOBALS.backend}_${this.type}`;
-        const opInfo = GLOBALS.opRegistry.ops[opKey];
-        if (opInfo && opInfo.inputsName) {
-            return opInfo.inputsName.reduce((acc: string[], cur) => acc.concat(this.inputs[cur] || []), []);
-        }
-        return this.inputs.Input || this.inputs.X;
+        const inputsName = [];
+        Object.keys(this.inputs).forEach(inputKey => {
+            inputsName.push(this.inputs[inputKey][0]);
+        });
+        return inputsName;
     }
 
     get outputsName() {
-        const opKey = `${GLOBALS.backend}_${this.type}`;
-        const opInfo = GLOBALS.opRegistry.ops[opKey];
-        if (opInfo && opInfo.outputsName) {
-            return opInfo.outputsName.reduce((acc: string[], cur) => acc.concat(this.outputs[cur] || []), []);
-        }
+        // not all outputs are useful
         return this.outputs.Output || this.outputs.Out || this.outputs.Y;
     }
 

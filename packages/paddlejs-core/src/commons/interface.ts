@@ -63,8 +63,6 @@ export interface OpInfo {
     },
     name?: string;
     conf?: object;
-    inputsName?: string[];
-    outputsName?: string[];
     main_packed?: string;
     behavior?: Behavior;
     behaviors?: string[];

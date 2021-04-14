@@ -23,8 +23,6 @@ function registerOp(opInfo: OpInfo, key: string) {
         conf,
         params,
         main,
-        inputsName,
-        outputsName,
         main_packed = '',
         behaviors = []
     } = opInfo;
@@ -37,8 +35,6 @@ function registerOp(opInfo: OpInfo, key: string) {
     GLOBALS.opRegistry.ops[opKey] = {
         name: key,
         conf,
-        inputsName,
-        outputsName,
         params,
         main,
         main_packed,

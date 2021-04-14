@@ -144,7 +144,7 @@ const behaviors : Behaviors = {
     },
 
     transToScale() {
-        this.data['multi_value'] = this.attrs['scale'] || 1;
+        this.data['multi_value'] = this.attrs['scale'] || 0;
         this.data['bias_value'] = this.attrs['bias'] || 0;
         const bias_after_scale = this.attrs['bias_after_scale'];
         this.data['active_function'] = (bias_after_scale || bias_after_scale === undefined)
@@ -172,7 +172,7 @@ const behaviors : Behaviors = {
 
     normalizeDim() {
         const originShape = this.input.X[0].shape;
-        let shape = Utils.formatShape(originShape);
+        const shape = Utils.formatShape(originShape);
         const axis = Utils.formatAxis(originShape, this.attrs.axis);
         const dim_value: number[] = [];
         for (let index = 0; index < shape[axis]; index++) {
@@ -217,7 +217,7 @@ const behaviors : Behaviors = {
 
     genElementwiseCounterPos() {
         const { counterLen, axis } = this.attrs;
-        const shape = ['0', '0', '0', '0']
+        const shape = ['0', '0', '0', '0'];
         let posIndex = axis;
         for (let i = 4 - counterLen; i < 4; i++) {
             shape[i] = `oPos[${posIndex++}]`;

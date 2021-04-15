@@ -3,7 +3,7 @@ const modelConfig = require('../dist/models/custom_model/config.json');
 
 const CUR_URL = 'http://localhost:9898/';
 
-const expected = [30, 25, 40, 30, 25, 40];
+const expected = [42, 35, 56, 43, 38, 60];
 
 describe('e2e test custom model', () => {
     beforeAll(async () => {

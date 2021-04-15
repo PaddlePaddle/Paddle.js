@@ -2,7 +2,7 @@
  * @file OpExecutor，封装算子可执行单元
  */
 
-import { ModelOp, OpInputs, OpOutputs, OpAttrs } from '../commons/interface';
+import { ModelOp, OpInputs, OpOutputs, OpAttrs, OpData } from '../commons/interface';
 import { GLOBALS } from '../globals';
 
 export default class OpExecutor {
@@ -13,7 +13,7 @@ export default class OpExecutor {
     attrs: OpAttrs = {} as OpAttrs;
     subAttrs: OpAttrs[] = [] as OpAttrs[];
     next: string | null = null;
-    opData: any = null;
+    opData: OpData = null;
     isPacked: boolean = false;
     finish: boolean = false;
 

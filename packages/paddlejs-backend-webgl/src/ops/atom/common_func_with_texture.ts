@@ -156,7 +156,7 @@ export function getTensorPosFromArrayIndex(
         `;
     }
 
-    const shapeVec = `ivec${length_shape}(${numbers_shape.join(', ')})`
+    const shapeVec = `ivec${length_shape}(${numbers_shape.join(', ')})`;
     return `
     ivec${length_shape} shapeVec_${textureName} = ${shapeVec};
     ivec${length_shape} getTensorPosFromArrayIndex_${textureName}(int n) {
@@ -168,7 +168,7 @@ export function getTensorPosFromArrayIndex(
         }
         return pos;
     }
-    `
+    `;
 }
 export function getPixelsFromTexturePos(textureName: string) {
     return `

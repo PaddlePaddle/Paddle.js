@@ -74,7 +74,7 @@ const behaviors : Behaviors = {
             this.attrs.filter_remainder_vec4 = inChannels % 4;
         }
         catch (e) {
-            console.log(e);
+            console.error(e);
         }
     },
 

@@ -1,5 +1,5 @@
 import { Runner } from '@paddlejs/paddlejs-core';
-import backend from '../../src/index';
+import { glInstance } from '../../src/index';
 
 const opName = 'arg_max';
 const modelDir = '/test/op/data/';
@@ -18,9 +18,9 @@ async function run() {
     });
     await runner.init();
     const executeOP = runner.weightMap[0];
-    console.log(runner.weightMap);
     runner.executeOp(executeOP);
-    console.log(await backend.read());
+    const res = await glInstance.read();
+    console.log(res);
 }
 
 run();

@@ -1,18 +1,20 @@
 import * as mobilenet from '../src/index';
 import map from './map.json';
 
-let loaded = false;
-const path = 'https://paddlejs.cdn.bcebos.com/models/mobileNetV2Opt';
+load();
+
+async function load() {
+    const path = 'https://paddlejs.cdn.bcebos.com/models/mobileNetV2';
+    await mobilenet.load({
+        path,
+        fileCount: 4,
+        mean: [0.485, 0.456, 0.406],
+        std: [0.229, 0.224, 0.225]
+    }, map);
+    document.getElementById('loading')!.style.display = 'none';
+}
+
 async function run(input?: HTMLElement) {
-    if (!loaded) {
-        await mobilenet.load({
-            path,
-            fileCount: 4,
-            mean: [0.485, 0.456, 0.406],
-            std: [0.229, 0.224, 0.225]
-        }, map);
-        loaded = true;
-    }
     const res = await mobilenet.classify(input);
     document.getElementById('txt')!.innerHTML = res;
 }

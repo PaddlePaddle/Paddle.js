@@ -39,7 +39,5 @@ export default {
         bias: ['getPixelsFromTexturePos'],
         mean: ['getPixelsFromTexturePos'],
         variance: ['getPixelsFromTexturePos']
-    },
-    behaviors: [
-    ]
+    }
 };

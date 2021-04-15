@@ -10,6 +10,7 @@ interface ModelConfig {
     fileCount: number;
     mean?: number[];
     std?: number[];
+    needPreheat?: boolean;
 }
 
 interface MobilenetMap {
@@ -26,7 +27,8 @@ export async function load(config: ModelConfig, map: string[] | MobilenetMap) {
         path,
         fileCount,
         mean,
-        std
+        std,
+        needPreheat = true
     } = config;
 
     runner = new Runner({
@@ -42,7 +44,8 @@ export async function load(config: ModelConfig, map: string[] | MobilenetMap) {
             width: 224
         },
         mean: mean || [],
-        std: std || []
+        std: std || [],
+        needPreheat
     });
     await runner.init();
 

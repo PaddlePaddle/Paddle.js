@@ -113,10 +113,10 @@ export default class Tensor {
     }
 
     get numbers_shape() {
-        let numbers = [];
-        let sLen = this.shape.length;
+        const numbers = [];
+        const sLen = this.shape.length;
         for (let i = 0; i < (sLen - 1); i++) {
-            let number = this.shape.slice(i + 1).reduce((total, num) => total * num);
+            const number = this.shape.slice(i + 1).reduce((total, num) => total * num);
             numbers.push(number);
         }
         // 和shape长度保持一致

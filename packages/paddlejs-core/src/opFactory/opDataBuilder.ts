@@ -83,7 +83,7 @@ export default class OpData {
                     }
                 }
                 catch (e) {
-                    console.log(e);
+                    console.error(e);
                 }
             }
         }
@@ -179,7 +179,7 @@ export default class OpData {
             });
         }
         catch (e) {
-            console.log(e);
+            console.error(e);
         }
 
     }

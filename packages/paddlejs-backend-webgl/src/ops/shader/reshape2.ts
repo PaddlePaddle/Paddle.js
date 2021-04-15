@@ -30,11 +30,9 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [
-    ],
+    params: [],
     textureFuncConf: {
         origin: ['getValueFromTensorPos']
     },
-    commonFuncConf: ['transferFromNHWCtoNCHW'],
-    behaviors: []
+    commonFuncConf: ['transferFromNHWCtoNCHW']
 };

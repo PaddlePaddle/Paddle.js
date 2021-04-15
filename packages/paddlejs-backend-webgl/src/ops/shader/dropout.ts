@@ -33,8 +33,5 @@ export default {
     },
     behaviors: [
         'normalizeDim'
-    ],
-    inputsName: [
-        'X'
     ]
 };

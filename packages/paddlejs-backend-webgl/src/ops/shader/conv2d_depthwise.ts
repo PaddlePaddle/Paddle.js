@@ -63,7 +63,5 @@ export default {
         filter: ['getValueFromTensorPos'],
         origin: ['getValueFromTensorPos'],
         bias: ['getValueFromTensorPos']
-    },
-    behaviors: [
-    ]
+    }
 };

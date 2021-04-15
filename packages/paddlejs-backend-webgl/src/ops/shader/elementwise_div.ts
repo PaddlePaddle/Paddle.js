@@ -63,9 +63,5 @@ export default {
     behaviors: [
         'processAxis',
         'genElementwiseCounterPos'
-    ],
-    inputsName: [
-        'X',
-        'Y'
     ]
 };

@@ -3,6 +3,7 @@
  */
 
 import { reduceShape } from '../../utils/dataProcess';
+
 function reshapeTo2D(src, num_col_dims) {
     const [n, c, h, w] = src;
     // 小于等于二维
@@ -28,7 +29,7 @@ function reshapeTo2D(src, num_col_dims) {
     ];
 }
 
-function  getTensorPosFromArrayIndex(name, numbers_shape, length_shape) {
+function getTensorPosFromArrayIndex(name, numbers_shape, length_shape) {
     if (length_shape === 1) {
         return `
             int getTensorPosFromArrayIndex_${name}(int n) {
@@ -39,7 +40,7 @@ function  getTensorPosFromArrayIndex(name, numbers_shape, length_shape) {
 
     const shape = reduceShape(numbers_shape);
     shape.push(1);
-    const shapeVec = `ivec${length_shape}(${shape.join(', ')})`
+    const shapeVec = `ivec${length_shape}(${shape.join(', ')})`;
     return `
     ivec${length_shape} shapeVec_${name} = ${shapeVec};
     ivec${length_shape} getTensorPosFromArrayIndex_${name}(int n) {
@@ -123,7 +124,5 @@ export default {
     textureFuncConf: {
         counter: ['getValueFromTensorPos'],
         origin: ['getValueFromTensorPos']
-    },
-    behaviors: [
-    ]
+    }
 };

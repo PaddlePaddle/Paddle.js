@@ -54,7 +54,5 @@ export default {
     ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos']
-    },
-    behaviors: [
-    ]
+    }
 };

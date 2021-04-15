@@ -35,12 +35,5 @@ export default {
         origin: ['getValueFromTensorPos'],
         counter: ['getValueFromTensorPos'],
         condition: ['getValueFromTensorPos']
-    },
-    behaviors: [
-    ],
-    inputsName: [
-        'X',
-        'Y',
-        'Condition'
-    ]
+    }
 };

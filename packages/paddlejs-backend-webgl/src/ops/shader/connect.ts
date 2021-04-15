@@ -3,13 +3,19 @@
  * @file concat
  */
 
-import { reduceShape } from '../../utils/dataProcess'
+import { reduceShape } from '../../utils/dataProcess';
+
 function mainFunc(
     { origin, out },
     {}
 ) {
-    const { total_shape, width_shape, height_shape, channel} = out;
-    const reducedShape = reduceShape([ total_shape / (width_shape * height_shape * channel), channel, height_shape, width_shape]);
+    const { total_shape, width_shape, height_shape, channel } = out;
+    const reducedShape = reduceShape([
+        total_shape / (width_shape * height_shape * channel),
+        channel,
+        height_shape,
+        width_shape
+    ]);
     return `
     // start函数
     void main(void) {
@@ -34,16 +40,9 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [
-    ],
+    params: [],
     textureFuncConf: {
         origin: ['getValueFromTensorPos', 'getTensorPosFromArrayIndex'],
         counter: ['getValueFromTensorPos', 'getTensorPosFromArrayIndex']
-    },
-    behaviors: [
-    ],
-    inputsName: [
-        'X',
-        'Y'
-    ]
+    }
 };

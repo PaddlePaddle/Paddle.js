@@ -20,7 +20,7 @@ function mainFunc(
 
     // 获取 output shape 里原本对应 origin shape 的维度
     const posArr = [0, 1, 2, 3];
-    const newPosArr = posArr.filter(item => newAxes.indexOf(item) === -1).map((item) => `oPos[${item}]`);
+    const newPosArr = posArr.filter(item => newAxes.indexOf(item) === -1).map(item => `oPos[${item}]`);
     const prefix = Array.from(new Array(newAxes.length), () => '0');
     newPosArr.splice(0, 0, ...prefix);
     const posStr = newPosArr.join(',');

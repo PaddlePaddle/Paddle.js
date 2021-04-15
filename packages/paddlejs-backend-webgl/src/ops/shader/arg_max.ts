@@ -93,9 +93,6 @@ export default {
     ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos']
-    },
-    inputsName: [
-        'X'
-    ]
+    }
 };
 

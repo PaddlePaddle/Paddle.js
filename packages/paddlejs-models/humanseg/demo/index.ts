@@ -4,6 +4,7 @@ import * as humanseg from '../src/index';
 
 async function load() {
     await humanseg.load();
+    document.getElementById('loading')!.style.display = 'none';
 }
 
 load();

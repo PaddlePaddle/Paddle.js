@@ -1,6 +1,6 @@
 {
   "name": "@paddlejs-models/humanseg",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "",
   "main": "lib/index",
   "scripts": {
@@ -11,8 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "@paddlejs-mediapipe/opencv": "^1.0.0",
-    "@paddlejs/paddlejs-backend-webgl": "^1.0.0",
-    "@paddlejs/paddlejs-core": "^2.0.0"
+    "@paddlejs/paddlejs-backend-webgl": "^1.0.1",
+    "@paddlejs/paddlejs-core": "^2.0.1"
   },
   "devDependencies": {
     "html-webpack-plugin": "^3.2.0",

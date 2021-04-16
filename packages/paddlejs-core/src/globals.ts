@@ -8,6 +8,9 @@ interface GLOBALS_INTERFACE {
     opRegistry: OpRegistry;
     backend: string;
     backendInstance: any; // todo Class Backend
+    backendType: string;
+    backendCount: number;
+    registerTypedBackend?: Function;
 }
 
 let GLOBALS: GLOBALS_INTERFACE = {
@@ -15,7 +18,9 @@ let GLOBALS: GLOBALS_INTERFACE = {
         ops: {}
     },
     backend: '',
-    backendInstance: null
+    backendInstance: null,
+    backendType: '',
+    backendCount: 0
 };
 
 function registerOp(opInfo: OpInfo, key: string) {
@@ -42,13 +47,18 @@ function registerOp(opInfo: OpInfo, key: string) {
     };
 }
 
-function registerBackend(backend: string, backendInstance: any, ops: Ops) {
+function registerBackend(backend: string, backendInstance: any, ops: Ops, backendType?: string) {
     if (backend) {
         GLOBALS.backend = backend;
+        GLOBALS.backendType = backendType || backend;
+    }
+
+    if (!GLOBALS[GLOBALS.backend]) {
+        GLOBALS[GLOBALS.backend] = {};
     }
 
     if (backendInstance) {
-        GLOBALS.backendInstance = backendInstance;
+        GLOBALS[GLOBALS.backend].backendInstance = backendInstance;
     }
 
     if (ops) {

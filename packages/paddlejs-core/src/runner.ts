@@ -47,6 +47,7 @@ export default class Runner {
     graphGenerator: Graph = {} as Graph;
     mediaProcessor: MediaProcessor | null = null;
     needPreheat: boolean = true;
+    backendName?: string;
 
     constructor(options: ModelConfig | null) {
         const opts = {
@@ -61,15 +62,27 @@ export default class Runner {
         if (env.get('platform') !== 'node') {
             this.mediaProcessor = new MediaProcessor();
         }
-    }
 
-    async init() {
-        if (!GLOBALS.backendInstance) {
+        if (!GLOBALS[GLOBALS.backend].backendInstance) {
             console.error('ERROR: Haven\'t register backend');
             return;
         }
 
-        await GLOBALS.backendInstance.init();
+        const backendIndex = ++GLOBALS.backendCount;
+        const backendType = this.backendName = GLOBALS.backendType;
+        if (backendIndex > 1 && GLOBALS.registerTypedBackend) {
+            this.backendName = `${backendType}_${backendIndex}`;
+            GLOBALS.registerTypedBackend(this.backendName);
+        }
+
+    }
+
+    async init() {
+        if (this.backendName) {
+            GLOBALS.backend = this.backendName;
+        }
+
+        await GLOBALS[GLOBALS.backend].backendInstance.init();
         this.isExecuted = false;
         await this.load();
         this.genFeedData();
@@ -110,6 +123,9 @@ export default class Runner {
     }
 
     async preheat() {
+        if (this.backendName) {
+            GLOBALS.backend = this.backendName;
+        }
         await this.checkModelLoaded();
         const result = await this.execute();
         this.isExecuted = true;
@@ -128,6 +144,9 @@ export default class Runner {
     }
 
     async predict(media, callback?: Function) {
+        if (this.backendName) {
+            GLOBALS.backend = this.backendName;
+        }
         // deal with input, such as image, video
         if (this.isPaused || !this.mediaProcessor) {
             return;
@@ -137,6 +156,17 @@ export default class Runner {
             this.modelConfig
         );
         this.updateFeedData(inputFeed);
+        const result = await this.execute();
+        this.isExecuted = true;
+        return callback ? callback(result) : result;
+    }
+
+    async predictWithFeed(feedData: number[], callback?: Function) {
+        if (this.backendName) {
+            GLOBALS.backend = this.backendName;
+        }
+        // deal with input, such as image, video
+        this.updateFeedData(feedData);
         const result = await this.execute();
         this.isExecuted = true;
         return callback ? callback(result) : result;
@@ -238,7 +268,7 @@ export default class Runner {
         const fetchInfo = this.model.vars.find(
             item => item.name === fetchOp.inputs.X[0]
         ) as ModelVar;
-        return await GLOBALS.backendInstance.read(fetchInfo);
+        return await GLOBALS[GLOBALS.backend].backendInstance.read(fetchInfo);
     }
 
     stopPredict() {

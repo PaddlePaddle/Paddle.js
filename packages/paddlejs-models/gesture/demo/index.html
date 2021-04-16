@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>paddle web demo</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <style>
+        body {
+            margin: 0 auto;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+        #rect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100px;
+            height: 100px;
+        }
+        .wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            margin: 0 auto;
+        }
+        #isLoading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, .5);
+        }
+        #isLoading .loading-text {
+            color: #fff;
+            font-size: 24px;
+        }
+        .center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+        }
+        #canvas {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 256px;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper center">
+    <img id="image" src="https://m.baidu.com/se/static/img/iphone/logo.png" width="256">
+    <canvas id="canvas" height="0"></canvas>
+    <div id="rect"></div>
+    <div id="tool">
+        <input type="file" id="uploadImg">
+    </div>
+    <div id="txt">...</div>
+</div>
+
+<div id="isLoading">
+    <p class="loading-text center">loading中……</p>
+</div>
+
+</body>
+</html>

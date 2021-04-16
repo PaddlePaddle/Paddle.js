@@ -144,7 +144,8 @@ const behaviors : Behaviors = {
     },
 
     transToScale() {
-        this.data['multi_value'] = this.attrs['scale'] || 0;
+        const scale = this.attrs['scale'];
+        this.data['multi_value'] = scale !== undefined ? scale : 1;
         this.data['bias_value'] = this.attrs['bias'] || 0;
         const bias_after_scale = this.attrs['bias_after_scale'];
         this.data['active_function'] = (bias_after_scale || bias_after_scale === undefined)

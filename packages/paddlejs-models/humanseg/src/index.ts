@@ -12,6 +12,7 @@ const WIDTH = 192;
 const HEIGHT = 192;
 const SCALE = 192;
 
+let backgroundCanvas = null;
 class OptModel extends Transformer {
     constructor() {
         super('OptModel');
@@ -69,13 +70,23 @@ export async function getGrayValue(input: HTMLImageElement | HTMLVideoElement) {
 export function drawHumanSeg(canvas: HTMLCanvasElement, gray_values: number[]) {
     const inputWidth = inputElement.naturalWidth || inputElement.width;
     const inputHeight = inputElement.naturalHeight || inputElement.height;
+
+    if (!backgroundCanvas) {
+        backgroundCanvas = createBackgroundCanvas(canvas);
+    }
+
+    const scaledBackgroundData = getScaledBackgroundCanvasData(backgroundCanvas, inputWidth, inputHeight);
+
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+    canvas.width = inputWidth;
+    canvas.height = inputHeight;
+
     const tempCanvas = document.createElement('canvas') as HTMLCanvasElement;
     const tempContext = tempCanvas.getContext('2d') as CanvasRenderingContext2D;
     tempCanvas.width = WIDTH;
     tempCanvas.height = HEIGHT;
-    canvas.width = inputWidth;
-    canvas.height = inputHeight;
     const tempData = tempContext.createImageData(WIDTH, HEIGHT);
+
     for (let i = 0; i < WIDTH * HEIGHT; i++) {
         tempData.data[i * 4] = 255;
         tempData.data[i * 4 + 1] = 255;
@@ -94,7 +105,6 @@ export function drawHumanSeg(canvas: HTMLCanvasElement, gray_values: number[]) {
 
     tempContext.putImageData(tempData, 0, 0);
     // stretch origin canvas to image size
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     ctx.drawImage(tempCanvas, 0, 0, inputWidth, inputHeight);
     const tempScaleData = ctx.getImageData(0, 0, inputWidth, inputHeight);
 
@@ -103,12 +113,52 @@ export function drawHumanSeg(canvas: HTMLCanvasElement, gray_values: number[]) {
     tempContext.drawImage(inputElement, 0, 0, inputWidth, inputHeight);
     const originImageData = tempContext.getImageData(0, 0, inputWidth, inputHeight);
     for (let i = 0; i < inputHeight * inputWidth; i++) {
-        tempScaleData.data[i * 4] = originImageData.data[i * 4];
-        tempScaleData.data[i * 4 + 1] = originImageData.data[i * 4 + 1];
-        tempScaleData.data[i * 4 + 2] = originImageData.data[i * 4 + 2];
+        if (tempScaleData.data[i * 4 + 3]) {
+            tempScaleData.data[i * 4] = originImageData.data[i * 4];
+            tempScaleData.data[i * 4 + 1] = originImageData.data[i * 4 + 1];
+            tempScaleData.data[i * 4 + 2] = originImageData.data[i * 4 + 2];
+        }
+        else {
+            tempScaleData.data[i * 4] = scaledBackgroundData.data[i * 4 + 0];
+            tempScaleData.data[i * 4 + 1] = scaledBackgroundData.data[i * 4 + 1];
+            tempScaleData.data[i * 4 + 2] = scaledBackgroundData.data[i * 4 + 2];
+            tempScaleData.data[i * 4 + 3] = 255;
+        }
     }
     tempContext.clearRect(0, 0, inputWidth, inputHeight);
     ctx.putImageData(tempScaleData, 0, 0);
+}
+
+/**
+ * Get scaled background canvas data to adapter target canvas size
+ *
+ * @param {HTMLCanvasElement} backgroundCanvas the canvas as background
+ * @param {Number} targetWidth target canvas width
+ * @param {Number} targetHeight target canvas height
+ * @returns {Object}
+ */
+function getScaledBackgroundCanvasData(backgroundCanvas, targetWidth, targetHeight) {
+    let tempBackgroundCanvas = document.createElement('canvas') as HTMLCanvasElement;
+    const tempBackgroundContext = tempBackgroundCanvas.getContext('2d') as CanvasRenderingContext2D;
+    tempBackgroundCanvas.width = targetWidth;
+    tempBackgroundCanvas.height = targetHeight;
+    tempBackgroundContext.drawImage(backgroundCanvas, 0, 0, targetWidth, targetHeight);
+    const scaledBackgroundCanvasData = tempBackgroundContext.getImageData(0, 0, targetWidth, targetHeight);
+    tempBackgroundCanvas = null;
+    return scaledBackgroundCanvasData;
+}
+
+/**
+ * Create background canvas to store the origin canvas background
+ *
+ * @param {HTMLCanvasElement} canvas the origin canvas passed by User
+ * @returns {HTMLCanvasElement}
+ */
+function createBackgroundCanvas(canvas) {
+    const backgroundCanvas = document.createElement('canvas') as HTMLCanvasElement;
+    const backgroundContext = backgroundCanvas.getContext('2d') as CanvasRenderingContext2D;
+    backgroundContext.drawImage(canvas, 0, 0);
+    return backgroundCanvas;
 }
 
 /**

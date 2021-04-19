@@ -8,15 +8,22 @@ async function load() {
 }
 
 load();
+const canvas1 = document.getElementById('demo1') as HTMLCanvasElement;
+const canvas2 = document.getElementById('demo2') as HTMLCanvasElement;
+
+const ctx = canvas1.getContext('2d');
+const img = new Image();
+img.src = './bgImgs/bg.jpg';
+img.onload = function () {
+    ctx.drawImage(img, 0, 0, canvas1.width, canvas1.height);
+};
 
 async function run(input) {
     const {
         data
     } = await humanseg.getGrayValue(input);
 
-    const canvas1 = document.getElementById('demo1') as HTMLCanvasElement;
     humanseg.drawHumanSeg(canvas1, data);
-    const canvas2 = document.getElementById('demo2') as HTMLCanvasElement;
     humanseg.drawMask(canvas2, data, true);
 }
 

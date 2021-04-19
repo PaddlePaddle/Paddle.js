@@ -38,6 +38,7 @@ import greater_than from './shader/greater_than';
 import reduce_sum from './shader/reduce_sum';
 import where from './shader/where';
 import connect from './shader/connect';
+import squeeze2 from './shader/squeeze2';
 
 const ops = {
     arg_max,
@@ -82,7 +83,8 @@ const ops = {
     relu: dynamic('relu'),
     hard_sigmoid: dynamic('hard_sigmoid'),
     pow: dynamic('pow'),
-    sqrt: dynamic('sqrt')
+    sqrt: dynamic('sqrt'),
+    squeeze2
 };
 export {
     ops

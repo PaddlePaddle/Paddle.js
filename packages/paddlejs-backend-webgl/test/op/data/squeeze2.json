@@ -1,0 +1,88 @@
+{
+    "chunkNum": 0, 
+    "ops": [
+        {
+            "attrs": {
+                "op_device": ""
+            }, 
+            "inputs": {
+                "X": [
+                    "feed"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "image"
+                ]
+            }, 
+            "type": "feed"
+        }, 
+        {
+            "attrs": {
+                "axes": [0, 2]
+            }, 
+            "inputs": {
+                "X": [
+                    "image"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "squeeze_0.tmp_0"
+                ], 
+                "XShape": [
+                    "squeeze_0.tmp_1"
+                ]
+            }, 
+            "type": "squeeze2"
+        }, 
+      
+        {
+            "attrs": {
+                "op_device": ""
+            }, 
+            "inputs": {
+                "X": [
+                    "squeeze_0.tmp_0"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "fetch"
+                ]
+            }, 
+            "type": "fetch"
+        }
+    ], 
+    "vars": [
+        {
+            "name": "image", 
+            "shape": [
+                1, 
+                3, 
+                1, 
+                10
+            ],
+            "data": [
+                1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1,
+                1, 1, 1, 1, 1, 1
+            ]
+        }, 
+        {
+            "name": "squeeze_0.tmp_0", 
+            "shape": [
+                3,
+                10
+            ]
+        },
+        {
+            "name": "squeeze_0.tmp_11",
+            "shape": [
+                0
+            ]
+        }
+    ]
+}

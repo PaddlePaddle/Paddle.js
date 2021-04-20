@@ -1,0 +1,60 @@
+{
+  "ops": [
+    {
+      "attrs": {
+        "op_device": ""
+      },
+      "inputs": {
+        "X": [
+          "feed"
+        ]
+      },
+      "outputs": {
+        "Out": [
+          "mean_0.tmp_0"
+        ]
+      },
+      "type": "feed"
+    },
+    {
+      "attrs": {
+        "axis": 0
+      },
+      "inputs": {
+        "X": ["mean_0.tmp_0"]
+      },
+      "outputs": {
+        "Out": ["mean_0.tmp_out"]
+      },
+      "type": "reduce_mean"
+    },
+    {
+      "attrs": {
+        "op_device": ""
+      },
+      "inputs": {
+        "X": [
+          "mean_0.tmp_out"
+        ]
+      },
+      "outputs": {
+        "Out": [
+          "fetch"
+        ]
+      },
+      "type": "fetch"
+    }
+  ],
+  "vars": [
+    {
+      "data": [1, 2, 3, 4, 5, 6, 7, 8],
+      "name": "mean_0.tmp_0",
+      "shape": [2, 4]
+    },
+    {
+      "data":[3, 4, 5, 6],
+      "name": "mean_0.tmp_out",
+      "shape": [1, 4]
+    }
+  ]
+}

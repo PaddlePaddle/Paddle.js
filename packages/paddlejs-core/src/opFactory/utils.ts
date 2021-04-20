@@ -12,7 +12,7 @@ import { GLOBALS } from '../globals';
  * @returns {Object} texture信息
  */
 export function getTextureInfoFromTensorShape(shape: number[] = [], isPacked = false) {
-    const GPU_TEXTURE_MAX_SIZE = GLOBALS.backendInstance.MAX_TEXTURE_SIZE || 4096;
+    const GPU_TEXTURE_MAX_SIZE = GLOBALS[GLOBALS.backend].backendInstance.MAX_TEXTURE_SIZE || 4096;
     const b = shape[0];
     const c = shape[1];
     const h = shape[2];
@@ -103,7 +103,7 @@ export function formatShape(shape: number[]): number[] {
  * @param {Array} shape shape of tensor
  * @returns {number} total length of shape
  */
- export function accShape(shape: number[]): number {
+export function accShape(shape: number[]): number {
     return shape.reduce((all, num) => all * num);
 }
 
@@ -112,7 +112,7 @@ export function formatShape(shape: number[]): number[] {
  * @param {Array} shape shape of tensor
  * @returns {number} real axis after shape format to 4D
  */
- export function formatAxis(shape: number[], axis): number {
+export function formatAxis(shape: number[], axis): number {
     const shapeLen = shape.length;
     const axis_temp = axis > -1 ? axis : shapeLen + axis;
     return 4 - shapeLen + axis_temp;

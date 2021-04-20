@@ -224,7 +224,7 @@ export default Vue.extend({
                 remainWholeT += t;
                     // this.remainOthersT = +(remainWholeT / (curTimes - 2).toFixed(4));
 
-                const queryList = GLOBALS.backendInstance.queryList;
+                const queryList = GLOBALS[GLOBALS.backend].backendInstance.queryList;
 
 
                 if (queryList && queryList.length) {

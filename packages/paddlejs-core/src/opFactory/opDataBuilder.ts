@@ -146,7 +146,8 @@ export default class OpData {
     buildProgram() {
         const name = this.name;
         const inputTensors = this.inputTensors;
-        this.program = this.outputTensors.map((outTensor, index) => GLOBALS.backendInstance.createProgram({
+        const backend = GLOBALS.backend;
+        this.program = this.outputTensors.map((outTensor, index) => GLOBALS[backend]?.backendInstance.createProgram({
             name,
             outTensor,
             inputTensors,
@@ -197,7 +198,7 @@ export default class OpData {
                 data: data.data || null,
                 isPacked: this.isPackedOp || false,
                 binding: index,
-                noLayout: GLOBALS.backendInstance?.noLayout
+                noLayout: GLOBALS[GLOBALS.backend].backendInstance?.noLayout
             });
             if (tensorName === 'out') {
                 this.outputTensors.push(tensor);

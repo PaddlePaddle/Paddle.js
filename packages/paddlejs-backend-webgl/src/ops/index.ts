@@ -40,6 +40,7 @@ import where from './shader/where';
 import connect from './shader/connect';
 import squeeze2 from './shader/squeeze2';
 import pad3d from './shader/pad3d';
+import reduce_mean from './shader/reduce_mean';
 
 const ops = {
     arg_max,
@@ -76,6 +77,7 @@ const ops = {
     reduce_sum,
     where,
     connect,
+    reduce_mean,
     prelu: dynamic('prelu'),
     relu6: dynamic('relu6'),
     leakyRelu: dynamic('leakyRelu'),

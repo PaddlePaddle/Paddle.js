@@ -32,3 +32,4 @@ humanseg.drawMask(canvas2, data, true);
 
   <img width="350"  src="https://user-images.githubusercontent.com/10822846/114897087-7fdb2d80-9e43-11eb-806d-fcf0198bc701.png"/>
   <img width="350"  src="https://user-images.githubusercontent.com/10822846/114897193-96818480-9e43-11eb-82bc-6d4e073423e9.png"/>
+  <img width="350"  src="https://user-images.githubusercontent.com/10822846/115279515-6b679f80-a179-11eb-87d9-41f84dc02430.jpg"/>

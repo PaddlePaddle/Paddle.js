@@ -39,6 +39,7 @@ import reduce_sum from './shader/reduce_sum';
 import where from './shader/where';
 import connect from './shader/connect';
 import squeeze2 from './shader/squeeze2';
+import pad3d from './shader/pad3d';
 
 const ops = {
     arg_max,
@@ -84,7 +85,8 @@ const ops = {
     hard_sigmoid: dynamic('hard_sigmoid'),
     pow: dynamic('pow'),
     sqrt: dynamic('sqrt'),
-    squeeze2
+    squeeze2,
+    pad3d
 };
 export {
     ops

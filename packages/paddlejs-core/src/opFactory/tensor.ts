@@ -54,7 +54,7 @@ export default class Tensor {
         this.shape_texture = shape_texture;
         this.exceedMax = exceedMax;
         // tensor数据
-        if (opts.type === 'image') {
+        if (opts.type.endsWith('image')) {
             this.data = opts.data;
         }
         else if (opts.data && opts.data.length) {

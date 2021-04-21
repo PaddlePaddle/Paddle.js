@@ -13,6 +13,7 @@ import { accShape } from './opFactory/utils';
 
 interface ModelConfig {
     modelPath: string;
+    modelName?: string;
     feedShape: {
         fw: number;
         fh: number;
@@ -39,6 +40,7 @@ interface ModelConfig {
 export default class Runner {
     // instance field
     modelConfig: ModelConfig = {} as ModelConfig;
+    modelName: string;
     isPaused: boolean = false;
     model: Model = {} as Model;
     weightMap: OpExecutor[] = [];
@@ -47,7 +49,6 @@ export default class Runner {
     graphGenerator: Graph = {} as Graph;
     mediaProcessor: MediaProcessor | null = null;
     needPreheat: boolean = true;
-    backendName?: string;
 
     constructor(options: ModelConfig | null) {
         const opts = {
@@ -56,35 +57,22 @@ export default class Runner {
         };
         this.modelConfig = Object.assign(opts, options);
         this.needPreheat = options.needPreheat === undefined ? true : options.needPreheat;
+        this.modelName = options.modelName || Date.now().toString();
         this.weightMap = [];
 
         env.set('ns', getGlobalNamespace());
         if (env.get('platform') !== 'node') {
             this.mediaProcessor = new MediaProcessor();
         }
+    }
 
-        if (!GLOBALS[GLOBALS.backend] || !GLOBALS[GLOBALS.backend].backendInstance) {
+    async init() {
+        if (!GLOBALS.backendInstance) {
             console.error('ERROR: Haven\'t register backend');
             return;
         }
 
-        const backendIndex = ++GLOBALS.backendCount;
-        const backendType = this.backendName = GLOBALS.backendType;
-        // only support a kind of typed backend.
-        if (backendIndex > 1 && GLOBALS.registerTypedBackend) {
-            this.backendName = `${backendType}_${backendIndex}`;
-            GLOBALS.registerTypedBackend(this.backendName);
-        }
-    }
-
-    async init() {
-        if (this.backendName) {
-            GLOBALS.backend = this.backendName;
-        }
-        if (!GLOBALS[GLOBALS.backend]) {
-            return;
-        }
-        await GLOBALS[GLOBALS.backend].backendInstance.init();
+        await GLOBALS.backendInstance.init();
         this.isExecuted = false;
         await this.load();
         this.genFeedData();
@@ -117,7 +105,8 @@ export default class Runner {
                     op,
                     iLayer,
                     this.model.vars,
-                    isFinalOp
+                    isFinalOp,
+                    this.modelName
                 );
                 op.opData = opData;
             }
@@ -125,9 +114,6 @@ export default class Runner {
     }
 
     async preheat() {
-        if (this.backendName) {
-            GLOBALS.backend = this.backendName;
-        }
         await this.checkModelLoaded();
         const result = await this.execute();
         this.isExecuted = true;
@@ -146,9 +132,6 @@ export default class Runner {
     }
 
     async predict(media, callback?: Function) {
-        if (this.backendName) {
-            GLOBALS.backend = this.backendName;
-        }
         // deal with input, such as image, video
         if (this.isPaused || !this.mediaProcessor) {
             return;
@@ -163,12 +146,44 @@ export default class Runner {
         return callback ? callback(result) : result;
     }
 
-    async predictWithFeed(feedData: number[], callback?: Function) {
-        if (this.backendName) {
-            GLOBALS.backend = this.backendName;
+    async predictWithFeed(data: number[] | InputFeed[] | ImageData, callback?, shape?: number[]) {
+        const { fw, fh } = this.modelConfig.feedShape;
+        let inputFeed;
+
+        if (Array.isArray(data)) {
+            if ((data[0] as InputFeed)?.data) {
+                // 已经构建好的inputFeed
+                let inputData = (data[0] as InputFeed).data;
+
+                // 确保输入是Float32Array
+                if (!(inputData instanceof Float32Array)) {
+                    (data[0] as InputFeed).data = new Float32Array(inputData);
+                }
+                inputFeed = data;
+            }
+            else {
+                inputFeed = [
+                    {
+                        data: new Float32Array(data as number[]),
+                        shape: shape || [1, 3, fh, fw],
+                        name: 'image'
+                    }
+                ];
+            }
         }
-        // deal with input, such as image, video
-        this.updateFeedData(feedData);
+        else {
+            // 类imageData类型
+            const { width, height, data: inputData } = data as ImageData;
+            inputFeed = [
+                {
+                    data: new Float32Array(inputData),
+                    shape: shape || [1, 3, height || fh, width || fw],
+                    name: 'image'
+                }
+            ];
+        }
+
+        this.updateFeedData(inputFeed);
         const result = await this.execute();
         this.isExecuted = true;
         return callback ? callback(result) : result;
@@ -218,10 +233,10 @@ export default class Runner {
                 return null;
             }
             const tensorData = item.opData.inputTensors;
-            return tensorData.find(tensor => tensor.tensorId === 'image');
+            return tensorData.find(tensor => tensor.tensorId.endsWith('_image'));
         }) as OpExecutor;
         const imageData = imageOp.opData.inputTensors.find(
-            tensor => tensor.tensorId === 'image'
+            tensor => tensor.tensorId.endsWith('_image')
         );
         imageData.data = feed[0].data;
     }
@@ -254,7 +269,7 @@ export default class Runner {
         if (env.get('debug')
             && op.opData?.outputTensors
             && op.opData.outputTensors[0]
-            && op.opData.outputTensors[0].tensorId === env.get('ns').layerName) {
+            && op.opData.outputTensors[0].tensorId === this.modelName + '_' + env.get('ns').layerName) {
             console.info(op.opData.name + '_' + op.opData.iLayer, 'runner op');
             return;
         }
@@ -270,7 +285,7 @@ export default class Runner {
         const fetchInfo = this.model.vars.find(
             item => item.name === fetchOp.inputs.X[0]
         ) as ModelVar;
-        return await GLOBALS[GLOBALS.backend].backendInstance.read(fetchInfo);
+        return await GLOBALS.backendInstance.read(fetchInfo);
     }
 
     stopPredict() {

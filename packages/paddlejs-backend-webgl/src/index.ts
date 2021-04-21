@@ -8,22 +8,19 @@ import WebGLBackend from './backend';
 import { ops } from './ops';
 import { GLHelper } from './webgl/WebGLUtils';
 import * as webgl_types from './webgl/webgl_types';
-import { GLOBALS } from '@paddlejs/paddlejs-core/globals';
 
-let glInstance;
-function registerWebGLBackend(name?: string) {
-    glInstance = new WebGLBackend();
+const glInstance = new WebGLBackend();
+
+function registerWebGLBackend() {
     registerBackend(
-        name || 'webgl',
+        'webgl',
         glInstance,
-        ops,
-        'webgl'
+        ops
     );
     return glInstance;
 }
 
 registerWebGLBackend();
-GLOBALS.registerTypedBackend = registerWebGLBackend;
 
 export {
     glInstance,

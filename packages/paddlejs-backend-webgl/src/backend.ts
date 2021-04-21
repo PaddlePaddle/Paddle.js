@@ -126,7 +126,7 @@ export default class WebGLBackend extends PaddlejsBackend {
             program.setProgram(this.gl, this.vertexBuffer, isRendered);
             this.program = program;
 
-            this.render(opData.inputTensors, opData.iLayer, isRendered, index, isPacked);
+            this.render(opData.inputTensors, opData.iLayer, isRendered, index, isPacked, opData.modelName);
         });
 
         if (query) {
@@ -285,16 +285,16 @@ export default class WebGLBackend extends PaddlejsBackend {
         return this.frameBuffer;
     }
 
-    render(data: any = [], iLayer: number = 0, isRendered: Boolean = false, index: number, isPacked: Boolean = false) {
+    render(data: any = [], iLayer: number = 0, isRendered: Boolean = false, index: number, isPacked: Boolean = false, modelName: string) {
         const gl = this.gl;
         const that = this;
         let textureIndex = 0;
         data.forEach(item => {
-            const loc = that.getUniformLoc('texture_' + item.name, iLayer, isRendered, index);
+            const loc = that.getUniformLoc('texture_' + item.name, iLayer, isRendered, index, modelName);
             if (!loc) {
                 return;
             }
-            that.initTexture(textureIndex, item, iLayer, isRendered, isPacked);
+            that.initTexture(textureIndex, item, iLayer, isRendered, isPacked, modelName);
             gl.uniform1i(loc, textureIndex++);
         });
         // gl.clearColor(.0, .0, .0, 1);
@@ -302,10 +302,11 @@ export default class WebGLBackend extends PaddlejsBackend {
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
-    initTexture(index, item, iLayer, isRendered, isPacked) {
+    initTexture(index, item, iLayer, isRendered, isPacked, modelName) {
         const gl = this.gl;
         const textureConf = this.textureConf as TextureConfig;
         const tensorName = item.opts.type;
+        const prefix = modelName + '_';
         let texture;
         if (!item.data) {
             // texture = this.prevTexture;
@@ -313,21 +314,21 @@ export default class WebGLBackend extends PaddlejsBackend {
         }
         else {
             // texture = gl.createTexture();
-            if (isRendered && (iLayer > 1 || (iLayer === 1 && tensorName !== 'image'))) {
-                const tData = this.cacheTextures['' + iLayer];
+            if (isRendered && (iLayer > 1 || (iLayer === 1 && !tensorName.endsWith('_image')))) {
+                const tData = this.cacheTextures[prefix + iLayer];
                 texture = tData['texture_' + tensorName];
             }
             else {
                 texture = gl.createTexture();
-                this.cacheTextures['' + iLayer] = this.cacheTextures['' + iLayer] || {};
-                this.cacheTextures['' + iLayer]['texture_' + tensorName] = texture;
+                this.cacheTextures[prefix + iLayer] = this.cacheTextures[prefix + iLayer] || {};
+                this.cacheTextures[prefix + iLayer]['texture_' + tensorName] = texture;
             }
         }
 
         gl.activeTexture(gl[`TEXTURE${index}`]);
         gl.bindTexture(gl.TEXTURE_2D, texture);
 
-        if (item.data && (!isRendered || (isRendered && iLayer === 1 && tensorName === 'image'))) {
+        if (item.data && (!isRendered || (isRendered && iLayer === 1 && tensorName.endsWith('_image')))) {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -374,14 +375,15 @@ export default class WebGLBackend extends PaddlejsBackend {
         }
     }
 
-    getUniformLoc(name, ilayer, isRendered, index) {
+    getUniformLoc(name, ilayer, isRendered, index, modelName) {
+        const prefix = modelName + '_';
         if (isRendered) {
-            return this.uniformLocations['' + ilayer][name + index];
+            return this.uniformLocations[prefix + ilayer][name + index];
         }
         const loc = this.gl.getUniformLocation((this.program as GLProgram).program as WebGLProgram, name);
         // 缓存
-        this.uniformLocations['' + ilayer] = this.uniformLocations['' + ilayer] || {};
-        this.uniformLocations['' + ilayer][name + index] = loc;
+        this.uniformLocations[prefix + ilayer] = this.uniformLocations[prefix + ilayer] || {};
+        this.uniformLocations[prefix + ilayer][name + index] = loc;
         return loc;
     }
 

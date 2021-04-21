@@ -90,6 +90,7 @@ export interface OpData {
     program: any;
     renderData: any[];
     tensorData: any[];
+    modelName: string;
 }
 
 

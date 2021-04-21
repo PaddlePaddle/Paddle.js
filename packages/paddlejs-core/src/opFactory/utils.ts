@@ -12,7 +12,7 @@ import { GLOBALS } from '../globals';
  * @returns {Object} texture信息
  */
 export function getTextureInfoFromTensorShape(shape: number[] = [], isPacked = false) {
-    const GPU_TEXTURE_MAX_SIZE = GLOBALS[GLOBALS.backend].backendInstance.MAX_TEXTURE_SIZE || 4096;
+    const GPU_TEXTURE_MAX_SIZE = GLOBALS.backendInstance.MAX_TEXTURE_SIZE || 4096;
     const b = shape[0];
     const c = shape[1];
     const h = shape[2];
@@ -132,7 +132,6 @@ export function getReshapeInPaddle(inputShape: number[] = [], outShape: number[]
     return [outShape[0], total / outShape[0]];
 
 }
-
 
 /**
  * pack op data

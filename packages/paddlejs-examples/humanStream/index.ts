@@ -6,23 +6,10 @@ const loadingDom = document.getElementById('isLoading');
 const video = document.getElementById('video') as HTMLVideoElement;
 const videoToolDom = document.getElementById('video-tool');
 
-
-const videoCanvas = document.querySelector('#demo') as HTMLCanvasElement;
 const bgElement = document.createElement('div') as HTMLDivElement;
 const container = document.querySelector('body');
 container.appendChild(bgElement);
 
-function makeBgDom() {
-    bgElement.style.width = `${videoCanvas.width}px`;
-    bgElement.style.height = `${videoCanvas.height}px`;
-
-    const imgURL = 'http://localhost:8866/bgImgs/bg.jpg';
-    bgElement.style.backgroundImage = 'url("' + imgURL + '")';
-    bgElement.style.backgroundRepeat = 'no-repeat';
-    bgElement.style.backgroundSize = 'cover';
-    bgElement.style.backgroundPosition = 'center';
-    bgElement.style.marginTop = `${-videoCanvas.height}px`;
-}
 load();
 
 // 视频开始播放，loading消失
@@ -41,6 +28,15 @@ videoToolDom.addEventListener('click', function (e: Event) {
     }
 });
 
+const canvas1 = document.getElementById('demo') as HTMLCanvasElement;
+
+const ctx = canvas1.getContext('2d');
+const img = new Image();
+img.src = './bgImgs/bg.jpg';
+img.onload = function () {
+    ctx.drawImage(img, 0, 0, canvas1.width, canvas1.height);
+};
+
 async function load() {
     await humanseg.load();
     camera = new Camera(video, {
@@ -48,9 +44,7 @@ async function load() {
             const {
                 data
             } = await humanseg.getGrayValue(video);
-            const canvas1 = document.getElementById('demo') as HTMLCanvasElement;
             humanseg.drawHumanSeg(canvas1, data);
-            makeBgDom();
         }
     });
 }

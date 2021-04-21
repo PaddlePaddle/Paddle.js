@@ -12,7 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@paddlejs-mediapipe/camera": "^0.0.1",
-    "@paddlejs-models/humanseg": "^0.0.7"
+    "@paddlejs-models/humanseg": "0.0.8"
   },
   "devDependencies": {
     "@types/webrtc": "0.0.26",

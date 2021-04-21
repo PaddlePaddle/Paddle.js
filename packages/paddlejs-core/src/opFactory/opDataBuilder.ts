@@ -24,8 +24,9 @@ export default class OpData {
     renderData: object[] = [];
     tensorData: ModelVar[] = [];
     isFinalOp: boolean = false;
+    modelName: string;
 
-    constructor(op: OpExecutor, iLayer: number, vars: ModelVar[], isFinalOp: boolean) {
+    constructor(op: OpExecutor, iLayer: number, vars: ModelVar[], isFinalOp: boolean, modelName: string) {
         const {
             type,
             inputs,
@@ -34,6 +35,7 @@ export default class OpData {
             isPacked
         } = op;
 
+        this.modelName = modelName;
         this.attrs = attrs;
         this.subAttrs = op.subAttrs;
         this.name = type;
@@ -146,8 +148,7 @@ export default class OpData {
     buildProgram() {
         const name = this.name;
         const inputTensors = this.inputTensors;
-        const backend = GLOBALS.backend;
-        this.program = this.outputTensors.map((outTensor, index) => GLOBALS[backend]?.backendInstance.createProgram({
+        this.program = this.outputTensors.map((outTensor, index) => GLOBALS.backendInstance.createProgram({
             name,
             outTensor,
             inputTensors,
@@ -192,13 +193,13 @@ export default class OpData {
         tensorData.forEach((data: ModelVar, index: number) => {
             const tensorName = data.tensorName as string;
             const tensor = new Tensor({
-                type: data.name,
+                type: this.modelName + '_' + data.name,
                 name: tensorName,
                 shape: data.shape,
                 data: data.data || null,
                 isPacked: this.isPackedOp || false,
                 binding: index,
-                noLayout: GLOBALS[GLOBALS.backend].backendInstance?.noLayout
+                noLayout: GLOBALS.backendInstance?.noLayout
             });
             if (tensorName === 'out') {
                 this.outputTensors.push(tensor);

@@ -11,7 +11,7 @@
             },
             "outputs": {
                 "Out": [
-                    "mean_0.tmp_0"
+                    "pow_0.tmp_0"
                 ]
             },
             "type": "feed"
@@ -22,15 +22,15 @@
             },
             "inputs": {
                 "X": [
-                    "mean_0.tmp_0"
+                    "pow_0.tmp_0"
                 ]
             },
             "outputs": {
                 "Out": [
-                    "mean_0.tmp_out"
+                    "pow_0.tmp_out"
                 ]
             },
-            "type": "reduce_mean"
+            "type": "pow"
         },
         {
             "attrs": {
@@ -38,7 +38,7 @@
             },
             "inputs": {
                 "X": [
-                    "mean_0.tmp_out"
+                    "pow_0.tmp_out"
                 ]
             },
             "outputs": {
@@ -52,32 +52,17 @@
     "vars": [
         {
             "data": [
-                1,
-                2,
-                3,
-                4,
-                5,
-                6,
-                7,
-                8
+                1
             ],
-            "name": "mean_0.tmp_0",
+            "name": "pow_0.tmp_0",
             "shape": [
-                2,
-                4
+                1
             ]
         },
         {
-            "data": [
-                3,
-                4,
-                5,
-                6
-            ],
-            "name": "mean_0.tmp_out",
+            "name": "pow_0.tmp_out",
             "shape": [
-                1,
-                4
+                1
             ]
         }
     ]

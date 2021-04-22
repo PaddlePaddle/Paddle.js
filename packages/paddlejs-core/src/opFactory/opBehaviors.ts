@@ -135,12 +135,20 @@ const behaviors : Behaviors = {
 
     transToPow() {
         this.data['multi_value'] = this.attrs.factor || 2;
-        this.data['active_function'] = 'pow';
+        this.data['active_function'] = 'pow_func';
         this.name = 'pow';
     },
 
     transToSigmoid() {
         this.data['active_function'] = 'sigmoid';
+    },
+
+    transToSqrt() {
+        this.data['active_function'] = 'sqrt';
+    },
+
+    transToTanh() {
+        this.data['active_function'] = 'tanh_func';
     },
 
     transToScale() {

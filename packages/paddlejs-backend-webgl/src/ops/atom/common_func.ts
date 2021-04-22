@@ -65,11 +65,16 @@ const sqrt = `
     }
 `;
 
-const pow = `
-    float pow(float x, float factor, float offset) {
+const pow_func = `
+    float pow_func(float x, float factor, float offset) {
         return pow(x, factor);
     }
 `;
+
+const tanh_func = `
+float tanh_func(float x, float y, float z) {
+    return tanh(x);
+}`;
 
 export {
     prelu,
@@ -80,7 +85,8 @@ export {
     hardSigmoid,
     scaleWidthBias,
     sqrt,
-    pow,
+    pow_func,
+    tanh_func,
     transferFromNHWCtoNCHW
 };
 

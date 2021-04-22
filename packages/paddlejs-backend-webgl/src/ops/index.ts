@@ -41,6 +41,9 @@ import connect from './shader/connect';
 import squeeze2 from './shader/squeeze2';
 import pad3d from './shader/pad3d';
 import reduce_mean from './shader/reduce_mean';
+import elementwise_pow from './shader/elementwise_pow';
+import elementwise_sub from './shader/elementwise_sub';
+import cast from './shader/cast';
 
 const ops = {
     arg_max,
@@ -57,6 +60,8 @@ const ops = {
     elementwise_add,
     elementwise_mul,
     elementwise_div,
+    elementwise_pow,
+    elementwise_sub,
     mul,
     matmul,
     fc,
@@ -78,6 +83,7 @@ const ops = {
     where,
     connect,
     reduce_mean,
+    cast,
     prelu: dynamic('prelu'),
     relu6: dynamic('relu6'),
     leakyRelu: dynamic('leakyRelu'),
@@ -87,6 +93,7 @@ const ops = {
     hard_sigmoid: dynamic('hard_sigmoid'),
     pow: dynamic('pow'),
     sqrt: dynamic('sqrt'),
+    tanh: dynamic('tanh'),
     squeeze2,
     pad3d
 };

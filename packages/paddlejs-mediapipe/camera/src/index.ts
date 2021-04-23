@@ -146,15 +146,12 @@ export default class Camera {
     }
 
     private initCanvas() {
-        this.canvas = this.options.targetCanvas || document.createElement('canvas');
+        if (!this.options.targetCanvas) {
+            return;
+        }
+        this.canvas = this.options.targetCanvas;
         this.canvas.width = this.video.width;
         this.canvas.height = this.video.height;
-        // 兼容用户未传targetCanvas情况
-        if (!this.options.targetCanvas) {
-            document.body.appendChild(this.canvas);
-            this.setVideoDomStyle();
-            this.setCanvasDomStyle();
-        }
         this.context = this.canvas.getContext('2d');
         // mirror video
         if (this.options.mirror) {
@@ -163,44 +160,29 @@ export default class Camera {
         }
     }
 
-    private setVideoDomStyle() {
-        const video = this.video;
-        video.style.position = 'relative';
-        video.style.top = '0';
-        video.style.left = '0';
-        video.style.opacity = '0';
-    }
-
-    private setCanvasDomStyle() {
-        const canvas = this.canvas;
-        canvas.style.position = 'absolute';
-        canvas.style.top = '0';
-        canvas.style.left = '0';
-    }
-
     private videoRequestAnimationFrame() {
         const drawImage = () => {
             this.context.drawImage(this.video, 0, 0, this.video.width, this.video.height);
             this.options.onFrame(this.canvas);
             this.requestAnimationId = window.requestAnimationFrame(drawImage);
         };
-        this.requestAnimationId = window.requestAnimationFrame(drawImage);
+        drawImage();
     }
 
     public start() {
         this.video && this.video.play();
-        if (this.requestAnimationId) {
+        if (!this.canvas || this.requestAnimationId) {
             return;
         }
         this.videoRequestAnimationFrame();
     }
 
     public pause() {
-        if (this.requestAnimationId) {
+        this.video && this.video.pause();
+        if (this.canvas && this.requestAnimationId) {
             cancelAnimationFrame(this.requestAnimationId);
             this.requestAnimationId = null;
         }
-        this.video && this.video.pause();
     }
 
     public switchCameras() {

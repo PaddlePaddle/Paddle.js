@@ -2,17 +2,24 @@
  * @file pool2d_max
  */
 
+function recoverShape({ total_shape, channel, height_shape, width_shape }) {
+    return [total_shape / channel / height_shape / width_shape, channel, height_shape, width_shape];
+}
+
 function mainFunc(
     { origin },
-    { strides = [], paddings = [], ksize }
+    { strides = [], paddings = [], ksize, global_pooling }
 ) {
     const [stride_v = 1, stride_h = 1] = strides;
     const [padTop = 0, padLeft = 0] = paddings;
     const [ksize_x, ksize_y] = ksize;
+    const originShape = recoverShape(origin);
+
     return `
     // start函数
     void main(void) {
         float res = -1. / 0.;
+        int index = 0;
         // 获取output的坐标
         ivec4 out_pos = getOutputTensorPos();
         int b = out_pos[0];
@@ -40,10 +47,20 @@ function mainFunc(
                 }
                 // origin数据
                 float curr = getValueFromTensorPos_origin(out_pos[0], out_pos[1], oy, ox);
+                if (layer_run_time == 0 && ${global_pooling === true}) {
+                    if (curr > res) {
+                        index = ${originShape[2] * originShape[3]} * out_pos[1] + ${originShape[3]} * oy + ox;
+                    }
+                }
                 res = max(res, curr);
             }
         }
-        setOutput(res);
+        if (layer_run_time == 0 && ${global_pooling === true}) {
+            setOutput(float(index));
+        }
+        else {
+            setOutput(float(res));
+        }
     }
     `;
 }
@@ -52,7 +69,8 @@ export default {
     params: [
         'strides',
         'paddings',
-        'ksize'
+        'ksize',
+        'global_pooling'
     ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos']
@@ -60,6 +78,7 @@ export default {
     behaviors: [
         'isMax',
         'setPacked',
+        'setAdaptive',
         'isGlobalPooling'
     ]
 };

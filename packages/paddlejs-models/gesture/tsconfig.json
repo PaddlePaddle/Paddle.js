@@ -1,0 +1,13 @@
+{
+    "extends": "../../../tsconfig",
+    "include": [
+        "src/",
+        "demo/"
+    ],
+    "exclude": [
+        "node_modules/"
+    ],
+    "compilerOptions": {
+        "outDir": "dist"
+    }
+}

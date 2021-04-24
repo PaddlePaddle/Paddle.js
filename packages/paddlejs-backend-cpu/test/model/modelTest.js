@@ -4,7 +4,6 @@ import '../../src/index';
 async function run() {
     const runner = new Runner({
         modelPath: 'https://paddlejs.cdn.bcebos.com/models/mobileNetV2/model.json',
-        fileCount: 4,
         feedShape: {
             fw: 224,
             fh: 224

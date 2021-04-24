@@ -10,8 +10,7 @@ async function run() {
         feedShape: {
             fw: 5,
             fh: 3
-        },
-        fileCount: 0
+        }
     });
     const preheatRes = await runner.init();
     console.log(preheatRes);

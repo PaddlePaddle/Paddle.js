@@ -11,7 +11,7 @@ describe('test loader', () => {
         fetch.resetMocks();
         fetch.mockResponseOnce(JSON.stringify(modelInfo));
         const modelPath = 'https://mobileNetV2Opt/model.json';
-        const loader = new Loader(modelPath, 0);
+        const loader = new Loader(modelPath);
         const {
             ops
         } = await loader.load();
@@ -22,7 +22,7 @@ describe('test loader', () => {
         fetch.resetMocks();
         fetch.mockResponseOnce(JSON.stringify(modelInfo));
         const modelPath = '/path';
-        const loader = new Loader(modelPath, 0);
+        const loader = new Loader(modelPath);
         const {
             vars
         } = await loader.load();

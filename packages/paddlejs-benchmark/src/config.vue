@@ -58,7 +58,6 @@ export default Vue.extend({
             modelList:  [
                 {
                     name: 'mobileNetV2',
-                    fileCount: 4,
                     feedShape: {
                         fw: 224,
                         fh: 224
@@ -70,7 +69,6 @@ export default Vue.extend({
                 },
                 {
                     name: 'mobileNetV2Opt',
-                    fileCount: 4,
                     feedShape: {
                         fw: 224,
                         fh: 224
@@ -82,7 +80,6 @@ export default Vue.extend({
                 },
                 {
                     name: 'wine',
-                    fileCount: 3,
                     feedShape: {
                         fw: 224,
                         fh: 224
@@ -94,7 +91,6 @@ export default Vue.extend({
                 },
                 {
                     name: 'gesture_detect',
-                    fileCount: 2,
                     feedShape: {
                         fw: 256,
                         fh: 256
@@ -106,7 +102,6 @@ export default Vue.extend({
                 },
                 {
                     name: 'gesture_rec',
-                    fileCount: 1,
                     feedShape: {
                         fw: 224,
                         fh: 224
@@ -118,7 +113,6 @@ export default Vue.extend({
                 },
                 {
                     name: 'humanseg',
-                    fileCount: 1,
                     feedShape: {
                         fw: 192,
                         fh: 192

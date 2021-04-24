@@ -114,12 +114,14 @@ export default class TexturePacking extends Transformer {
         }
 
         const {
-            inputsName,
-            outputsName
+            inputs,
+            outputs
         } = originOp;
+        const connectInputName = inputs.Input[0];
+        const connectOutputName = outputs.Output[0];
         const unpacked2packedOp = createUnpacked2packedOp({
-            inputName: inputsName[0],
-            outputName: `${inputsName[0]}_packed`
+            inputName: connectInputName,
+            outputName: `${connectInputName}_packed`
         });
         const unpacked2packedOpIdx = opsMap.length;
         opsMap.push(new OpExecutor(unpacked2packedOp, unpacked2packedOpIdx));
@@ -129,8 +131,8 @@ export default class TexturePacking extends Transformer {
 
         // deal with packed2unpacked op
         const packed2unpackedOp = createPacked2unpackedOp({
-            inputName: `${outputsName[0]}_packed`,
-            outputName: outputsName[0]
+            inputName: `${connectOutputName}_packed`,
+            outputName: connectOutputName
         });
         const packed2unpackedOpIdx = opsMap.length + 1;
         opsMap.push(new OpExecutor(packed2unpackedOp, packed2unpackedOpIdx));

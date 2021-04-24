@@ -3,16 +3,17 @@
  */
 
 import Transformer from './transformer';
+
 function getTensorShapeFromVals(name, vars) {
-    const  result = vars.filter(item => item.name === name);
-    return result.length ? result[0].shape : []
+    const result = vars.filter(item => item.name === name);
+    return result.length ? result[0].shape : [];
 }
 
 function buildOutputVarInfo(inputs, outputShape, axis, vars) {
     // calculate shape
     const shape = [...outputShape];
     let shapeSum = 0;
-    for (let input of inputs) {
+    for (const input of inputs) {
         const curShape = getTensorShapeFromVals(input, vars);
         shapeSum += curShape[axis];
     }
@@ -58,7 +59,7 @@ export default class SplitOp extends Transformer {
 
             const varList = [];
             const opList = [];
-            let firstOpInputs = inputs.slice(0, 4);
+            const firstOpInputs = inputs.slice(0, 4);
             let prevVar;
 
             for (let i = 0; i < opLen; i++) {
@@ -68,14 +69,13 @@ export default class SplitOp extends Transformer {
                     : inputs.slice(i * 3 + 1, (i + 1) * 3 + 1);
 
                 const outputVar = buildOutputVarInfo(curOpInputs, outputShape, axis, vars);
-                console.log(outputVar.name)
 
                 // concat prev op info
                 i !== 0 && curOpInputs.splice(0, 0, prevVar.name);
                 outputVar.shape[axis] += prevVar ? prevVar.shape[axis] : 0;
 
-                const outputs = {Out: [outputVar.name]};
-                opList.push({attrs, inputs: {X: curOpInputs}, outputs, type: 'concat'});
+                const outputs = { Out: [outputVar.name] };
+                opList.push({ attrs, inputs: { X: curOpInputs }, outputs, type: 'concat' });
                 varList.push(outputVar);
                 prevVar = outputVar;
             }

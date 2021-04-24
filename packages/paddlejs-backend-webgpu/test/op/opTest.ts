@@ -47,7 +47,6 @@ async function run() {
             fw: 3,
             fh: 3
         },
-        fileCount: 0,
         needPreheat: false
     });
     await runner.init();

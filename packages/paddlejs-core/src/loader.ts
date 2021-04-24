@@ -3,6 +3,7 @@
  */
 
 import env from './env';
+import { Model, ModelVar } from './commons/interface';
 
 interface UrlConf {
     dir: string;
@@ -15,33 +16,26 @@ interface FetchParams {
     mode?: string;
 }
 
-interface ModelVars {
-    name: string;
-    shape: number[];
-    data?: number[] | Float32Array;
-    persistable?: boolean;
-}
-
 export default class ModelLoader {
     urlConf: UrlConf = {
         dir: '',
         main: ''
     };
 
-    multipart = false;
-    chunkNum = 0;
-    dataType = 'binary';
+    separateChunk: boolean = true;
+    chunkNum: number = 1;
+    dataType: string = 'binary';
     params: FetchParams = {
         type: 'fetch'
     };
 
-    inNode = false;
+    inNode: boolean = false;
     isLocalFile: boolean = false;
     realFetch: Function = function () {
         throw new Error('ERROR: empty fetch funciton');
     };
 
-    constructor(modelPath: string, fileCount: number = 1) {
+    constructor(modelPath: string) {
         let modelDir = '';
         let filename = 'model.json';
         if (modelPath.endsWith('.json')) {
@@ -64,15 +58,15 @@ export default class ModelLoader {
             main: filename // 主文件
         };
 
-        this.multipart = fileCount > 0;
-        this.dataType = 'binary';
-        this.chunkNum = fileCount;
         this.inNode = env.get('platform') === 'node';
     }
 
     async load() {
-        const modelInfo: any = await this.fetchModel();
-        if (this.multipart === true) {
+        const modelInfo: Model = await this.fetchModel();
+        this.separateChunk = !!modelInfo.chunkNum && modelInfo.chunkNum > 0;
+        this.chunkNum = this.separateChunk ? modelInfo.chunkNum : 0;
+
+        if (this.separateChunk) {
             if (this.dataType === 'binary') {
                 await this.fetchChunks().then(allChunksData =>
                     this.traverse(modelInfo.vars, allChunksData)
@@ -130,7 +124,7 @@ export default class ModelLoader {
         });
     }
 
-    traverse(arr: ModelVars[], allChunksData: Float32Array) {
+    traverse(arr: ModelVar[], allChunksData: Float32Array) {
         let marker = 0; // 读到哪个位置了
         let len; // 当前op长度
         arr.filter(item => {

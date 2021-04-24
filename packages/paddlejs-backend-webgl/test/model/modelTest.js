@@ -10,8 +10,7 @@ async function run() {
         feedShape: {
             fw: 5,
             fh: 3
-        },
-        fileCount: 0
+        }
     });
 
     env.set('debug', true);

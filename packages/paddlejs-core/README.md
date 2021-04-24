@@ -16,7 +16,6 @@ import '@paddlejs/paddlejs-backend-webgl';
 
 const runner = new Runner({
     modelPath: '/model/mobilenetv2', // model path, e.g. http://xx.cc/path, http://xx.cc/path/model.json, /localModelDir/model.json, /localModelDir
-    fileCount?: 4, // model data file count, default value is 1
     feedShape: { // input shape
         fw: 256,
         fh: 256

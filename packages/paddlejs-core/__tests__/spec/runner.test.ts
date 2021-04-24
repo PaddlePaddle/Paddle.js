@@ -14,8 +14,7 @@ const runner = new Runner({
     feedShape: {
         fw: 5,
         fh: 3
-    },
-    fileCount: 0
+    }
 });
 
 it('test case: unregister backend', async () => {

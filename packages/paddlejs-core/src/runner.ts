@@ -22,7 +22,6 @@ interface ModelConfig {
         height: number;
         width: number;
     };
-    fileCount?: number; // 参数分片chunk_*.dat 个数
     fill?: string; // 缩放后用什么颜色填充不足方形部分
     mean?: number[];
     std?: number[];
@@ -84,8 +83,8 @@ export default class Runner {
     }
 
     async load() {
-        const { modelPath, fileCount } = this.modelConfig;
-        const loader = new Loader(modelPath, fileCount);
+        const { modelPath } = this.modelConfig;
+        const loader = new Loader(modelPath);
         this.model = await loader.load();
     }
 
@@ -153,7 +152,7 @@ export default class Runner {
         if (Array.isArray(data)) {
             if ((data[0] as InputFeed)?.data) {
                 // 已经构建好的inputFeed
-                let inputData = (data[0] as InputFeed).data;
+                const inputData = (data[0] as InputFeed).data;
 
                 // 确保输入是Float32Array
                 if (!(inputData instanceof Float32Array)) {

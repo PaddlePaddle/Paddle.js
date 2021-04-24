@@ -9,7 +9,6 @@ const modelPath = `${modelDir}${opName}.json`;
 async function run() {
     const runner = new Runner({
         modelPath,
-        fileCount: 0,
         feedShape: {
             fw: 3,
             fh: 3

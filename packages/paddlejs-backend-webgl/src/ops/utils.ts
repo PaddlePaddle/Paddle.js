@@ -21,7 +21,7 @@ const inputParams = [
     'limit',
     'channel',
     'total_shape',
-    'numbers_shape',
+    'numbers_shape'
 ];
 
 const outParams = [
@@ -44,7 +44,7 @@ const baseParams = {
     ]
 };
 
-function getTensorParams(inputTensors: Tensor[], ownParams: [], fShaderParams: object): opInfo {
+function getTensorParams(inputTensors: Tensor[], ownParams: [], fShaderParams: object, runtime: number): opInfo {
     const tensorsParams = {};
     const opParams = {};
     const tensorNames = [] as string[];
@@ -97,6 +97,9 @@ function getTensorParams(inputTensors: Tensor[], ownParams: [], fShaderParams: o
     if (fShaderParams['active_function']) {
         opParams['active_function'] = fShaderParams['active_function'];
     }
+
+    opParams['runtime'] = runtime;
+
     return { textureParams: tensorsParams, opParams, active_function: fShaderParams['active_function'] };
 }
 

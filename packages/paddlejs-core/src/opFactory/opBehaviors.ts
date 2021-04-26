@@ -20,6 +20,18 @@ const behaviors : Behaviors = {
         }
     },
 
+    setAdaptive() {
+        if (
+            this.attrs.adaptive
+            && this.attrs.ksize.length === 2
+            && this.attrs.ksize[0] === 1
+            && this.attrs.ksize[1] === 1
+        ) {
+            this.attrs.adaptive = false;
+            this.attrs.global_pooling = true;
+        }
+    },
+
     isGlobalPooling() {
         const counter = this.input.X[0] || {};
         const length = (counter.shape && counter.shape.length) || 0;

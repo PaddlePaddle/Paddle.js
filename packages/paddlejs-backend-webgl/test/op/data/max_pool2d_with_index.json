@@ -1,0 +1,106 @@
+{
+    "chunkNum": 0,
+    "ops": [
+        {
+            "attrs": {
+                "op_device": ""
+            },
+            "inputs": {
+                "X": [
+                    "feed"
+                ]
+            },
+            "outputs": {
+                "Out": [
+                    "tmp_43"
+                ]
+            },
+            "type": "feed"
+        }, 
+        {
+            "attrs": {
+                "adaptive": true,
+                "global_pooling": false,
+                "ksize": [
+                    1, 
+                    1
+                ],
+                "op_device": "",
+                "paddings": [
+                    0,
+                    0
+                ], 
+                "strides": [
+                    1,
+                    1
+                ]
+            },
+            "inputs": {
+                "X": [
+                    "tmp_43"
+                ]
+            },
+            "outputs": {
+                "Mask": [
+                    "max_pool2d_with_index_0.tmp_1"
+                ],
+                "Out": [
+                    "max_pool2d_with_index_0.tmp_0"
+                ]
+            },
+            "type": "max_pool2d_with_index"
+        },
+        {
+            "attrs": {
+                "op_device": ""
+            }, 
+            "inputs": {
+                "X": [
+                    "max_pool2d_with_index_0.tmp_0"
+                ]
+            },
+            "outputs": {
+                "Out": [
+                    "fetch"
+                ]
+            },
+            "type": "fetch"
+        }
+    ],
+    "vars": [
+        {
+            "name": "tmp_43", 
+            "shape": [
+                1,
+                3, 
+                3, 
+                3
+            ],
+            "data": [
+                1, 2, 3, 1, 1, 5, 1, 7, 1,
+                9, 10, 1, 1, 1, 8, 1, 1, 1,
+                1, 7, 1, 9, 14, 1, 1, 1, 8
+            ]
+        },
+        {
+            "name": "max_pool2d_with_index_0.tmp_0",
+            "shape": [
+                1, 
+                3, 
+                1, 
+                1
+            ],
+            "data": [7, 10, 14]
+        },
+        {
+            "name": "max_pool2d_with_index_0.tmp_1",
+            "shape": [
+                1, 
+                3, 
+                1, 
+                1
+            ],
+            "data": [7, 10, 22]
+        }
+    ]
+}

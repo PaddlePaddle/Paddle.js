@@ -127,7 +127,8 @@ export default class OpData {
             scale: 'scale',
             bias: 'bias',
             mean: 'mean',
-            variance: 'variance'
+            variance: 'variance',
+            mask: 'out'
         };
 
 
@@ -168,6 +169,10 @@ export default class OpData {
 
             if (this.name.indexOf('flatten2') > -1) {
                 this.name = 'reshape2';
+            }
+
+            if (this.name.indexOf('max_pool2d_with_index') > -1) {
+                this.name = 'pool2d_max';
             }
 
             const tensorData: ModelVar[] = this.tensorData;

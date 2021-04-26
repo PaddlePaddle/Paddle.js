@@ -20,7 +20,9 @@ export default function buildShader(textureConf, type, inputTensors, fShaderPara
         const { params = {}, mainFunc, textureFuncConf = {}, commonFuncConf } = ops[opName];
 
         // textureList: [filter, origin, bias]
-        const { textureParams, opParams, active_function } = getTensorParams(inputTensors, params, fShaderParams);
+        const { textureParams, opParams, active_function } = getTensorParams(
+            inputTensors, params, fShaderParams, runtime
+        );
 
         const prefixCode = genPrefixCode(textureConf);
 

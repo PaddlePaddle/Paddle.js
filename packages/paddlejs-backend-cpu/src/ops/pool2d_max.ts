@@ -73,7 +73,7 @@ function main(tensorMap: Map<string, Tensor>, attrs: Attrs, runtime: i32): f32[]
                             const curr = originData[n * originS0 + c * originS1 + oy * originS2 + ox];
                             /* eslint-disable-next-line */
                             if (pooling_type == 1) {
-								// max-pool update
+                                // max-pool update
                                 if (count_pool == 0){
                                     res = curr;
                                     count_pool++;

@@ -23,6 +23,7 @@ import split from './shader/split';
 import batchnorm from './shader/batchnorm';
 import reshape2 from './shader/reshape2';
 import bilinear_interp from './shader/bilinear_interp';
+import bilinear_interp_v2 from './shader/bilinear_interp_v2';
 import transpose2 from './shader/transpose2';
 import softmax from './shader/softmax';
 import dynamic from './shader/dynamic';
@@ -88,7 +89,8 @@ const ops = {
     pow: dynamic('pow'),
     sqrt: dynamic('sqrt'),
     squeeze2,
-    pad3d
+    pad3d,
+    bilinear_interp_v2
 };
 export {
     ops

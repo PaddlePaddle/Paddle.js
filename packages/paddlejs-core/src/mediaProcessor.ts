@@ -8,7 +8,7 @@ type Color = string;
 
 export default class MediaProcessor {
     targetContext: CanvasRenderingContext2D = {} as CanvasRenderingContext2D;
-    gapFillWith: Color = '#000';
+    gapFillWith: Color = '#fff';
     mean: number[] = [0, 0, 0];
     std: number[] = [1, 1, 1];
     bgr: boolean = false;
@@ -53,7 +53,9 @@ export default class MediaProcessor {
         let data: ImageData | number[] = [];
         let scaleSize;
 
-        if (!(pixels instanceof HTMLImageElement || pixels instanceof HTMLVideoElement)) {
+        if (!(pixels instanceof HTMLImageElement
+            || pixels instanceof HTMLVideoElement
+            || pixels instanceof HTMLCanvasElement)) {
             return [{
                 data: data,
                 shape: opt.shape || opt.targetShape,
@@ -63,11 +65,10 @@ export default class MediaProcessor {
 
         this.pixelWidth = pixels.width;
         this.pixelHeight = pixels.height;
-
-        if (opt.scale && opt.targetSize) { // Moblienet的情况
+        if (opt.scale && opt.targetSize) {
             data = this.resizeAndFitTargetSize(pixels, opt);
         }
-        else if (opt.targetSize) { // 如果有targetSize，就是装在目标宽高里的模式 TinyYolo的情况
+        else if (opt.targetSize) { // 如果有 targetSize，就是装在目标宽高里的模式
             scaleSize = this.fitToTargetSize(pixels, opt);
             data = this.getImageData(0, 0, scaleSize);
         }
@@ -75,7 +76,6 @@ export default class MediaProcessor {
             scaleSize = this.reSize(pixels, opt);
             data = this.getImageData(0, 0, scaleSize);
         }
-
         if (opt.gray) {
             data = this.grayscale(data);
         }
@@ -142,18 +142,17 @@ export default class MediaProcessor {
      * @param opt.mean 均值
      * @param opt.std 方差
      * @param opt.targetShape 输出shape
-     * @param opt.normalizeType 0：将数据映射为0~1， 1：映射为-1~1之间
      */
     allReshapeToRGB(imageData, opt) {
 
         // mean和std是介于0-1之间的
-        const { mean, std, normalizeType = 0, targetShape } = opt;
+        const { mean, std, targetShape } = opt;
         const [, c, h, w] = targetShape;
         const data = imageData.data || imageData;
 
         const result = this.result;
         let offset = 0;
-
+        const normalizeType = 0; // 将数据映射为0~1， 1：映射为-1~1之间
         // h w c
         for (let i = 0; i < h; ++i) {
             const iw = i * w;
@@ -168,7 +167,6 @@ export default class MediaProcessor {
                 }
             }
         }
-
         return result;
     }
 
@@ -261,7 +259,7 @@ export default class MediaProcessor {
     /**
      * 缩放成目标尺寸并居中
      */
-    fitToTargetSize(image, params, center?) {
+    fitToTargetSize(image, params) {
         // 目标尺寸
         const targetWidth = params.targetSize.width;
         const targetHeight = params.targetSize.height;
@@ -284,12 +282,9 @@ export default class MediaProcessor {
             sh = Math.round(sw * this.pixelHeight / this.pixelWidth);
             y = Math.floor((targetHeight - sh) / 2);
         }
-        if (center) {
-            this.targetContext.drawImage(image, x, y, sw, sh);
-        }
-        else {
-            this.targetContext.drawImage(image, 0, 0, sw, sh);
-        }
+
+        this.targetContext.drawImage(image, x, y, sw, sh);
+
         return { sw: targetWidth, sh: targetHeight };
     }
 

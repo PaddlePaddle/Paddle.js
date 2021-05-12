@@ -13,9 +13,8 @@ import * as textureFunc from '../ops/atom/common_func_with_texture';
 
 export default function buildShader(textureConf, type, inputTensors, fShaderParams, runtime: number, isPacked = false) {
     let code = '';
+    const opName = getExactOpName(type, isPacked);
     try {
-
-        const opName = getExactOpName(type, isPacked);
 
         const { params = {}, mainFunc, textureFuncConf = {}, commonFuncConf } = ops[opName];
 
@@ -50,7 +49,7 @@ export default function buildShader(textureConf, type, inputTensors, fShaderPara
         code = populateData(code);
     }
     catch (e) {
-        console.error(e);
+        console.error(`[${opName}]: ` + e);
     }
 
     return code;

@@ -25,12 +25,6 @@ function mainFunc(
     void main(void) {
         // 输出数据
         ivec4 oPos = getOutputTensorPos();
-        // 输出坐标转换为输入坐标
-        //int sumVal = oPos.g
-            + oPos.a * ${out.channel}
-            + oPos.b * ${out.channel} * ${out.width_shape}
-            + oPos.r * ${out.channel} * ${out.width_shape} * ${out.height_shape};
-
 
         bool align_flag = ${align_mode} == 0 && !${align_corners};
 

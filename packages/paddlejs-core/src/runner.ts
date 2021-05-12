@@ -50,11 +50,7 @@ export default class Runner {
     needPreheat: boolean = true;
 
     constructor(options: ModelConfig | null) {
-        const opts = {
-            fill: '#fff',
-            scale: 256
-        };
-        this.modelConfig = Object.assign(opts, options);
+        this.modelConfig = Object.assign({}, options);
         this.needPreheat = options.needPreheat === undefined ? true : options.needPreheat;
         this.modelName = options.modelName || Date.now().toString();
         this.weightMap = [];
@@ -209,7 +205,6 @@ export default class Runner {
                 });
             }
         }
-
         else {
             preheatFeedData = vars.find(item => item.name === 'image');
             if (preheatFeedData) {
@@ -264,6 +259,7 @@ export default class Runner {
         if (op.type === 'fetch') {
             return;
         }
+
         op.execute(this.isExecuted);
         if (env.get('debug')
             && op.opData?.outputTensors

@@ -1,0 +1,27 @@
+{
+    "ops": [
+        {
+            "attrs": {
+                "align_corners": false
+            },
+            "inputs": {
+                "X": ["nearest_interp.tmp_0"]
+            },
+            "outputs": {
+                "Out": ["nearest_interp.tmp_1"]
+            },
+            "type": "nearest_interp"
+        }
+    ],
+    "vars": [
+        {
+            "data": [2, 3, 6, 10],
+            "name": "nearest_interp.tmp_0",
+            "shape": [1, 4]
+        },
+        {
+            "name": "nearest_interp.tmp_1",
+            "shape": [1, 4]
+        }
+    ]
+}

@@ -42,6 +42,9 @@ import connect from './shader/connect';
 import squeeze2 from './shader/squeeze2';
 import pad3d from './shader/pad3d';
 import reduce_mean from './shader/reduce_mean';
+import hard_swish from './shader/hard_swish';
+import nearest_interp from './shader/nearest_interp';
+import nearest_interp_v2 from './shader/nearest_interp_v2';
 
 const ops = {
     arg_max,
@@ -79,6 +82,9 @@ const ops = {
     where,
     connect,
     reduce_mean,
+    hard_swish,
+    nearest_interp,
+    nearest_interp_v2,
     prelu: dynamic('prelu'),
     relu6: dynamic('relu6'),
     leakyRelu: dynamic('leakyRelu'),

@@ -1,0 +1,29 @@
+{
+    "ops": [
+        {
+            "attrs": {
+                "offset": 3,
+                "scale": 6,
+                "threshold": 6
+            },
+            "inputs": {
+                "X": ["hard_swish.tmp_0"]
+            },
+            "outputs": {
+                "Out": ["hard_swish.tmp_1"]
+            },
+            "type": "hard_swish"
+        }
+    ],
+    "vars": [
+        {
+            "data": [1, 2, 3, 4],
+            "name": "hard_swish.tmp_0",
+            "shape": [1, 4]
+        },
+        {
+            "name": "hard_swish.tmp_1",
+            "shape": [1, 4]
+        }
+    ]
+}

@@ -19,7 +19,7 @@
         }, 
         {
             "attrs": {
-                "padding": [2, 2, 2, 2, 0, 0],
+                "paddings": [2, 2, 2, 2, 0, 0],
                 "mode": "constant",
                 "value": "0.0"
             }, 

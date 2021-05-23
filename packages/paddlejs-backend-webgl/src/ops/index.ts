@@ -42,6 +42,7 @@ import connect from './shader/connect';
 import squeeze2 from './shader/squeeze2';
 import pad3d from './shader/pad3d';
 import reduce_mean from './shader/reduce_mean';
+import shuffle_channel from './shader/shuffle_channel';
 import hard_swish from './shader/hard_swish';
 import nearest_interp from './shader/nearest_interp';
 import nearest_interp_v2 from './shader/nearest_interp_v2';
@@ -96,7 +97,8 @@ const ops = {
     sqrt: dynamic('sqrt'),
     squeeze2,
     pad3d,
-    bilinear_interp_v2
+    bilinear_interp_v2,
+    shuffle_channel
 };
 export {
     ops

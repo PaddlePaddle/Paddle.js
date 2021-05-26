@@ -10,7 +10,9 @@ const commonFuncBehaviors = {
     scale: ['transToScale'],
     sigmoid: ['transToSigmoid'],
     hard_sigmoid: ['transToHardSigmoid'],
-    pow: ['transToPow']
+    pow: ['transToPow'],
+    sqrt: ['transToSqrt'],
+    tanh: ['transToTanh']
 };
 
 function mainFunc(

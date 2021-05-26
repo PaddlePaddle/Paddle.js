@@ -1,0 +1,39 @@
+{
+    "ops": [
+        {
+            "attrs": {
+                "in_dtype": 3,
+                "op_device": "",
+                "out_dtype": 3
+            },
+            "inputs": {
+                "X": [
+                    "numel_0.tmp_0"
+                ]
+            },
+            "outputs": {
+                "Out": [
+                    "cast_0.tmp_0"
+                ]
+            },
+            "type": "cast"
+        }
+    ],
+    "vars": [
+        {
+            "data": [
+                524288.0, 1, 0, -1, 0.9, 1.1
+            ],
+            "name": "numel_0.tmp_0",
+            "shape": [
+                6
+            ]
+        },
+        {
+            "name": "cast_0.tmp_0",
+            "shape": [
+                6
+            ]
+        }
+    ]
+}

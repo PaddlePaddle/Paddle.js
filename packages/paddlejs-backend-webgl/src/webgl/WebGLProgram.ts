@@ -66,6 +66,6 @@ export default class GLProgram {
         gl.enableVertexAttribArray(aPosition);
         // Bind the position buffer.
         gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-        gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 16, 0);
+        gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
     }
 }

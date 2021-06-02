@@ -84,10 +84,7 @@ export default class MediaProcessor {
             data = this.reshape(data, opt, scaleSize);
         }
 
-        if (opt.bgr) {
-            data = this.allReshapeToBGR(data, opt) as number[];
-        }
-        else if (opt.targetShape) {
+        if (opt.targetShape) {
             data = this.allReshapeToRGB(data, opt) as number[];
         }
 
@@ -144,22 +141,21 @@ export default class MediaProcessor {
      * @param opt.targetShape 输出shape
      */
     allReshapeToRGB(imageData, opt) {
-
         // mean和std是介于0-1之间的
-        const { mean, std, targetShape } = opt;
+        const { mean, std, targetShape, bgr } = opt;
         const [, c, h, w] = targetShape;
         const data = imageData.data || imageData;
-
         const result = this.result;
         let offset = 0;
-        const normalizeType = 0; // 将数据映射为0~1， 1：映射为-1~1之间
+        // 将数据映射为0~1， 1：映射为-1~1之间
+        const normalizeType = 0;
         // h w c
         for (let i = 0; i < h; ++i) {
             const iw = i * w;
             for (let j = 0; j < w; ++j) {
                 const iwj = iw + j;
                 for (let k = 0; k < c; ++k) {
-                    const a = iwj * 4 + k;
+                    const a = bgr ? iwj * 4 + (2 - k) : iwj * 4 + k;
                     result[offset] = normalizeType === 0 ? data[a] / 255 : (data[a] - 128) / 128;
                     result[offset] -= mean[k];
                     result[offset] /= std[k];
@@ -169,37 +165,6 @@ export default class MediaProcessor {
         }
         return result;
     }
-
-    /**
-     * 全部转bgr * H * W
-     * @param shape
-     */
-    allReshapeToBGR(imageData, opt) {
-        const [, c, h, w] = opt.targetShape;
-        const data = imageData.data || imageData;
-        // mean和std是介于0-1之间的
-        const mean = opt.mean;
-        const std = opt.std;
-        const result = this.result;
-        let offset = 0;
-        // h w c
-        for (let i = 0; i < h; ++i) {
-            const iw = i * w;
-            for (let j = 0; j < w; ++j) {
-                const iwj = iw + j;
-                for (let k = 0; k < c; ++k) {
-                    const a = iwj * 4 + (2 - k);
-                    result[offset] = data[a];
-                    result[offset] -= mean[2 - k];
-                    result[offset] /= std[2 - k];
-                    // result[offset] = 0.5;
-                    offset++;
-                }
-            }
-        }
-        return result;
-    }
-
 
     /**
      * 根据scale缩放图像

@@ -70,14 +70,6 @@ describe('test mediaProcessor with scale and targetSize', () => {
         expect(data[3]).toBe(255);
     });
 
-    test('test api bgr allReshapeToBGR', () => {
-        mediaParams.bgr = true;
-        const imagedata = processror.resizeAndFitTargetSize(img, mediaParams);
-        const data = processror.allReshapeToBGR(imagedata, mediaParams);
-        expect(data.length).toBe(150528);
-        expect(+(data[0] + data[1] + data[2]).toFixed(2)).toBe(-5.96);
-    });
-
     test('test api reshape', () => {
         const imagedata = {
             data: new Array(10 * 12 * 4).fill(0)

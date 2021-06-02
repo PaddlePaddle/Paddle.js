@@ -5,6 +5,10 @@
 A lightweight npm package which just includes modules **core imgproc js video**.
 Modify the [opencv](/https://github.com/opencv/opencv) build_js script to package a few modules and api.
 
+# opencv.js
+
+Opencv3.4 contains most of the commonly used APIs, supporting cv.boxPoints api.
+
 # modules 
 OpenCV modules:
 --     To be built:                 **core imgproc js video**
@@ -32,3 +36,7 @@ let ksize = new cv.Size(5, 5);
 let anchor = new cv.Point(-1, -1);
 cv.blur(logit, dst, ksize, anchor, cv.BORDER_DEFAULT);
 ```
+
+# tips
+
+1、cv.mean api has precision error when calculating floating-point numbers

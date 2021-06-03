@@ -35,7 +35,12 @@ function reduceShape(shape: number[]): number[] {
     return s;
 }
 
+function getSizeFromShape(shape: number[]): number {
+    return shape.reduce((acc, cur) => acc * cur, 1);
+}
+
 export {
+    getSizeFromShape,
     nhwc2nchw,
     reduceShape
 };

@@ -1,0 +1,25 @@
+{
+    "ops": [
+        {
+            "attrs": {},
+            "inputs": {
+                "X": ["concat.tmp_0"]
+            },
+            "outputs": {
+                "Out": ["concat.tmp_2"]
+            },
+            "type": "pack_out"
+        }
+    ],
+    "vars": [
+        {
+            "data": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+            "name": "concat.tmp_0",
+            "shape": [1, 1, 6, 2]
+        },
+        {
+            "name": "concat.tmp_2",
+            "shape": [1, 1, 2, 2]
+        }
+    ]
+}

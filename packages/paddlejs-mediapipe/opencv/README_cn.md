@@ -5,6 +5,10 @@
 一个轻量级 opencv 库，目前包含模块 **core imgproc js video**，主要用于边缘模糊处理。
 修改 [opencv](/https://github.com/opencv/opencv) build_js 构建脚本，打包少量模块和api。
 
+# opencv.js
+
+opencv3.4版本，包含大多数常用api，增加 cv.boxPoints api。
+
 # 模块
 
 OpenCV 模块:
@@ -27,3 +31,7 @@ let ksize = new cv.Size(5, 5);
 let anchor = new cv.Point(-1, -1);
 cv.blur(logit, dst, ksize, anchor, cv.BORDER_DEFAULT);
 ```
+
+# tips
+
+1、cv.mean api在计算浮点数时存在精度误差

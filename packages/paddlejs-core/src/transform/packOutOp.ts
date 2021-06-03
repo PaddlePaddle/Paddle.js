@@ -10,9 +10,9 @@ import Transformer from './transformer';
 const FINAL_PACK_OP_NAME = 'fetch_pack';
 const FINAL_NCHW_OP_NAME = 'final_nchw';
 
-export default class Fetch extends Transformer {
+export default class PackOut extends Transformer {
     constructor() {
-        super('Fetch');
+        super('PackOut');
     }
 
     transform(...args: any) {

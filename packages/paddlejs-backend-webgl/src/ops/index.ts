@@ -27,8 +27,6 @@ import bilinear_interp_v2 from './shader/bilinear_interp_v2';
 import transpose2 from './shader/transpose2';
 import softmax from './shader/softmax';
 import dynamic from './shader/dynamic';
-import unpacked_2_packed from './shader/unpacked_2_packed';
-import packed_2_unpacked from './shader/packed_2_unpacked';
 import elementwise_mul from './shader/elementwise_mul';
 import elementwise_div from './shader/elementwise_div';
 import arg_max from './shader/arg_max';
@@ -49,6 +47,10 @@ import nearest_interp_v2 from './shader/nearest_interp_v2';
 import elementwise_pow from './shader/elementwise_pow';
 import elementwise_sub from './shader/elementwise_sub';
 import cast from './shader/cast';
+
+import { pack_out, nhwc_2_nchw, unpacked_2_packed, packed_2_unpacked } from './shader/custom';
+
+
 
 const ops = {
     arg_max,
@@ -105,7 +107,9 @@ const ops = {
     squeeze2,
     pad3d,
     bilinear_interp_v2,
-    shuffle_channel
+    shuffle_channel,
+    pack_out,
+    nhwc_2_nchw
 };
 export {
     ops

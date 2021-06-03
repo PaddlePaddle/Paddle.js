@@ -13,7 +13,8 @@ async function run() {
         }
     });
 
-    env.set('debug', true);
+    env.set('webgl_pack_output', true);
+
     const preheatRes = await runner.init();
     console.log(preheatRes);
     window.weightMap = runner.weightMap;

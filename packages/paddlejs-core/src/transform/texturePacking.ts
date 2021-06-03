@@ -3,6 +3,7 @@
  */
 
 import { GLOBALS } from '../globals';
+import env from '../env';
 import OpExecutor from '../opFactory/opExecutor';
 import Transformer from './transformer';
 
@@ -109,10 +110,11 @@ export default class TexturePacking extends Transformer {
     }
 
     transform(...args: any) {
-        // wegbl backend 单独处理
-        if (GLOBALS.backend !== 'webgl') {
+        // wegbl backend 单独处理，开启 webgl pack flag 才处理
+        if (GLOBALS.backend !== 'webgl' || !env.get('webgl_pack_channel')) {
             return;
         }
+
         const [originOp, vars, opsMap] = args;
 
         if (!(packedOpConditions[originOp.type] && packedOpConditions[originOp.type](originOp, vars))) {

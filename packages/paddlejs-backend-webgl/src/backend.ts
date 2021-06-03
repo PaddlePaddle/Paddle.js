@@ -4,13 +4,13 @@
  */
 
 import { PaddlejsBackend, env } from '@paddlejs/paddlejs-core';
-import { OpData, Query } from './types';
+import { ModelVar, OpData, Query } from './types';
 import { GLHelper, EShaderType } from './webgl/WebGLUtils';
 import { GLTexture, TextureConfig } from './webgl/WebGLTexture';
 import { vShaderSource, vShaderData } from './ops/vShader';
 import buildShader from './webgl/buildShader';
 import GLProgram from './webgl/WebGLProgram';
-import { nhwc2nchw } from './utils/dataProcess';
+import { getSizeFromShape, nhwc2nchw } from './utils/dataProcess';
 import queryProcess from './utils/queryProcess';
 
 
@@ -135,14 +135,20 @@ export default class WebGLBackend extends PaddlejsBackend {
         }
     }
 
-    async read(): Promise<number[]> {
+    async read(fetchInfo: ModelVar): Promise<number[]> {
         const pbo = this.createPBO();
         await this.createAndWaitForFence();
         const result = this.downloadFoat32TensorFromBuffer(pbo);
-        let shape = (this.program as GLProgram).shape as number[];
-        if (env.get('debug') && env.get('shape')) {
-            shape = env.get('shape');
+
+        let shape = fetchInfo ? fetchInfo.shape : [];
+        if (env.get('webgl_pack_output')) {
+            return result.slice(0, getSizeFromShape(shape));
         }
+
+        shape = env.get('debug') && env.get('shape')
+            ? env.get('shape')
+            : (this.program as GLProgram).shape;
+
         const [N, C, H, W] = shape;
         const nhwcFetchShape = [N, H, W, C];
         return nhwc2nchw(result, nhwcFetchShape);
@@ -224,7 +230,11 @@ export default class WebGLBackend extends PaddlejsBackend {
             gl2.bindBuffer(gl2.PIXEL_PACK_BUFFER, buffer);
             gl2.getBufferSubData(gl2.PIXEL_PACK_BUFFER, 0, pixels);
             gl2.bindBuffer(gl2.PIXEL_PACK_BUFFER, null);
+
             const result: number[] = [];
+            if (env.get('webgl_pack_output')) {
+                return Array.from(pixels);
+            }
             for (let i = 0; i < this.width_texture_out * this.height_texture_out; i++) {
                 result.push(pixels[4 * i]);
             }
@@ -285,7 +295,14 @@ export default class WebGLBackend extends PaddlejsBackend {
         return this.frameBuffer;
     }
 
-    render(data: any = [], iLayer: number = 0, isRendered: Boolean = false, index: number, isPacked: Boolean = false, modelName: string) {
+    render(
+        data: any = [],
+        iLayer: number = 0,
+        isRendered: Boolean = false,
+        index: number,
+        isPacked: Boolean = false,
+        modelName: string
+    ) {
         const gl = this.gl;
         const that = this;
         let textureIndex = 0;

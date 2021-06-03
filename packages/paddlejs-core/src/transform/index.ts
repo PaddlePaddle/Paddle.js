@@ -2,6 +2,7 @@ import TexturePacking from './texturePacking';
 import FormatInputsX from './formatInputsX';
 import type Transformer from './transformer';
 import SplitOp from './splitOp';
+import PackOutOp from './packOutOp';
 
 interface TransformerAction {
     preTransforms: Transformer[];
@@ -11,7 +12,8 @@ interface TransformerAction {
 
 const actions: TransformerAction = {
     preTransforms: [
-        new SplitOp()
+        new SplitOp(),
+        new PackOutOp()
     ],
     transforms: [
         new FormatInputsX(),

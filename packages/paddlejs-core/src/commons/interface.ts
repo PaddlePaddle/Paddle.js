@@ -1,3 +1,5 @@
+import type Transformer from '../transform/transformer';
+
 export interface ModelOp {
     type: string;
     attrs?: OpAttrs;
@@ -23,6 +25,30 @@ export interface Model {
     multiOutputs?: ModelVar[]
 }
 
+export interface ModelConfig {
+    modelPath: string;
+    modelName?: string;
+    feedShape: {
+        fw: number;
+        fh: number;
+    };
+    targetSize?: {
+        height: number;
+        width: number;
+    };
+    fill?: string; // 缩放后用什么颜色填充不足方形部分
+    mean?: number[];
+    std?: number[];
+    bgr?: boolean;
+    scale?: number;
+    type?: GraphType; // model type
+    needPreheat?: boolean;
+    plugins?: { // tranform graph plugins
+        preTransforms?: Transformer[]; // before creating graph
+        transforms?: Transformer[]; // while traversing the ops map
+        postTransforms?: Transformer[]; // after creating graph
+    };
+}
 export interface OpInputs {
     [key: string]: any;
 }

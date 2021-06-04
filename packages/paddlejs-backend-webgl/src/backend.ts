@@ -138,7 +138,7 @@ export default class WebGLBackend extends PaddlejsBackend {
     async read(fetchInfo: ModelVar): Promise<number[]> {
         const pbo = this.createPBO();
         await this.createAndWaitForFence();
-        const result = this.downloadFoat32TensorFromBuffer(pbo);
+        const result = this.downloadFloat32TensorFromBuffer(pbo);
 
         let shape = fetchInfo ? fetchInfo.shape : [];
         if (env.get('webgl_pack_output')) {
@@ -222,7 +222,7 @@ export default class WebGLBackend extends PaddlejsBackend {
         fn();
     }
 
-    downloadFoat32TensorFromBuffer(buffer) {
+    downloadFloat32TensorFromBuffer(buffer) {
         const gl2 = this.gl as any;
         const size: number = 4 * this.width_texture_out * this.height_texture_out;
         if (this.glVersion === 2) {

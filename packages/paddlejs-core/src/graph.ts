@@ -2,7 +2,7 @@
  * @file ModelGraph，graph 生成器
  */
 
-import { ModelOp, GraphType, Model, ModelVar } from './commons/interface';
+import { ModelOp, GraphType, Model, ModelVar, ModelConfig } from './commons/interface';
 import OpExecutor from './opFactory/opExecutor';
 import transformActions from './transform';
 
@@ -28,14 +28,16 @@ export default class ModelGraph {
     weightMap: OpExecutor[] = [];
     ops: ModelOp[] = [];
     vars: ModelVar[] = [];
+    config: ModelConfig = {} as ModelConfig;
     type: GraphType = GraphType.SingleOutput;
     plugins: GraphPlugins = null;
 
-    constructor(model: Model, type?: GraphType, plugins?: GraphPlugins) {
+    constructor(model: Model, config: ModelConfig) {
         this.ops = model.ops;
         this.vars = model.vars;
-        this.type = type || this.type;
-        this.plugins = plugins;
+        this.type = config.type || this.type;
+        this.plugins = config.plugins;
+        this.config = config;
     }
 
     /**
@@ -57,7 +59,7 @@ export default class ModelGraph {
     preTransforms(): void {
         [...transformActions.preTransforms, ...pluckTransformFunction(this.plugins, TransformName.PreTransforms)]
             .forEach(action => {
-                action.transform(this.ops, this.vars, this.type);
+                action.transform(this.ops, this.vars, this.config);
             });
     }
 

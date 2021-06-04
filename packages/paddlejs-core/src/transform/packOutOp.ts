@@ -10,9 +10,9 @@ import Transformer from './transformer';
 const FINAL_PACK_OP_NAME = 'fetch_pack';
 const FINAL_NCHW_OP_NAME = 'final_nchw';
 
-export default class Fetch extends Transformer {
+export default class PackOut extends Transformer {
     constructor() {
-        super('Fetch');
+        super('PackOut');
     }
 
     transform(...args: any) {
@@ -23,7 +23,7 @@ export default class Fetch extends Transformer {
         const fetchOp = ops.find(item => item.type === 'fetch');
         const [inputName] = fetchOp.inputs.X;
         const fetchInputVar = vars.find(item => item.name === inputName);
-        const [n, h, w, c] = formatShape(fetchInputVar.shape);
+        const [n, c, h, w] = formatShape(fetchInputVar.shape);
 
         // transform data from nhwc to nchw
         const nchwOp: ModelOp = {

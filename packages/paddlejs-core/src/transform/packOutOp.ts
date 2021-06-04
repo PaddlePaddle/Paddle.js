@@ -23,7 +23,7 @@ export default class PackOut extends Transformer {
         const fetchOp = ops.find(item => item.type === 'fetch');
         const [inputName] = fetchOp.inputs.X;
         const fetchInputVar = vars.find(item => item.name === inputName);
-        const [n, h, w, c] = formatShape(fetchInputVar.shape);
+        const [n, c, h, w] = formatShape(fetchInputVar.shape);
 
         // transform data from nhwc to nchw
         const nchwOp: ModelOp = {

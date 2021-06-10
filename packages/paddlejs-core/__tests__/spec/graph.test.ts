@@ -1,9 +1,12 @@
 import Graph from '../../src/graph';
+import { ModelConfig } from '../../src/commons/interface';
 import modelInfo from '../env/mock/model.json';
 
 describe('test graph', () => {
 
-    const graphGenerator = new Graph(modelInfo);
+    const graphGenerator = new Graph(modelInfo, {
+        type: 'single'
+    } as ModelConfig);
     const weightMap = graphGenerator.createGraph();
 
 

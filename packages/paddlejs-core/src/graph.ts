@@ -47,7 +47,6 @@ export default class ModelGraph {
     createGraph(): OpExecutor[] {
         this.preTransforms();
         this.createOpsMap();
-        this.constructOpsMap();
         this.arrangeMap();
         this.postTransforms();
         return this.weightMap;
@@ -100,20 +99,6 @@ export default class ModelGraph {
         this.weightMap = opsMap;
     }
 
-    /**
-     * Construct Ops Relationship
-     */
-    private constructOpsMap() {
-        for (let index = 0; index < this.weightMap.length; index++) {
-            const item = this.weightMap[index];
-            const outputsName = item.outputsName[0];
-            const next = this.getNextExecutor(this.weightMap, outputsName);
-            if (next) {
-                item.next = next.id;
-            }
-        }
-    }
-
     private arrangeMap() {
         const executed: object = {};
         const inIndex: number[] = [];
@@ -122,13 +107,13 @@ export default class ModelGraph {
         for (let index = 0; index < this.weightMap.length; index++) {
             const item = this.weightMap[index];
             for (let index = 0; index < item.outputsName.length; index++) {
-                const output = item.outputsName[index];
-                executed[output] = true;
+                const outputName = item.outputsName[index];
+                const next = this.getNextExecutor(this.weightMap, outputName);
+                if (next) {
+                    item.next = next.id;
+                }
+                executed[outputName] = true;
             }
-        }
-
-        for (let index = 0; index < this.weightMap.length; index++) {
-            const item = this.weightMap[index];
             inIndex[index] = 0;
             idtoindex[item.id] = index;
             if (item.inputsName.length > 1) {

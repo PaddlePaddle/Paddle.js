@@ -105,16 +105,13 @@ export default class Runner {
         if (this.isPaused || !this.mediaProcessor) {
             return;
         }
-        // const start = Date.now();
+
         const inputFeed: InputFeed[] = this.mediaProcessor.process(
             media,
             this.modelConfig
         );
-        // console.log('media-process ' + (Date.now() - start));
         this.updateFeedData(inputFeed);
-        // const start = Date.now();
         const result = await this.execute();
-        // console.log(Date.now() - start + '======== predict ===============');
         this.isExecuted = true;
         return callback ? callback(result) : result;
     }
@@ -237,7 +234,7 @@ export default class Runner {
         if (op.type === 'fetch') {
             return;
         }
-        // console.log(op.type);
+
         op.execute(this.isExecuted);
         if (env.get('debug')
             && op.opData?.outputTensors
@@ -258,7 +255,7 @@ export default class Runner {
         const fetchInfo = this.model.vars.find(
             item => item.name === fetchOp.inputs.X[0]
         ) as ModelVar;
-        console.log(fetchInfo);
+
         return await GLOBALS.backendInstance.read(fetchInfo);
     }
 

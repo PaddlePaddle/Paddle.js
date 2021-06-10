@@ -108,10 +108,6 @@ export default class ModelGraph {
             const item = this.weightMap[index];
             for (let index = 0; index < item.outputsName.length; index++) {
                 const outputName = item.outputsName[index];
-                const next = this.getNextExecutor(this.weightMap, outputName);
-                if (next) {
-                    item.next = next.id;
-                }
                 executed[outputName] = true;
             }
             inIndex[index] = 0;
@@ -143,6 +139,7 @@ export default class ModelGraph {
             }
             prev = iterator;
             iterator = inline.pop() || {} as OpExecutor;
+
             for (let i = 0; i < iterator.outputsName.length; i++) {
                 for (let k = 0; k < ops_temp.length; k++) {
                     for (let j = 0; j < ops_temp[k].inputsName.length; j++) {
@@ -159,25 +156,6 @@ export default class ModelGraph {
                 }
             }
         }
-    }
-
-    /**
-     * Get The Next Executor need Exec
-     * @param ops
-     * @param id
-     * @returns {*}
-     */
-    private getNextExecutor(ops: OpExecutor[], id: string) {
-        return ops.find(item => {
-            if (!item.next) {
-                for (let i = 0; i < item.inputsName.length; i++) {
-                    if (id === item.inputsName[i]) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        });
     }
 
     /**

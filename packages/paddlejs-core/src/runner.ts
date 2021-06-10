@@ -234,7 +234,6 @@ export default class Runner {
         if (op.type === 'fetch') {
             return;
         }
-
         op.execute(this.isExecuted);
         if (env.get('debug')
             && op.opData?.outputTensors
@@ -252,10 +251,13 @@ export default class Runner {
 
     async read() {
         const fetchOp = this.graphGenerator.getFetchExecutor();
-        const fetchInfo = this.model.vars.find(
+        const fetchVar = this.model.vars.find(
             item => item.name === fetchOp.inputs.X[0]
         ) as ModelVar;
-
+        const fetchInfo = {
+            name: fetchVar.name,
+            shape: fetchOp.attrs['origin_shape'] || fetchVar.shape
+        };
         return await GLOBALS.backendInstance.read(fetchInfo);
     }
 

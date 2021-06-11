@@ -2,7 +2,7 @@
  * @file ModelGraph，graph 生成器
  */
 
-import { ModelOp, GraphType, Model, ModelVar } from './commons/interface';
+import { ModelOp, GraphType, Model, ModelVar, ModelConfig } from './commons/interface';
 import OpExecutor from './opFactory/opExecutor';
 import transformActions from './transform';
 
@@ -28,14 +28,16 @@ export default class ModelGraph {
     weightMap: OpExecutor[] = [];
     ops: ModelOp[] = [];
     vars: ModelVar[] = [];
+    config: ModelConfig = {} as ModelConfig;
     type: GraphType = GraphType.SingleOutput;
     plugins: GraphPlugins = null;
 
-    constructor(model: Model, type?: GraphType, plugins?: GraphPlugins) {
+    constructor(model: Model, config: ModelConfig) {
         this.ops = model.ops;
         this.vars = model.vars;
-        this.type = type || this.type;
-        this.plugins = plugins;
+        this.type = config.type || this.type;
+        this.plugins = config.plugins;
+        this.config = config;
     }
 
     /**
@@ -45,7 +47,6 @@ export default class ModelGraph {
     createGraph(): OpExecutor[] {
         this.preTransforms();
         this.createOpsMap();
-        this.constructOpsMap();
         this.arrangeMap();
         this.postTransforms();
         return this.weightMap;
@@ -57,7 +58,7 @@ export default class ModelGraph {
     preTransforms(): void {
         [...transformActions.preTransforms, ...pluckTransformFunction(this.plugins, TransformName.PreTransforms)]
             .forEach(action => {
-                action.transform(this.ops, this.vars, this.type);
+                action.transform(this.ops, this.vars, this.config);
             });
     }
 
@@ -98,20 +99,6 @@ export default class ModelGraph {
         this.weightMap = opsMap;
     }
 
-    /**
-     * Construct Ops Relationship
-     */
-    private constructOpsMap() {
-        for (let index = 0; index < this.weightMap.length; index++) {
-            const item = this.weightMap[index];
-            const outputsName = item.outputsName[0];
-            const next = this.getNextExecutor(this.weightMap, outputsName);
-            if (next) {
-                item.next = next.id;
-            }
-        }
-    }
-
     private arrangeMap() {
         const executed: object = {};
         const inIndex: number[] = [];
@@ -120,13 +107,9 @@ export default class ModelGraph {
         for (let index = 0; index < this.weightMap.length; index++) {
             const item = this.weightMap[index];
             for (let index = 0; index < item.outputsName.length; index++) {
-                const output = item.outputsName[index];
-                executed[output] = true;
+                const outputName = item.outputsName[index];
+                executed[outputName] = true;
             }
-        }
-
-        for (let index = 0; index < this.weightMap.length; index++) {
-            const item = this.weightMap[index];
             inIndex[index] = 0;
             idtoindex[item.id] = index;
             if (item.inputsName.length > 1) {
@@ -156,6 +139,7 @@ export default class ModelGraph {
             }
             prev = iterator;
             iterator = inline.pop() || {} as OpExecutor;
+
             for (let i = 0; i < iterator.outputsName.length; i++) {
                 for (let k = 0; k < ops_temp.length; k++) {
                     for (let j = 0; j < ops_temp[k].inputsName.length; j++) {
@@ -172,25 +156,6 @@ export default class ModelGraph {
                 }
             }
         }
-    }
-
-    /**
-     * Get The Next Executor need Exec
-     * @param ops
-     * @param id
-     * @returns {*}
-     */
-    private getNextExecutor(ops: OpExecutor[], id: string) {
-        return ops.find(item => {
-            if (!item.next) {
-                for (let i = 0; i < item.inputsName.length; i++) {
-                    if (id === item.inputsName[i]) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        });
     }
 
     /**

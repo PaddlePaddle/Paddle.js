@@ -1,40 +1,14 @@
 import Loader from './loader';
 import Graph from './graph';
-import { Model, InputFeed, ModelVar, GraphType } from './commons/interface';
+import { Model, ModelConfig, InputFeed, ModelVar, GraphType } from './commons/interface';
 import OpData from './opFactory/opDataBuilder';
 import { GLOBALS, getGlobalNamespace } from './globals';
 import MediaProcessor from './mediaProcessor';
 import env from './env';
 
 import type OpExecutor from './opFactory/opExecutor';
-import type Transformer from './transform/transformer';
 
 import { accShape } from './opFactory/utils';
-
-interface ModelConfig {
-    modelPath: string;
-    modelName?: string;
-    feedShape: {
-        fw: number;
-        fh: number;
-    };
-    targetSize?: {
-        height: number;
-        width: number;
-    };
-    fill?: string; // 缩放后用什么颜色填充不足方形部分
-    mean?: number[];
-    std?: number[];
-    bgr?: boolean;
-    scale?: number;
-    type?: GraphType; // model type
-    needPreheat?: boolean;
-    plugins?: { // tranform graph plugins
-        preTransforms?: Transformer[]; // before creating graph
-        transforms?: Transformer[]; // while traversing the ops map
-        postTransforms?: Transformer[]; // after creating graph
-    };
-}
 
 export default class Runner {
     // instance field
@@ -85,7 +59,7 @@ export default class Runner {
     }
 
     genGraph() {
-        this.graphGenerator = new Graph(this.model, this.modelConfig.type, this.modelConfig.plugins);
+        this.graphGenerator = new Graph(this.model, this.modelConfig);
         this.weightMap = this.graphGenerator.createGraph();
     }
 
@@ -131,6 +105,7 @@ export default class Runner {
         if (this.isPaused || !this.mediaProcessor) {
             return;
         }
+
         const inputFeed: InputFeed[] = this.mediaProcessor.process(
             media,
             this.modelConfig
@@ -259,7 +234,6 @@ export default class Runner {
         if (op.type === 'fetch') {
             return;
         }
-
         op.execute(this.isExecuted);
         if (env.get('debug')
             && op.opData?.outputTensors
@@ -277,9 +251,13 @@ export default class Runner {
 
     async read() {
         const fetchOp = this.graphGenerator.getFetchExecutor();
-        const fetchInfo = this.model.vars.find(
+        const fetchVar = this.model.vars.find(
             item => item.name === fetchOp.inputs.X[0]
         ) as ModelVar;
+        const fetchInfo = {
+            name: fetchVar.name,
+            shape: fetchOp.attrs['origin_shape'] || fetchVar.shape
+        };
         return await GLOBALS.backendInstance.read(fetchInfo);
     }
 

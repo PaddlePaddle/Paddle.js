@@ -3,7 +3,7 @@
  */
 
 import env from '../env';
-import { ModelOp, ModelVar } from '../commons/interface';
+import { ModelOp } from '../commons/interface';
 import { formatShape } from '../opFactory/utils';
 import Transformer from './transformer';
 
@@ -65,17 +65,10 @@ export default class PackOut extends Transformer {
             persistable: false
         };
 
-        const changed_fetch_name = `${inputName}_fetch`;
-        fetchOp.inputs.X = [changed_fetch_name];
-        // save origin fetch op info
-        const changedFetchVar: ModelVar = {
-            name: changed_fetch_name,
-            shape: fetchInputVar.shape,
-            persistable: false
-        };
-
+        fetchOp.inputs.X = [FINAL_PACK_OP_NAME];
+        fetchOp.attrs['origin_shape'] = [n, c, h, w];
         ops.push(...[nchwOp, packOutOp]);
-        vars.push(...[nchwVar, packOutVar, changedFetchVar]);
+        vars.push(...[nchwVar, packOutVar]);
     }
 }
 

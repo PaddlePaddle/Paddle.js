@@ -117,7 +117,11 @@ export default class TexturePacking extends Transformer {
 
         const [originOp, vars, opsMap] = args;
 
-        if (!(packedOpConditions[originOp.type] && packedOpConditions[originOp.type](originOp, vars))) {
+        // because conv2d and depthwise_conv2d are same.
+        const opType = originOp.type === 'depthwise_conv2d' ? 'conv2d' : originOp.type;
+        const conditionFunc = packedOpConditions[opType];
+
+        if (!(conditionFunc && conditionFunc(originOp, vars))) {
             return;
         }
 

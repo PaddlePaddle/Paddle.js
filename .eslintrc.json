@@ -120,7 +120,7 @@
         ],
         "max-nested-callbacks": "warn",
         "max-params": ["error", 6],
-        "max-statements": ["error", 50],
+        "max-statements": ["error", 70],
         "max-statements-per-line": "error",
         "multiline-comment-style": ["warn", "separate-lines"],
         "new-parens": "warn",

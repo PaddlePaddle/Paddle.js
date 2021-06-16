@@ -9,9 +9,9 @@ interface cameraOption {
     mirror?: boolean;
     targetCanvas?: HTMLCanvasElement;
     onSuccess?: () => void;
-    onError?: NavigatorUserMediaErrorCallback;
+    onError?: () => void;
     onNotSupported?: () => void;
-    onFrame?: (canvas: HTMLCanvasElement) => void;
+    onFrame?: (target: HTMLCanvasElement | HTMLVideoElement) => void;
     switchError?: () => void;
     videoLoaded?: () => void;
 }
@@ -42,8 +42,8 @@ export default class Camera {
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
     private requestAnimationId;
-    private stream: any;
-    private videoDevices: any;
+    private stream: MediaStream;
+    private videoDevices: string[];
     private videoDeviceId: string;
     private currentMode: string;
     private isIOS: boolean;
@@ -52,9 +52,7 @@ export default class Camera {
         const ua = navigator.userAgent;
         this.isIOS = !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
         this.video.width = this.options.width || this.video.clientWidth;
-        if (this.options.height) {
-            this.video.height = this.options.height;
-        }
+        this.video.height = this.options.height || this.video.clientHeight;
         // 枚举设备摄像头
         this.enumerateDevices();
     }
@@ -62,8 +60,11 @@ export default class Camera {
     private handleStream() {
         const videoConstraints = {
             deviceId: { exact: this.videoDeviceId },
-            facingMode: this.currentMode
+            facingMode: this.currentMode,
+            width: this.video.width,
+            height: this.video.height
         };
+
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia({
                 video: videoConstraints
@@ -111,7 +112,7 @@ export default class Camera {
             })
             .catch(err => {
                 this.options.onNotSupported && this.options.onNotSupported();
-                console.log(err.name + ': ' + err.message);
+                console.error(err.name + ': ' + err.message);
             });
     }
 
@@ -122,7 +123,8 @@ export default class Camera {
         if ('srcObject' in this.video) {
             try {
                 this.video.srcObject = this.stream;
-            } catch (error) {
+            }
+            catch (error) {
                 this.video.src = URL.createObjectURL(this.stream) || this.stream;
             }
         }
@@ -134,6 +136,7 @@ export default class Camera {
             else {
                 this.video.height = this.video.clientHeight;
             }
+
             this.options.videoLoaded && this.options.videoLoaded();
             this.initCanvas();
         });
@@ -162,16 +165,18 @@ export default class Camera {
 
     private videoRequestAnimationFrame() {
         const drawImage = () => {
-            this.context.drawImage(this.video, 0, 0, this.video.width, this.video.height);
-            this.options.onFrame(this.canvas);
-            this.requestAnimationId = window.requestAnimationFrame(drawImage);
+            if (this.context) {
+                this.context.drawImage(this.video, 0, 0, this.video.width, this.video.height);
+            }
+            this.options.onFrame(this.video);
+            this.requestAnimationId = requestAnimationFrame(drawImage);
         };
         drawImage();
     }
 
     public start() {
         this.video && this.video.play();
-        if (!this.canvas || this.requestAnimationId) {
+        if (this.requestAnimationId) {
             return;
         }
         this.videoRequestAnimationFrame();

@@ -1,17 +1,17 @@
-export default class Env {
-    private static ENV: object;
-    static set(name, entry) {
-        if (!Env.ENV) {
-            Env.ENV = new Env();
-        }
-        Env.ENV[name] = entry;
+import { getOrMakeGlobalProperty } from './commons/utils';
+
+class Env {
+    ENV: object = {};
+
+    set(name, entry) {
+        this.ENV[name] = entry;
     }
 
-    static get(name) {
-        if (!Env.ENV) {
-            Env.ENV = new Env();
-        }
-        return Env.ENV[name];
+    get(name) {
+        return this.ENV[name];
     }
 }
 
+const env = new Env();
+
+export default getOrMakeGlobalProperty('env', env);

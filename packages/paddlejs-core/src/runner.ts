@@ -235,7 +235,10 @@ export default class Runner {
         if (op.type === 'fetch') {
             return;
         }
-        op.execute(this.isExecuted);
+        if (op.type !== 'feed') {
+            op.execute(this.isExecuted);
+        }
+
         if (env.get('debug')
             && op.opData?.outputTensors
             && op.opData.outputTensors[0]

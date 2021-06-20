@@ -3,6 +3,7 @@
  */
 
 import { InputFeed } from './commons/interface';
+import env from './env';
 
 type Color = string;
 
@@ -50,7 +51,7 @@ export default class MediaProcessor {
     }
 
     fromPixels(pixels, opt): InputFeed[] {
-        let data: ImageData | number[] = [];
+        let data: ImageData | number[] | Float32Array = [];
         let scaleSize;
 
         if (!(pixels instanceof HTMLImageElement
@@ -84,10 +85,17 @@ export default class MediaProcessor {
             data = this.reshape(data, opt, scaleSize);
         }
 
-        if (opt.targetShape) {
-            data = this.allReshapeToRGB(data, opt) as number[];
+        // process imageData in webgl
+        if (env.get('webgl_feed_process')) {
+            data = Float32Array.from((data as ImageData).data);
+            return [{
+                data: data,
+                shape: [1, 4, opt.targetShape[2], opt.targetShape[3]],
+                name: 'image'
+            }] as InputFeed[];
         }
 
+        data = this.allReshapeToRGB(data, opt) as number[];
         return [{
             data: data,
             shape: opt.targetShape || opt.shape,

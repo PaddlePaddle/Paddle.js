@@ -1,6 +1,4 @@
-import * as humanseg from '../src/index';
-
-
+import * as humanseg from '../src';
 
 async function load() {
     await humanseg.load();
@@ -8,14 +6,13 @@ async function load() {
 }
 
 load();
-const canvas1 = document.getElementById('demo1') as HTMLCanvasElement;
-const canvas2 = document.getElementById('demo2') as HTMLCanvasElement;
-
-const ctx = canvas1.getContext('2d');
+const back_canvas = document.getElementById('back') as HTMLCanvasElement;
+const blur_canvas = document.getElementById('blur') as HTMLCanvasElement;
+const mask_canvas = document.getElementById('mask') as HTMLCanvasElement;
 const img = new Image();
 img.src = './bgImgs/bg.jpg';
-img.onload = function () {
-    ctx.drawImage(img, 0, 0, canvas1.width, canvas1.height);
+img.onload = () => {
+    back_canvas.getContext('2d').drawImage(img, 0, 0, back_canvas.width, back_canvas.height);
 };
 
 async function run(input) {
@@ -23,8 +20,9 @@ async function run(input) {
         data
     } = await humanseg.getGrayValue(input);
 
-    humanseg.drawHumanSeg(canvas1, data);
-    humanseg.drawMask(canvas2, data, true);
+    humanseg.blurBackground(data, blur_canvas);
+    humanseg.drawHumanSeg(data, back_canvas);
+    humanseg.drawMask(data, mask_canvas, true);
 }
 
 function selectImage(file) {

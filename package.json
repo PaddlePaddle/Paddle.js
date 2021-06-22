@@ -11,7 +11,6 @@
     "cpu": "lerna run start  --scope=@paddlejs/paddlejs-backend-cpu  --stream",
     "webgl": "lerna run start  --scope=@paddlejs/paddlejs-backend-webgl  --stream",
     "webgpu": "lerna run start  --scope=@paddlejs/paddlejs-backend-webgpu  --stream",
-    "enc": "lerna run start  --scope=@paddlejs/paddlejs-enc --stream",
     "nodegl-op": "lerna run start  --scope=@paddlejs/paddlejs-backend-nodegl  --stream",
     "nodegl-model": "lerna run dev-model --scope=@paddlejs/paddlejs-backend-nodegl  --stream",
     "benchmark": "lerna run start  --scope=@paddlejs/paddlejs-benchmark --stream",

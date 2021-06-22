@@ -184,7 +184,7 @@ export default class Camera {
 
     public pause() {
         this.video && this.video.pause();
-        if (this.canvas && this.requestAnimationId) {
+        if (this.requestAnimationId) {
             cancelAnimationFrame(this.requestAnimationId);
             this.requestAnimationId = null;
         }

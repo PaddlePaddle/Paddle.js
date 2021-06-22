@@ -57,9 +57,6 @@ export default class OpExecutor {
      * @param isRendered
      */
     execute(isRendered) {
-        if (this.type !== 'feed') {
-            GLOBALS.backendInstance.runProgram(this.opData, isRendered);
-        }
-
+        GLOBALS.backendInstance.runProgram(this.opData, isRendered);
     }
 }

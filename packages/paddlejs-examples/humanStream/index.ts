@@ -46,6 +46,9 @@ async function load() {
             } = await humanseg.getGrayValue(video);
             humanseg.drawHumanSeg(canvas1, data);
         }
+        // canvas大小不合适可以自行修改width，height
+        // width: 800,
+        // height: 600
     });
 }
 

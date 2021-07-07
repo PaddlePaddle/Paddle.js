@@ -1,4 +1,4 @@
-import * as gesture from '../src/index';
+import * as gesture from '@paddlejs-models/gesture';
 
 const loading = document.getElementById('isLoading');
 const content = document.getElementById('txt');

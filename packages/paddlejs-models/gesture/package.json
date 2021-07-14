@@ -2,7 +2,7 @@
   "name": "@paddlejs-models/gesture",
   "version": "0.0.1",
   "description": "",
-  "main": "src/index",
+  "main": "lib/index",
   "scripts": {
     "dev": "webpack-dev-server --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js"

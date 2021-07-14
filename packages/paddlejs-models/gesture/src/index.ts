@@ -7,6 +7,7 @@ import '@paddlejs/paddlejs-backend-webgl';
 import WarpAffine from './warpAffine';
 import DetectProcess from './detectProcess';
 import LMProcess from './LMProcess';
+import anchor from '!!raw-loader!./anchor_small.txt';
 
 let box = null;
 let detectRunner = null as Runner;
@@ -29,10 +30,7 @@ function initCanvas() {
 }
 
 export async function load() {
-    const waitAnchor = fetch('./src/anchor_small.txt').then(async res => {
-        anchorResults = await res.text();
-        anchorResults = anchorResults.replace(/\s+/g, ',').split(',').map(item => +item);
-    });
+    anchorResults = anchor.replace(/\s+/g, ',').split(',').map(item => +item);
 
     detectRunner = new Runner({
         modelPath: 'https://paddlejs.cdn.bcebos.com/models/gesture_detection',
@@ -69,7 +67,7 @@ export async function load() {
         height: 224
     });
 
-    return await Promise.all([detectInit, recInit, waitAnchor]);
+    return await Promise.all([detectInit, recInit]);
 }
 
 export async function classify(image) {

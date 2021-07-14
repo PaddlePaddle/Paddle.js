@@ -21,7 +21,10 @@ export default class Camera {
         this.video = videoElement;
         this.options = Object.assign({}, this.defaultOption, opt);
         this.currentMode = 'user';
+        this.visible = true;
+        this.isCameraRunning = true;
         this.initVideoStream();
+        this.registerVisiblityEvent();
     }
 
     private noop = () => {};
@@ -42,11 +45,14 @@ export default class Camera {
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
     private requestAnimationId;
+    private setTimeoutHandler;
     private stream: MediaStream;
     private videoDevices: string[];
     private videoDeviceId: string;
     private currentMode: string;
     private isIOS: boolean;
+    private visible: boolean;
+    private isCameraRunning: boolean;
 
     private initVideoStream() {
         const ua = navigator.userAgent;
@@ -165,28 +171,41 @@ export default class Camera {
 
     private videoRequestAnimationFrame() {
         const drawImage = () => {
+            if (!this.isCameraRunning) {
+                return;
+            }
             if (this.context) {
                 this.context.drawImage(this.video, 0, 0, this.video.width, this.video.height);
             }
             this.options.onFrame(this.video);
-            this.requestAnimationId = requestAnimationFrame(drawImage);
+            if (this.visible) {
+                this.requestAnimationId = requestAnimationFrame(drawImage);
+                return;
+            }
+            this.setTimeoutHandler = setTimeout(() => {
+                drawImage();
+            }, 50);
         };
         drawImage();
     }
 
     public start() {
         this.video && this.video.play();
-        if (this.requestAnimationId) {
+        if (this.requestAnimationId || this.setTimeoutHandler) {
             return;
         }
+        this.isCameraRunning = true;
         this.videoRequestAnimationFrame();
     }
 
     public pause() {
         this.video && this.video.pause();
+        this.isCameraRunning = false;
         if (this.requestAnimationId) {
             cancelAnimationFrame(this.requestAnimationId);
+            clearTimeout(this.setTimeoutHandler);
             this.requestAnimationId = null;
+            this.setTimeoutHandler = null;
         }
     }
 
@@ -205,5 +224,22 @@ export default class Camera {
             : this.videoDevices[0];
         // 重置视频流
         this.handleStream();
+    }
+
+    private registerVisiblityEvent() {
+        document.addEventListener('visibilitychange', () => {
+            if (!this.isCameraRunning) {
+                return;
+            }
+            if (document.visibilityState === 'visible') {
+                this.visible = true;
+                clearTimeout(this.setTimeoutHandler);
+                this.setTimeoutHandler = null;
+            }
+            else if (document.visibilityState === 'hidden') {
+                this.visible = false;
+                this.videoRequestAnimationFrame();
+            }
+        });
     }
 }

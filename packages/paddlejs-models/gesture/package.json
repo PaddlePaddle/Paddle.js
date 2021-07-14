@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "html-webpack-plugin": "^3.2.0",
+    "raw-loader": "^4.0.2",
     "ts-loader": "^8.0.12",
     "typescript": "^3.9.5",
     "webpack": "^4.29.6",

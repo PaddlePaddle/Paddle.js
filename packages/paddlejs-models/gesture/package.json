@@ -1,6 +1,6 @@
 {
   "name": "@paddlejs-models/gesture",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "",
   "main": "lib/index",
   "scripts": {

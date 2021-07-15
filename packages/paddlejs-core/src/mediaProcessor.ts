@@ -14,8 +14,8 @@ export default class MediaProcessor {
     std: number[] = [1, 1, 1];
     bgr: boolean = false;
     result: Float32Array | number[] = [];
-    pixelWidth: number = 224;
-    pixelHeight: number = 224;
+    pixelWidth: number = 1;
+    pixelHeight: number = 1;
     inputFeed: InputFeed[] = [];
 
     constructor() {
@@ -28,17 +28,20 @@ export default class MediaProcessor {
      * @param inputs
      */
     process(media, modelConfig): InputFeed[] {
-        const { feedShape, fill, targetSize, scale, mean, std, bgr } = modelConfig;
+        const { feedShape, fill, mean, std, bgr } = modelConfig;
         const { fh, fw } = feedShape;
         const input = media;
+
 
         const params = {
             gapFillWith: fill || this.gapFillWith,
             mean: mean || this.mean,
             std: std || this.std,
             bgr: bgr || this.bgr,
-            scale,
-            targetSize,
+            targetSize: {
+                width: fw,
+                height: fh
+            },
             targetShape: [1, 3, fh, fw]
         };
 
@@ -52,7 +55,12 @@ export default class MediaProcessor {
 
     fromPixels(pixels, opt): InputFeed[] {
         let data: ImageData | number[] | Float32Array = [];
-        let scaleSize;
+        const imageDataInfo = {
+            dx: 0,
+            dy: 0,
+            dWidth: opt.targetSize.width,
+            dHeight: opt.targetSize.height
+        };
 
         if (!(pixels instanceof HTMLImageElement
             || pixels instanceof HTMLVideoElement
@@ -66,30 +74,15 @@ export default class MediaProcessor {
 
         this.pixelWidth = pixels.width;
         this.pixelHeight = pixels.height;
-        if (opt.scale && opt.targetSize) {
-            data = this.resizeAndFitTargetSize(pixels, opt);
-        }
-        else if (opt.targetSize) { // 如果有 targetSize，就是装在目标宽高里的模式
-            scaleSize = this.fitToTargetSize(pixels, opt);
-            data = this.getImageData(0, 0, scaleSize);
-        }
-        else {
-            scaleSize = this.reSize(pixels, opt);
-            data = this.getImageData(0, 0, scaleSize);
-        }
-        if (opt.gray) {
-            data = this.grayscale(data);
-        }
 
-        if (opt.reShape) {
-            data = this.reshape(data, opt, scaleSize);
-        }
+        this.fitToTargetSize(pixels, opt);
+        data = this.getImageData(imageDataInfo);
 
         // process imageData in webgl
         if (env.get('webgl_feed_process')) {
             data = Float32Array.from((data as ImageData).data);
             return [{
-                data: data,
+                data,
                 shape: [1, 4, opt.targetShape[2], opt.targetShape[3]],
                 name: 'image'
             }] as InputFeed[];
@@ -97,48 +90,12 @@ export default class MediaProcessor {
 
         data = this.allReshapeToRGB(data, opt) as number[];
         return [{
-            data: data,
+            data,
             shape: opt.targetShape || opt.shape,
             name: 'image'
         }] as InputFeed[];
     }
 
-    /**
-     * crop图像&重新设定图片tensor形状
-     * @param shape
-     */
-    reshape(imageData, opt, scaleSize) {
-        const { sw, sh } = scaleSize;
-        const { width, height } = opt;
-        const hPadding = Math.ceil((sw - width) / 2);
-        const vPadding = Math.ceil((sh - height) / 2);
-
-        const data = imageData.data;
-        // channel RGB
-        const red: number[] = [];
-        const green: number[] = [];
-        const blue: number[] = [];
-        // 平均数
-        const mean = opt.mean;
-        // 标准差
-        const std = opt.std;
-        // 考虑channel因素获取数据
-        for (let i = 0; i < data.length; i += 4) {
-            // img_mean 0.485, 0.456, 0.406
-            // img_std 0.229, 0.224, 0.225
-            const index = i / 4;
-            const vIndex = Math.floor(index / sw);
-            const hIndex = index - (vIndex * sw) - 1;
-            if (hIndex >= hPadding && hIndex < (hPadding + width)
-                && vIndex >= vPadding && vIndex < (vPadding + height)) {
-                red.push(((data[i] / 255) - mean[0]) / std[0]); // red
-                green.push(((data[i + 1] / 255) - mean[1]) / std[1]); // green
-                blue.push(((data[i + 2] / 255) - mean[2]) / std[2]); // blue
-            }
-        }
-        // 转成 GPU 加速 NCHW 格式
-        return red.concat(green.concat(blue));
-    }
 
     /**
      * 全部转rgb * H * W
@@ -174,60 +131,6 @@ export default class MediaProcessor {
         return result;
     }
 
-    /**
-     * 根据scale缩放图像
-     * @param image
-     * @param params
-     * @return {Object} 缩放后的尺寸
-     */
-    reSize(image, params) {
-        // 原始图片宽高
-        const width = this.pixelWidth;
-        const height = this.pixelHeight;
-        // 缩放后的宽高
-        let sw = width;
-        let sh = height;
-        sw = sh = params.scale;
-
-        this.targetContext.canvas.width = sw;
-        this.targetContext.canvas.height = sh;
-        this.targetContext.drawImage(
-            image, 0, 0, sw, sh);
-        return { sw, sh };
-    }
-
-    /**
-     * 根据scale缩放图像并且缩放成目标尺寸并居中
-     */
-    resizeAndFitTargetSize(image, params) {
-        // 原始图片宽高
-        const width = this.pixelWidth;
-        const height = this.pixelHeight;
-        // 缩放后的宽高
-        let sw = width;
-        let sh = height;
-        // 最小边缩放到scale
-        if (width < height) {
-            sw = params.scale;
-            sh = Math.round(sw * height / width);
-        }
-        else {
-            sh = params.scale;
-            sw = Math.round(sh * width / height);
-        }
-
-        this.targetContext.canvas.width = sw;
-        this.targetContext.canvas.height = sh;
-        const targetWidth = params.targetSize.width;
-        const targetHeight = params.targetSize.height;
-        this.targetContext.drawImage(image, 0, 0, sw, sh);
-        const x = (sw - targetWidth) / 2;
-        const y = (sh - targetHeight) / 2;
-        sw = targetWidth;
-        sh = targetHeight;
-        const data = this.getImageData(x, y, { sw, sh });
-        return data;
-    }
 
     /**
      * 缩放成目标尺寸并居中
@@ -257,8 +160,6 @@ export default class MediaProcessor {
         }
 
         this.targetContext.drawImage(image, x, y, sw, sh);
-
-        return { sw: targetWidth, sh: targetHeight };
     }
 
     /**
@@ -266,28 +167,11 @@ export default class MediaProcessor {
      * @param pixels
      * @returns {Uint8ClampedArray}
      */
-    getImageData(x, y, scaleSize) {
+    getImageData(imageDataInfo) {
 
-        const { sw, sh } = scaleSize;
+        const { dx, dy, dWidth, dHeight } = imageDataInfo;
         // 复制画布上指定矩形的像素数据
-        return this.targetContext.getImageData(x, y, sw, sh);
+        return this.targetContext.getImageData(dx, dy, dWidth, dHeight);
     }
 
-    /**
-     * 计算灰度图
-     * @param imageData
-     * @returns {*}
-     */
-    grayscale(imageData) {
-        const data = imageData.data;
-
-        for (let i = 0; i < data.length; i += 4) {
-            // 3 channel 灰度处理无空间压缩
-            const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-            data[i] = avg; // red
-            data[i + 1] = avg; // green
-            data[i + 2] = avg; // blue
-        }
-        return data;
-    }
 }

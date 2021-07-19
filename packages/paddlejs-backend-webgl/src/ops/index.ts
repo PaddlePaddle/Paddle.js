@@ -48,8 +48,7 @@ import elementwise_pow from './shader/elementwise_pow';
 import elementwise_sub from './shader/elementwise_sub';
 import cast from './shader/cast';
 
-import { pack_out, nhwc_2_nchw, unpacked_2_packed, packed_2_unpacked } from './shader/custom';
-
+import { pack_out, nhwc_2_nchw, unpacked_2_packed, packed_2_unpacked, feedPost } from './shader/custom';
 
 
 const ops = {
@@ -109,7 +108,8 @@ const ops = {
     bilinear_interp_v2,
     shuffle_channel,
     pack_out,
-    nhwc_2_nchw
+    nhwc_2_nchw,
+    feedPost
 };
 export {
     ops

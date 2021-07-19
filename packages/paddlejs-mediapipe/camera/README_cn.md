@@ -21,6 +21,8 @@ const option = {
     height?: number,
     // 是否镜像
     mirror?: boolean,
+    // 当页面处于非激活态时，是否继续捕获 video frame，默认为 false
+    enableOnInactiveState?: boolean,
     // 目标canvas DOM对象
     targetCanvas?: HTMLCanvasElement,
     // 视频流渲染成功

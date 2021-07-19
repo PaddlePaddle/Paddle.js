@@ -2,7 +2,8 @@ import Loader from './loader';
 import Graph from './graph';
 import { Model, ModelConfig, InputFeed, ModelVar, GraphType } from './commons/interface';
 import OpData from './opFactory/opDataBuilder';
-import { GLOBALS, getGlobalNamespace } from './globals';
+import { GLOBALS } from './globals';
+import { getGlobalInterface } from './commons/utils';
 import MediaProcessor from './mediaProcessor';
 import env from './env';
 
@@ -29,7 +30,7 @@ export default class Runner {
         this.modelName = options.modelName || Date.now().toString();
         this.weightMap = [];
 
-        env.set('ns', getGlobalNamespace());
+        env.set('ns', getGlobalInterface());
         if (env.get('platform') !== 'node') {
             this.mediaProcessor = new MediaProcessor();
         }
@@ -234,7 +235,10 @@ export default class Runner {
         if (op.type === 'fetch') {
             return;
         }
-        op.execute(this.isExecuted);
+        if (op.type !== 'feed') {
+            op.execute(this.isExecuted);
+        }
+
         if (env.get('debug')
             && op.opData?.outputTensors
             && op.opData.outputTensors[0]

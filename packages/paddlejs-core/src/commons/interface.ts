@@ -40,7 +40,6 @@ export interface ModelConfig {
     mean?: number[];
     std?: number[];
     bgr?: boolean;
-    scale?: number;
     type?: GraphType; // model type
     needPreheat?: boolean;
     plugins?: { // tranform graph plugins

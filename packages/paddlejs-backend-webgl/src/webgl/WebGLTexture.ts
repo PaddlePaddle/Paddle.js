@@ -10,7 +10,10 @@ export interface TextureConfig {
     textureFloat: number;
     textureHalfFloat: number | null;
     internalFormat: number;
+    internalFormatPacked: number;
     textureFormat: number;
+    internalFormatPackedHalfFloat: number;
+    internalFormatHalfFloat: number;
     downloadInternalFormat: number;
     frameBufferSupportFloat: boolean;
     isFloatTextureReadPixelsEnabled: boolean;
@@ -23,20 +26,28 @@ export class GLTexture {
         let textureFormat: number;
         let textureHalfFloat: number | null;
         let internalFormat: number;
+        let internalFormatPacked: number;
+        let internalFormatHalfFloat: number;
+        let internalFormatPackedHalfFloat: number;
         let downloadInternalFormat: number;
         let frameBufferSupportFloat: boolean = true;
         let isFloatTextureReadPixelsEnabled: boolean = true;
 
         if (env.get('webglVersion') === 2) {
             textureFloat = gl.getExtension('EXT_color_buffer_float');
-            textureHalfFloat = null;
+            textureHalfFloat = gl.HALF_FLOAT;
             internalFormat = gl.R32F;
+            internalFormatPacked = gl.RGBA32F;
+            internalFormatHalfFloat = gl.R16F;
+            internalFormatPackedHalfFloat = gl.RGBA16F;
             textureFormat = gl.RED;
             downloadInternalFormat = gl.RGBA32F;
-
         }
         else {
             internalFormat = gl.RGBA;
+            internalFormatHalfFloat = gl.RGBA;
+            internalFormatPackedHalfFloat = gl.RGBA;
+            internalFormatPacked = gl.RGBA;
             textureFormat = gl.RGBA;
             downloadInternalFormat = gl.RGBA;
             const TEXTURE_FLOAT = 'OES_texture_float';
@@ -51,6 +62,9 @@ export class GLTexture {
             textureFloat,
             textureHalfFloat,
             internalFormat,
+            internalFormatPacked,
+            internalFormatHalfFloat,
+            internalFormatPackedHalfFloat,
             textureFormat,
             downloadInternalFormat,
             frameBufferSupportFloat,
@@ -90,7 +104,8 @@ export class GLTexture {
             1,
             0,
             gl.RGBA,
-            gl.getExtension('OES_texture_half_float').HALF_FLOAT_OES, null
+            gl.getExtension('OES_texture_half_float').HALF_FLOAT_OES,
+            null
         );
 
         gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
@@ -196,22 +211,35 @@ export class GLTexture {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texImage2D(gl.TEXTURE_2D, // Target, matches bind above.
+
+        const useHalfFloat = env.get('webgl_force_half_float_texture');
+        const internalFormat = useHalfFloat
+            ? textureConf.internalFormatPackedHalfFloat // webgl: 2.0 gl.RGBA16F, 1.0 gl.RGBA
+            : textureConf.internalFormatPacked; // webgl: 2.0 gl.RGBA32F, 1.0 gl.RGBA
+
+        const textureType = env.get('webglVersion') === 2
+            ? useHalfFloat
+                ? gl.HALF_FLOAT
+                : gl.FLOAT
+            : textureConf.frameBufferSupportFloat
+                ? gl.FLOAT
+                : textureConf.textureHalfFloat.HALF_FLOAT_OES;
+
+        const textureTypeForReadPixel = isFinalOp
+            ? textureConf.isFloatTextureReadPixelsEnabled
+                ? textureType
+                : gl.UNSIGNED_BYTE
+            : null;
+
+        gl.texImage2D(
+            gl.TEXTURE_2D, // Target, matches bind above.
             0, // Level of detail.
-            textureConf.downloadInternalFormat, // Internal format.
+            internalFormat, // Internal format.
             outTensor.width_texture,
             outTensor.height_texture,
             0, // Always 0 in OpenGL ES.
             gl.RGBA, // Format for each pixel.
-            !isFinalOp
-                ? textureConf.frameBufferSupportFloat
-                    ? gl.FLOAT
-                    : textureConf.textureHalfFloat.HALF_FLOAT_OES
-                : textureConf.isFloatTextureReadPixelsEnabled
-                    ? textureConf.frameBufferSupportFloat
-                        ? gl.FLOAT
-                        : textureConf.textureHalfFloat.HALF_FLOAT_OES
-                    : gl.UNSIGNED_BYTE, // Data type for each chanel.
+            isFinalOp ? textureTypeForReadPixel : textureType, // Data type for each chanel.
             null);
         gl.bindTexture(gl.TEXTURE_2D, null);
 

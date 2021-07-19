@@ -274,7 +274,8 @@ export default class WebGLBackend extends PaddlejsBackend {
         this.currentTexture = this.texturesMap[tensorId];
 
         const gl = this.gl;
-        gl.framebufferTexture2D(gl.FRAMEBUFFER, // The target is always a FRAMEBUFFER.
+        gl.framebufferTexture2D(
+            gl.FRAMEBUFFER, // The target is always a FRAMEBUFFER.
             gl.COLOR_ATTACHMENT0, // We are providing the color buffer.表示texture是颜色关联对象
             gl.TEXTURE_2D, // This is a 2D image texture.
             this.currentTexture as WebGLTexture, // The texture.
@@ -351,9 +352,17 @@ export default class WebGLBackend extends PaddlejsBackend {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
             if (this.glVersion === 2) {
-                // @ts-ignore
-                const internalFormat = isPacked ? gl.RGBA16F : textureConf.internalFormat;
+                const useHalfFloat = env.get('webgl_force_half_float_texture');
+                const internalFormat = isPacked
+                    ? useHalfFloat
+                        ? textureConf.internalFormatPackedHalfFloat
+                        : textureConf.internalFormatPacked
+                    : useHalfFloat
+                        ? textureConf.internalFormatHalfFloat
+                        : textureConf.internalFormat;
+
                 const textureFormat = isPacked ? gl.RGBA : textureConf.textureFormat;
+
                 gl.texImage2D(gl.TEXTURE_2D,
                     0,
                     internalFormat,

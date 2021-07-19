@@ -14,6 +14,7 @@ import traceback
 import numpy as np
 import paddle.fluid as fluid
 import paddle as paddle
+import copy
 from functools import reduce
 
 
@@ -36,14 +37,29 @@ modelInfo = {"vars": [], "ops": [], "chunkNum": 0}
 # 存放参数数值（未排序）
 paramValuesDict = {}
 
+# 有一些后置算子适合在cpu中运行，所以单独统计
+postOps = []
+# 在转换过程中新生成的、需要添加到vars中的variable
+appendedVarList = []
+
+class ObjDict(dict):
+    """
+    Makes a  dictionary behave like an object,with attribute-style access.
+    """
+    def __getattr__(self,name):
+        try:
+            return self[name]
+        except:
+            raise AttributeError(name)
+    def __setattr__(self,name,value):
+        self[name]=value
+
 def validateShape(shape, name):
     """检验shape长度，超过4则截断"""
     if len(shape) > 4:
         newShape = shape[-4:]
         print('\033[31m ' + name + ' tensor shape length > 4, 处理为丢弃头部shape \033[0m')
         return newShape
-    if (name == 'reshape2_0.tmp_0'):
-        print(shape)
     return shape
 
 def splitLargeNum(x):
@@ -190,6 +206,16 @@ def organizeModelVariableInfo(result):
         varShape = list(varData.shape)
         varInfoDict[varKey]['shape'] = validateShape(varShape, varKey)
 
+    # vars追加
+    vars = modelInfo['vars']
+    for appendedVar in appendedVarList:
+        appendedName = appendedVar['name']
+        newName = appendedVar['new']
+        for curVarKey in varInfoDict:
+            if curVarKey == appendedName:
+                newVar = copy.deepcopy(varInfoDict[curVarKey])
+                varInfoDict[newName] = newVar
+                break
     # 对var信息dict，按照key（var名）进行字母顺序排序
     varInfoOrderDict = sortDict(varInfoDict)
 
@@ -211,9 +237,12 @@ def organizeModelOpInfo():
         # 获取OP type，需要映射到PaddleJS的名字
         opInfo["type"] = mapToPaddleJSTypeName(op.type)
 
+        opInputs = op.input_names
+        opOutputs = op.output_names
+
         # 获取OP input
         inputs = {}
-        for name in op.input_names:
+        for name in opInputs:
             value = op.input(name)
             if len(value) <= 0:
                 continue
@@ -226,17 +255,46 @@ def organizeModelOpInfo():
 
         # 获取OP output
         outputs = {}
-        for name in op.output_names:
-            value = op.output(name)
-            if len(value) <= 0:
-                continue
-            if op.type == "feed":
-                # FIXME:workaround,PaddleJSfeed 输入必须是image，且为单输入，这里保存原始的输出名，以便映射
-                feedOutputName = value[0]
-                outputs[name] = ["image"]
-            else:
-                outputs[name] = value
+        # 将outputs转换为数组
+        if (op.type == 'density_prior_box' or op.type == 'box_coder'):
+            outputs['Out'] = []
+            for name in opOutputs:
+                value = op.output(name)
+                if len(value) <= 0:
+                    continue
+                outputs['Out'].append(value[0])
+        else:
+            for name in opOutputs:
+                value = op.output(name)
+                if len(value) <= 0:
+                    continue
+                if op.type == "feed":
+                    # FIXME:workaround,PaddleJSfeed 输入必须是image，且为单输入，这里保存原始的输出名，以便映射
+                    feedOutputName = value[0]
+                    outputs[name] = ["image"]
+                else:
+                    outputs[name] = value
+
         opInfo["outputs"] = outputs
+
+
+        # 有的模型如人脸关键点，会出现两个算子合并的情况，如lmk_demo，elementwise_add后接了relu算子，relu的输入输出相等，兼容一下
+        # inputs与outputs只有一个，名称相等，则，输入加后缀，改上一层算子。
+        if 'X' in inputs and 'Out' in outputs:
+            curInputs = inputs['X']
+            curOutputs = outputs['Out']
+            if len(curInputs) == 1 and len(curOutputs) == 1 and curInputs[0] == curOutputs[0] and index > 1:
+                originName = curInputs[0]
+                changedName = inputs['X'][0] = curInputs[0] = originName + '_changed'
+                opInfo["inputs"]['X'] = curInputs
+                # 获取上一层算子
+                prevOpOutputs = modelInfo["ops"][index - 1]['outputs']
+                for name in prevOpOutputs:
+                    values = prevOpOutputs[name]
+                    for i, curName in enumerate(values):
+                        if (curName == originName):
+                            modelInfo["ops"][index - 1]['outputs'][name][i] = changedName
+                appendedVarList.append({'name': originName, 'new': changedName})
 
         # 获取OP attribute
         attrs = {}
@@ -248,8 +306,13 @@ def organizeModelOpInfo():
             attrs[name] = value
         opInfo["attrs"] = attrs
 
-        # 存入modelInfo
-        modelInfo["ops"].append(opInfo)
+
+        # multiclass_nms 单独处理
+        if (op.type == 'multiclass_nms'):
+            postOps.append(opInfo)
+        else:
+            # 存入modelInfo
+            modelInfo["ops"].append(opInfo)
         logModel("[OP index:" + str(index) + " type:" + op.type + "]")
         jsonDumpsIndentStr = json.dumps(opInfo, indent=2)
         logModel(jsonDumpsIndentStr)
@@ -324,6 +387,7 @@ def appendConnectOp(fetch_targets):
 
     vars.append(outputVar)
     modelInfo['multiOutputs'] = targets
+    return targets
 
 def convertToPaddleJSModel():
     """ 转换fluid modle为paddleJS model """
@@ -349,6 +413,25 @@ def convertToPaddleJSModel():
     # 对多输出模型追加connect算子
     if len(fetch_targets) > 1:
         appendConnectOp(fetch_targets)
+
+    if (postOps and len(postOps) > 0):
+        for op in postOps:
+            if (op['type'] == 'multiclass_nms'):
+                inputNames = []
+                for input, value in op['inputs'].items():
+                    if len(value) <= 0:
+                        continue
+                    cur = ObjDict()
+                    cur.name = value[0]
+                    inputNames.append(cur)
+                targets = appendConnectOp(inputNames)
+                # op['inputs'] = targets
+                keys = op['inputs'].keys()
+                for i, val in enumerate(keys):
+                    op['inputs'][val] = targets[i]
+
+
+        modelInfo['postOps'] = postOps
 
     # 对参数数值dict，按照key（参数名）进行字母顺序排序，并组合到一起
     paramValues = reorderParamsValue()

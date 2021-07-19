@@ -1,4 +1,5 @@
 import { OpInfo, Ops } from './commons/interface';
+import { getOrMakeGlobalProperty } from './commons/utils';
 
 interface OpRegistry {
     ops: Ops;
@@ -58,36 +59,10 @@ function registerBackend(backend: string, backendInstance: any, ops: Ops) {
     }
 }
 
-function getGlobalNamespace(): any {
-    let ns: any;
-    if (typeof (window) !== 'undefined') {
-        ns = window;
-    }
-    else if (typeof (global) !== 'undefined') {
-        ns = global;
-    }
-    else if (typeof (self) !== 'undefined') {
-        ns = self;
-    }
-    else {
-        throw new Error('Could not find a global object');
-    }
-    return ns;
-}
 
-function getOrMakeGlobals(): GLOBALS_INTERFACE {
-    const globalNameSpace = getGlobalNamespace();
-    if (globalNameSpace.GLOBALS) {
-        return globalNameSpace.GLOBALS;
-    }
-    globalNameSpace.GLOBALS = GLOBALS;
-    return globalNameSpace.GLOBALS;
-}
-
-GLOBALS = getOrMakeGlobals();
+GLOBALS = getOrMakeGlobalProperty('GLOBALS', GLOBALS);
 
 export {
     GLOBALS,
-    registerBackend,
-    getGlobalNamespace
+    registerBackend
 };

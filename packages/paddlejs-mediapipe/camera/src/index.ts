@@ -3,10 +3,13 @@
  * @author xxx
  */
 
+import 'hacktimer';
+
 interface cameraOption {
     width?: number;
     height?: number;
     mirror?: boolean;
+    enableOnInactiveState?: boolean;
     targetCanvas?: HTMLCanvasElement;
     onSuccess?: () => void;
     onError?: () => void;
@@ -15,7 +18,6 @@ interface cameraOption {
     switchError?: () => void;
     videoLoaded?: () => void;
 }
-
 export default class Camera {
     constructor(videoElement: HTMLVideoElement, opt: Partial<cameraOption> = {}) {
         this.video = videoElement;
@@ -24,13 +26,14 @@ export default class Camera {
         this.visible = true;
         this.isCameraRunning = true;
         this.initVideoStream();
-        this.registerVisiblityEvent();
+        this.options.enableOnInactiveState && this.registerVisiblityEvent();
     }
 
     private noop = () => {};
     /** 默认配置对象 */
     private defaultOption: cameraOption = {
         mirror: false,
+        enableOnInactiveState: false,
         targetCanvas: null,
         onSuccess: this.noop,
         onError: this.noop,
@@ -170,24 +173,42 @@ export default class Camera {
     }
 
     private videoRequestAnimationFrame() {
-        const drawImage = () => {
-            if (!this.isCameraRunning) {
-                return;
-            }
-            if (this.context) {
-                this.context.drawImage(this.video, 0, 0, this.video.width, this.video.height);
-            }
-            this.options.onFrame(this.video);
-            if (this.visible) {
-                this.requestAnimationId = requestAnimationFrame(drawImage);
-                return;
-            }
-            this.setTimeoutHandler = setTimeout(() => {
-                drawImage();
-            }, 50);
-        };
-        drawImage();
+        if (this.visible) {
+            this.drawImageRAF();
+            return;
+        }
+        this.drawImageST();
     }
+
+    private async drawImageRAF() {
+        if (!this.isCameraRunning) {
+            cancelAnimationFrame(this.requestAnimationId);
+            this.requestAnimationId = null;
+            return;
+        }
+        if (this.context) {
+            this.context.drawImage(this.video, 0, 0, this.video.width, this.video.height);
+        }
+        await this.options.onFrame(this.video);
+        this.requestAnimationId = requestAnimationFrame(() => {
+            this.drawImageRAF();
+        });
+    }
+
+    private drawImageST() {
+        if (!this.isCameraRunning) {
+            clearTimeout(this.setTimeoutHandler);
+            this.setTimeoutHandler = null;
+            return;
+        }
+        if (this.context) {
+            this.context.drawImage(this.video, 0, 0, this.video.width, this.video.height);
+        }
+        this.options.onFrame(this.video);
+        this.setTimeoutHandler = setTimeout(() => {
+            this.drawImageST();
+        }, 50);
+    };
 
     public start() {
         this.video && this.video.play();
@@ -195,18 +216,14 @@ export default class Camera {
             return;
         }
         this.isCameraRunning = true;
+        this.visible = true;
         this.videoRequestAnimationFrame();
     }
 
     public pause() {
         this.video && this.video.pause();
         this.isCameraRunning = false;
-        if (this.requestAnimationId) {
-            cancelAnimationFrame(this.requestAnimationId);
-            clearTimeout(this.setTimeoutHandler);
-            this.requestAnimationId = null;
-            this.setTimeoutHandler = null;
-        }
+        this.cancelDrawImage();
     }
 
     public switchCameras() {
@@ -226,20 +243,25 @@ export default class Camera {
         this.handleStream();
     }
 
+    private cancelDrawImage() {
+        clearTimeout(this.setTimeoutHandler);
+        this.setTimeoutHandler = null;
+        cancelAnimationFrame(this.requestAnimationId);
+        this.requestAnimationId = null;
+    }
+
     private registerVisiblityEvent() {
         document.addEventListener('visibilitychange', () => {
             if (!this.isCameraRunning) {
                 return;
             }
-            if (document.visibilityState === 'visible') {
-                this.visible = true;
-                clearTimeout(this.setTimeoutHandler);
-                this.setTimeoutHandler = null;
+            this.visible = document.visibilityState === 'visible';
+            this.cancelDrawImage();
+            if (this.visible) {
+                this.drawImageRAF();
+                return;
             }
-            else if (document.visibilityState === 'hidden') {
-                this.visible = false;
-                this.videoRequestAnimationFrame();
-            }
+            this.drawImageST();
         });
     }
 }

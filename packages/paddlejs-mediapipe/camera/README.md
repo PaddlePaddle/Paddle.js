@@ -21,6 +21,8 @@ const option = {
     height?: number,
     // mirror or not
     mirror?: boolean,
+    // if enable capture stream when page hidden, default is false
+    enableOnInactiveState?: boolean,
     // canvas DOM
     targetCanvas?: HTMLCanvasElement,
     // video rendered successfully

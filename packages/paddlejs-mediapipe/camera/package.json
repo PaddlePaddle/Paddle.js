@@ -1,6 +1,6 @@
 {
   "name": "@paddlejs-mediapipe/camera",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "webrtc camera",
   "main": "lib/index.js",
   "scripts": {
@@ -37,6 +37,6 @@
     }
   },
   "dependencies": {
-    "node-pre-gyp": "^0.17.0"
+    "hacktimer": "^1.1.3"
   }
 }

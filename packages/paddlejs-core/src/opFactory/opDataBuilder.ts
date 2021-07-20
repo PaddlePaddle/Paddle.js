@@ -154,8 +154,7 @@ export default class OpData {
             outTensor,
             inputTensors,
             shaderParams: this.fShaderParams[index],
-            runtime: index,
-            isPacked: this.isPackedOp || false
+            runtime: index
         }));
     }
 

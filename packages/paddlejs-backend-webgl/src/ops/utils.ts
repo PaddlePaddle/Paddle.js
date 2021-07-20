@@ -103,15 +103,6 @@ function getTensorParams(inputTensors: Tensor[], ownParams: [], fShaderParams: o
     return { textureParams: tensorsParams, opParams, active_function: fShaderParams['active_function'] };
 }
 
-
-function getExactOpName(name, isPacked) {
-    if (name.indexOf('conv2d-elementwise_add') > -1) {
-        return 'conv2d_elementwise_add';
-    }
-    return isPacked ? `${name}_packing` : name;
-}
-
 export {
-    getExactOpName,
     getTensorParams
 };

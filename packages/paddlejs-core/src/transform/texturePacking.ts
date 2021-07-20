@@ -100,6 +100,7 @@ function transformOriginOp(op, opsMap) {
         .forEach(key => {
             op.outputs[key] = [`${op.outputs[key]}_packed`];
         });
+    op.type = `${op.type}_packing`;
     op.id = `${op.type}_${+new Date()}_${opsMap.length}`;
     op.isPacked = true;
 }

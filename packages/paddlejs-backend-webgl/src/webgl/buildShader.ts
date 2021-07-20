@@ -5,15 +5,15 @@
 
 import { env } from '@paddlejs/paddlejs-core';
 import { ops } from '../ops';
-import { getTensorParams, getExactOpName } from '../ops/utils';
+import { getTensorParams } from '../ops/utils';
 import genPrefixCode from '../ops/atom/prefix';
 import genSuffixCode from '../ops/atom/suffix';
 import * as commonFunc from '../ops/atom/common_func';
 import * as textureFunc from '../ops/atom/common_func_with_texture';
 
-export default function buildShader(textureConf, type, inputTensors, fShaderParams, runtime: number, isPacked = false) {
+export default function buildShader(textureConf, type, inputTensors, fShaderParams, runtime: number) {
     let code = '';
-    const opName = getExactOpName(type, isPacked);
+    const opName = type;
     try {
 
         const { params = {}, mainFunc, textureFuncConf = {}, commonFuncConf } = ops[opName];

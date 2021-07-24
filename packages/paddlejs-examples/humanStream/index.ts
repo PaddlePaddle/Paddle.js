@@ -8,6 +8,7 @@ const videoToolDom = document.getElementById('video-tool');
 
 const bgElement = document.createElement('div') as HTMLDivElement;
 const container = document.querySelector('body');
+
 container.appendChild(bgElement);
 
 load();
@@ -30,25 +31,22 @@ videoToolDom.addEventListener('click', function (e: Event) {
 
 const canvas1 = document.getElementById('demo') as HTMLCanvasElement;
 
-const ctx = canvas1.getContext('2d');
-const img = new Image();
-img.src = './bgImgs/bg.jpg';
-img.onload = function () {
-    ctx.drawImage(img, 0, 0, canvas1.width, canvas1.height);
-};
 
+const videoCanvas = document.createElement('canvas') as HTMLCanvasElement;
+const videoCanvasCtx = videoCanvas.getContext('2d');
 async function load() {
-    await humanseg.load();
+    await humanseg.load(true, true);
     camera = new Camera(video, {
+        mirror: true,
+        enableOnInactiveState: true,
         onFrame: async () => {
+            videoCanvas.width = video.width;
+            videoCanvas.height = video.height;
+            videoCanvasCtx.drawImage(video, 0, 0, video.width, video.height);
             const {
                 data
-            } = await humanseg.getGrayValue(video);
-            humanseg.drawHumanSeg(canvas1, data);
+            } = await humanseg.getGrayValue(videoCanvas);
+            humanseg.blurBackground(data, canvas1);
         }
-        // canvas大小不合适可以自行修改width，height
-        // width: 800,
-        // height: 600
     });
 }
-

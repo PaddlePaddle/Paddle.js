@@ -7,9 +7,20 @@
         <style>
             body {
                 margin: 0 auto;
-                position: fixed;
                 width: 100%;
                 height: 100%;
+                overflow: auto;
+            }
+            video {
+                width: 500px;
+                height: 280px;
+                transform: scaleX(-1);
+                object-fit: contain;
+            }
+            #demo {
+                transform: scaleX(-1);
+                width: 500px;
+                height: 280px;
             }
             #videoSelect::before {
                 content: "请选择设备摄像头：";
@@ -52,9 +63,13 @@
             </div>
         </div>
         <canvas id="demo"></canvas>
+        <div id="background">
+        </div>
         <div id="isLoading">
             <p class="loading-text center">loading中……</p>
         </div>
+        <div id="timer"></div>
+        <div id="counter"></div>
         <!--canvas id="canvasout" width="250" height="300"></canvas-->
     </body>
 </html>

@@ -11,8 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@paddlejs-mediapipe/camera": "^0.0.1",
-    "@paddlejs-models/humanseg": "0.0.8"
+    "@paddlejs-mediapipe/camera": "0.0.2",
+    "@paddlejs-models/humanseg": "^1.0.2"
   },
   "devDependencies": {
     "@types/webrtc": "0.0.26",

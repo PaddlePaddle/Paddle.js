@@ -35,7 +35,7 @@ const canvas1 = document.getElementById('demo') as HTMLCanvasElement;
 const videoCanvas = document.createElement('canvas') as HTMLCanvasElement;
 const videoCanvasCtx = videoCanvas.getContext('2d');
 async function load() {
-    await humanseg.load();
+    await humanseg.load(true, true);
     camera = new Camera(video, {
         mirror: true,
         enableOnInactiveState: true,

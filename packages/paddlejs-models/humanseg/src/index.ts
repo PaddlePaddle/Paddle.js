@@ -60,8 +60,7 @@ export async function preheat() {
 
 export async function getGrayValue(input: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement) {
     inputElement = input;
-    const res = await runner.predict(input);
-    const seg_values = res;
+    const seg_values = await runner.predict(input);
     backgroundSize = genBackgroundSize();
     return {
         width: WIDTH,

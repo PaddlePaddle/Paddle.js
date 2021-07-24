@@ -2,7 +2,11 @@
 
 # humanseg
 
-A real-time human-segmentation model. You can use it to change background. The output of the model is gray value. Model supplies simple api for users. Api drawHumanSeg can draw human segmentation, another one drawMask can draw the background without human.
+A real-time human-segmentation model. You can use it to change background. The output of the model is gray value. Model supplies simple api for users. 
+
+Api drawHumanSeg can draw human segmentation with a specified background. 
+Api blurBackground can draw human segmentation with a blurred origin background.
+Api drawMask can draw the background without human.
 
 
 # Usage
@@ -11,25 +15,40 @@ A real-time human-segmentation model. You can use it to change background. The o
 
 import * as humanseg from '@paddlejs-models/humanseg';
 
-// load humanseg model
+// load humanseg model, use 398x224 shape model, and preheat
 await humanseg.load();
 
-// get the gray value [192 * 192];
+// use 288x160 shape model, preheat and predict faster with a little loss of precision
+// await humanseg.load(true, true); 
+
+// get the gray value [2, 398, 224] or [2, 288, 160];
 const { data } = await humanseg.getGrayValue(img);
 
-// draw human segmentation
-const canvas1 = document.getElementById('demo1') as HTMLCanvasElement;
-humanseg.drawHumanSeg(canvas1, data);
+// background canvas
+const back_canvas = document.getElementById('background') as HTMLCanvasElement;
 
-// draw the background mask
-const canvas2 = document.getElementById('demo2') as HTMLCanvasElement;
-humanseg.drawMask(canvas2, data, true);
+// draw human segmentation
+const canvas1 = document.getElementById('back') as HTMLCanvasElement;
+humanseg.drawHumanSeg(data, canvas1, back_canvas) ;
+
+// blur background
+const canvas2 = document.getElementById('blur') as HTMLCanvasElement;
+humanseg.drawHumanSeg(data, canvas2) ;
+
+// draw the mask with background
+const canvas3 = document.getElementById('mask') as HTMLCanvasElement;
+humanseg.drawMask(data, back_canvas, canvas3);
 
 ```
 
+# Performance
 
-# performance
+  <img width="800"  src="https://user-images.githubusercontent.com/10822846/126873788-1e2d4984-274f-45be-8716-2a87ddda8c75.png"/>
+  <img width="800"  src="https://user-images.githubusercontent.com/10822846/126873838-e5b68c9b-279f-4cb4-ae90-6aaaecd06aa4.png"/>
 
-  <img width="350"  src="https://user-images.githubusercontent.com/10822846/114897087-7fdb2d80-9e43-11eb-806d-fcf0198bc701.png"/>
-  <img width="350"  src="https://user-images.githubusercontent.com/10822846/114897193-96818480-9e43-11eb-82bc-6d4e073423e9.png"/>
-  <img width="350"  src="https://user-images.githubusercontent.com/10822846/115279515-6b679f80-a179-11eb-87d9-41f84dc02430.jpg"/>
+
+# Used in Video Meeting
+  <p>
+  <img width="400"  src="https://user-images.githubusercontent.com/10822846/126872499-c3fd680e-a01b-4daa-b0cb-acd3290862bd.gif"/>
+  <img width="400"  src="https://user-images.githubusercontent.com/10822846/126872930-4f4c5c5d-5c51-44fe-b2d6-3f83c4e124bc.png"/>
+  </p>

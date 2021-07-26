@@ -10,6 +10,7 @@ interface TensorParams {
     name: string;
     shape: number[];
     data: Float32Array | number[] | null;
+    persistable: boolean;
     isPacked?: boolean;
     binding?: number;
     noLayout?: boolean;
@@ -26,6 +27,7 @@ export default class Tensor {
     shape_texture: number[] = [];
     exceedMax: boolean = false;
     data: Float32Array | number[] | null = null;
+    persistable: boolean = false;
 
     constructor(opts: TensorParams) {
         this.opts = opts;
@@ -33,6 +35,7 @@ export default class Tensor {
         this.isPacked = opts.isPacked || false;
         // 设置tensor名字
         this.name = opts.name;
+        this.persistable = opts.persistable || false;
         // 设置 tensorId
         this.tensorId = opts.type;
         // 保留 model 原生 shape 长度

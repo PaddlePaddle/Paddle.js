@@ -201,6 +201,7 @@ export default class OpData {
                 name: tensorName,
                 shape: data.shape,
                 data: data.data || null,
+                persistable: data.persistable || false,
                 isPacked: this.isPackedOp || false,
                 binding: index,
                 noLayout: GLOBALS.backendInstance?.noLayout

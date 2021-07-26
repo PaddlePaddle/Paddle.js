@@ -68,7 +68,8 @@ export default class MediaProcessor {
             return [{
                 data: data,
                 shape: opt.shape || opt.targetShape,
-                name: 'image'
+                name: 'image',
+                persistable: false
             }] as InputFeed[];
         }
 
@@ -84,7 +85,8 @@ export default class MediaProcessor {
             return [{
                 data,
                 shape: [1, 4, opt.targetShape[2], opt.targetShape[3]],
-                name: 'image'
+                name: 'image',
+                persistable: false
             }] as InputFeed[];
         }
 
@@ -92,7 +94,8 @@ export default class MediaProcessor {
         return [{
             data,
             shape: opt.targetShape || opt.shape,
-            name: 'image'
+            name: 'image',
+            persistable: false
         }] as InputFeed[];
     }
 

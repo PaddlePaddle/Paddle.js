@@ -47,7 +47,7 @@ describe('test mediaProcessor with scale and targetSize', () => {
 
     test('test api process', () => {
         const data = processror.process(img, mediaParams);
-        expect(data).toEqual([{ data: [], shape: [1, 3, 224, 224], name: 'image' }]);
+        expect(data).toEqual([{ data: [], shape: [1, 3, 224, 224], name: 'image', persistable: false }]);
     });
 });
 

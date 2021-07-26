@@ -137,7 +137,8 @@ export default class Runner {
                     {
                         data: new Float32Array(data as number[]),
                         shape: shape || [1, 3, fh, fw],
-                        name: 'image'
+                        name: 'image',
+                        persistable: false
                     }
                 ];
             }
@@ -149,7 +150,8 @@ export default class Runner {
                 {
                     data: new Float32Array(inputData),
                     shape: shape || [1, 3, height || fh, width || fw],
-                    name: 'image'
+                    name: 'image',
+                    persistable: false
                 }
             ];
         }
@@ -190,7 +192,8 @@ export default class Runner {
             preheatFeedData = {
                 data: new Float32Array(3 * fh * fw).fill(1.0),
                 name: 'image',
-                shape: [1, 3, fh, fw]
+                shape: [1, 3, fh, fw],
+                persistable: false
             };
         }
 

@@ -22,7 +22,6 @@ export default class WebGLBackend extends PaddlejsBackend {
     pbo?: WebGLBuffer | null;
     vertexBuffer?: WebGLBuffer | null;
     textureConf: TextureConfig | null;
-    prevTexture?: WebGLTexture | null;
     nextTexture?: WebGLTexture | null;
     currentTexture?: WebGLTexture | null;
     textureBufferIndex?: number;
@@ -54,8 +53,6 @@ export default class WebGLBackend extends PaddlejsBackend {
 
         this.queryList = [];
 
-        // 上一个texture
-        this.prevTexture = null;
         // 当前op输出texture
         this.currentTexture = null;
 
@@ -270,7 +267,6 @@ export default class WebGLBackend extends PaddlejsBackend {
     }
 
     attachFrameBuffer(tensorId: string) {
-        this.prevTexture = this.currentTexture;
         this.currentTexture = this.texturesMap[tensorId];
 
         const gl = this.gl;
@@ -328,7 +324,6 @@ export default class WebGLBackend extends PaddlejsBackend {
         let texture;
 
         if (!item.data) {
-            // texture = this.prevTexture;
             texture = this.texturesMap[item.opts.type];
         }
         else {
@@ -348,9 +343,6 @@ export default class WebGLBackend extends PaddlejsBackend {
         gl.bindTexture(gl.TEXTURE_2D, texture);
 
         if (item.data && (!isRendered || !item.persistable)) {
-            if (isRendered) {
-                debugger;
-            }
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -367,7 +359,8 @@ export default class WebGLBackend extends PaddlejsBackend {
 
                 const textureFormat = isPacked ? gl.RGBA : textureConf.textureFormat;
 
-                gl.texImage2D(gl.TEXTURE_2D,
+                gl.texImage2D(
+                    gl.TEXTURE_2D,
                     0,
                     internalFormat,
                     item.width_texture,

@@ -57,15 +57,8 @@ export default class Tensor {
         this.shape_texture = shape_texture;
         this.exceedMax = exceedMax;
         // tensor数据
-        if (opts.type.endsWith('image')) {
-            this.data = opts.data;
-        }
-        else if (opts.data && opts.data.length) {
-            const nhwcData: Float32Array | number[] = Utils.nchw2nhwc(
-                opts.data,
-                [shape[0], shape[1] * (this.isPacked ? 4 : 1), shape[2], shape[3]]
-            );
-            this.data = new Float32Array(nhwcData);
+        if (opts.data && opts.data.length) {
+            this.data = new Float32Array(opts.data);
             opts.data = null;
         }
     }

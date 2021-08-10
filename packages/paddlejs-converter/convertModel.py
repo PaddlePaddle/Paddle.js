@@ -131,6 +131,7 @@ def reorderParamsValue():
         paramValues += value
     return paramValues
 
+
 def mapToPaddleJSTypeName(fluidOPName):
     """ 处理fluid的OP type与PaddleJS的OP type不对应情况 """
     if fluidOPName == "batch_norm":
@@ -181,7 +182,14 @@ def organizeModelVariableInfo(result):
 
         # persistable数据存入paramValuesDict，等待排序
         if v.persistable:
-            data = np.array(fluid.global_scope().find_var(v.name).get_tensor()).flatten().tolist()
+            tensor = np.array(fluid.global_scope().find_var(v.name).get_tensor())
+            # nchw 转 nhwc
+            if len(tensor.shape) == 3:
+                tensor = np.transpose(tensor, (1, 2, 0))
+            elif len(tensor.shape) == 4:
+                tensor = np.transpose(tensor, (0, 2, 3, 1))
+
+            data = tensor.flatten().tolist()
             paramValuesDict[v.name] = data
 
     # shape推断校正

@@ -57,32 +57,6 @@ export function getTextureInfoFromTensorShape(shape: number[] = [], isPacked = f
 
 
 /**
- * 将nchw排布数据转为nhwc排布数据
- * @param {Array} data tensor data
- * @param {Array} shape nchw
- * @returns {Array} nhwc data
- */
-export function nchw2nhwc(data: number[] | Float32Array, shape: number[]): number[] | Float32Array {
-    const N = shape[0];
-    const C = shape[1];
-    const H = shape[2];
-    const W = shape[3];
-    const HXW = H * W;
-    const CXHXW = C * H * W;
-    const nhwcData: number[] | Float32Array = [];
-    for (let n = 0; n < N; n++) {
-        for (let h = 0; h < H; h++) {
-            for (let w = 0; w < W; w++) {
-                for (let c = 0; c < C; c++) {
-                    nhwcData.push(data[n * CXHXW + c * HXW + h * W + w]);
-                }
-            }
-        }
-    }
-    return nhwcData;
-}
-
-/**
  * tensor shape 标准化为 4维
  * @param {Array} shape tensor的形状
  * @returns {Array} 4维 shape

@@ -12,7 +12,7 @@ function mainFunc(
 ) {
     const [stride_v = 1, stride_h = 1] = strides;
     const [padTop = 0, padLeft = 0] = paddings;
-    const [ksize_x, ksize_y] = ksize;
+    const [ksize_y, ksize_x] = ksize;
     const originShape = recoverShape(origin);
     let computedIndex = '';
     let outputCode = 'setOutput(float(res));';

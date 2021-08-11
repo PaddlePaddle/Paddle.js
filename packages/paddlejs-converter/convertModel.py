@@ -42,6 +42,12 @@ postOps = []
 # 在转换过程中新生成的、需要添加到vars中的variable
 appendedVarList = []
 
+# 转换模型中需要过滤掉的参数
+needFilterAttributes = ['op_callstack', 'col', 'op_role', 'op_namescope', 'op_role_var',
+    'data_format', 'is_test', 'use_mkldnn', 'use_cudnn', 'use_quantizer', 'workspace_size_MB',
+    'mkldnn_data_type', 'op_device', '__@kernel_type_attr@__']
+
+
 class ObjDict(dict):
     """
     Makes a  dictionary behave like an object,with attribute-style access.
@@ -308,7 +314,7 @@ def organizeModelOpInfo():
         attrs = {}
         for name in op.attr_names:
             # 过滤不需要的参数
-            if name in ["op_callstack", 'col', 'op_role', 'op_namescope', 'op_role_var']:
+            if name in needFilterAttributes:
                 continue
             value = op.attr(name)
             attrs[name] = value

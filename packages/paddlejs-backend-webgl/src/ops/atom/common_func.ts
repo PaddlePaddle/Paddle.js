@@ -17,8 +17,7 @@ float prelu(float x, float p, float b) {
 
 const relu6 = `
 float relu6(float x, float threshold, float b) {
-    float result = max(0.0, x);
-    result = min(result, threshold);
+    float result = min(max(0.0, x), threshold);
     return result;
 }`;
 

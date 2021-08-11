@@ -12,7 +12,8 @@ function mainFunc(
         dilations = [],
         fuse_relu,
         filter_nearest_vec4,
-        filter_remainder_vec4
+        filter_remainder_vec4,
+        act_type
     }
 ) {
     const [stride_v = 1, stride_h = 1] = strides;
@@ -105,6 +106,9 @@ function mainFunc(
         if (${fuse_relu}) {
             res = max(0.0, res);
         }
+        else if (${act_type === 'relu6'}) {
+            res = min(max(0.0, res), 6.0);
+        }
 
         setOutput(res);
     }
@@ -119,7 +123,8 @@ export default {
         'dilations',
         'groups',
         'filter_nearest_vec4',
-        'filter_remainder_vec4'
+        'filter_remainder_vec4',
+        'act_type'
     ],
     textureFuncConf: {
         filter: ['getValueFromTensorPos'],

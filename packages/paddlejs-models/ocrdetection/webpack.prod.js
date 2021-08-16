@@ -22,5 +22,8 @@ module.exports = {
         filename: '[name].js',
         path: path.resolve(__dirname, 'lib'),
         libraryTarget: 'umd'
+    },
+    node: {
+        fs: 'empty'
     }
 };

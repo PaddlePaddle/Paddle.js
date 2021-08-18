@@ -9,7 +9,8 @@ function mainFunc(
         strides = [],
         paddings = [],
         dilations = [],
-        fuse_relu
+        fuse_relu,
+        act_type
     }
 ) {
     const [stride_v = 1, stride_h = 1] = strides;
@@ -76,10 +77,10 @@ function mainFunc(
 
         res += getValueFromTensorPosPacking_bias(0, c, 0, 0);
         if (${fuse_relu}) {
-            res.r = max(0.0, res.r);
-            res.g = max(0.0, res.g);
-            res.b = max(0.0, res.b);
-            res.a = max(0.0, res.a);
+            res = max(vec4(0.0, 0.0, 0.0, 0.0), res);
+        }
+        else if (${act_type === 'relu6'}) {
+            res = min(max(vec4(0.0, 0.0, 0.0, 0.0), res), vec4(6.0, 6.0, 6.0, 6.0));
         }
         setPackedOutput(res);
     }
@@ -92,7 +93,8 @@ export default {
         'strides',
         'paddings',
         'dilations',
-        'groups'
+        'groups',
+        'act_type'
     ],
     textureFuncConf: {
         filter: ['getValueFromTensorPosPacking'],

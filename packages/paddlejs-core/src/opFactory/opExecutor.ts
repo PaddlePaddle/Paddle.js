@@ -12,7 +12,7 @@ export default class OpExecutor {
     outputs: OpOutputs = {} as OpOutputs;
     attrs: OpAttrs = {} as OpAttrs;
     subAttrs: OpAttrs[] = [] as OpAttrs[];
-    next: string | null = null;
+    next: string = '';
     opData: OpData = null;
     isPacked: boolean = false;
     finish: boolean = false;
@@ -33,7 +33,7 @@ export default class OpExecutor {
         this.type = type;
         this.isPacked = isPacked || false;
         this.finish = false;
-        this.next = null;
+        this.next = '';
         this.opData = null;
         this.isPacked = false;
     }

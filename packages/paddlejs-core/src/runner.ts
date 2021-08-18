@@ -118,7 +118,7 @@ export default class Runner {
     }
 
     async predictWithFeed(data: number[] | InputFeed[] | ImageData, callback?, shape?: number[]) {
-        const { fw, fh } = this.modelConfig.feedShape;
+        const { fc = 3, fw, fh } = this.modelConfig.feedShape;
         let inputFeed;
 
         if (Array.isArray(data)) {
@@ -136,7 +136,7 @@ export default class Runner {
                 inputFeed = [
                     {
                         data: new Float32Array(data as number[]),
-                        shape: shape || [1, 3, fh, fw],
+                        shape: shape || [1, fc, fh, fw],
                         name: 'image',
                         persistable: false
                     }
@@ -149,7 +149,7 @@ export default class Runner {
             inputFeed = [
                 {
                     data: new Float32Array(inputData),
-                    shape: shape || [1, 3, height || fh, width || fw],
+                    shape: shape || [1, fc, height || fh, width || fw],
                     name: 'image',
                     persistable: false
                 }
@@ -164,7 +164,7 @@ export default class Runner {
 
     genFeedData() {
         const { type, feedShape } = this.modelConfig;
-        const { fh, fw } = feedShape;
+        const { fc = 3, fh, fw } = feedShape;
         const vars = this.model.vars;
 
         let preheatFeedData;
@@ -186,13 +186,13 @@ export default class Runner {
         else {
             preheatFeedData = vars.find(item => item.name === 'image');
             if (preheatFeedData) {
-                preheatFeedData.data = new Float32Array(3 * fh * fw).fill(1.0);
+                preheatFeedData.data = new Float32Array(fc * fh * fw).fill(1.0);
                 return;
             }
             preheatFeedData = {
-                data: new Float32Array(3 * fh * fw).fill(1.0),
+                data: new Float32Array(fc * fh * fw).fill(1.0),
                 name: 'image',
-                shape: [1, 3, fh, fw],
+                shape: [1, fc, fh, fw],
                 persistable: false
             };
         }

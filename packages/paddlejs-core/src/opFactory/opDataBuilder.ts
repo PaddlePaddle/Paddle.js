@@ -21,7 +21,6 @@ export default class OpData {
     vars: ModelVar[] = [];
     iLayer: number = 0;
     program: string[] = [];
-    renderData: object[] = [];
     tensorData: ModelVar[] = [];
     isFinalOp: boolean = false;
     modelName: string;
@@ -51,7 +50,6 @@ export default class OpData {
         this.outputTensors = [];
         this.fShaderParams = [];
         this.program = [];
-        this.renderData = [];
 
         this.constructTensorData();
         this.buildTensor();

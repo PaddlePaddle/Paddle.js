@@ -29,6 +29,7 @@ export interface ModelConfig {
     modelPath: string;
     modelName?: string;
     feedShape: {
+        fc?: number;
         fw: number;
         fh: number;
     };
@@ -114,7 +115,6 @@ export interface OpData {
     vars: ModelVar[];
     iLayer: number;
     program: any;
-    renderData: any[];
     tensorData: any[];
     modelName: string;
 }

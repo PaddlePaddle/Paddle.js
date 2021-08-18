@@ -29,7 +29,7 @@ export default class MediaProcessor {
      */
     process(media, modelConfig): InputFeed[] {
         const { feedShape, fill, mean, std, bgr } = modelConfig;
-        const { fh, fw } = feedShape;
+        const { fc = 3, fh, fw } = feedShape;
         const input = media;
 
 
@@ -42,7 +42,7 @@ export default class MediaProcessor {
                 width: fw,
                 height: fh
             },
-            targetShape: [1, 3, fh, fw]
+            targetShape: [1, fc, fh, fw]
         };
 
         if (this.result.length === 0) {

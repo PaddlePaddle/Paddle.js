@@ -138,7 +138,7 @@ export default class Runner {
                         data: new Float32Array(data as number[]),
                         shape: shape || [1, fc, fh, fw],
                         name: 'image',
-                        persistable: false
+                        persistable: true
                     }
                 ];
             }
@@ -151,7 +151,7 @@ export default class Runner {
                     data: new Float32Array(inputData),
                     shape: shape || [1, fc, height || fh, width || fw],
                     name: 'image',
-                    persistable: false
+                    persistable: true
                 }
             ];
         }
@@ -193,7 +193,7 @@ export default class Runner {
                 data: new Float32Array(fc * fh * fw).fill(1.0),
                 name: 'image',
                 shape: [1, fc, fh, fw],
-                persistable: false
+                persistable: true
             };
         }
 

@@ -22,7 +22,6 @@ export default class WebGLBackend extends PaddlejsBackend {
     pbo?: WebGLBuffer | null;
     vertexBuffer?: WebGLBuffer | null;
     textureConf: TextureConfig | null;
-    nextTexture?: WebGLTexture | null;
     currentTexture?: WebGLTexture | null;
     textureBufferIndex?: number;
     cacheTextures: object;
@@ -308,7 +307,7 @@ export default class WebGLBackend extends PaddlejsBackend {
             if (!loc) {
                 return;
             }
-            that.initTexture(textureIndex, item, iLayer, isRendered, isPacked, modelName);
+            that.initTexture(textureIndex, item, isPacked);
             gl.uniform1i(loc, textureIndex++);
         });
         // gl.clearColor(.0, .0, .0, 1);
@@ -316,33 +315,30 @@ export default class WebGLBackend extends PaddlejsBackend {
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
-    initTexture(index, item, iLayer, isRendered, isPacked, modelName) {
+    initTexture(index, item, isPacked) {
         const gl = this.gl;
         const textureConf = this.textureConf as TextureConfig;
         const tensorName = item.opts.type;
-        const prefix = modelName + '_';
         let texture;
 
-        if (!item.data) {
-            texture = this.texturesMap[item.opts.type];
+        if (!item.persistable) {
+            texture = this.texturesMap[tensorName];
         }
         else {
-            // texture = gl.createTexture();
-            if (isRendered && item.persistable) {
-                const tData = this.cacheTextures[prefix + iLayer];
-                texture = tData['texture_' + tensorName];
+            this.cacheTextures = this.cacheTextures || {};
+            if (this.cacheTextures[tensorName]) {
+                texture = this.cacheTextures[tensorName];
             }
             else {
                 texture = gl.createTexture();
-                this.cacheTextures[prefix + iLayer] = this.cacheTextures[prefix + iLayer] || {};
-                this.cacheTextures[prefix + iLayer]['texture_' + tensorName] = texture;
+                this.cacheTextures[tensorName] = texture;
             }
         }
 
         gl.activeTexture(gl[`TEXTURE${index}`]);
         gl.bindTexture(gl.TEXTURE_2D, texture);
 
-        if (item.data && (!isRendered || !item.persistable)) {
+        if (item.data) {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -395,6 +391,7 @@ export default class WebGLBackend extends PaddlejsBackend {
                     gl.FLOAT,
                     temp);
             }
+            item.data = null;
         }
     }
 

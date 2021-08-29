@@ -204,11 +204,16 @@ export class GLTexture {
     }
 
     public static genOutputTexture(gl, textureConf, outTensor, isFinalOp): WebGLTexture {
+        const {
+            interpType,
+            width_texture,
+            height_texture
+        } = outTensor;
         // 生成output的texture缓存
         const texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, interpType === 'LINEAR' ? gl.LINEAR : gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, interpType === 'LINEAR' ? gl.LINEAR : gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
@@ -231,12 +236,13 @@ export class GLTexture {
                 : gl.UNSIGNED_BYTE
             : null;
 
+
         gl.texImage2D(
             gl.TEXTURE_2D, // Target, matches bind above.
             0, // Level of detail.
             internalFormat, // Internal format.
-            outTensor.width_texture,
-            outTensor.height_texture,
+            width_texture,
+            height_texture,
             0, // Always 0 in OpenGL ES.
             gl.RGBA, // Format for each pixel.
             isFinalOp ? textureTypeForReadPixel : textureType, // Data type for each chanel.

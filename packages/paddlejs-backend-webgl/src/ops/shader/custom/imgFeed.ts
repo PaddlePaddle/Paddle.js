@@ -2,17 +2,14 @@
  * @file feed post process
  */
 
-function mainFunc(
-    {},
-    {}
-) {
+function mainFunc() {
 
     return `
-    // start函数
+
     void main(void) {
-        ivec4 oPos = getOutputTensorPos();
-        vec4 o = getValueFromTensorPosPacking_origin(oPos.r, oPos.g, oPos.b, oPos.a);
-        setPackedOutput(o / 255.0);
+        vec2 outCoord = vCoord.xy;
+        vec4 counter = TEXTURE2D(texture_origin, vCoord.xy);
+        setPackedOutput(counter);
     }
     `;
 }
@@ -20,6 +17,6 @@ export default {
     mainFunc,
     params: [],
     textureFuncConf: {
-        origin: ['getValueFromTensorPosPacking']
+        origin: []
     }
 };

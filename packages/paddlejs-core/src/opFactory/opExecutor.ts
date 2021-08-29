@@ -17,12 +17,13 @@ export default class OpExecutor {
     isPacked: boolean = false;
     finish: boolean = false;
 
-    constructor(op: ModelOp, idx: number, isPacked: boolean | undefined = false) {
+    constructor(op: ModelOp, idx: number) {
         const {
             inputs,
             outputs,
             attrs = {},
-            type
+            type,
+            isPacked = false
         } = op;
 
         this.id = `${type}_${+new Date()}_${idx}`;
@@ -31,11 +32,10 @@ export default class OpExecutor {
         this.attrs = attrs;
         this.subAttrs = op['sub-attrs'] || [];
         this.type = type;
-        this.isPacked = isPacked || false;
+        this.isPacked = isPacked;
         this.finish = false;
         this.next = '';
         this.opData = null;
-        this.isPacked = false;
     }
 
     get inputsName() {

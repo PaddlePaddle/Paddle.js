@@ -3,8 +3,10 @@ import pack_out from './pack_out';
 import unpacked_2_packed from './unpacked_2_packed';
 import packed_2_unpacked from './packed_2_unpacked';
 import feedPost from './feedPost';
+import imgFeed from './imgFeed';
 
 export {
+    imgFeed,
     feedPost,
     nhwc_2_nchw,
     pack_out,

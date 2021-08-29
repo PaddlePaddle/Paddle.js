@@ -2,6 +2,7 @@ import Loader from './loader';
 import Graph from './graph';
 import { Model, ModelConfig, InputFeed, ModelVar, GraphType } from './commons/interface';
 import OpData from './opFactory/opDataBuilder';
+import Tensor from './opFactory/tensor';
 import { GLOBALS } from './globals';
 import { getGlobalInterface } from './commons/utils';
 import MediaProcessor from './mediaProcessor';
@@ -166,7 +167,6 @@ export default class Runner {
         const { type, feedShape } = this.modelConfig;
         const { fc = 3, fh, fw } = feedShape;
         const vars = this.model.vars;
-
         let preheatFeedData;
         if (type === GraphType.MultipleInput) {
             // 默认第1个是输入op, 形为inputs: {X: [a, b]}
@@ -208,10 +208,13 @@ export default class Runner {
             const tensorData = item.opData.inputTensors;
             return tensorData.find(tensor => tensor.tensorId.endsWith('_image'));
         }) as OpExecutor;
-        const imageData = imageOp.opData.inputTensors.find(
-            tensor => tensor.tensorId.endsWith('_image')
-        );
-        imageData.data = feed[0].data;
+
+        let imageInputTensor: Tensor = imageOp.opData.inputTensors[0];
+        const imageInputTensorParams = imageInputTensor.opts;
+        imageInputTensorParams.shape = feed[0].shape;
+        imageInputTensorParams.data = feed[0].data;
+        imageInputTensor = new Tensor(imageInputTensorParams);
+        imageOp.opData.inputTensors = [imageInputTensor];
     }
 
     async execute() {

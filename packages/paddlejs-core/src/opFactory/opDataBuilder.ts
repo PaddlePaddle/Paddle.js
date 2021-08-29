@@ -152,7 +152,8 @@ export default class OpData {
             outTensor,
             inputTensors,
             shaderParams: this.fShaderParams[index],
-            runtime: index
+            runtime: index,
+            isFinalOp: this.isFinalOp
         }));
     }
 
@@ -200,6 +201,7 @@ export default class OpData {
                 shape: data.shape,
                 data: data.data || null,
                 persistable: data.persistable || false,
+                interpType: data.interpType || 'NEAREST',
                 isPacked: this.isPackedOp || false,
                 binding: index,
                 noLayout: GLOBALS.backendInstance?.noLayout

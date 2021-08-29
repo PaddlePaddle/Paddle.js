@@ -11,6 +11,7 @@ interface TensorParams {
     shape: number[];
     data: Float32Array | number[] | null;
     persistable: boolean;
+    interpType?: string;
     isPacked?: boolean;
     binding?: number;
     noLayout?: boolean;
@@ -28,6 +29,7 @@ export default class Tensor {
     exceedMax: boolean = false;
     data: Float32Array | number[] | null = null;
     persistable: boolean = false;
+    interpType: string = 'NEAREST';
 
     constructor(opts: TensorParams) {
         this.opts = opts;
@@ -36,6 +38,7 @@ export default class Tensor {
         // 设置tensor名字
         this.name = opts.name;
         this.persistable = opts.persistable || false;
+        this.interpType = opts.interpType || 'NEAREST';
         // 设置 tensorId
         this.tensorId = opts.type;
         // 保留 model 原生 shape 长度

@@ -13,7 +13,6 @@ export default class MediaProcessor {
     mean: number[] = [0, 0, 0];
     std: number[] = [1, 1, 1];
     bgr: boolean = false;
-    result: Float32Array | number[] = [];
     pixelWidth: number = 1;
     pixelHeight: number = 1;
     inputFeed: InputFeed[] = [];
@@ -45,17 +44,13 @@ export default class MediaProcessor {
             targetShape: [1, fc, fh, fw]
         };
 
-        if (this.result.length === 0) {
-            const [, c, h, w] = params.targetShape;
-            // 计算确定targetShape所需Float32Array占用空间
-            this.result = new Float32Array(h * w * c);
-        }
         return this.fromPixels(input, params) || [];
     }
 
     fromPixels(pixels, opt): InputFeed[] {
         let data: ImageData | number[] | Float32Array = [];
         const imageDataInfo = {
+            gapFillWith: opt.gapFillWith,
             dx: 0,
             dy: 0,
             dWidth: opt.targetSize.width,
@@ -76,21 +71,22 @@ export default class MediaProcessor {
         this.pixelWidth = pixels.width;
         this.pixelHeight = pixels.height;
 
-        this.fitToTargetSize(pixels, opt);
-        data = this.getImageData(imageDataInfo);
 
+        this.fitToTargetSize(pixels, imageDataInfo, env.get('webgl_feed_process'));
+        data = this.getImageData(imageDataInfo);
         // process imageData in webgl
         if (env.get('webgl_feed_process')) {
             data = Float32Array.from((data as ImageData).data);
             return [{
                 data,
-                shape: [1, 4, opt.targetShape[2], opt.targetShape[3]],
+                shape: [1, 1, imageDataInfo.dHeight, imageDataInfo.dWidth],
                 name: 'image',
                 persistable: true
             }] as InputFeed[];
         }
 
-        data = this.allReshapeToRGB(data, opt) as number[];
+
+        data = this.allReshapeToRGB(data, opt) as Float32Array;
         return [{
             data,
             shape: opt.targetShape || opt.shape,
@@ -113,7 +109,7 @@ export default class MediaProcessor {
         const { mean, std, targetShape, bgr } = opt;
         const [, c, h, w] = targetShape;
         const data = imageData.data || imageData;
-        const result = this.result;
+        const result = new Float32Array(h * w * c);
         let offset = 0;
         // 将数据映射为0~1， 1：映射为-1~1之间
         const normalizeType = 0;
@@ -138,30 +134,47 @@ export default class MediaProcessor {
     /**
      * 缩放成目标尺寸并居中
      */
-    fitToTargetSize(image, params) {
+    fitToTargetSize(image, imageDataInfo, inGPU = false) {
         // 目标尺寸
-        const targetWidth = params.targetSize.width;
-        const targetHeight = params.targetSize.height;
-        this.targetContext.canvas.width = targetWidth;
-        this.targetContext.canvas.height = targetHeight;
-        this.targetContext.fillStyle = params.gapFillWith;
-        this.targetContext.fillRect(0, 0, targetHeight, targetWidth);
+        const targetWidth = imageDataInfo.dWidth;
+        const targetHeight = imageDataInfo.dHeight;
+
+        let canvasWidth = inGPU ? this.pixelWidth : targetWidth;
+        let canvasHeight = inGPU ? this.pixelHeight : targetHeight;
         // 缩放后的宽高
-        let sw = targetWidth;
-        let sh = targetHeight;
+        let sw = inGPU ? this.pixelWidth : targetWidth;
+        let sh = inGPU ? this.pixelHeight : targetHeight;
         let x = 0;
         let y = 0;
         // target的长宽比大些 就把原图的高变成target那么高
         if (targetWidth / targetHeight * this.pixelHeight / this.pixelWidth >= 1) {
-            sw = Math.round(sh * this.pixelWidth / this.pixelHeight);
-            x = Math.floor((targetWidth - sw) / 2);
+            if (inGPU) {
+                canvasWidth = Math.round(sh * targetWidth / targetHeight);
+                x = Math.floor((canvasWidth - sw) / 2);
+            }
+            else {
+                sw = Math.round(sh * this.pixelWidth / this.pixelHeight);
+                x = Math.floor((targetWidth - sw) / 2);
+            }
         }
         // target的长宽比小些 就把原图的宽变成target那么宽
         else {
-            sh = Math.round(sw * this.pixelHeight / this.pixelWidth);
-            y = Math.floor((targetHeight - sh) / 2);
+            if (inGPU) {
+                canvasHeight = Math.round(sw * targetHeight / targetWidth);
+                y = Math.floor((canvasHeight - sh) / 2);
+            }
+            else {
+                sh = Math.round(sw * this.pixelHeight / this.pixelWidth);
+                y = Math.floor((targetHeight - sh) / 2);
+            }
         }
 
+        imageDataInfo.dWidth = canvasWidth;
+        imageDataInfo.dHeight = canvasHeight;
+        this.targetContext.canvas.width = canvasWidth;
+        this.targetContext.canvas.height = canvasHeight;
+        this.targetContext.fillStyle = imageDataInfo.gapFillWith;
+        this.targetContext.fillRect(0, 0, canvasHeight, canvasWidth);
         this.targetContext.drawImage(image, x, y, sw, sh);
     }
 

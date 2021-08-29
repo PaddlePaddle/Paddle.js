@@ -6,6 +6,7 @@ export interface ModelOp {
     'sub-attrs'?: OpAttrs[];
     inputs: OpInputs;
     outputs: OpOutputs;
+    isPacked?: boolean;
 }
 
 export interface ModelVar {
@@ -14,6 +15,7 @@ export interface ModelVar {
     data?: number[] | Float32Array;
     persistable?: boolean;
     tensorName?: string;
+    interpType?: string;
     total?: number;
     runtime?: number;
 }

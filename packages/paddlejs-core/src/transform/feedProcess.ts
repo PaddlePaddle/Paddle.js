@@ -14,7 +14,7 @@ export default class WebglFeedProcess extends Transformer {
     }
 
     transform(...args: any) {
-        if (!env.get('webgl_feed_process')) {
+        if (!env.get('webgl_feed_process') && !env.get('webgl_gpu_pipeline')) {
             return;
         }
         const [ops, vars, modelConfig] = args;
@@ -38,6 +38,7 @@ export default class WebglFeedProcess extends Transformer {
         originImgVar.name = IMG_ORIGIN;
         originImgVar.shape = [1, 1, feedShape.fh, feedShape.fw];
         originImgVar.persistable = false;
+        originImgVar.interpType = 'LINEAR';
         delete originImgVar.data;
 
         vars.push(originImgVar);
@@ -85,7 +86,6 @@ export default class WebglFeedProcess extends Transformer {
             type: 'imgFeed',
             isPacked: true
         };
-
 
         ops.splice(1, 0, imgPreProcessOp);
         ops.splice(1, 0, imgOriginOp);

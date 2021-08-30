@@ -90,6 +90,7 @@ export interface OpInfo {
     textureFuncConf?: {
         [key: string]: string[];
     },
+    commonFuncConf?: string[];
     name?: string;
     conf?: object;
     main_packed?: string;

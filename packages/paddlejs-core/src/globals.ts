@@ -24,7 +24,9 @@ function registerOp(opInfo: OpInfo, key: string) {
         conf,
         params,
         main,
-        main_packed = '',
+        mainFunc,
+        textureFuncConf,
+        commonFuncConf,
         behaviors = []
     } = opInfo;
 
@@ -38,7 +40,9 @@ function registerOp(opInfo: OpInfo, key: string) {
         conf,
         params,
         main,
-        main_packed,
+        mainFunc,
+        textureFuncConf,
+        commonFuncConf,
         behaviors
     };
 }
@@ -64,5 +68,6 @@ GLOBALS = getOrMakeGlobalProperty('GLOBALS', GLOBALS);
 
 export {
     GLOBALS,
-    registerBackend
+    registerBackend,
+    registerOp
 };

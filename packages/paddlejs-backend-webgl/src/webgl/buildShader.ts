@@ -4,20 +4,17 @@
  */
 
 import { env } from '@paddlejs/paddlejs-core';
-import { ops } from '../ops';
 import { getTensorParams } from '../ops/utils';
 import genPrefixCode from '../ops/atom/prefix';
 import genSuffixCode from '../ops/atom/suffix';
 import * as commonFunc from '../ops/atom/common_func';
 import * as textureFunc from '../ops/atom/common_func_with_texture';
 
-export default function buildShader(textureConf, type, inputTensors, fShaderParams, runtime: number) {
+export default function buildShader(textureConf, op, inputTensors, fShaderParams, runtime: number) {
     let code = '';
-    const opName = type;
+    const { name, params = {}, mainFunc, textureFuncConf = {}, commonFuncConf } = op;
+
     try {
-
-        const { params = {}, mainFunc, textureFuncConf = {}, commonFuncConf } = ops[opName];
-
         // textureList: [filter, origin, bias]
         const { textureParams, opParams, active_function } = getTensorParams(
             inputTensors, params, fShaderParams, runtime
@@ -49,7 +46,7 @@ export default function buildShader(textureConf, type, inputTensors, fShaderPara
         code = populateData(code);
     }
     catch (e) {
-        console.error(`[${opName}]: ` + e);
+        console.error(`[${name}]: ` + e);
     }
 
     return code;

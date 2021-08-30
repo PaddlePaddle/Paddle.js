@@ -146,15 +146,25 @@ export default class OpData {
 
     buildProgram() {
         const name = this.name;
-        const inputTensors = this.inputTensors;
-        this.program = this.outputTensors.map((outTensor, index) => GLOBALS.backendInstance.createProgram({
-            name,
-            outTensor,
-            inputTensors,
-            shaderParams: this.fShaderParams[index],
-            runtime: index,
-            isFinalOp: this.isFinalOp
-        }));
+        const opKey = `${GLOBALS.backend}_${name}`;
+        const op = GLOBALS.opRegistry.ops[opKey];
+        try {
+            if (!op) {
+                throw new Error(`[unregistered op] ${name}`);
+            }
+            const inputTensors = this.inputTensors;
+            this.program = this.outputTensors.map((outTensor, index) => GLOBALS.backendInstance.createProgram({
+                op,
+                outTensor,
+                inputTensors,
+                shaderParams: this.fShaderParams[index],
+                runtime: index,
+                isFinalOp: this.isFinalOp
+            }));
+        }
+        catch (e) {
+            console.error(e);
+        }
     }
 
     // process op tensorData and attrs according to op behaviors
@@ -186,7 +196,6 @@ export default class OpData {
         catch (e) {
             console.error(e);
         }
-
     }
 
     buildTensor() {

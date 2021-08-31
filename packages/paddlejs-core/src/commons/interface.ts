@@ -1,5 +1,10 @@
 import type Transformer from '../transform/transformer';
 
+export enum BufferType {
+    FrameBuffer = 'frameBuffer',
+    ColorBuffer = 'colorBuffer'
+}
+
 export interface ModelOp {
     type: string;
     attrs?: OpAttrs;
@@ -7,6 +12,7 @@ export interface ModelOp {
     inputs: OpInputs;
     outputs: OpOutputs;
     isPacked?: boolean;
+    bufferType?: BufferType;
 }
 
 export interface ModelVar {
@@ -63,6 +69,7 @@ export interface OpAttrs {
     [key: string]: any
 }
 
+
 export interface OpExecutor {
     id: string;
     type: string;
@@ -77,6 +84,7 @@ export interface OpExecutor {
     inputsName: string[];
     outputsName: string[];
     execute: Function;
+    bufferType?: BufferType;
 }
 
 interface Behavior {
@@ -107,6 +115,7 @@ export interface OpData {
     name: string;
     realName: string;
     isPackedOp: boolean;
+    bufferType: BufferType;
     input: OpInputs;
     output: OpOutputs;
     attrs: any;

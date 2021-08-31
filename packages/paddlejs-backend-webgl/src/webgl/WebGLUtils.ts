@@ -72,7 +72,8 @@ export class GLHelper {
         preserveDrawingBuffer: false,
         depth: false,
         stencil: false,
-        failIfMajorPerformanceCaveat: true
+        failIfMajorPerformanceCaveat: true,
+        powerPreference: 'high-performance'
     };
 
     public static gl: WebGLRenderingContext = null;
@@ -91,15 +92,18 @@ export class GLHelper {
     }
 
     public static setWebGLRenderingContext(gl: WebGLRenderingContext): WebGLRenderingContext {
-        if (this.gl) {
-            return this.gl;
-        }
-
         this.gl = gl;
         return gl;
     }
 
     public static getWebGLRenderingContext(): WebGLRenderingContext {
+        if (this.gl) {
+            return this.gl;
+        }
+        return this.createWebGLRenderingContext();
+    }
+
+    public static createWebGLRenderingContext(): WebGLRenderingContext {
         if (this.gl) {
             return this.gl;
         }

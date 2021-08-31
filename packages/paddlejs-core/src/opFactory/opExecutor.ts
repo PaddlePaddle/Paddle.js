@@ -2,7 +2,7 @@
  * @file OpExecutor，封装算子可执行单元
  */
 
-import { ModelOp, OpInputs, OpOutputs, OpAttrs, OpData } from '../commons/interface';
+import { ModelOp, OpInputs, OpOutputs, OpAttrs, OpData, BufferType } from '../commons/interface';
 import { GLOBALS } from '../globals';
 
 export default class OpExecutor {
@@ -16,6 +16,7 @@ export default class OpExecutor {
     opData: OpData = null;
     isPacked: boolean = false;
     finish: boolean = false;
+    bufferType: BufferType = BufferType.FrameBuffer;
 
     constructor(op: ModelOp, idx: number) {
         const {
@@ -23,7 +24,8 @@ export default class OpExecutor {
             outputs,
             attrs = {},
             type,
-            isPacked = false
+            isPacked = false,
+            bufferType = BufferType.FrameBuffer
         } = op;
 
         this.id = `${type}_${+new Date()}_${idx}`;
@@ -33,6 +35,7 @@ export default class OpExecutor {
         this.subAttrs = op['sub-attrs'] || [];
         this.type = type;
         this.isPacked = isPacked;
+        this.bufferType = bufferType;
         this.finish = false;
         this.next = '';
         this.opData = null;

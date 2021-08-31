@@ -11,4 +11,5 @@ export interface WebGLContextAttributes {
   depth?: boolean;
   stencil?: boolean;
   failIfMajorPerformanceCaveat?: boolean;
+  powerPreference?: string;
 }

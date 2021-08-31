@@ -1,4 +1,4 @@
-import { ModelVar, OpExecutor, OpInputs, OpOutputs, AttrsData } from '../commons/interface';
+import { ModelVar, OpExecutor, OpInputs, OpOutputs, AttrsData, BufferType } from '../commons/interface';
 import { GLOBALS } from '../globals';
 import Tensor from './tensor';
 import opBehaviors from './opBehaviors';
@@ -24,6 +24,7 @@ export default class OpData {
     tensorData: ModelVar[] = [];
     isFinalOp: boolean = false;
     modelName: string;
+    bufferType: BufferType = BufferType.FrameBuffer;
 
     constructor(op: OpExecutor, iLayer: number, vars: ModelVar[], isFinalOp: boolean, modelName: string) {
         const {
@@ -31,7 +32,8 @@ export default class OpData {
             inputs,
             outputs,
             attrs,
-            isPacked
+            isPacked,
+            bufferType = BufferType.FrameBuffer
         } = op;
 
         this.modelName = modelName;
@@ -40,6 +42,7 @@ export default class OpData {
         this.name = type;
         this.realName = type;
         this.isPackedOp = isPacked;
+        this.bufferType = bufferType;
         this.vars = vars;
         this.iLayer = iLayer;
         this.isFinalOp = isFinalOp;

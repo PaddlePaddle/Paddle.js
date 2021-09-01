@@ -68,8 +68,8 @@ export default class MediaProcessor {
             }] as InputFeed[];
         }
 
-        this.pixelWidth = pixels.width;
-        this.pixelHeight = pixels.height;
+        this.pixelWidth = (pixels as HTMLImageElement).naturalWidth || pixels.width;
+        this.pixelHeight = (pixels as HTMLImageElement).naturalHeight || pixels.height;
 
 
         this.fitToTargetSize(pixels, imageDataInfo, env.get('webgl_feed_process'));

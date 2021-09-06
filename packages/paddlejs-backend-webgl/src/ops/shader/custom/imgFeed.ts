@@ -8,8 +8,8 @@ function mainFunc() {
 
     void main(void) {
         vec2 outCoord = vCoord.xy;
-        vec4 counter = TEXTURE2D(texture_origin, vCoord.xy);
-        setPackedOutput(counter);
+        vec4 origin = TEXTURE2D(texture_origin, vCoord.xy);
+        setPackedOutput(origin);
     }
     `;
 }

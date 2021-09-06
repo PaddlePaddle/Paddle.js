@@ -1,5 +1,5 @@
 import type Tensor from '@paddlejs/paddlejs-core/src/opFactory/tensor';
-import { OpData, ModelVar } from '@paddlejs/paddlejs-core/src/commons/interface';
+import { OpData, ModelVar, OpUniform } from '@paddlejs/paddlejs-core/src/commons/interface';
 
 interface Query {
     name: string;
@@ -11,5 +11,6 @@ export {
     Tensor,
     OpData,
     Query,
-    ModelVar
+    ModelVar,
+    OpUniform
 };

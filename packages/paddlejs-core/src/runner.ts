@@ -209,12 +209,17 @@ export default class Runner {
             return tensorData.find(tensor => tensor.tensorId.endsWith('_image'));
         }) as OpExecutor;
 
-        let imageInputTensor: Tensor = imageOp.opData.inputTensors[0];
-        const imageInputTensorParams = imageInputTensor.opts;
-        imageInputTensorParams.shape = feed[0].shape;
-        imageInputTensorParams.data = feed[0].data;
-        imageInputTensor = new Tensor(imageInputTensorParams);
-        imageOp.opData.inputTensors = [imageInputTensor];
+        const imageInputTensor = imageOp.opData.inputTensors.find(
+            tensor => tensor.tensorId.endsWith('_image')
+        );
+        imageInputTensor.data = feed[0].data;
+
+        if (env.get('webgl_feed_process') || env.get('webgl_gpu_pipeline')) {
+            const imageInputTensorParams = imageInputTensor.opts;
+            imageInputTensorParams.shape = feed[0].shape;
+            imageInputTensorParams.data = feed[0].data;
+            imageOp.opData.inputTensors = [new Tensor(imageInputTensorParams)];
+        }
     }
 
     async execute() {

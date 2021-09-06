@@ -1,4 +1,4 @@
-import { ModelVar, OpExecutor, OpInputs, OpOutputs, AttrsData, BufferType } from '../commons/interface';
+import { ModelVar, OpExecutor, OpInputs, OpOutputs, AttrsData, BufferType, OpUniform } from '../commons/interface';
 import { GLOBALS } from '../globals';
 import Tensor from './tensor';
 import opBehaviors from './opBehaviors';
@@ -15,6 +15,7 @@ export default class OpData {
     data: AttrsData = {};
     attrs: object = {};
     subAttrs: object[] = [];
+    uniform: OpUniform | null = null;
     inputTensors: Tensor[] = [];
     outputTensors: Tensor[] = [];
     fShaderParams: object[] = [];
@@ -33,7 +34,8 @@ export default class OpData {
             outputs,
             attrs,
             isPacked,
-            bufferType = BufferType.FrameBuffer
+            bufferType = BufferType.FrameBuffer,
+            uniform = null
         } = op;
 
         this.modelName = modelName;
@@ -48,6 +50,7 @@ export default class OpData {
         this.isFinalOp = isFinalOp;
         this.input = inputs;
         this.output = outputs;
+        this.uniform = uniform;
         // tensor数据
         this.inputTensors = [];
         this.outputTensors = [];
@@ -214,7 +217,7 @@ export default class OpData {
                 data: data.data || null,
                 persistable: data.persistable || false,
                 interpType: data.interpType || 'NEAREST',
-                isPacked: this.isPackedOp || false,
+                isPacked: this.isPackedOp || data.packed || false,
                 binding: index,
                 noLayout: GLOBALS.backendInstance?.noLayout
             });

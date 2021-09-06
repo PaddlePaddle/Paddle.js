@@ -13,6 +13,7 @@ export interface ModelOp {
     outputs: OpOutputs;
     isPacked?: boolean;
     bufferType?: BufferType;
+    uniform?: OpUniform | null;
 }
 
 export interface ModelVar {
@@ -22,6 +23,7 @@ export interface ModelVar {
     persistable?: boolean;
     tensorName?: string;
     interpType?: string;
+    packed?: boolean;
     total?: number;
     runtime?: number;
 }
@@ -66,10 +68,34 @@ export interface OpOutputs {
 }
 
 export interface OpAttrs {
-    [key: string]: any
+    [key: string]: any;
 }
 
+export enum UniformType {
+    uniform1f = '1f',
+    uniform1fv = '1fv',
+    uniform1i = '1i',
+    uniform1iv = '1iv',
+    uniform2f = '2f',
+    uniform2fv = '2fv',
+    uniform2i = '2i',
+    uniform2iv = '2iv',
+    uniform3f = '3f',
+    uniform3fv = '3fv',
+    uniform3i = '3i',
+    uniform3iv = '3iv',
+    uniform4f = '4f',
+    uniform4fv = '4fv',
+    uniform4i = '4i',
+    uniform4iv = '4iv'
+}
 
+export interface OpUniform {
+    [key: string]: {
+        type: UniformType,
+        value: number | Array<number> | Int32Array | Float32Array
+    };
+}
 export interface OpExecutor {
     id: string;
     type: string;
@@ -85,6 +111,7 @@ export interface OpExecutor {
     outputsName: string[];
     execute: Function;
     bufferType?: BufferType;
+    uniform?: OpUniform | null;
 }
 
 interface Behavior {
@@ -129,11 +156,12 @@ export interface OpData {
     program: any;
     tensorData: any[];
     modelName: string;
+    uniform: OpUniform | null;
 }
 
 
 export interface AttrsData {
-    [key: string]: any
+    [key: string]: any;
 }
 
 

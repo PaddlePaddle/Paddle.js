@@ -34,7 +34,7 @@ export default function buildShader(textureConf, op, inputTensors, fShaderParams
         const mainCode = mainFunc(textureParams, opParams);
 
         code
-        = `   ${prefixCode}
+        = ` ${prefixCode}
             ${commonFuncCode}
             ${activeFuncCode}
             ${textureCode}

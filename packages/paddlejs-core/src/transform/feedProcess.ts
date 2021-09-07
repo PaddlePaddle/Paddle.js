@@ -38,7 +38,6 @@ export default class WebglFeedProcess extends Transformer {
         originImgVar.name = IMG_ORIGIN;
         originImgVar.shape = [1, 1, feedShape.fh, feedShape.fw];
         originImgVar.persistable = false;
-        originImgVar.interpType = 'LINEAR';
         delete originImgVar.data;
 
         vars.push(originImgVar);

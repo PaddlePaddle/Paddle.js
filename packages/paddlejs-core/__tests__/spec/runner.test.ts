@@ -1,7 +1,7 @@
 import fetch from 'jest-fetch-mock';
 import { Runner, registerBackend } from '../../src';
 import Backend from '../env/mock/backend';
-import * as ops from '../env/mock/ops';
+import { ops } from '../env/mock/ops';
 import modelInfo from '../env/mock/model.json';
 
 // enabal mock fetch & return model.json

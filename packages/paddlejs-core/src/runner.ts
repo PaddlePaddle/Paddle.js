@@ -214,7 +214,7 @@ export default class Runner {
         );
         imageInputTensor.data = feed[0].data;
 
-        if (env.get('webgl_feed_process')) {
+        if (env.get('webgl_feed_process') || env.get('webgl_gpu_pipeline')) {
             const imageInputTensorParams = imageInputTensor.opts;
             imageInputTensorParams.shape = feed[0].shape;
             imageInputTensorParams.data = feed[0].data;

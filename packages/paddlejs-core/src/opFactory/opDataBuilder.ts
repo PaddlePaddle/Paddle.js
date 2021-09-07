@@ -1,4 +1,4 @@
-import { ModelVar, OpExecutor, OpInputs, OpOutputs, AttrsData } from '../commons/interface';
+import { ModelVar, OpExecutor, OpInputs, OpOutputs, AttrsData, BufferType, OpUniform } from '../commons/interface';
 import { GLOBALS } from '../globals';
 import Tensor from './tensor';
 import opBehaviors from './opBehaviors';
@@ -15,6 +15,7 @@ export default class OpData {
     data: AttrsData = {};
     attrs: object = {};
     subAttrs: object[] = [];
+    uniform: OpUniform | null = null;
     inputTensors: Tensor[] = [];
     outputTensors: Tensor[] = [];
     fShaderParams: object[] = [];
@@ -24,6 +25,7 @@ export default class OpData {
     tensorData: ModelVar[] = [];
     isFinalOp: boolean = false;
     modelName: string;
+    bufferType: BufferType = BufferType.FrameBuffer;
 
     constructor(op: OpExecutor, iLayer: number, vars: ModelVar[], isFinalOp: boolean, modelName: string) {
         const {
@@ -31,7 +33,9 @@ export default class OpData {
             inputs,
             outputs,
             attrs,
-            isPacked
+            isPacked,
+            bufferType = BufferType.FrameBuffer,
+            uniform = null
         } = op;
 
         this.modelName = modelName;
@@ -40,11 +44,13 @@ export default class OpData {
         this.name = type;
         this.realName = type;
         this.isPackedOp = isPacked;
+        this.bufferType = bufferType;
         this.vars = vars;
         this.iLayer = iLayer;
         this.isFinalOp = isFinalOp;
         this.input = inputs;
         this.output = outputs;
+        this.uniform = uniform;
         // tensor数据
         this.inputTensors = [];
         this.outputTensors = [];
@@ -146,15 +152,25 @@ export default class OpData {
 
     buildProgram() {
         const name = this.name;
-        const inputTensors = this.inputTensors;
-        this.program = this.outputTensors.map((outTensor, index) => GLOBALS.backendInstance.createProgram({
-            name,
-            outTensor,
-            inputTensors,
-            shaderParams: this.fShaderParams[index],
-            runtime: index,
-            isFinalOp: this.isFinalOp
-        }));
+        const opKey = `${GLOBALS.backend}_${name}`;
+        const op = GLOBALS.opRegistry.ops[opKey];
+        try {
+            if (!op) {
+                throw new Error(`[unregistered op] ${name}`);
+            }
+            const inputTensors = this.inputTensors;
+            this.program = this.outputTensors.map((outTensor, index) => GLOBALS.backendInstance.createProgram({
+                op,
+                outTensor,
+                inputTensors,
+                shaderParams: this.fShaderParams[index],
+                runtime: index,
+                isFinalOp: this.isFinalOp
+            }));
+        }
+        catch (e) {
+            console.error(e);
+        }
     }
 
     // process op tensorData and attrs according to op behaviors
@@ -186,7 +202,6 @@ export default class OpData {
         catch (e) {
             console.error(e);
         }
-
     }
 
     buildTensor() {
@@ -202,7 +217,7 @@ export default class OpData {
                 data: data.data || null,
                 persistable: data.persistable || false,
                 interpType: data.interpType || 'NEAREST',
-                isPacked: this.isPackedOp || false,
+                isPacked: this.isPackedOp || data.packed || false,
                 binding: index,
                 noLayout: GLOBALS.backendInstance?.noLayout
             });

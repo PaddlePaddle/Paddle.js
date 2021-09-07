@@ -4,7 +4,7 @@
  */
 
 import { PaddlejsBackend, env } from '@paddlejs/paddlejs-core';
-import { ModelVar, OpData, Query } from './types';
+import { OpData, Query, OpUniform } from './types';
 import { GLHelper, EShaderType } from './webgl/WebGLUtils';
 import { GLTexture, TextureConfig } from './webgl/WebGLTexture';
 import { vShaderSource, vShaderData } from './ops/vShader';
@@ -12,7 +12,6 @@ import buildShader from './webgl/buildShader';
 import GLProgram from './webgl/WebGLProgram';
 import { getSizeFromShape, nhwc2nchw } from './utils/dataProcess';
 import queryProcess from './utils/queryProcess';
-
 
 export default class WebGLBackend extends PaddlejsBackend {
     gl: WebGLRenderingContext;
@@ -39,19 +38,12 @@ export default class WebGLBackend extends PaddlejsBackend {
 
     constructor() {
         super();
-        this.gl = GLHelper.getWebGLRenderingContext();
-        this.textureConf = GLTexture.getTextureConfig(this.gl);
-        this.glVersion = GLHelper.getWebglVersion();
-        this.MAX_TEXTURE_SIZE = this.gl.getParameter(this.gl.MAX_TEXTURE_SIZE);
-
         // 计算texture cache
         this.cacheTextures = {};
         this.uniformLocations = {};
         // texture buffer
         this.texturesMap = {};
-
         this.queryList = [];
-
         // 当前op输出texture
         this.currentTexture = null;
 
@@ -66,7 +58,8 @@ export default class WebGLBackend extends PaddlejsBackend {
 
     async init() {
         // 初始化webgl环境
-        const gl = this.gl;
+        const gl = this.gl = GLHelper.createWebGLRenderingContext();
+        this.glVersion = GLHelper.getWebglVersion();
         // 关闭相关功能
         gl.disable(gl.DEPTH_TEST);
         gl.disable(gl.STENCIL_TEST);
@@ -88,13 +81,16 @@ export default class WebGLBackend extends PaddlejsBackend {
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.frameBuffer);
         // pbo
         this.pbo = gl.createBuffer();
+        // texture conf
+        this.textureConf = GLTexture.getTextureConfig(gl);
+        this.MAX_TEXTURE_SIZE = this.gl.getParameter(this.gl.MAX_TEXTURE_SIZE);
     }
 
 
 
-    createProgram({ name, outTensor, inputTensors, shaderParams, runtime, isFinalOp }) {
+    createProgram({ op, outTensor, inputTensors, shaderParams, runtime, isFinalOp }) {
         // genFscode  buildShader
-        const fsCode = buildShader(this.textureConf, name, inputTensors, shaderParams, runtime);
+        const fsCode = buildShader(this.textureConf, op, inputTensors, shaderParams, runtime);
 
         const programInstance = new GLProgram(this.gl, this.vShader as WebGLShader, fsCode, outTensor);
         programInstance.fsCode = fsCode;
@@ -117,12 +113,17 @@ export default class WebGLBackend extends PaddlejsBackend {
             const tensorId = outTensor.tensorId;
             this.setOutProps(outTensor);
 
-            // 生成帧缓存材质
-            this.attachFrameBuffer(tensorId);
+            if (opData.bufferType === 'frameBuffer') {
+                // render to frame buffer
+                this.attachFrameBuffer(tensorId);
+            }
+            else {
+                // render to color buffer
+                this.attachColorBuffer();
+            }
             program.setProgram(this.gl, this.vertexBuffer, isRendered);
             this.program = program;
-
-            this.render(opData.inputTensors, opData.iLayer, isRendered, index, isPacked, opData.modelName);
+            this.render(opData, isRendered, index, isPacked);
         });
 
         if (query) {
@@ -131,11 +132,17 @@ export default class WebGLBackend extends PaddlejsBackend {
         }
     }
 
-    async read(fetchInfo: ModelVar): Promise<number[]> {
+    async read(fetchInfo): Promise<number[]> {
+        if (env.get('webgl_gpu_pipeline')) {
+            const gl = this.gl as WebGLRenderingContext;
+            this.frameBuffer = gl.createFramebuffer();
+            gl.bindFramebuffer(gl.FRAMEBUFFER, this.frameBuffer);
+            return [];
+        }
+
         const pbo = this.createPBO();
         await this.createAndWaitForFence();
         const result = this.downloadFloat32TensorFromBuffer(pbo);
-
         let shape = fetchInfo ? fetchInfo.shape : [];
         if (env.get('webgl_pack_output')) {
             return result.slice(0, getSizeFromShape(shape));
@@ -153,7 +160,7 @@ export default class WebGLBackend extends PaddlejsBackend {
     createPBO() {
         const textureConf = this.textureConf as TextureConfig;
         if (this.glVersion === 2) {
-            const gl2 = this.gl as any;
+            const gl2 = this.gl as WebGL2RenderingContext;
             const buffer = this.pbo;
             gl2.bindBuffer(gl2.PIXEL_PACK_BUFFER, buffer);
             const sizeBytes = 4 * 4 * this.width_texture_out * this.height_texture_out;
@@ -164,21 +171,21 @@ export default class WebGLBackend extends PaddlejsBackend {
         }
 
         let downloadData;
-        const gl2 = this.gl;
-        let textureType = gl2.FLOAT;
+        const gl = this.gl as WebGLRenderingContext;
+        let textureType = gl.FLOAT;
         if (textureConf.isFloatTextureReadPixelsEnabled) {
             downloadData = new Float32Array(this.width_texture_out * this.height_texture_out * 4);
         }
         else {
             downloadData = new Uint8Array(this.width_texture_out * this.height_texture_out * 4);
-            textureType = gl2.UNSIGNED_BYTE;
+            textureType = gl.UNSIGNED_BYTE;
         }
-        gl2.readPixels(
+        gl.readPixels(
             0,
             0,
             this.width_texture_out,
             this.height_texture_out,
-            gl2.RGBA,
+            gl.RGBA,
             textureType,
             downloadData);
         if (textureConf.isFloatTextureReadPixelsEnabled) {
@@ -190,7 +197,7 @@ export default class WebGLBackend extends PaddlejsBackend {
     }
 
     async createAndWaitForFence() {
-        const gl2 = this.gl as any;
+        const gl2 = this.gl as WebGL2RenderingContext;
         const isFenceEnabled = (gl2.fenceSync != null);
         let isFencePassed = () => true;
         if (isFenceEnabled) {
@@ -219,9 +226,9 @@ export default class WebGLBackend extends PaddlejsBackend {
     }
 
     downloadFloat32TensorFromBuffer(buffer) {
-        const gl2 = this.gl as any;
         const size: number = 4 * this.width_texture_out * this.height_texture_out;
         if (this.glVersion === 2) {
+            const gl2 = this.gl as WebGL2RenderingContext;
             const pixels = new Float32Array(size);
             gl2.bindBuffer(gl2.PIXEL_PACK_BUFFER, buffer);
             gl2.getBufferSubData(gl2.PIXEL_PACK_BUFFER, 0, pixels);
@@ -265,6 +272,26 @@ export default class WebGLBackend extends PaddlejsBackend {
         this.total_shape = total_shape;
     }
 
+    attachColorBuffer() {
+        const gl = this.gl;
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+        gl.canvas.width = this.width_shape_out;
+        gl.canvas.height = this.height_shape_out;
+        gl.viewport(
+            0,
+            0,
+            gl.canvas.width,
+            gl.canvas.height
+        );
+        gl.scissor(
+            0,
+            0,
+            gl.canvas.width,
+            gl.canvas.height
+        );
+    }
+
     attachFrameBuffer(tensorId: string) {
         this.currentTexture = this.texturesMap[tensorId];
 
@@ -288,28 +315,33 @@ export default class WebGLBackend extends PaddlejsBackend {
             this.width_texture_out,
             this.height_texture_out
         );
-        return this.frameBuffer;
     }
 
     render(
-        data: any = [],
-        iLayer: number = 0,
+        opData: OpData,
         isRendered: Boolean = false,
         index: number,
-        isPacked: Boolean = false,
-        modelName: string
+        isPacked: Boolean = false
     ) {
+        const {
+            inputTensors: data,
+            uniform = null,
+            iLayer = 0,
+            modelName
+        } = opData;
         const gl = this.gl;
-        const that = this;
         let textureIndex = 0;
         data.forEach(item => {
-            const loc = that.getUniformLoc('texture_' + item.name, iLayer, isRendered, index, modelName);
+            const loc = this.getUniformLoc('texture_' + item.name, iLayer, isRendered, index, modelName);
             if (!loc) {
                 return;
             }
-            that.initTexture(textureIndex, item, isPacked);
+            this.initTexture(textureIndex, item, isPacked);
             gl.uniform1i(loc, textureIndex++);
         });
+        if (uniform) {
+            this.setUniform(uniform, iLayer, isRendered, index, modelName);
+        }
         // gl.clearColor(.0, .0, .0, 1);
         // gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -319,6 +351,7 @@ export default class WebGLBackend extends PaddlejsBackend {
         const gl = this.gl;
         const textureConf = this.textureConf as TextureConfig;
         const tensorName = item.opts.type;
+        const packed = isPacked || item.isPacked;
         let texture;
 
         if (!item.persistable) {
@@ -334,7 +367,6 @@ export default class WebGLBackend extends PaddlejsBackend {
                 this.cacheTextures[tensorName] = texture;
             }
         }
-
         gl.activeTexture(gl[`TEXTURE${index}`]);
         gl.bindTexture(gl.TEXTURE_2D, texture);
 
@@ -343,9 +375,10 @@ export default class WebGLBackend extends PaddlejsBackend {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
             if (this.glVersion === 2) {
                 const useHalfFloat = env.get('webgl_force_half_float_texture');
-                const internalFormat = isPacked
+                const internalFormat = packed
                     ? useHalfFloat
                         ? textureConf.internalFormatPackedHalfFloat
                         : textureConf.internalFormatPacked
@@ -353,7 +386,7 @@ export default class WebGLBackend extends PaddlejsBackend {
                         ? textureConf.internalFormatHalfFloat
                         : textureConf.internalFormat;
 
-                const textureFormat = isPacked ? gl.RGBA : textureConf.textureFormat;
+                const textureFormat = packed ? gl.RGBA : textureConf.textureFormat;
 
                 gl.texImage2D(
                     gl.TEXTURE_2D,
@@ -370,7 +403,7 @@ export default class WebGLBackend extends PaddlejsBackend {
             else {
                 const temp = new Float32Array(item.width_texture * item.height_texture * 4);
                 for (let i = 0; i < item.data.length; i++) {
-                    if (isPacked) {
+                    if (packed) {
                         temp[i] = item.data[i];
                     }
                     else {
@@ -393,6 +426,17 @@ export default class WebGLBackend extends PaddlejsBackend {
             }
             item.data = null;
         }
+    }
+
+    setUniform(uniform: OpUniform, iLayer, isRendered, index, modelName) {
+        const uniformParamKeys = Object.keys(uniform);
+        const gl = this.gl;
+        uniformParamKeys.forEach(key => {
+            const uniformType = uniform[key].type;
+            const uniformValue = uniform[key].value;
+            const loc = this.getUniformLoc(key, iLayer, isRendered, index, modelName);
+            GLHelper.setUniformParam(gl, loc, uniformType, uniformValue);
+        });
     }
 
     getUniformLoc(name, ilayer, isRendered, index, modelName) {

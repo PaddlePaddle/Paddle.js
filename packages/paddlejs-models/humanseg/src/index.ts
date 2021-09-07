@@ -21,8 +21,8 @@ blurFilter.addFilter('blur', 10);
 
 
 export async function load(needPreheat = true, enableLightModel = false) {
-    const modelpath = 'https://paddlejs.cdn.bcebos.com/models/shufflenetv2_humanseg_398x224/model.json';
-    const lightModelPath = 'https://paddlejs.cdn.bcebos.com/models/shufflenetv2_humanseg_288x160/model.json';
+    const modelpath = 'https://paddlejs.cdn.bcebos.com/models/shufflenetv2_398x224/model.json';
+    const lightModelPath = 'https://paddlejs.cdn.bcebos.com/models/shufflenetv2_288x160/model.json';
     const modelPath = enableLightModel ? lightModelPath : modelpath;
     if (enableLightModel) {
         WIDTH = 288;
@@ -115,6 +115,7 @@ function genBackgroundSize() {
  * draw human seg
  * @param {Array} seg_values seg values of the input image
  * @param {HTMLCanvasElement} canvas the dest canvas draws the pixels
+ * @param {HTMLCanvasElement} backgroundCanvas the background canvas draws the pixels
  */
 export function drawHumanSeg(
     seg_values: number[],
@@ -196,10 +197,10 @@ export function blurBackground(seg_values: number[], dest_canvas) {
 /**
  * draw mask without human
  * @param {Array} seg_values seg_values of the input image
- * @param {HTMLCanvasElement} background canvas
- * @param {HTMLCanvasElement} canvas the dest canvas draws the pixels
+ * @param {HTMLCanvasElement} dest the dest canvas draws the pixels
+ * @param {HTMLCanvasElement} canvas background canvas
  */
-export function drawMask(seg_values: number[], canvas: HTMLCanvasElement, dest) {
+export function drawMask(seg_values: number[], dest: HTMLCanvasElement, canvas: HTMLCanvasElement) {
     const tempCanvas = document.createElement('canvas') as HTMLCanvasElement;
     const tempContext = tempCanvas.getContext('2d') as CanvasRenderingContext2D;
     tempCanvas.width = WIDTH;
@@ -219,4 +220,3 @@ export function drawMask(seg_values: number[], canvas: HTMLCanvasElement, dest) 
     tempContext.putImageData(tempScaleData, 0, 0);
     dest_ctx.drawImage(tempCanvas, 0, 0, WIDTH, HEIGHT);
 }
-

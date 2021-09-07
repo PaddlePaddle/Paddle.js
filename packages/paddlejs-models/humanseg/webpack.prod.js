@@ -3,7 +3,8 @@ const path = require('path');
 module.exports = {
     mode: 'production',
     entry: {
-        index: ['./src/index']
+        index: ['./src/index'],
+        index_gpu: ['./src/index_gpu']
     },
     resolve: {
         // Add ".ts" and ".tsx" as resolvable extensions.

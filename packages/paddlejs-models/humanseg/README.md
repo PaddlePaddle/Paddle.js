@@ -19,7 +19,7 @@ import * as humanseg from '@paddlejs-models/humanseg';
 await humanseg.load();
 
 // use 288x160 shape model, preheat and predict faster with a little loss of precision
-// await humanseg.load(true, true); 
+// await humanseg.load(true, true);
 
 // get the gray value [2, 398, 224] or [2, 288, 160];
 const { data } = await humanseg.getGrayValue(img);
@@ -37,7 +37,38 @@ humanseg.drawHumanSeg(data, canvas2) ;
 
 // draw the mask with background
 const canvas3 = document.getElementById('mask') as HTMLCanvasElement;
-humanseg.drawMask(data, back_canvas, canvas3);
+humanseg.drawMask(data, canvas3, back_canvas);
+
+```
+
+## gpu pipeline
+
+```js
+
+// 引入 humanseg sdk
+import * as humanseg from '@paddlejs-models/humanseg/lib/index_gpu';
+
+// load humanseg model, use 398x224 shape model, and preheat
+await humanseg.load();
+
+// use 288x160 shape model, preheat and predict faster with a little loss of precision
+// await humanseg.load(true, true);
+
+
+// background canvas
+const back_canvas = document.getElementById('background') as HTMLCanvasElement;
+
+// draw human segmentation
+const canvas1 = document.getElementById('back') as HTMLCanvasElement;
+await humanseg.drawHumanSeg(input, canvas1, back_canvas) ;
+
+// blur background
+const canvas2 = document.getElementById('blur') as HTMLCanvasElement;
+await humanseg.drawHumanSeg(input, canvas2) ;
+
+// draw the mask with background
+const canvas3 = document.getElementById('mask') as HTMLCanvasElement;
+await humanseg.drawMask(input, canvas3, back_canvas);
 
 ```
 

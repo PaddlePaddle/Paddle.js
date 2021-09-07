@@ -2,11 +2,13 @@
  * @file graph transformer
  */
 
+import { findVarByKey, AddItemToVars } from '../commons/utils';
 import Transformer from './transformer';
 
+
 function getTensorShapeFromVals(name, vars) {
-    const result = vars.filter(item => item.name === name);
-    return result.length ? result[0].shape : [];
+    const result = findVarByKey(vars, name);
+    return result ? result.shape : [];
 }
 
 function buildOutputVarInfo(inputs, outputShape, axis, vars) {
@@ -83,7 +85,8 @@ export default class SplitOp extends Transformer {
             // change outputname of next op
             opList[opLen - 1].outputs.Out = [outputName];
             ops.splice(index, 1, ...opList);
-            vars.splice(vars.length - 1, 0, ...varList);
+
+            AddItemToVars(vars, varList);
         }
     }
 }

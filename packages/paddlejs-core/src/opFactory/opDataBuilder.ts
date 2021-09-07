@@ -3,6 +3,7 @@ import { GLOBALS } from '../globals';
 import Tensor from './tensor';
 import opBehaviors from './opBehaviors';
 import * as Utils from './utils';
+import { findVarByKey } from '../commons/utils';
 
 // model的名字和paddleJS的tensor名字mapping
 
@@ -67,12 +68,12 @@ export default class OpData {
     constructTensorData() {
         Object.keys(this.output).forEach(key => {
             this.output[key].forEach((name: string, index: number) => {
-                this.output[key][index] = this.getTensorVar(name)[0];
+                this.output[key][index] = this.getTensorVar(name);
             });
         });
 
         Object.keys(this.input).forEach(key => {
-            this.input[key] = this.getTensorVar(this.input[key][0]);
+            this.input[key] = [this.getTensorVar(this.input[key][0])];
         });
 
         for (const key in this.output) {
@@ -142,10 +143,11 @@ export default class OpData {
     }
 
     getTensorVar(name: string) {
-        const data = this.vars.filter(item => item.name === name || item.name === name.replace(/_packed$/, ''));
-        if (data.length > 0 && name.endsWith('_packed')) {
-            const packedData = Utils.packOpData(data[0], name);
-            return [packedData];
+        const varName = name.replace(/_packed$/, '');
+        const data = findVarByKey(this.vars, varName);
+        if (data && name.endsWith('_packed')) {
+            const packedData = Utils.packOpData(data, name);
+            return packedData;
         }
         return data;
     }

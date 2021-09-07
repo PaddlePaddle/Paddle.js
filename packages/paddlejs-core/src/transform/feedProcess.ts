@@ -3,6 +3,7 @@
  */
 
 import { ModelOp } from '../commons/interface';
+import { findVarByKey, AddItemToVars } from '../commons/utils';
 import env from '../env';
 import Transformer from './transformer';
 
@@ -25,7 +26,7 @@ export default class WebglFeedProcess extends Transformer {
         } = modelConfig;
 
         // make img_pre_processed var
-        const imgVar = vars.find(item => item.name === 'image');
+        const imgVar = findVarByKey(vars, 'image');
         const [, , h, w] = imgVar.shape;
         imgVar.shape = [1, 1, h, w];
         const processImgVar = Object.assign({}, imgVar);
@@ -40,8 +41,7 @@ export default class WebglFeedProcess extends Transformer {
         originImgVar.persistable = false;
         delete originImgVar.data;
 
-        vars.push(originImgVar);
-        vars.push(processImgVar);
+        AddItemToVars(vars, [originImgVar, processImgVar]);
 
         // change recieve_img op input
         const imageOriginInputOp = ops.find(item => {

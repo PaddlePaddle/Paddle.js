@@ -4,6 +4,7 @@
 
 import env from '../env';
 import { ModelOp } from '../commons/interface';
+import { findVarByKey, AddItemToVars } from '../commons/utils';
 import { formatShape } from '../opFactory/utils';
 import Transformer from './transformer';
 
@@ -22,7 +23,7 @@ export default class PackOut extends Transformer {
         const [ops, vars] = args;
         const fetchOp = ops.find(item => item.type === 'fetch');
         const [inputName] = fetchOp.inputs.X;
-        const fetchInputVar = vars.find(item => item.name === inputName);
+        const fetchInputVar = findVarByKey(vars, inputName);
         const [n, c, h, w] = formatShape(fetchInputVar.shape);
 
         // transform data from nhwc to nchw
@@ -68,7 +69,7 @@ export default class PackOut extends Transformer {
         fetchOp.inputs.X = [FINAL_PACK_OP_NAME];
         fetchOp.attrs['origin_shape'] = [n, c, h, w];
         ops.push(...[nchwOp, packOutOp]);
-        vars.push(...[nchwVar, packOutVar]);
+        AddItemToVars(vars, [nchwVar, packOutVar]);
     }
 }
 

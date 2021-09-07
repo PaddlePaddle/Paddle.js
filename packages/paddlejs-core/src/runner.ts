@@ -4,7 +4,7 @@ import { Model, ModelConfig, InputFeed, ModelVar, GraphType } from './commons/in
 import OpData from './opFactory/opDataBuilder';
 import Tensor from './opFactory/tensor';
 import { GLOBALS } from './globals';
-import { getGlobalInterface } from './commons/utils';
+import { getGlobalInterface, findVarByKey, AddItemToVars } from './commons/utils';
 import MediaProcessor from './mediaProcessor';
 import env from './env';
 
@@ -174,7 +174,7 @@ export default class Runner {
             if (feedOpInputs.length > 1) {
                 // 多输入
                 preheatFeedData = feedOpInputs.map(inputName => {
-                    const feedInfo = vars.find(item => item.name === inputName);
+                    const feedInfo = findVarByKey(vars, inputName);
                     const shape = feedInfo.shape;
                     const [w, h, c = 3, n = 1] = shape.reverse();
 
@@ -184,7 +184,7 @@ export default class Runner {
             }
         }
         else {
-            preheatFeedData = vars.find(item => item.name === 'image');
+            preheatFeedData = findVarByKey(vars, 'image');
             if (preheatFeedData) {
                 preheatFeedData.data = new Float32Array(fc * fh * fw).fill(1.0);
                 return;
@@ -197,7 +197,7 @@ export default class Runner {
             };
         }
 
-        vars.push(preheatFeedData);
+        AddItemToVars(vars, preheatFeedData);
     }
 
     updateFeedData(feed) {
@@ -266,9 +266,7 @@ export default class Runner {
 
     async read() {
         const fetchOp = this.graphGenerator.getFetchExecutor();
-        const fetchVar = this.model.vars.find(
-            item => item.name === fetchOp.inputs.X[0]
-        ) as ModelVar;
+        const fetchVar = findVarByKey(this.model.vars, fetchOp.inputs.X[0]) as ModelVar;
         const fetchInfo = {
             name: fetchVar.name,
             shape: fetchOp.attrs['origin_shape'] || fetchVar.shape

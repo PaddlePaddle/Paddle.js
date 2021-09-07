@@ -1,4 +1,4 @@
-export default {
+const ops = {
     mul: {
         params: '',
         main: '',
@@ -49,4 +49,9 @@ export default {
             'normalizeDim'
         ]
     }
+};
+
+
+export {
+    ops
 };

@@ -1,8 +1,9 @@
 /**
- * @file humanseg model use cpu and gpu mix pipeline
+ * @file humanseg model use gpu unique pipeline
  */
 
-import * as humanseg from '../src';
+
+import * as humanseg from '../src/index_gpu';
 
 async function load() {
     await humanseg.load();
@@ -29,13 +30,9 @@ img.onload = () => {
 
 
 async function run(input) {
-    const {
-        data
-    } = await humanseg.getGrayValue(input);
-
-    humanseg.blurBackground(data, blur_canvas);
-    humanseg.drawHumanSeg(data, back_canvas, background_canvas);
-    humanseg.drawMask(data, mask_canvas, background_canvas);
+    await humanseg.blurBackground(input, blur_canvas);
+    await humanseg.drawHumanSeg(input, back_canvas, background_canvas);
+    await humanseg.drawMask(input, mask_canvas, background_canvas);
 }
 
 function selectImage(file) {

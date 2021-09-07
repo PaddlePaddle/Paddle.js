@@ -4,7 +4,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
     mode: 'development',
     entry: {
-        index: './demo/index.ts'
+        index: './demo/index.ts',
+        gpu: './demo/index_gpu.ts'
     },
     devtool: 'inline-source-map',
     devServer: {
@@ -15,6 +16,11 @@ module.exports = {
         new HtmlWebpackPlugin({
             filename: 'index.html',
             chunks: ['index'],
+            template: './demo/index.html'
+        }),
+        new HtmlWebpackPlugin({
+            filename: 'gpu.html',
+            chunks: ['gpu'],
             template: './demo/index.html'
         })
     ],

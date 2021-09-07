@@ -16,7 +16,7 @@ import * as humanseg from '@paddlejs-models/humanseg';
 await humanseg.load();
 
 // 指定下载更轻量模型, 该模型 shape 288x160，预测过程会更快，但会有少许精度损失
-// await humanseg.load(true, true); 
+// await humanseg.load(true, true);
 
 
 // 获取分割后的像素 alpha 值，大小为 [2, 398, 224] 或者 [2, 288, 160]
@@ -35,7 +35,38 @@ humanseg.drawHumanSeg(data, canvas2) ;
 
 // 绘制人型遮罩，在新背景上隐藏人像
 const canvas3 = document.getElementById('mask') as HTMLCanvasElement;
-humanseg.drawMask(data, back_canvas, canvas3);
+humanseg.drawMask(data, canvas3, back_canvas);
+
+```
+
+## gpu pipeline
+
+```js
+
+// 引入 humanseg sdk
+import * as humanseg from '@paddlejs-models/humanseg/lib/index_gpu';
+
+// 默认下载 398x224 shape 的模型，默认执行预热
+await humanseg.load();
+
+// 指定下载更轻量模型, 该模型 shape 288x160，预测过程会更快，但会有少许精度损失
+// await humanseg.load(true, true);
+
+
+// 获取 background canvas
+const back_canvas = document.getElementById('background') as HTMLCanvasElement;
+
+// 背景替换， 使用 back_canvas 作为新背景实现背景替换
+const canvas1 = document.getElementById('back') as HTMLCanvasElement;
+await humanseg.drawHumanSeg(input, canvas1, back_canvas) ;
+
+// 背景虚化
+const canvas2 = document.getElementById('blur') as HTMLCanvasElement;
+await humanseg.drawHumanSeg(input, canvas2) ;
+
+// 绘制人型遮罩，在新背景上隐藏人像
+const canvas3 = document.getElementById('mask') as HTMLCanvasElement;
+await humanseg.drawMask(input, canvas3, back_canvas);
 
 ```
 

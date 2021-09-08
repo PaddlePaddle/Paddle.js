@@ -3,7 +3,8 @@
  */
 
 import env from './env';
-import { Model, ModelVar } from './commons/interface';
+import { Model } from './commons/interface';
+import { traverseVars } from './commons/utils';
 
 interface UrlConf {
     dir: string;
@@ -124,12 +125,10 @@ export default class ModelLoader {
         });
     }
 
-    traverse(arr: ModelVar[], allChunksData: Float32Array) {
+    traverse(vars, allChunksData: Float32Array) {
         let marker = 0; // 读到哪个位置了
         let len; // 当前op长度
-        arr.filter(item => {
-            return item.name;
-        }).forEach(item => {
+        traverseVars(vars, item => {
             len = item.shape.reduce((a, b) => a * b); // 长度为shape的乘积
             // 为了减少模型体积，模型转换工具不会导出非persistable的数据，这里只需要读取persistable的数据
             if (item.persistable) {

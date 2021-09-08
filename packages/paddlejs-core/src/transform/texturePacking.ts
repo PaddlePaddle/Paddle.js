@@ -5,7 +5,9 @@
 import { GLOBALS } from '../globals';
 import env from '../env';
 import OpExecutor from '../opFactory/opExecutor';
+import { findVarByKey } from '../commons/utils';
 import Transformer from './transformer';
+
 
 const packedOpConditions = {
     conv2d: (op, vars) => {
@@ -16,10 +18,10 @@ const packedOpConditions = {
         if (inputName === 'image') {
             return false;
         }
-        const inputOpData = vars.find(item => item.name === inputName);
+        const inputOpData = findVarByKey(vars, inputName);
         const inputShape = inputOpData.shape;
         // let inputData = inputOpData.data;
-        const filterOpData = vars.find(item => item.name === filterName);
+        const filterOpData = findVarByKey(vars, filterName);
         const filterShape = filterOpData.shape;
         // let filterData = filterOpData.data;
         // model 里 模型shape 可能不全

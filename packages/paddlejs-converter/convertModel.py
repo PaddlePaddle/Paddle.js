@@ -33,7 +33,7 @@ sliceDataSize = 4 * 1024
 # paddlepaddle运行程序实例
 program = None
 # 存放模型结构
-modelInfo = {"vars": [], "ops": [], "chunkNum": 0}
+modelInfo = {"vars": {}, "ops": [], "chunkNum": 0, "dataLayout": "nhwc"}
 # 存放参数数值（未排序）
 paramValuesDict = {}
 
@@ -236,7 +236,7 @@ def organizeModelVariableInfo(result):
     # 将var信息按照顺序，添加到model info的vars中
     for key, value in varInfoOrderDict.items():
         value["name"] = key
-        modelInfo["vars"].append(value)
+        modelInfo["vars"][key] = value
     print("Organizing model variables info successfully.")
 
 def organizeModelOpInfo():

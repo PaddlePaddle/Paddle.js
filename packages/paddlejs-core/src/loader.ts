@@ -77,7 +77,10 @@ export default class ModelLoader {
         return modelInfo;
     }
 
-    fetchOneChunk(path: string) {
+    async fetchOneChunk(path: string) {
+        if (env.get('fetch')) {
+            return await env.get('fetch')(path, { type: 'arrayBuffer' });
+        };
         return this.fetch(path).then(request => {
             return request.arrayBuffer();
         });
@@ -94,7 +97,7 @@ export default class ModelLoader {
         return `chunk_${i}.dat`;
     }
 
-    fetchChunks() {
+    async fetchChunks() {
         const counts = this.chunkNum;
         const chunkArray: any[] = [];
         for (let i = 1; i <= counts; i++) {
@@ -139,6 +142,9 @@ export default class ModelLoader {
     }
 
     fetch(path: string, params?: FetchParams) {
+        if (env.get('fetch')) {
+            return env.get('fetch')(path, params || {});
+        }
         const fetchParams = params || this.params;
         const method = fetchParams.method || 'get';
         const HeadersClass = this.inNode
@@ -179,6 +185,9 @@ export default class ModelLoader {
             load = new Promise((resolve, reject) => {
                 this.fetch(path, params)
                     .then(response => {
+                        if (env.get('fetch')) {
+                            return response;
+                        }
                         return this.isLocalFile && this.inNode
                             ? JSON.parse(response)
                             : response.json();

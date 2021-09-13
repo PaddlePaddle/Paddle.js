@@ -13,7 +13,7 @@ function mainFunc(
         float res = 0.0;
         int c1 = int(mod(float(oPos[1]), 4.0));
         int c = oPos[1];
-        vec4 o = getValueFromTensorPosPacking_origin(oPos[0], c / 4, oPos[2], oPos[3]) / 255.0;
+        vec4 o = getValueFromTensorPosPacking_origin(oPos[0], c / 4, oPos[2], oPos[3]);
 
         if (c1 == 0) {
             res = o.r;

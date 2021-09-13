@@ -4,10 +4,9 @@ import map from './map.json';
 load();
 
 async function load() {
-    const path = 'https://paddlejs.cdn.bcebos.com/models/mobileNetV2';
+    const path = 'https://paddlejs.cdn.bcebos.com/models/mobilenetV2_nchw';
     await mobilenet.load({
         path,
-        fileCount: 4,
         mean: [0.485, 0.456, 0.406],
         std: [0.229, 0.224, 0.225]
     }, map);

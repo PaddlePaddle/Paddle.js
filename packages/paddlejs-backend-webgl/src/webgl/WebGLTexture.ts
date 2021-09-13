@@ -53,9 +53,13 @@ export class GLTexture {
             const TEXTURE_FLOAT = 'OES_texture_float';
             const TEXTURE_HALF_FLOAT = 'OES_texture_half_float';
             textureFloat = gl.getExtension(TEXTURE_FLOAT);
-            textureHalfFloat = gl.getExtension(TEXTURE_HALF_FLOAT);
+            textureHalfFloat = gl.getExtension(TEXTURE_HALF_FLOAT).HALF_FLOAT_OES;
             frameBufferSupportFloat = this.isDownloadFloatTextureEnabled(gl, downloadInternalFormat);
-            isFloatTextureReadPixelsEnabled = this.isFloatTextureReadPixelsEnabledMethod(gl, 1);
+            isFloatTextureReadPixelsEnabled = this.isFloatTextureReadPixelsEnabledMethod(
+                gl,
+                1, // gl version
+                frameBufferSupportFloat
+            );
         }
 
         return {
@@ -72,7 +76,11 @@ export class GLTexture {
         };
     }
 
-    public static isFloatTextureReadPixelsEnabledMethod(webgl: WebGLRenderingContext, webGLVersion) {
+    public static isFloatTextureReadPixelsEnabledMethod(
+        webgl: WebGLRenderingContext,
+        webGLVersion,
+        frameBufferSupportFloat
+    ) {
         const gl = webgl as any;
         if (webGLVersion === 0) {
             return false;
@@ -104,7 +112,7 @@ export class GLTexture {
             1,
             0,
             gl.RGBA,
-            gl.getExtension('OES_texture_half_float').HALF_FLOAT_OES,
+            frameBufferSupportFloat ? gl.FLOAT : gl.getExtension('OES_texture_half_float').HALF_FLOAT_OES,
             null
         );
 
@@ -117,7 +125,6 @@ export class GLTexture {
         gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.FLOAT, new Float32Array(4));
 
         const readPixelsNoError = gl.getError() === gl.NO_ERROR;
-
 
         return frameBufferComplete && readPixelsNoError;
     }
@@ -228,7 +235,7 @@ export class GLTexture {
                 : gl.FLOAT
             : textureConf.frameBufferSupportFloat
                 ? gl.FLOAT
-                : textureConf.textureHalfFloat.HALF_FLOAT_OES;
+                : textureConf.textureHalfFloat;
 
         const textureTypeForReadPixel = isFinalOp
             ? textureConf.isFloatTextureReadPixelsEnabled

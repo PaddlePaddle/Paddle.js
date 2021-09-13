@@ -9,6 +9,7 @@ type Color = string;
 
 export default class MediaProcessor {
     targetContext: CanvasRenderingContext2D = {} as CanvasRenderingContext2D;
+    targetCanvas: HTMLCanvasElement;
     gapFillWith: Color = '#fff';
     mean: number[] = [0, 0, 0];
     std: number[] = [1, 1, 1];
@@ -18,8 +19,8 @@ export default class MediaProcessor {
     inputFeed: InputFeed[] = [];
 
     constructor() {
-        const targetCanvas = document.createElement('canvas') as HTMLCanvasElement;
-        this.targetContext = targetCanvas.getContext('2d') as CanvasRenderingContext2D;
+        this.targetCanvas = env.get('canvas2d') || document.createElement('canvas') as HTMLCanvasElement;
+        this.targetContext = this.targetCanvas.getContext('2d') as CanvasRenderingContext2D;
     };
 
     /**
@@ -57,7 +58,9 @@ export default class MediaProcessor {
             dHeight: opt.targetSize.height
         };
 
-        if (!(pixels instanceof HTMLImageElement
+        const input = pixels;
+        const isImageElementLike = pixels.path && pixels.width && pixels.height;
+        if (!isImageElementLike && !(pixels instanceof HTMLImageElement
             || pixels instanceof HTMLVideoElement
             || pixels instanceof HTMLCanvasElement)) {
             return [{
@@ -72,7 +75,7 @@ export default class MediaProcessor {
         this.pixelHeight = (pixels as HTMLImageElement).naturalHeight || pixels.height;
 
         const inGPU = env.get('webgl_gpu_pipeline') || env.get('webgl_feed_process');
-        this.fitToTargetSize(pixels, imageDataInfo, inGPU);
+        this.fitToTargetSize(isImageElementLike ? input.path : input, imageDataInfo, inGPU);
         data = this.getImageData(imageDataInfo);
         // process imageData in webgl
         if (inGPU) {
@@ -171,8 +174,8 @@ export default class MediaProcessor {
 
         imageDataInfo.dWidth = canvasWidth;
         imageDataInfo.dHeight = canvasHeight;
-        this.targetContext.canvas.width = canvasWidth;
-        this.targetContext.canvas.height = canvasHeight;
+        this.targetCanvas.width = canvasWidth;
+        this.targetCanvas.height = canvasHeight;
         this.targetContext.fillStyle = imageDataInfo.gapFillWith;
         this.targetContext.fillRect(0, 0, canvasHeight, canvasWidth);
         this.targetContext.drawImage(image, x, y, sw, sh);
@@ -190,4 +193,20 @@ export default class MediaProcessor {
         return this.targetContext.getImageData(dx, dy, dWidth, dHeight);
     }
 
+    cover(w, h, dw, dh) {
+        // 缩放后的宽高
+        let sw = dw;
+        let sh = dh;
+        // target的长宽比大些 就把原图的高变成target那么高
+        if (dw / dh * h / w >= 1) {
+            sw = Math.round(sh * w / h);
+        }
+        // target的长宽比小些 就把原图的宽变成target那么宽
+        else {
+            sh = Math.round(sw * h / w);
+        }
+
+        const scale = [sw / dw, sh / dh];
+        return scale;
+    }
 }

@@ -27,7 +27,7 @@ export default class Tensor {
     unformattedShapeLength: number = 0;
     shape_texture: number[] = [];
     exceedMax: boolean = false;
-    data: Float32Array | number[] | null = null;
+    data: Float32Array | number[] | Uint8Array | null = null;
     persistable: boolean = false;
     interpType: string = 'NEAREST';
 

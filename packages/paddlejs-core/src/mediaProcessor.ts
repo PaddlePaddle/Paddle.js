@@ -181,16 +181,6 @@ export default class MediaProcessor {
         this.targetContext.drawImage(image, x, y, sw, sh);
     }
 
-    readImageData(image) {
-        const w = (image as HTMLImageElement).naturalWidth || image.width;
-        const h = (image as HTMLImageElement).naturalHeight || image.height;
-        this.targetCanvas.width = w;
-        this.targetCanvas.height = h;
-        this.targetContext.drawImage(image, 0, 0, w, h);
-        const data = this.targetContext.getImageData(0, 0, w, h);
-        return data;
-    }
-
     /**
      * 获取图像内容
      * @param pixels

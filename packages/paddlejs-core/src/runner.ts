@@ -108,10 +108,17 @@ export default class Runner {
             return;
         }
 
-        const inputFeed: InputFeed[] = this.mediaProcessor.process(
-            media,
-            this.modelConfig
-        );
+        let inputFeed = [];
+        if (env.get('webgl_feed_process')) {
+            inputFeed = [media];
+        }
+        else {
+            inputFeed = this.mediaProcessor.process(
+                media,
+                this.modelConfig
+            );
+        }
+
         this.updateFeedData(inputFeed);
         const result = await this.execute();
         this.isExecuted = true;
@@ -176,7 +183,7 @@ export default class Runner {
                 preheatFeedData = feedOpInputs.map(inputName => {
                     const feedInfo = findVarByKey(vars, inputName);
                     const shape = feedInfo.shape;
-                    const [w, h, c = 3, n = 1] = shape.reverse();
+                    const [w, h, c, n = 1] = shape.reverse();
 
                     feedInfo.data = new Float32Array(n * c * h * w);
                     return feedInfo;
@@ -184,23 +191,28 @@ export default class Runner {
             }
         }
         else {
+            const feedC = env.get('webgl_feed_process') ? 4 : fc;
             preheatFeedData = findVarByKey(vars, 'image');
-            if (preheatFeedData) {
-                preheatFeedData.data = new Float32Array(fc * fh * fw).fill(1.0);
-                return;
-            }
-            preheatFeedData = {
-                data: new Float32Array(fc * fh * fw).fill(1.0),
+
+            const imageBaseInfo = {
                 name: 'image',
-                shape: [1, fc, fh, fw],
+                shape: [1, feedC, fh, fw],
                 persistable: true
             };
+            preheatFeedData = Object.assign(
+                imageBaseInfo,
+                preheatFeedData,
+                {
+                    data: new Float32Array(feedC * fh * fw).fill(1.0)
+                }
+            );
         }
 
         AddItemToVars(vars, preheatFeedData);
     }
 
-    updateFeedData(feed) {
+    updateFeedData(inputFeed) {
+        const feed = inputFeed[0];
         const imageOp = this.weightMap.find(item => {
             if (!item.opData) {
                 return null;
@@ -212,14 +224,35 @@ export default class Runner {
         const imageInputTensor = imageOp.opData.inputTensors.find(
             tensor => tensor.tensorId.endsWith('_image')
         );
-        imageInputTensor.data = feed[0].data;
+        imageInputTensor.data = feed.data;
 
+        // todo
         if (env.get('webgl_feed_process') || env.get('webgl_gpu_pipeline')) {
+            // support imageDataLike feed which has unit8ClampedArray data and width + height or shape
+            // support ImageElementLike feed which is HTMLImageElement or HTMLVideoElement or HTMLCanvasElement
+            let shape = feed.shape || [1, 1, feed.height, feed.width];
+            let feedData = new Uint8Array(feed.data || []);
+            const isImageElementLike = feed.width && feed.height && !feed.data;
+            if (isImageElementLike) {
+                const w = (feed as HTMLImageElement).naturalWidth || feed.width;
+                const h = (feed as HTMLImageElement).naturalHeight || feed.height;
+                shape = [1, 1, h, w];
+                feedData = feed;
+            }
+
             const imageInputTensorParams = imageInputTensor.opts;
-            imageInputTensorParams.shape = feed[0].shape;
-            imageInputTensorParams.data = feed[0].data;
-            imageOp.opData.inputTensors = [new Tensor(imageInputTensorParams)];
+            imageInputTensorParams.shape = shape;
+            const imageOpData = imageOp.opData;
+            const imageTensor = new Tensor(imageInputTensorParams);
+            imageTensor.data = feedData;
+            imageOpData.inputTensors = [imageTensor];
+
+            const [h, w] = shape.slice(-2);
+            const [dh, dw] = imageOpData.outputTensors[0].shape.slice(-2);
+            const scale = this.mediaProcessor.cover(w, h, dw, dh);
+            imageOp.uniform.u_scale.value = scale;
         }
+
     }
 
     async execute() {
@@ -253,7 +286,8 @@ export default class Runner {
         if (env.get('debug')
             && op.opData?.outputTensors
             && op.opData.outputTensors[0]
-            && op.opData.outputTensors[0].tensorId === this.modelName + '_' + env.get('ns').layerName) {
+            && op.opData.outputTensors[0].tensorId === this.modelName + '_'
+                + (env.get('ns').layerName || env.get('layerName'))) {
             console.info(op.opData.name + '_' + op.opData.iLayer, 'runner op');
             return;
         }

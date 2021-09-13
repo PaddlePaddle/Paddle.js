@@ -2,7 +2,7 @@
  * @file image pre process
  */
 
-import { ModelOp } from '../commons/interface';
+import { ModelOp, UniformType } from '../commons/interface';
 import { findVarByKey, AddItemToVars } from '../commons/utils';
 import env from '../env';
 import Transformer from './transformer';
@@ -22,6 +22,8 @@ export default class WebglFeedProcess extends Transformer {
         const {
             mean = [0, 0, 0],
             std = [1, 1, 1],
+            scale = [1, 1],
+            pos = [0, 0],
             feedShape
         } = modelConfig;
 
@@ -74,7 +76,9 @@ export default class WebglFeedProcess extends Transformer {
         const imgOriginOp: ModelOp = {
             attrs: {
                 mean,
-                std
+                std,
+                scale,
+                pos
             },
             inputs: {
                 X: ['image']
@@ -83,6 +87,16 @@ export default class WebglFeedProcess extends Transformer {
                 Y: [IMG_ORIGIN]
             },
             type: 'imgFeed',
+            uniform: {
+                u_scale: {
+                    type: UniformType.uniform2fv,
+                    value: [1, 1]
+                },
+                u_pos: {
+                    type: UniformType.uniform2fv,
+                    value: [0, 0]
+                }
+            },
             isPacked: true
         };
 

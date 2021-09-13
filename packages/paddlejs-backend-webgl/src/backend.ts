@@ -59,7 +59,14 @@ export default class WebGLBackend extends PaddlejsBackend {
     async init() {
         // 初始化webgl环境
         const gl = this.gl = GLHelper.createWebGLRenderingContext();
+        if (!this.gl) {
+            return;
+        }
         this.glVersion = GLHelper.getWebglVersion();
+
+        // texture conf
+        this.textureConf = GLTexture.getTextureConfig(gl);
+        this.MAX_TEXTURE_SIZE = gl.getParameter(gl.MAX_TEXTURE_SIZE);
         // 关闭相关功能
         gl.disable(gl.DEPTH_TEST);
         gl.disable(gl.STENCIL_TEST);
@@ -81,9 +88,6 @@ export default class WebGLBackend extends PaddlejsBackend {
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.frameBuffer);
         // pbo
         this.pbo = gl.createBuffer();
-        // texture conf
-        this.textureConf = GLTexture.getTextureConfig(gl);
-        this.MAX_TEXTURE_SIZE = this.gl.getParameter(this.gl.MAX_TEXTURE_SIZE);
     }
 
 
@@ -324,19 +328,20 @@ export default class WebGLBackend extends PaddlejsBackend {
         isPacked: Boolean = false
     ) {
         const {
-            inputTensors: data,
+            inputTensors: data = [],
             uniform = null,
             iLayer = 0,
             modelName
         } = opData;
         const gl = this.gl;
         let textureIndex = 0;
+
         data.forEach(item => {
+            this.initTexture(textureIndex, item, isPacked);
             const loc = this.getUniformLoc('texture_' + item.name, iLayer, isRendered, index, modelName);
             if (!loc) {
                 return;
             }
-            this.initTexture(textureIndex, item, isPacked);
             gl.uniform1i(loc, textureIndex++);
         });
         if (uniform) {
@@ -369,14 +374,38 @@ export default class WebGLBackend extends PaddlejsBackend {
         }
         gl.activeTexture(gl[`TEXTURE${index}`]);
         gl.bindTexture(gl.TEXTURE_2D, texture);
+        const data = item.data;
 
-        if (item.data) {
+        if (data) {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
-            if (this.glVersion === 2) {
+            if (data instanceof Uint8Array || data instanceof Uint8ClampedArray) {
+                gl.texImage2D(
+                    gl.TEXTURE_2D,
+                    0,
+                    gl.RGBA,
+                    item.width_texture,
+                    item.height_texture,
+                    0,
+                    gl.RGBA,
+                    gl.UNSIGNED_BYTE,
+                    data
+                );
+            }
+            else if (!(data instanceof Float32Array || data instanceof Array)) {
+                gl.texImage2D(
+                    gl.TEXTURE_2D,
+                    0,
+                    gl.RGBA,
+                    gl.RGBA,
+                    gl.UNSIGNED_BYTE,
+                    data
+                );
+            }
+            else if (this.glVersion === 2) {
                 const useHalfFloat = env.get('webgl_force_half_float_texture');
                 const internalFormat = packed
                     ? useHalfFloat
@@ -397,7 +426,7 @@ export default class WebGLBackend extends PaddlejsBackend {
                     0,
                     textureFormat,
                     gl.FLOAT,
-                    item.data
+                    data as Float32Array
                 );
             }
             else {

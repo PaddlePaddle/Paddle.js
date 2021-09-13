@@ -14,6 +14,8 @@ export interface ModelOp {
     isPacked?: boolean;
     bufferType?: BufferType;
     uniform?: OpUniform | null;
+    scale?: number[];
+    pos?: number[];
 }
 
 export interface ModelVar {
@@ -169,7 +171,7 @@ export interface InputFeed {
     data: Float32Array | number[];
     shape: number[];
     name: string;
-    persistable: boolean;
+    persistable?: boolean;
 }
 
 

@@ -84,7 +84,7 @@ export class GLHelper {
     }
 
     public static createCanvas() {
-        return document.createElement('canvas');
+        return env.get('canvas') || (document && document.createElement('canvas'));
     }
 
     public static setWebglVersion(version: number) {
@@ -110,7 +110,11 @@ export class GLHelper {
 
         const canvas = this.createCanvas();
 
-        canvas.addEventListener('webglcontextlost', (ev: Event) => {
+        if (!canvas) {
+            return null;
+        }
+
+        canvas.addEventListener && canvas.addEventListener('webglcontextlost', (ev: Event) => {
             ev.preventDefault();
             throw Error('webgl context is lost~');
         }, false);

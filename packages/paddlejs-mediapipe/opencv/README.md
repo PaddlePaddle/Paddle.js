@@ -9,6 +9,10 @@ Modify the [opencv](/https://github.com/opencv/opencv) build_js script to packag
 
 Opencv3.4 contains most of the commonly used APIs, supporting cv.boxPoints api.
 
+# opencv_ocr.js
+
+Encapsulate the opencv API used by ocr module.
+
 # modules 
 OpenCV modules:
 --     To be built:                 **core imgproc js video**

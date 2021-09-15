@@ -9,6 +9,10 @@
 
 opencv3.4版本，包含大多数常用api，增加 cv.boxPoints api。
 
+# opencv_ocr.js
+
+封装ocr模块所用到的opencv api。
+
 # 模块
 
 OpenCV 模块:

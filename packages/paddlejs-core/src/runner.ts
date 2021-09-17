@@ -75,7 +75,7 @@ export default class Runner {
                 const opData = new OpData(
                     op,
                     iLayer,
-                    this.model.vars,
+                    this.model,
                     isFinalOp,
                     this.modelName
                 );

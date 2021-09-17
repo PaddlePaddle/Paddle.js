@@ -127,3 +127,46 @@ export function packOpData(opData, packedName) {
     }
     return packedOpData;
 }
+
+
+/**
+ * 将nchw排布数据转为nhwc排布数据
+ * @param {Array} data tensor data
+ * @param {Array} shape nchw
+ * @returns {Array} nhwc data
+ */
+function nchw2nhwc(data: number[] | Float32Array, shape: number[]): number[] | Float32Array {
+    const [N, C, H, W] = shape;
+    const HXW = H * W;
+    const CXHXW = C * H * W;
+    const nhwcData: number[] | Float32Array = [];
+    for (let n = 0; n < N; n++) {
+        for (let h = 0; h < H; h++) {
+            for (let w = 0; w < W; w++) {
+                for (let c = 0; c < C; c++) {
+                    nhwcData.push(data[n * CXHXW + c * HXW + h * W + w]);
+                }
+            }
+        }
+    }
+    return nhwcData;
+}
+
+/**
+ * 生成 tensor data，如果数据排布为 nhwc 则直接返回 Float32Array，否则进行排布变换
+ * @param {Array} data tensor data
+ * @param {string} dataLayout layout
+ * @param {Array} shape nchw
+ * @param {boolean} isPacked
+ * @returns {Float32Array} nhwc data
+ */
+export function genTensorData(data: number[] | Float32Array, dataLayout: string, shape: number[], isPacked: boolean) {
+    if (dataLayout === 'nhwc') {
+        return new Float32Array(data);
+    }
+    const nhwcData: Float32Array | number[] = nchw2nhwc(
+        data,
+        [shape[0], shape[1] * (isPacked ? 4 : 1), shape[2], shape[3]]
+    );
+    return new Float32Array(nhwcData);
+}

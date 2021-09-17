@@ -1,4 +1,7 @@
-import { ModelVar, OpExecutor, OpInputs, OpOutputs, AttrsData, BufferType, OpUniform } from '../commons/interface';
+import {
+    ModelVar, Model, OpExecutor, OpInputs, OpOutputs,
+    AttrsData, BufferType, OpUniform
+} from '../commons/interface';
 import { GLOBALS } from '../globals';
 import Tensor from './tensor';
 import opBehaviors from './opBehaviors';
@@ -21,6 +24,7 @@ export default class OpData {
     outputTensors: Tensor[] = [];
     fShaderParams: object[] = [];
     vars: ModelVar[] = [];
+    dataLayout: string = '';
     iLayer: number = 0;
     program: string[] = [];
     tensorData: ModelVar[] = [];
@@ -28,7 +32,7 @@ export default class OpData {
     modelName: string;
     bufferType: BufferType = BufferType.FrameBuffer;
 
-    constructor(op: OpExecutor, iLayer: number, vars: ModelVar[], isFinalOp: boolean, modelName: string) {
+    constructor(op: OpExecutor, iLayer: number, model: Model, isFinalOp: boolean, modelName: string) {
         const {
             type,
             inputs,
@@ -46,7 +50,8 @@ export default class OpData {
         this.realName = type;
         this.isPackedOp = isPacked;
         this.bufferType = bufferType;
-        this.vars = vars;
+        this.vars = model.vars;
+        this.dataLayout = model.dataLayout || '';
         this.iLayer = iLayer;
         this.isFinalOp = isFinalOp;
         this.input = inputs;
@@ -221,7 +226,8 @@ export default class OpData {
                 interpType: data.interpType || 'NEAREST',
                 isPacked: this.isPackedOp || data.packed || false,
                 binding: index,
-                noLayout: GLOBALS.backendInstance?.noLayout
+                noLayout: GLOBALS.backendInstance?.noLayout,
+                dataLayout: this.dataLayout
             });
             if (tensorName === 'out') {
                 this.outputTensors.push(tensor);

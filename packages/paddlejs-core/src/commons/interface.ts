@@ -32,6 +32,7 @@ export interface ModelVar {
 
 export interface Model {
     chunkNum?: number;
+    dataLayout?: string;
     ops: ModelOp[];
     vars: ModelVar[];
     multiOutputs?: ModelVar[]

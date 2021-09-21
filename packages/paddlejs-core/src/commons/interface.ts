@@ -38,17 +38,13 @@ export interface Model {
     multiOutputs?: ModelVar[]
 }
 
-export interface ModelConfig {
+export interface RunnerConfig {
     modelPath: string;
     modelName?: string;
     feedShape: {
         fc?: number;
         fw: number;
         fh: number;
-    };
-    targetSize?: {
-        height: number;
-        width: number;
     };
     fill?: string; // 缩放后用什么颜色填充不足方形部分
     mean?: number[];

@@ -34,31 +34,21 @@ export async function load() {
 
     detectRunner = new Runner({
         modelPath: 'https://paddlejs.cdn.bcebos.com/models/gesture_detection',
-        fileCount: 2,
         feedShape: {
             fw: detFeedShape,
             fh: detFeedShape
         },
-        fill: '#fff',
-        targetSize: {
-            height: detFeedShape,
-            width: detFeedShape
-        }
+        fill: '#fff'
     });
     const detectInit = detectRunner.init();
 
     recRunner = new Runner({
         modelPath: 'https://paddlejs.cdn.bcebos.com/models/gesture_recognization',
-        fileCount: 1,
         feedShape: {
             fw: recFeedShape,
             fh: recFeedShape
         },
-        fill: '#fff',
-        targetSize: {
-            height: recFeedShape,
-            width: recFeedShape
-        }
+        fill: '#fff'
     });
     const recInit = recRunner.init();
 

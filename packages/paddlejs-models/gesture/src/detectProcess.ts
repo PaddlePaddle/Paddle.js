@@ -284,10 +284,6 @@ class DetectProcess {
             scale: 224,
             std: [1, 1, 1],
             targetShape: [1, 3, 224, 224],
-            targetSize: {
-                width: 224,
-                height: 224
-            },
             normalizeType: 1
         });
         this.feed = [{

@@ -12,7 +12,7 @@ async function load() {
     run(img);
 }
 
-load();
+
 const back_canvas = document.getElementById('back') as HTMLCanvasElement;
 const blur_canvas = document.getElementById('blur') as HTMLCanvasElement;
 const mask_canvas = document.getElementById('mask') as HTMLCanvasElement;
@@ -27,7 +27,7 @@ img.onload = () => {
     background_canvas.getContext('2d').drawImage(img, 0, 0, background_canvas.width, background_canvas.height);
 };
 
-
+load();
 
 async function run(input) {
     await humanseg.blurBackground(input, blur_canvas);

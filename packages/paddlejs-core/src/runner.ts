@@ -1,6 +1,6 @@
 import Loader from './loader';
 import Graph from './graph';
-import { Model, ModelConfig, InputFeed, ModelVar, GraphType } from './commons/interface';
+import { Model, RunnerConfig, InputFeed, ModelVar, GraphType } from './commons/interface';
 import OpData from './opFactory/opDataBuilder';
 import Tensor from './opFactory/tensor';
 import { GLOBALS } from './globals';
@@ -14,7 +14,7 @@ import { accShape } from './opFactory/utils';
 
 export default class Runner {
     // instance field
-    modelConfig: ModelConfig = {} as ModelConfig;
+    runnerConfig: RunnerConfig = {} as RunnerConfig;
     modelName: string;
     isPaused: boolean = false;
     model: Model = {} as Model;
@@ -25,8 +25,8 @@ export default class Runner {
     mediaProcessor: MediaProcessor | null = null;
     needPreheat: boolean = true;
 
-    constructor(options: ModelConfig | null) {
-        this.modelConfig = Object.assign({}, options);
+    constructor(options: RunnerConfig | null) {
+        this.runnerConfig = Object.assign({}, options);
         this.needPreheat = options.needPreheat === undefined ? true : options.needPreheat;
         this.modelName = options.modelName || Date.now().toString();
         this.weightMap = [];
@@ -55,13 +55,13 @@ export default class Runner {
     }
 
     async load() {
-        const { modelPath } = this.modelConfig;
+        const { modelPath } = this.runnerConfig;
         const loader = new Loader(modelPath);
         this.model = await loader.load();
     }
 
     genGraph() {
-        this.graphGenerator = new Graph(this.model, this.modelConfig);
+        this.graphGenerator = new Graph(this.model, this.runnerConfig);
         this.weightMap = this.graphGenerator.createGraph();
     }
 
@@ -115,7 +115,7 @@ export default class Runner {
         else {
             inputFeed = this.mediaProcessor.process(
                 media,
-                this.modelConfig
+                this.runnerConfig
             );
         }
 
@@ -126,7 +126,7 @@ export default class Runner {
     }
 
     async predictWithFeed(data: number[] | InputFeed[] | ImageData, callback?, shape?: number[]) {
-        const { fc = 3, fw, fh } = this.modelConfig.feedShape;
+        const { fc = 3, fw, fh } = this.runnerConfig.feedShape;
         let inputFeed;
 
         if (Array.isArray(data)) {
@@ -171,7 +171,7 @@ export default class Runner {
     }
 
     genFeedData() {
-        const { type, feedShape } = this.modelConfig;
+        const { type, feedShape } = this.runnerConfig;
         const { fc = 3, fh, fw } = feedShape;
         const vars = this.model.vars;
         let preheatFeedData;

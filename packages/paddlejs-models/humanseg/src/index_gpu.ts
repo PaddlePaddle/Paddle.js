@@ -93,7 +93,7 @@ export async function preheat() {
 export async function drawHumanSeg(
     input: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement,
     canvas: HTMLCanvasElement,
-    back: HTMLCanvasElement
+    back?: HTMLCanvasElement
 ) {
     if (!segImgOp) {
         segImgOp = runner.weightMap[runner.weightMap.length - 1].opData;
@@ -104,7 +104,9 @@ export async function drawHumanSeg(
     canvas.width = input.width;
     canvas.height = input.height;
     const destCtx = canvas.getContext('2d');
-    destCtx.drawImage(back, -backgroundSize.bx, -backgroundSize.by, backgroundSize.bw, backgroundSize.bh);
+    if (back) {
+        destCtx.drawImage(back, -backgroundSize.bx, -backgroundSize.by, backgroundSize.bw, backgroundSize.bh);
+    }
     destCtx.drawImage(gl.canvas, -backgroundSize.bx, -backgroundSize.by, backgroundSize.bw, backgroundSize.bh);
 }
 

@@ -47,7 +47,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Runner } from '@paddlejs/paddlejs-core';
-import { GLOBALS } from '@paddlejs/paddlejs-core/globals';
+import { GLOBALS } from '@paddlejs/paddlejs-core/src/globals';
 import '@paddlejs/paddlejs-backend-webgl';
 import Utils from './utils';
 
@@ -64,7 +64,6 @@ export default Vue.extend({
                     },
                     fetchShape: [1, 1000, 10, 1],
                     fill: '#fff',
-                    targetSize: { height: 224, width: 224 },
                     needPreheat: false
                 },
                 {
@@ -75,7 +74,6 @@ export default Vue.extend({
                     },
                     fetchShape: [1, 1000, 10, 1],
                     fill: '#fff',
-                    targetSize: { height: 224, width: 224 },
                     needPreheat: false
                 },
                 {
@@ -86,7 +84,6 @@ export default Vue.extend({
                     },
                     fetchShape: [1, 40, 10, 1],
                     fill: '#fff',
-                    targetSize: { height: 224, width: 224 },
                     needPreheat: false
                 },
                 {
@@ -97,7 +94,6 @@ export default Vue.extend({
                     },
                     fetchShape: [1, 1920, 10 , 1],
                     fill: '#fff',
-                    targetSize: { height: 256, width: 256 },
                     needPreheat: false
                 },
                 {
@@ -108,7 +104,6 @@ export default Vue.extend({
                     },
                     fetchShape: [1, 9, 1, 1],
                     fill: '#fff',
-                    targetSize: { height: 224, width: 224 },
                     needPreheat: false
                 },
                 {
@@ -119,7 +114,6 @@ export default Vue.extend({
                     },
                     fetchShape: [1, 2, 192, 192],
                     fill: '#fff',
-                    targetSize: { height: 224, width: 224 },
                     needPreheat: false
                 }
             ],

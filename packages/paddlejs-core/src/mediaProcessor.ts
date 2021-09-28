@@ -109,13 +109,11 @@ export default class MediaProcessor {
      */
     allReshapeToRGB(imageData, opt) {
         // mean和std是介于0-1之间的
-        const { mean, std, targetShape, bgr } = opt;
+        const { mean, std, targetShape, bgr, normalizeType = 0 } = opt;
         const [, c, h, w] = targetShape;
         const data = imageData.data || imageData;
         const result = new Float32Array(h * w * c);
         let offset = 0;
-        // 将数据映射为0~1， 1：映射为-1~1之间
-        const normalizeType = 0;
         // h w c
         for (let i = 0; i < h; ++i) {
             const iw = i * w;

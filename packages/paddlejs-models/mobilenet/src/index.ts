@@ -36,15 +36,12 @@ export async function load(config: ModelConfig, map: string[] | MobilenetMap) {
             fh: 224
         },
         fill: '#fff',
-        targetSize: {
-            height: 224,
-            width: 224
-        },
         mean: mean || [],
         std: std || [],
         needPreheat
     });
     env.set('webgl_feed_process', true);
+    env.set('webgl_pack_channel', true);
     await runner.init();
 }
 

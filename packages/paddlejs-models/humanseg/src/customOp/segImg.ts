@@ -31,7 +31,7 @@ function mainFunc({
 
 
         float origin_alpha = TEXTURE2D(texture_origin, outCoord.xy / 2.0 + (0.5, 0.5)).r;
-        vec4 counter = TEXTURE2D(texture_counter, outCoord.xy) / 255.0;
+        vec4 counter = TEXTURE2D(texture_counter, outCoord.xy);
         vec4 res = vec4(0.0);
 
         if (type == 0) {

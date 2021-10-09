@@ -16,6 +16,7 @@ import paddle.fluid as fluid
 import paddle as paddle
 import copy
 from functools import reduce
+import rnn
 
 
 # 输入模型所在目录
@@ -41,6 +42,8 @@ paramValuesDict = {}
 postOps = []
 # 在转换过程中新生成的、需要添加到vars中的variable
 appendedVarList = []
+# rnn op索引
+rnnIndex = -1
 
 # 转换模型中需要过滤掉的参数
 needFilterAttributes = ['op_callstack', 'col', 'op_role', 'op_namescope', 'op_role_var',
@@ -320,6 +323,9 @@ def organizeModelOpInfo():
             attrs[name] = value
         opInfo["attrs"] = attrs
 
+        if (op.type == 'rnn'):
+            global rnnIndex
+            rnnIndex = index
 
         # multiclass_nms 单独处理
         if (op.type == 'multiclass_nms'):
@@ -399,7 +405,7 @@ def appendConnectOp(fetch_targets):
     ops.append(op)
     ops.append(fetchOp)
 
-    vars.append(outputVar)
+    vars['connect_result'] = outputVar
     modelInfo['multiOutputs'] = targets
     return targets
 
@@ -423,6 +429,10 @@ def convertToPaddleJSModel():
 
     # 获取program中所有的var，按照字母顺序加入到model info，同时读取参数数值
     organizeModelVariableInfo(result)
+
+    # 拆分rnn op
+    if (rnnIndex > 0):
+        rnn.splice_rnn_op(modelInfo, rnnIndex)
 
     # 对多输出模型追加connect算子
     if len(fetch_targets) > 1:

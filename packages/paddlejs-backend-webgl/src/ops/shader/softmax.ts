@@ -33,13 +33,6 @@ function mainFunc(
             }
             res = exp(o) / total;
         }
-        else if (${axisVal} == 2) {
-            for (int i = 0; i < ${origin.height_shape}; i++){
-            float temp = getValueFromTensorPos_origin(oPos[0], oPos[1], i, oPos[3]);
-            total += exp(temp);
-            }
-            res = exp(o) / total;
-        }
         else {
             for (int i = 0; i < ${origin.width_shape}; i++){
             float temp = getValueFromTensorPos_origin(oPos[0], oPos[1], oPos[2], i);

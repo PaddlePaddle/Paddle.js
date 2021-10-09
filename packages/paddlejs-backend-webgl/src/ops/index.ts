@@ -47,6 +47,12 @@ import nearest_interp_v2 from './shader/nearest_interp_v2';
 import elementwise_pow from './shader/elementwise_pow';
 import elementwise_sub from './shader/elementwise_sub';
 import cast from './shader/cast';
+import fill_constant_batch_size_like from './shader/fill_constant_batch_size_like';
+import rnn_matmul from './shader/rnn/rnn_matmul';
+import rnn_sigmoid from './shader/rnn/rnn_sigmoid';
+import rnn_tanh from './shader/rnn/rnn_tanh';
+import rnn_origin from './shader/rnn/rnn_origin';
+import pool2d_avg from './shader/pool2d_avg';
 
 import {
     imgFeed, pack_out, nhwc_2_nchw, unpacked_2_packed,
@@ -96,6 +102,12 @@ const ops = {
     nearest_interp,
     nearest_interp_v2,
     cast,
+    fill_constant_batch_size_like,
+    rnn_matmul,
+    rnn_tanh,
+    rnn_sigmoid,
+    rnn_origin,
+    pool2d_avg,
     prelu: dynamic('prelu'),
     relu6: dynamic('relu6'),
     leakyRelu: dynamic('leakyRelu'),

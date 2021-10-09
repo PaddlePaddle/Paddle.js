@@ -12,12 +12,23 @@ export default class FormatInputsX extends Transformer {
     transform(...args: any) {
         const [originOp] = args;
 
-        if (originOp.type !== 'concat' && originOp.type !== 'connect') {
+        if (originOp.type !== 'concat'
+        && originOp.type !== 'connect'
+        && originOp.type !== 'rnn_origin'
+        && originOp.type !== 'rnn_matmul'
+        ) {
             return;
         }
         const {
             inputs
         } = originOp;
+
+        if ((originOp.type === 'rnn_origin' || originOp.type === 'rnn_matmul') && inputs.WeightList.length > 0) {
+            inputs.WeightList.forEach((item, index) => {
+                inputs[`weightlist_${index}`] = [item];
+            });
+            return;
+        }
 
         if (inputs.X.length > 4) {
             throw Error('Not yet supporting concat input tensors more than 4.');

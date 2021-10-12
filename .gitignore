@@ -8,3 +8,4 @@ coverage
 lerna-debug.log
 .vscode
 !e2e/dist
+e2e/dist/*_bundle.js

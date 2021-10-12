@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
     mode: 'production',
     entry: {
-        index: ['./src/index']
+        index: [path.resolve(__dirname, './src/index')]
     },
     resolve: {
         // Add ".ts" and ".tsx" as resolvable extensions.
@@ -21,6 +21,9 @@ module.exports = {
     output: {
         filename: '[name].js',
         path: path.resolve(__dirname, 'lib'),
-        libraryTarget: 'umd'
+        globalObject: 'this',
+        libraryTarget: 'umd',
+        library: 'paddlejsMobilenet',
+        publicPath: '/'
     }
 };

@@ -26,6 +26,9 @@ module.exports = {
     output: {
         filename: '[name].js',
         path: path.resolve(__dirname, 'lib'),
-        libraryTarget: 'umd'
+        libraryTarget: 'umd',
+        library: ['paddlejs', 'gesture'],
+        globalObject: 'this',
+        publicPath: '/'
     }
 };

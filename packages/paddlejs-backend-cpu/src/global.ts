@@ -1,4 +1,5 @@
 
+// @ts-ignore
 import { getGlobalNamespace } from '@paddlejs/paddlejs-core/globals';
 import { Arr, Obj, Value } from './utils/json';
 

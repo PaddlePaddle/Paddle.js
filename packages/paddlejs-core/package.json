@@ -2,9 +2,21 @@
   "name": "@paddlejs/paddlejs-core",
   "version": "2.1.0",
   "description": "",
-  "main": "lib/index",
+  "main": "cjs/index",
+  "umd:main": "lib/index",
+  "module": "es/index",
+  "types": "es/index.d.ts",
+  "typings": "es/index.d.ts",
+  "files": [
+    "cjs",
+    "es",
+    "lib",
+    "README.md",
+    "README_cn.md"
+  ],
   "scripts": {
-    "build": "webpack --config webpack.prod.js",
+    "build": "rm -rf lib es cjs && tsc & tsc --module esnext --outDir ./es && webpack --config webpack.prod.js",
+    "build:check": "tsc",
     "test": "jest"
   },
   "sideEffects": false,

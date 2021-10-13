@@ -3,7 +3,7 @@
  * @author yueshuangyan
  */
 
-import { GLOBALS } from '@paddlejs/paddlejs-core/globals';
+import { GLOBALS } from '@paddlejs/paddlejs-core';
 
 export default class Program {
     shape?: number[]; // 当前program输出shape

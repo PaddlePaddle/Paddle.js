@@ -1,5 +1,5 @@
 {
-    "extends": "../../tsconfig",
+    "extends": "../../tsconfig.json",
     "include": [
         "src/"
     ],
@@ -10,14 +10,13 @@
         "node_modules/"
     ],
     "compilerOptions": {
-        "outDir": "dist",
         "baseUrl": ".",
+        "outDir": "./cjs",
         "lib": ["ESNext", "dom"],
+        "module": "commonjs",
+        "skipLibCheck": true,
         "typeRoots": [
             "src/@types"
-        ],
-        "paths": {
-            "@paddlejs/paddlejs-core": ["../paddlejs-core/src/index"]
-        }
+        ]
     }
 }

@@ -3,6 +3,8 @@
   "version": "0.0.2-beta.0",
   "description": "Node.js backend with a WebGL context for Paddle.js",
   "main": "lib/index",
+  "types": "lib/index.d.ts",
+  "typings": "lib/index.d.ts",
   "scripts": {
     "start": "nodemon -e ts,tsx --config nodemon.json --exec ts-node test/op/opTest.ts",
     "dev-model": "nodemon -e ts,tsx --config nodemon.json --exec ts-node test/model/modelTest.ts",

@@ -7,8 +7,11 @@
         "node_modules/"
     ],
     "compilerOptions": {
-        "outDir": "dist",
+        "baseUrl": ".",
+        "outDir": "./cjs",
+        "lib": ["ESNext", "dom"],
+        "module": "commonjs",
+        "skipLibCheck": true,
         "types": ["jest", "node"]
     }
 }
-  

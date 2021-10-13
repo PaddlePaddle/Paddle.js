@@ -1,7 +1,7 @@
 const map = require('../dist/assets/map.json');
 
 describe('e2e test mobilenet model', () => {
-    const { paddlejsMobilenet } = require('./global.d.ts');
+    const { paddlejs } = require('./global.d.ts');
     const CUR_URL = 'http://localhost:9898/';
 
     beforeAll(async () => {
@@ -14,16 +14,17 @@ describe('e2e test mobilenet model', () => {
             const carImg = document.querySelector('#car');
             const catImg = document.querySelector('#cat');
             const path = 'https://paddlejs.cdn.bcebos.com/models/mobilenetV2_nchw';
+            const mobilenet = paddlejs['mobilenet'];
 
-            await paddlejsMobilenet.load({
+            await mobilenet.load({
                 path,
                 mean: [0.485, 0.456, 0.406],
                 std: [0.229, 0.224, 0.225]
             }, map);
             // classify car
-            const carRes = await paddlejsMobilenet.classify(carImg);
+            const carRes = await mobilenet.classify(carImg);
             // classify cat
-            const catRes = await paddlejsMobilenet.classify(catImg);
+            const catRes = await mobilenet.classify(catImg);
 
             return [carRes, catRes];
         }, map);

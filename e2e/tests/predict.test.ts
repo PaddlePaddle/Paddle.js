@@ -1,5 +1,5 @@
 describe('e2e test custom model', () => {
-    const { paddlejsCore } = require('./global.d.ts');
+    const { paddlejs } = require('./global.d.ts');
     const modelConfig = require('../dist/assets/models/custom_model/config.json');
     const CUR_URL = 'http://localhost:9898/';
 
@@ -17,7 +17,7 @@ describe('e2e test custom model', () => {
         page.on('console', msg => console.log('PAGE LOG:', msg.text()));
 
         const res = await page.evaluate(async modelInfo => {
-            const runner = new paddlejsCore.Runner(modelInfo);
+            const runner = new paddlejs['core'].Runner(modelInfo);
             const preheatRes = await runner.init();
             return preheatRes;
         }, modelInfo);

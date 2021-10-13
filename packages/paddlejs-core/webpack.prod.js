@@ -29,7 +29,7 @@ module.exports = {
         path: path.resolve(__dirname, 'lib'),
         globalObject: 'this',
         libraryTarget: 'umd',
-        library: 'paddlejsCore',
+        library: ['paddlejs', 'core'],
         publicPath: '/'
     }
 };

@@ -23,7 +23,9 @@ module.exports = {
         filename: '[name].js',
         path: path.resolve(__dirname, 'lib'),
         libraryTarget: 'umd',
-        library: 'humanseg'
+        library: ['paddlejs', 'humanseg'],
+        globalObject: 'this',
+        publicPath: '/'
     },
     node: {
         fs: 'empty'

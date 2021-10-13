@@ -23,7 +23,7 @@ module.exports = {
         path: path.resolve(__dirname, 'lib'),
         globalObject: 'this',
         libraryTarget: 'umd',
-        library: 'paddlejsOcrDetection',
+        library: ['paddlejs', 'ocrdetection'],
         publicPath: '/'
     },
     node: {

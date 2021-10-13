@@ -23,7 +23,7 @@ module.exports = {
         path: path.resolve(__dirname, 'lib'),
         globalObject: 'this',
         libraryTarget: 'umd',
-        library: 'paddlejsMobilenet',
+        library: ['paddlejs', 'mobilenet'],
         publicPath: '/'
     }
 };

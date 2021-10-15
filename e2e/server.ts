@@ -6,8 +6,11 @@ const webglWebpackConfig = require('../packages/paddlejs-backend-webgl/webpack.p
 const coreWebpackConfig = require('../packages/paddlejs-core/webpack.prod');
 const mobilenetWebpackConfig = require('../packages/paddlejs-models/mobilenet/webpack.prod');
 const gestureWebpackConfig = require('../packages/paddlejs-models/gesture/webpack.prod');
+const humansegWebpackConfig = require('../packages/paddlejs-models/humanseg/webpack.prod');
 
 const DIST_DIR = path.join(__dirname, 'dist');
+
+delete humansegWebpackConfig.entry.index_gpu;
 
 class ConfigInfo {
     key: string;
@@ -27,8 +30,10 @@ const core = new ConfigInfo('core', coreWebpackConfig);
 const webgl = new ConfigInfo('webgl', webglWebpackConfig);
 const mobilenet = new ConfigInfo('mobilenet', mobilenetWebpackConfig, true);
 const gesture = new ConfigInfo('gesture', gestureWebpackConfig, true);
+const humanseg = new ConfigInfo('humanseg', humansegWebpackConfig, true);
 
-[core, webgl, mobilenet, gesture].forEach(instance => {
+// edit webpack config
+[core, webgl, mobilenet, gesture, humanseg].forEach(instance => {
     const config = instance.config;
     config.output.path = DIST_DIR;
     config.output.filename = `${instance.key}_bundle.js`;
@@ -55,6 +60,7 @@ const app = express()
     }))
     .use(middleware(mobilenet.compiler))
     .use(middleware(gesture.compiler))
+    .use(middleware(humanseg.compiler))
     .use(express.static(DIST_DIR));
 
 app.listen(port, () => {

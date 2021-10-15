@@ -3,8 +3,8 @@ const path = require('path');
 module.exports = {
     mode: 'production',
     entry: {
-        index: ['./src/index'],
-        index_gpu: ['./src/index_gpu']
+        index: [path.resolve(__dirname, './src/index')],
+        index_gpu: [path.resolve(__dirname, './src/index_gpu')]
     },
     resolve: {
         // Add ".ts" and ".tsx" as resolvable extensions.
@@ -26,8 +26,5 @@ module.exports = {
         library: ['paddlejs', 'humanseg'],
         globalObject: 'this',
         publicPath: '/'
-    },
-    node: {
-        fs: 'empty'
     }
 };

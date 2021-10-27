@@ -5,6 +5,7 @@
   "main": "lib/index",
   "scripts": {
     "build": "webpack --config webpack.prod.js",
+    "visual": "webpack-bundle-analyzer --port 8888 ./lib/stats.json",
     "test": "jest"
   },
   "sideEffects": false,

@@ -27,6 +27,3 @@ jobs:
       # Runs a single command using the runners shell
       - name: BundleStats
         uses: vio/bundle-stats-action@v1.3.0
-        with:
-          webpack-stats-path: 'bundle-stats.json'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}

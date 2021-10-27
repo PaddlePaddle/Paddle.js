@@ -1,0 +1,10 @@
+{
+    "stats": {
+      "assets": [],
+      "entrypoints": true,
+      "chunks": true,
+      "modules": [],
+      "builtAt": true,
+      "hash": true
+    }
+}

@@ -54,5 +54,10 @@ export default {
     ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos']
-    }
+    },
+    behaviors: [
+        'setPacked',
+        'setAdaptive',
+        'isGlobalPooling'
+    ]
 };

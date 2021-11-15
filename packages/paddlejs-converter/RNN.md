@@ -28,24 +28,24 @@ $网络在  t  时刻接收到输入  X_t  之后，隐藏层的值是 S_t  ，�
 ### 以ch_ppocr_mobile_v2.0_rec_infer 模型 rnn算子为例：
 ```javascript
 {
-	Attr：{
+	Attr: {
 		mode: 'LSTM'
 		//  是否双向，为true则正向反向都需要遍历
-		is_bidirec：true
+		is_bidirec: true
 		// 隐藏层层数，代表循环次数
-		num_layers：2
+		num_layers: 2
 	}
 	
-	Input： [
+	Input: [
 		transpose_1.tmp_0[25, 1, 288]
 	]
 
-	PreState：[
+	PreState: [
 		fill_constant_batch_size_like_0.tmp_0[4, 1, 48],  
 		fill_constant_batch_size_like_1.tmp_0[4, 1, 48]
 	]
 
-	WeightList：[
+	WeightList: [
 		lstm_cell_0.w_0[192, 288], lstm_cell_0.w_1[192, 48], 
 		lstm_cell_1.w_0[192, 288], lstm_cell_1.w_1[192, 48],
 		lstm_cell_2.w_0[192, 96], lstm_cell_2.w_1[192, 48], 
@@ -56,7 +56,9 @@ $网络在  t  时刻接收到输入  X_t  之后，隐藏层的值是 S_t  ，�
 		lstm_cell_3.b_0[192], lstm_cell_3.b_1[192]
 	]
 
-	Ooutput：[lstm_0.tmp_0]
+	Output: [
+	    lstm_0.tmp_0[25, 1, 96]
+    ]
 }
 ```
 

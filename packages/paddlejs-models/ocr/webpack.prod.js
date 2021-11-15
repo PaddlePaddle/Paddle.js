@@ -3,11 +3,20 @@ const path = require('path');
 module.exports = {
     mode: 'production',
     entry: {
-        index: ['./src/index']
+        index: [path.resolve(__dirname, './src/index')]
     },
     resolve: {
         // Add ".ts" and ".tsx" as resolvable extensions.
-        extensions: ['.ts', '.js']
+        extensions: ['.ts', '.js'],
+        alias: {
+            '@paddlejs/paddlejs-core': path.resolve(__dirname, '../../paddlejs-core/src/'),
+            '@paddlejs/paddlejs-backend-webgl': path.resolve(__dirname, '../../paddlejs-backend-webgl/src/')
+        },
+        fallback: {
+            fs: false,
+            crypto: false,
+            path: false
+        }
     },
     module: {
         rules: [
@@ -18,13 +27,17 @@ module.exports = {
             },
             {
                 test: /\.txt$/,
-                use: 'raw-loader'
+                loader: 'raw-loader',
+                exclude: /node_modules/
             }
         ]
     },
     output: {
         filename: '[name].js',
         path: path.resolve(__dirname, 'lib'),
-        libraryTarget: 'umd'
+        libraryTarget: 'umd',
+        library: ['paddlejs', 'ocr'],
+        globalObject: 'this',
+        publicPath: '/'
     }
 };

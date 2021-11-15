@@ -24,6 +24,11 @@ module.exports = {
         alias: {
             '@paddlejs/paddlejs-core': path.resolve(__dirname, '../../paddlejs-core/src/'),
             '@paddlejs/paddlejs-backend-webgl': path.resolve(__dirname, '../../paddlejs-backend-webgl/src/')
+        },
+        fallback: {
+            fs: false,
+            crypto: false,
+            path: false
         }
     },
     module: {
@@ -35,15 +40,13 @@ module.exports = {
             },
             {
                 test: /\.txt$/,
-                use: 'raw-loader'
+                loader: 'raw-loader',
+                exclude: /node_modules/
             }
         ]
     },
     output: {
         filename: '[name].js',
         path: path.resolve(__dirname, 'dist')
-    },
-    node: {
-        fs: 'empty'
     }
 };

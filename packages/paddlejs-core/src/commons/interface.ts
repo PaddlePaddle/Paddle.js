@@ -16,6 +16,8 @@ export interface ModelOp {
     uniform?: OpUniform | null;
     scale?: number[];
     pos?: number[];
+    shape?: number[];
+    name?: string;
 }
 
 export interface ModelVar {
@@ -30,12 +32,25 @@ export interface ModelVar {
     runtime?: number;
 }
 
+export enum WasmMemoryType {
+    memory100 = '100',
+    memory200 = '200',
+    memory300 = '300',
+    memory400 = '400',
+    memory500 = '500',
+    memory600 = '600',
+    memory700 = '700',
+    memory800 = '800',
+    memory900 = '900',
+}
 export interface Model {
     chunkNum?: number;
     dataLayout?: string;
     ops: ModelOp[];
     vars: ModelVar[];
-    multiOutputs?: ModelVar[]
+    multiOutputs?: ModelOp[];
+    postOps?: ModelOp[];
+    index?: number;
 }
 
 export interface RunnerConfig {
@@ -57,6 +72,11 @@ export interface RunnerConfig {
         transforms?: Transformer[]; // while traversing the ops map
         postTransforms?: Transformer[]; // after creating graph
     };
+    wasmMemoryType?: WasmMemoryType;
+    index?: number; // the index of model
+    dataLayout?: string;
+    multiOutputs?: ModelOp[];
+    postOps?: ModelOp[];
 }
 export interface OpInputs {
     [key: string]: any;
@@ -89,6 +109,11 @@ export enum UniformType {
     uniform4iv = '4iv'
 }
 
+export enum GraphType {
+    SingleOutput = 'single',
+    MultipleOutput = 'multiple',
+    MultipleInput = 'multipleInput'
+}
 export interface OpUniform {
     [key: string]: {
         type: UniformType,
@@ -169,11 +194,4 @@ export interface InputFeed {
     shape: number[];
     name: string;
     persistable?: boolean;
-}
-
-
-export enum GraphType {
-    SingleOutput = 'single',
-    MultipleOutput = 'multiple',
-    MultipleInput = 'multipleInput'
 }

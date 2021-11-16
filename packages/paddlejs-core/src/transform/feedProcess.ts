@@ -30,7 +30,7 @@ export default class WebglFeedProcess extends Transformer {
         // make img_pre_processed var
         const imgVar = findVarByKey(vars, 'image');
         const [, , h, w] = imgVar.shape;
-        imgVar.shape = [1, 1, h, w];
+        imgVar.shape = [1, 3, h, w];
         const processImgVar = Object.assign({}, imgVar);
         processImgVar.name = IMG_PRE_PROCESS_VAR;
         processImgVar.shape = [1, 3, feedShape.fh, feedShape.fw];
@@ -39,7 +39,7 @@ export default class WebglFeedProcess extends Transformer {
 
         const originImgVar = Object.assign({}, imgVar);
         originImgVar.name = IMG_ORIGIN;
-        originImgVar.shape = [1, 1, feedShape.fh, feedShape.fw];
+        originImgVar.shape = [1, 3, feedShape.fh, feedShape.fw];
         originImgVar.persistable = false;
         delete originImgVar.data;
 
@@ -99,7 +99,6 @@ export default class WebglFeedProcess extends Transformer {
             },
             isPacked: true
         };
-
         ops.splice(1, 0, imgPreProcessOp);
         ops.splice(1, 0, imgOriginOp);
     }

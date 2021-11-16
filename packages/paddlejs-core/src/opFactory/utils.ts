@@ -170,3 +170,28 @@ export function genTensorData(data: number[] | Float32Array, dataLayout: string,
     );
     return new Float32Array(nhwcData);
 }
+/**
+ * reshape
+ *
+ * @param {Object} data
+ * @param {string} shape
+ * @returns {Object} shapedData
+ */
+export function reshape({ data, shape: originShape }) {
+    const shape = [...originShape].reverse();
+    let res;
+    for (let i = 0, len = shape.length - 1; i < len; i++) {
+        const dim = shape[i];
+        const cur = !res ? data : res;
+        res = splitArr(cur, dim);
+    }
+    return res;
+}
+
+function splitArr(arr, count) {
+    const res = [];
+    for (let i = 0, len = arr.length; i < len; i += count) {
+        res.push(arr.slice(i, i + count));
+    }
+    return res;
+}

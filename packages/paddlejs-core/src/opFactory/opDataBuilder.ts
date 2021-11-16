@@ -3,11 +3,11 @@ import {
     AttrsData, BufferType, OpUniform
 } from '../commons/interface';
 import { GLOBALS } from '../globals';
+import { env } from '../';
+import { findVarByKey } from '../commons/utils';
 import Tensor from './tensor';
 import opBehaviors from './opBehaviors';
 import * as Utils from './utils';
-import { findVarByKey } from '../commons/utils';
-
 // model的名字和paddleJS的tensor名字mapping
 
 export default class OpData {
@@ -167,7 +167,7 @@ export default class OpData {
         const opKey = `${GLOBALS.backend}_${name}`;
         const op = GLOBALS.opRegistry.ops[opKey];
         try {
-            if (!op) {
+            if (!op && env.get('backend') !== 'wasm') {
                 throw new Error(`[unregistered op] ${name}`);
             }
             const inputTensors = this.inputTensors;

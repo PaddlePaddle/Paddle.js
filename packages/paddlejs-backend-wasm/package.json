@@ -1,0 +1,12 @@
+{
+    "name": "@paddlejs/paddlejs-backend-wasm",
+    "version": "1.0.0",
+    "description": "",
+    "main": "lib/index",
+    "scripts": {
+      "build": "webpack --config webpack.prod.js",
+      "start": "webpack serve"
+    },
+    "author": "",
+    "license": "ISC"
+  }

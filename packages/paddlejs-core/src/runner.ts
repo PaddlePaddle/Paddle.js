@@ -1,6 +1,6 @@
 import Loader from './loader';
 import Graph from './graph';
-import { Model, RunnerConfig, InputFeed, ModelVar, GraphType } from './commons/interface';
+import { Model, RunnerConfig, ModelOp, InputFeed, ModelVar, GraphType } from './commons/interface';
 import OpData from './opFactory/opDataBuilder';
 import Tensor from './opFactory/tensor';
 import { GLOBALS } from './globals';
@@ -11,6 +11,7 @@ import env from './env';
 import type OpExecutor from './opFactory/opExecutor';
 
 import { accShape } from './opFactory/utils';
+import postOpsList from './postOps';
 
 export default class Runner {
     // instance field
@@ -24,6 +25,9 @@ export default class Runner {
     graphGenerator: Graph = {} as Graph;
     mediaProcessor: MediaProcessor | null = null;
     needPreheat: boolean = true;
+    multiOutputs?: ModelOp[];
+    postOps?: ModelOp[];
+    index?: number;
 
     constructor(options: RunnerConfig | null) {
         this.runnerConfig = Object.assign({}, options);
@@ -43,12 +47,19 @@ export default class Runner {
             return;
         }
 
-        await GLOBALS.backendInstance.init();
         this.isExecuted = false;
-        await this.load();
+        await Promise.all([this.load(), GLOBALS.backendInstance.init()]);
         this.genFeedData();
         this.genGraph();
         this.genOpData();
+
+        if (env.get('backend') === 'wasm') {
+            // the initialization of wasm backend relies on the generated weightMap
+            this.model = Object.assign(this.model, this.runnerConfig);
+            const modelTimeList = await GLOBALS.backendInstance.initWasm(this.model, this.weightMap);
+            return modelTimeList;
+        }
+
         if (this.needPreheat) {
             return await this.preheat();
         }
@@ -119,8 +130,17 @@ export default class Runner {
             );
         }
 
-        this.updateFeedData(inputFeed);
-        const result = await this.execute();
+        let result = [];
+        if (env.get('backend') === 'wasm') {
+            await GLOBALS.backendInstance.predict(inputFeed[0].data, this.model.index);
+            const data = await this.read();
+            result = this.postProcess(data);
+        }
+        else {
+            this.updateFeedData(inputFeed);
+            result = await this.execute();
+        }
+
         this.isExecuted = true;
         return callback ? callback(result) : result;
     }
@@ -164,8 +184,17 @@ export default class Runner {
             ];
         }
 
-        this.updateFeedData(inputFeed);
-        const result = await this.execute();
+        let result = [];
+        if (env.get('backend') === 'wasm') {
+            await GLOBALS.backendInstance.predict(inputFeed[0].data, this.model.index);
+            const data = await this.read();
+            result = this.postProcess(data);
+        }
+        else {
+            this.updateFeedData(inputFeed);
+            result = await this.execute();
+        }
+
         this.isExecuted = true;
         return callback ? callback(result) : result;
     }
@@ -191,9 +220,8 @@ export default class Runner {
             }
         }
         else {
-            const feedC = env.get('webgl_feed_process') ? 4 : fc;
+            const feedC = env.get('backend') !== 'wasm' && env.get('webgl_feed_process') ? 4 : fc;
             preheatFeedData = findVarByKey(vars, 'image');
-
             const imageBaseInfo = {
                 name: 'image',
                 shape: [1, feedC, fh, fw],
@@ -260,19 +288,69 @@ export default class Runner {
         this.executeOp(feedOp);
         const data = await this.read();
 
+        const res = this.postProcess(data);
+
+        return res;
+    }
+
+    postProcess(data) {
+        const isWasm = env.get('backend') === 'wasm';
+        if (env.get('debug')) {
+            return;
+        }
         // 多输出数据拆分
-        const multiOutputs = this.model.multiOutputs;
+        let result = data;
+        const { multiOutputs, postOps } = this.model;
         if (multiOutputs) {
-            let sumVal = 0;
-            return multiOutputs.map(output => {
-                const totalShape = accShape(output.shape);
-                const curData = data.slice(sumVal, totalShape + sumVal);
-                sumVal += totalShape;
-                return { [output.name]: curData };
-            });
+            if (isWasm) {
+                // wasm数据已经是数组
+                result = multiOutputs.map((output, index) => {
+                    return { [output.name]: data[index] };
+                });
+            }
+            else {
+                let sumVal = 0;
+                result = multiOutputs.map(output => {
+                    const totalShape = accShape(output.shape);
+                    const curData = data.slice(sumVal, totalShape + sumVal);
+                    sumVal += totalShape;
+                    return { [output.name]: curData };
+                });
+            }
         }
 
-        return data;
+        if (multiOutputs && postOps && postOps.length) {
+            // 执行后续op，如multiclass_nms
+            for (let i = 0, len = postOps.length; i < len; i++) {
+                // 提取op信息
+                const { type, attrs: attr, inputs: inputsObj } = postOps[i] as ModelOp;
+                const postOp = postOpsList[type] as Function;
+                if (!postOp) {
+                    return;
+                }
+
+                const outputsData = [...result];
+
+                const inputsData = Object.keys(inputsObj).map(key => {
+                    const item = inputsObj[key];
+                    const { name, shape } = item;
+                    const cur = outputsData.filter(cur => cur[name]);
+                    if (!cur || !cur[0] || !cur[0][name]) {
+                        console.error(`未获取到${name}的数据`);
+                        return null;
+                    }
+                    return {
+                        name: key,
+                        tensorId: name,
+                        data: cur[0][name],
+                        shape
+                    };
+                });
+                // 执行op, 注意：shape是原始的
+                result = postOp(inputsData, attr);
+            }
+        }
+        return result;
     }
 
     executeOp(op: OpExecutor) {
@@ -303,7 +381,9 @@ export default class Runner {
         const fetchVar = findVarByKey(this.model.vars, fetchOp.inputs.X[0]) as ModelVar;
         const fetchInfo = {
             name: fetchVar.name,
-            shape: fetchOp.attrs['origin_shape'] || fetchVar.shape
+            shape: fetchOp.attrs['origin_shape'] || fetchVar.shape,
+            index: this.model.index
+
         };
         return await GLOBALS.backendInstance.read(fetchInfo);
     }

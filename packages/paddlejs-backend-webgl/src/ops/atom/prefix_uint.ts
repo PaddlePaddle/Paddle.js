@@ -17,6 +17,10 @@ bool isnan_custom(float val) {
     return (val > 0. || val < 1. || val == 0.) ? false : true;
 }
 
+int calMod(int a, int b) {
+    return a - a / b * b;
+}
+
 lowp vec4 encode_float(highp float v) {
     if (isnan(v)) {
       return vec4(255, 255, 255, 255);

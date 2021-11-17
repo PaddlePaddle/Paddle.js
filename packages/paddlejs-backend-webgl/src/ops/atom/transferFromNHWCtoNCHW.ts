@@ -11,13 +11,13 @@ ivec4 transferFromNHWCtoNCHW(
     const int total_shape) {
 
     int n_origin = int(total_shape/(channel * width_shape * height_shape));
-    int new_a = int(mod(float(sumVal), float(width_shape)));
+    int new_a = calMod(sumVal, width_shape);
     sumVal = int((sumVal - new_a) / width_shape);
-    int new_b = int(mod(float(sumVal), float(height_shape)));
+    int new_b = calMod(sumVal, height_shape);
     sumVal = int((sumVal - new_b) / height_shape);
-    int new_g = int(mod(float(sumVal), float(channel)));
+    int new_g = calMod(sumVal, channel);
     sumVal = int((sumVal - new_g) / channel);
-    int new_r = int(mod(float(sumVal), float(n_origin)));
+    int new_r = calMod(sumVal, n_origin);
     return ivec4(new_r,new_g,new_b,new_a);
 }
 `;

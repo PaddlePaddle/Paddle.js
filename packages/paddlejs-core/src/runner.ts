@@ -224,14 +224,14 @@ export default class Runner {
             preheatFeedData = findVarByKey(vars, 'image');
             const imageBaseInfo = {
                 name: 'image',
-                shape: [1, feedC, fh, fw],
-                persistable: true
+                shape: [1, feedC, fh, fw]
             };
             preheatFeedData = Object.assign(
                 imageBaseInfo,
                 preheatFeedData,
                 {
-                    data: new Float32Array(feedC * fh * fw).fill(1.0)
+                    data: new Float32Array(feedC * fh * fw).fill(1.0),
+                    persistable: true
                 }
             );
         }
@@ -296,7 +296,7 @@ export default class Runner {
     postProcess(data) {
         const isWasm = env.get('backend') === 'wasm';
         if (env.get('debug')) {
-            return;
+            return data;
         }
         // 多输出数据拆分
         let result = data;

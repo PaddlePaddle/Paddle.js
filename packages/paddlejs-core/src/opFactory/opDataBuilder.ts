@@ -143,7 +143,9 @@ export default class OpData {
             bias: 'bias',
             mean: 'mean',
             variance: 'variance',
-            mask: 'out'
+            mask: 'out',
+            boxes: 'out',
+            variances: 'out'
         };
 
 
@@ -193,11 +195,15 @@ export default class OpData {
                 this.name = 'conv2d_elementwise_add';
             }
 
-            if (this.name.indexOf('flatten2') > -1) {
+            else if (this.name.indexOf('shape') > -1) {
                 this.name = 'reshape2';
             }
 
-            if (this.name.indexOf('max_pool2d_with_index') > -1) {
+            else if (this.name.indexOf('flatten2') > -1) {
+                this.name = 'reshape2';
+            }
+
+            else if (this.name.indexOf('max_pool2d_with_index') > -1) {
                 this.name = 'pool2d_max';
             }
 

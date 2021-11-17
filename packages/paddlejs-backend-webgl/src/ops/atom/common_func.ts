@@ -23,13 +23,7 @@ float relu6(float x, float threshold, float b) {
 
 const leakyRelu = `
 float leakyRelu(float x, float p, float b) {
-    float result = 0.0
-    if (x > 0.0) {
-        result = x;
-    }
-    else {
-        result = p * x;
-    }
+    float result = max(x, x * p);
     return result;
 }`;
 

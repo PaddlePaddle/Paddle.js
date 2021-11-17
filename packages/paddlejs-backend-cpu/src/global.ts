@@ -1,8 +1,8 @@
 
-import { getGlobalNamespace } from '@paddlejs/paddlejs-core/globals';
+import { getGlobalInterface } from '@paddlejs/paddlejs-core/globals';
 import { Arr, Obj, Value } from './utils/json';
 
-const _global = getGlobalNamespace();
+const _global = getGlobalInterface();
 _global.i32 = function (num: number): number {
     return num;
 };

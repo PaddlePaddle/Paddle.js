@@ -53,6 +53,8 @@ import rnn_cell from './shader/rnn/rnn_cell';
 import rnn_hidden from './shader/rnn/rnn_hidden';
 import rnn_origin from './shader/rnn/rnn_origin';
 import pool2d_avg from './shader/pool2d_avg';
+import density_prior_box from './shader/density_prior_box';
+import box_coder from './shader/box_coder';
 
 import {
     imgFeed, pack_out, nhwc_2_nchw, unpacked_2_packed,
@@ -125,7 +127,9 @@ const ops = {
     pack_out,
     nhwc_2_nchw,
     feedPost,
-    imgFeed
+    imgFeed,
+    box_coder,
+    density_prior_box
 };
 export {
     ops

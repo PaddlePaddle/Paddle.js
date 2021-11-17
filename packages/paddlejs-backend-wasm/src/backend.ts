@@ -5,9 +5,9 @@
 
 import { PaddlejsBackend, env } from '@paddlejs/paddlejs-core';
 import type OpExecutor from '@paddlejs/paddlejs-core/src/opFactory/opExecutor';
+import { WasmMemoryType } from '@paddlejs/paddlejs-core/commons/interface';
 import { RunnerConfig } from './types';
 import { download, nchw2chwn, nhwc2chwn, nchw2nhwc, nhwc2nchw } from './utils';
-import { WasmMemoryType } from '@paddlejs/paddlejs-core/commons/interface';
 import Wasm from './wasm';
 
 

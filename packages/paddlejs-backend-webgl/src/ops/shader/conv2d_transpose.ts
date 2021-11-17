@@ -52,7 +52,7 @@ function mainFunc({
                 // channel计算
                 for (int j = 0; j < groupLen; j++) {
                     int curIndex = j + b * groupLen;
-                    if (int(mod(float(ox), float(${stride_h}))) == 0 && int(mod(float(oy), float(${stride_v}))) == 0) {
+                    if (calMod(ox, int(${stride_h})) == 0 && calMod(oy, int(${stride_v})) == 0) {
                         temp_x = int(floor(float(ox) / float(${stride_h})));
                         temp_y = int(floor(float(oy) / float(${stride_v})));
                         if (temp_x < ${origin.width_shape} && temp_y < ${origin.height_shape}) {

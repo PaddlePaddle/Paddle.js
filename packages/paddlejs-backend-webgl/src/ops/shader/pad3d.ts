@@ -85,7 +85,7 @@ function mainFunc(
         constant: '',
         undefined: ''
     };
-    const defaultValue = value ? value : '0.0';
+    const defaultValue = value || '0.0';
 
     return `
     // start函数

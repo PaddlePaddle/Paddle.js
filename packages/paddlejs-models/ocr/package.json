@@ -1,0 +1,27 @@
+{
+  "name": "@paddlejs-models/ocr",
+  "version": "0.0.1",
+  "description": "",
+  "main": "src/index",
+  "scripts": {
+    "dev": "webpack server --config webpack.dev.js",
+    "build": "webpack --config webpack.prod.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@paddlejs-mediapipe/opencv": "0.0.3",
+    "@paddlejs/paddlejs-backend-webgl": "^1.0.3",
+    "@paddlejs/paddlejs-core": "^2.0.3"
+  },
+  "devDependencies": {
+    "ts-loader": "^8.0.12",
+    "d3-polygon": "^2.0.0",
+    "js-clipper": "^1.0.1",
+    "number-precision": "^1.5.0",
+    "raw-loader": "^4.0.2",
+    "webpack": "^5.40.0",
+    "webpack-cli": "^4.7.2",
+    "html-webpack-plugin": "^4.5.0"
+  }
+}

@@ -127,7 +127,12 @@ export default class OpData {
             bias: 'bias',
             mean: 'mean',
             variance: 'variance',
-            w: 'weight'
+            w: 'weight',
+            weightlist_0: 'weightlist_0',
+            weightlist_1: 'weightlist_1',
+            weightlist_2: 'weightlist_2',
+            weightlist_3: 'weightlist_3',
+            prestate: 'prestate'
         };
 
         const outTensorName = {

@@ -17,14 +17,14 @@ inputElement.addEventListener('change', (e: Event) => {
     imgElement.src = URL.createObjectURL((e.target as HTMLInputElement).files[0]);
 }, false);
 
-imgElement.onload = async function () {
+imgElement.onload = async () => {
+    txt.innerHTML = '';
     // 绘制文本框选坐标
     await ocr.drawBox(imgElement, canvasOutput);
     // 获取文本检测坐标及识别内容
     const res = await ocr.recognize(imgElement);
-    let text = '';
-    for (let i = 0; i < res.text.length; i++) {
-        text += `<p>${res.text[i]}</p>`;
+    if (res.text?.length) {
+        // 页面展示识别内容
+        txt.innerHTML = res.text.reduce((total, cur) => total + `<p>${cur}</p>`);
     }
-    txt.innerHTML = text;
 };

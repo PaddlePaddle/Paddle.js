@@ -7,6 +7,7 @@ import '@paddlejs/paddlejs-backend-webgl';
 import DBProcess from './dbPostprocess';
 import RecProcess from './recPostprocess';
 import cv from '@paddlejs-mediapipe/opencv/library/opencv_ocr';
+import { flatten, int, clip } from './util';
 
 const DETSHAPE = 640;
 const RECWIDTH = 320;
@@ -109,11 +110,11 @@ export async function detect(image) {
     const result = postResult.outputBox();
     // 转换原图坐标
     const points = JSON.parse(JSON.stringify(result.boxes));
-    // debugger
+    // 框选调整大小
     const adjust = 8;
     points && points.forEach(item => {
         item.forEach((point, index) => {
-            // 扩大框选区域
+            // 扩大框选区域，便于文字识别
             point[0] = clip(
                 (Math.round(point[0] - x) * Math.max(image.naturalWidth, image.naturalHeight) / DETSHAPE)
                 + (index === 0 ? -adjust : index === 1 ? adjust : index === 2 ? adjust : -adjust),
@@ -131,7 +132,32 @@ export async function detect(image) {
     return points;
 }
 
-export async function recognition(image: HTMLImageElement) {
+export async function drawBox(
+    image: HTMLImageElement,
+    canvas: HTMLCanvasElement,
+    color?: string
+) {
+    const points = await detect(image);
+    canvas.width = image.naturalWidth;
+    canvas.height = image.naturalHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    points && points.forEach(point => {
+        // 开始一个新的绘制路径
+        ctx.beginPath();
+        // 设置绘制线条颜色，默认为黑色
+        ctx.strokeStyle = color || '#000';
+        // 设置路径起点坐标
+        ctx.moveTo(point[0][0], point[0][1]);
+        ctx.lineTo(point[1][0], point[1][1]);
+        ctx.lineTo(point[2][0], point[2][1]);
+        ctx.lineTo(point[3][0], point[3][1]);
+        ctx.closePath();
+        ctx.stroke();
+    });
+}
+
+export async function recognize(image: HTMLImageElement) {
     const point = await detect(image);
     const boxes = sorted_boxes(point);
     const text_list = [];
@@ -155,10 +181,6 @@ export async function recognition(image: HTMLImageElement) {
         text_list.push(text_list_tmp);
     }
     return { text: text_list, points: point };
-}
-
-function clip(data: number, min: number, max: number) {
-    return data < min ? min : data > max ? max : data;
 }
 
 function sorted_boxes(box) {
@@ -224,19 +246,12 @@ function linalg_norm(x, y) {
     return Math.sqrt(Math.pow(x[0] - y[0], 2) + Math.pow(x[1] - y[1], 2));
 }
 
-function int(num: number) {
-    return num > 0 ? Math.floor(num) : Math.ceil(num);
-}
-
-function flatten(arr: number[] | number[][]) {
-    return arr.toString().split(',').map(item => +item);
-}
-
 function resize_norm_img_splice(
     image: HTMLImageElement | HTMLCanvasElement,
     origin_width: number,
     origin_height: number,
-    index = 0) {
+    index = 0
+) {
     canvas_rec.width = RECWIDTH;
     canvas_rec.height = RECHEIGHT;
     const ctx = canvas_rec.getContext('2d');

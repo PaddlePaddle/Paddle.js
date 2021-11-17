@@ -1,6 +1,7 @@
 import clipper from 'js-clipper';
-import NP from 'number-precision';
+import { enableBoundaryChecking, plus, divide } from 'number-precision';
 import CV from '@paddlejs-mediapipe/opencv/library/opencv_ocr';
+import { clip } from './util';
 
 const Polygon = require('d3-polygon');
 
@@ -16,7 +17,7 @@ export default class DBPostprocess {
     private height: number;
 
     constructor(result: number[], shape: number[]) {
-        NP.enableBoundaryChecking(false);
+        enableBoundaryChecking(false);
         this.thresh = 0.3;
         this.box_thresh = 0.5;
         this.max_candidates = 1000;
@@ -62,8 +63,8 @@ export default class DBPostprocess {
                 continue;
             }
             box.forEach(item => {
-                item[0] = this.clip(Math.round(item[0]), 0, this.width);
-                item[1] = this.clip(Math.round(item[1]), 0, this.height);
+                item[0] = clip(Math.round(item[0]), 0, this.width);
+                item[1] = clip(Math.round(item[1]), 0, this.height);
             });
             boxes.push(box);
             scores.push(score);
@@ -140,10 +141,10 @@ export default class DBPostprocess {
             y.push(item[1]);
         });
         // clip这个函数将将数组中的元素限制在a_min, a_max之间，大于a_max的就使得它等于 a_max，小于a_min,的就使得它等于a_min。
-        const xmin = this.clip(Math.floor(Math.min(...x)), 0, w - 1);
-        const xmax = this.clip(Math.ceil(Math.max(...x)), 0, w - 1);
-        const ymin = this.clip(Math.floor(Math.min(...y)), 0, h - 1);
-        const ymax = this.clip(Math.ceil(Math.max(...y)), 0, h - 1);
+        const xmin = clip(Math.floor(Math.min(...x)), 0, w - 1);
+        const xmax = clip(Math.ceil(Math.max(...x)), 0, w - 1);
+        const ymin = clip(Math.floor(Math.min(...y)), 0, h - 1);
+        const ymax = clip(Math.ceil(Math.max(...y)), 0, h - 1);
         // eslint-disable-next-line new-cap
         const mask = new CV.Mat.zeros(ymax - ymin + 1, xmax - xmin + 1, CV.CV_8UC1);
         box.forEach(item => {
@@ -167,10 +168,6 @@ export default class DBPostprocess {
         points.delete();
         pts.delete();
         return mean;
-    }
-
-    private clip(data: number, min: number, max: number) {
-        return data < min ? min : data > max ? max : data;
     }
 
     private unclip(box: number[]) {
@@ -205,11 +202,11 @@ export default class DBPostprocess {
         let length = 0;
         for (let i = 0; i < data.length; i++) {
             if (mask[i]) {
-                sum = NP.plus(sum, data[i]);
+                sum = plus(sum, data[i]);
                 length++;
             }
         }
-        const num = NP.divide(sum, length);
+        const num = divide(sum, length);
         return num;
     }
 }

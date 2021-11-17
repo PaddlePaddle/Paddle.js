@@ -42,8 +42,8 @@ paramValuesDict = {}
 postOps = []
 # 在转换过程中新生成的、需要添加到vars中的variable
 appendedVarList = []
-# rnn op索引
-rnnIndex = -1
+# rnn op索引列表
+rnnList = []
 
 # 转换模型中需要过滤掉的参数
 needFilterAttributes = ['op_callstack', 'col', 'op_role', 'op_namescope', 'op_role_var',
@@ -324,8 +324,8 @@ def organizeModelOpInfo():
         opInfo["attrs"] = attrs
 
         if (op.type == 'rnn'):
-            global rnnIndex
-            rnnIndex = index
+            global rnnList
+            rnnList.append(index)
 
         # multiclass_nms 单独处理
         if (op.type == 'multiclass_nms'):
@@ -431,8 +431,9 @@ def convertToPaddleJSModel():
     organizeModelVariableInfo(result)
 
     # 拆分rnn op
-    if (rnnIndex > 0):
-        rnn.splice_rnn_op(modelInfo, rnnIndex)
+    if len(rnnList):
+        for index in rnnList:
+            rnn.splice_rnn_op(modelInfo, index)
 
     # 对多输出模型追加connect算子
     if len(fetch_targets) > 1:

@@ -26,10 +26,8 @@ function init(output) {
     gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
     // 初始化之前先加载图片
     if (!initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE)) {
-        console.log('initShaders false');
-        return;
+        throw new Error('initShaders false');
     }
-    console.log('initShaders true');
 }
 function main(opt) {
     const {

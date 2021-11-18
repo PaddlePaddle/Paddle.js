@@ -31,7 +31,8 @@ module.exports = {
         filename: '[name].js',
         path: path.resolve(__dirname, 'lib'),
         libraryTarget: 'umd',
-        library: 'paddlejsWebglBackend',
+        globalObject: 'this',
+        library: ['paddlejs', 'webglBackend'],
         publicPath: '/'
     }
 };

@@ -5,9 +5,30 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>paddlejs e2e test</title>
-        <script src="./core_bundle.js"></script>
-        <script src="./webgl_bundle.js"></script>
+        <style>
+            body img {
+                width: 300px;
+                border: 2px black solid;
+            }
+            canvas {
+                border: 2px pink solid;
+            }
+        </style>
     </head>
     <body>
+        <img id="car" src="./assets/imgs/car.webp"/>
+        <img id="cat" src="./assets/imgs/cat.jpeg"/>
+        <img id="ok" src="./assets/imgs/ok.jpeg"/>
+        <img id="human" src="./assets/imgs/human.jpg"/>
+        <img id="seg" src="./assets/imgs/seg.png"/>
+        <img id="ocr" src="./assets/imgs/ocr.jpg"/>
+        <canvas id="back_canvas"></canvas>
+        <canvas id="seg_canvas"></canvas>
     </body>
+    <script src="./core_bundle.js"></script>
+    <script src="./webgl_bundle.js"></script>
+    <script src="./mobilenet_bundle.js"></script>
+    <script src="./gesture_bundle.js"></script>
+    <script src="./humanseg_bundle.js"></script>
+    <script src="./ocr_bundle.js"></script>
 </html>

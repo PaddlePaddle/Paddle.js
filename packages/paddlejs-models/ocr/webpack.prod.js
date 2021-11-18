@@ -7,7 +7,12 @@ module.exports = {
     },
     resolve: {
         // Add ".ts" and ".tsx" as resolvable extensions.
-        extensions: ['.ts', '.js', 'txt']
+        extensions: ['.ts', '.js'],
+        fallback: {
+            fs: false,
+            crypto: false,
+            path: false
+        }
     },
     module: {
         rules: [
@@ -17,8 +22,8 @@ module.exports = {
                 exclude: /node_modules/
             },
             {
-                test: /\.txt$/i,
-                loader: 'raw-​loader',
+                test: /\.txt$/,
+                loader: 'raw-loader',
                 exclude: /node_modules/
             }
         ]
@@ -27,7 +32,7 @@ module.exports = {
         filename: '[name].js',
         path: path.resolve(__dirname, 'lib'),
         libraryTarget: 'umd',
-        library: ['paddlejs', 'gesture'],
+        library: ['paddlejs', 'ocr'],
         globalObject: 'this',
         publicPath: '/'
     }

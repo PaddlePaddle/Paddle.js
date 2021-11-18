@@ -3,25 +3,21 @@
 ## 一、RNN理解
 
 RNN：循环神经网络，是由输入层、一个隐藏层和一个输出层组成：
-![图片](https://pic4.zhimg.com/80/v2-3884f344d71e92d70ec3c44d2795141f_1440w.jpg)
-
-U：输入层到隐藏层的权重矩阵
-V：隐藏层到输出层的权重矩阵
-
+<img src="https://pic4.zhimg.com/80/v2-3884f344d71e92d70ec3c44d2795141f_1440w.jpg" width="500px">
+<p>U：输入层到隐藏层的权重矩阵</p>
+<p>V：隐藏层到输出层的权重矩阵</p>
 
 paddle官网文档：https://www.paddlepaddle.org.cn/documentation/docs/zh/api/paddle/nn/RNN_cn.html#rnn
 
 paddle源码实现：https://github.com/PaddlePaddle/Paddle/blob/develop/paddle/fluid/operators/rnn_op.h#L812
 
+## 二、RNN计算方式
 
-##二、RNN计算方式
-![图片](http://bos.bj.bce-internal.sdns.baidu.com/agroup-bos-bj/bj-2e9e106bc9e13aaeb18e9ae10dd7a5cd3b57a6c4)
-<center><font size=2>RNN时间线展开图</font></center>
+<img src="https://user-images.githubusercontent.com/43414102/142216554-0e021000-606f-4234-9615-62044e0e0540.png">
+<p align="center"><font size=2>RNN时间线展开图</font></p>
 
-$网络在  t  时刻接收到输入  X_t  之后，隐藏层的值是 S_t  ，输出值是  O_t 。关键一点是， S_t 的值不仅仅取决于  X_t ，还取决于  S_{t-1} $。可以用下面的公式来表示循环神经网络的计算方法：
-
-![图片](http://bos.bj.bce-internal.sdns.baidu.com/agroup-bos-bj/bj-dc5982fcfcc1c78f1394e34c768337da70efe0ee)
-<center><font size=2>RNN公式</font></center>
+网络在 t 时刻接收到输入 ![图片](https://paddlejs.bj.bcebos.com/doc/xt.svg) 之后，隐藏层的值是 ![图片](https://paddlejs.bj.bcebos.com/doc/st.svg) ，输出值是 ![图片](https://paddlejs.bj.bcebos.com/doc/ot.svg)  。关键一点是，![图片](https://paddlejs.bj.bcebos.com/doc/st.svg) 的值不仅仅取决于 ![图片](https://paddlejs.bj.bcebos.com/doc/xt.svg)  ，还取决于 ![图片](https://paddlejs.bj.bcebos.com/doc/st1.svg) 。可以用下面的公式来表示循环神经网络的计算方法：
+<p align="center"><img src="https://user-images.githubusercontent.com/43414102/142371063-c8da5776-d508-4bca-8b8c-048ee5b30cc5.png" width="500px"></p>
 
 ## 三、pdjs中RNN算子实现
 
@@ -63,25 +59,24 @@ $网络在  t  时刻接收到输入  X_t  之后，隐藏层的值是 S_t  ，�
 ```
 
 ### 整体计算过程
-![图片](http://bos.bj.bce-internal.sdns.baidu.com/agroup-bos-bj/bj-6cb50a05114867914a7f4fdff193e9590375e028)
+![rnn](https://user-images.githubusercontent.com/43414102/142216581-4b16c94a-8632-4075-b6ad-157dfa51f92b.png)
 
 ### rnn 计算中新增op：
+
 1）rnn_origin
 
-计算公式： blas.MatMul(Input,  WeightList_ih, blas_ih) + blas.MatMul(PreState,  WeightList_hh,  blas_hh)
+计算公式： blas.MatMul(Input, WeightList_ih, blas_ih) + blas.MatMul(PreState, WeightList_hh, blas_hh)
 
 2）rnn_matmul
 
-计算公式：rnn_matmul = rnn_origin +  Matmul( $ S_{t-1} $,  WeightList_hh)
+计算公式：rnn_matmul = rnn_origin + Matmul(![图片](https://paddlejs.bj.bcebos.com/doc/st1.svg), WeightList_hh)
 
 3）rnn_cell
 
-计算方式：将rnn_matmul op输出结果分割成4份，每份执行不同激活函数计算，最后输出lstm_x_y.tmp_c[1,  1,  48]。x∈[0, 3]，y∈[0, 24]。
+计算方式：将rnn_matmul op输出结果分割成4份，每份执行不同激活函数计算，最后输出lstm_x_y.tmp_c[1, 1, 48]。x∈[0, 3]，y∈[0, 24]。
 详见算子实现：[rnn_cell](../paddlejs-backend-webgl/src/ops/shader/rnn/rnn_cell.ts)
 )
 
 4）rnn_hidden
-计算方式：将rnn_matmul op输出结果分割成4份，每份执行不同激活函数计算，最后输出lstm_x_y.tmp_h[1,  1,  48]。x∈[0, 3]，y∈[0, 24]。
+计算方式：将rnn_matmul op输出结果分割成4份，每份执行不同激活函数计算，最后输出lstm_x_y.tmp_h[1, 1, 48]。x∈[0, 3]，y∈[0, 24]。
 详见算子实现：[rnn_hidden](../paddlejs-backend-webgl/src/ops/shader/rnn/rnn_hidden.ts)
-
-

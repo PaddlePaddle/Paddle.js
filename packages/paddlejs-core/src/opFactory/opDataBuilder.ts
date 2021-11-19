@@ -193,12 +193,22 @@ export default class OpData {
                 this.name = 'conv2d_elementwise_add';
             }
 
-            if (this.name.indexOf('flatten2') > -1) {
+            else if (this.name.indexOf('flatten2') > -1) {
                 this.name = 'reshape2';
             }
 
-            if (this.name.indexOf('max_pool2d_with_index') > -1) {
+            else if (this.name.indexOf('max_pool2d_with_index') > -1) {
                 this.name = 'pool2d_max';
+            }
+
+            else if (this.name.indexOf('instance_norm') > -1 || this.name.indexOf('sync_batch_norm') > -1) {
+                this.name = 'batchnorm';
+            }
+            else if (this.name.indexOf('bilinear_interp_v2') > -1) {
+                this.name = 'bilinear_interp';
+            }
+            else if (this.name.indexOf('leaky_relu') > -1) {
+                this.name = 'conv2d_elementwise_add';
             }
 
             const tensorData: ModelVar[] = this.tensorData;

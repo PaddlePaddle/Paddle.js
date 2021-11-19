@@ -125,7 +125,8 @@ const ops = {
     pack_out,
     nhwc_2_nchw,
     feedPost,
-    imgFeed
+    imgFeed,
+    'conv2d-elementwise_add-leaky_relu': conv2d_elementwise_add
 };
 export {
     ops

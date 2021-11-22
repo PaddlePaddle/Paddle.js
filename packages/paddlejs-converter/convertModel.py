@@ -17,6 +17,7 @@ import paddle as paddle
 import copy
 from functools import reduce
 import rnn
+from pruningModel import pruningNoSenseTensor
 
 
 # 输入模型所在目录
@@ -463,6 +464,10 @@ def convertToPaddleJSModel():
 
     # model.json 设置分片参数
     addChunkNumToJson(paramValues)
+
+    # 去掉无意义的 tensor 和对应 op
+    pruningNoSenseTensor(modelInfo)
+
     # 导出模型文件到json
     dumpModelToJsonFile()
 

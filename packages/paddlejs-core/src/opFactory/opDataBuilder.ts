@@ -195,7 +195,7 @@ export default class OpData {
                 this.name = 'conv2d_elementwise_add';
             }
 
-            else if (this.name.indexOf('shape') > -1) {
+            else if (this.name.indexOf('reshape') > -1) {
                 this.name = 'reshape2';
             }
 

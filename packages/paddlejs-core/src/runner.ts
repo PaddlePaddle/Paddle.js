@@ -48,7 +48,14 @@ export default class Runner {
         }
 
         this.isExecuted = false;
-        await Promise.all([this.load(), GLOBALS.backendInstance.init()]);
+        if (env.get('backend') === 'wasm') {
+            await Promise.all([this.load(), GLOBALS.backendInstance.init()]);
+        }
+        else {
+            GLOBALS.backendInstance.init();
+            this.isExecuted = false;
+            await this.load();
+        }
         this.genFeedData();
         this.genGraph();
         this.genOpData();
@@ -56,8 +63,8 @@ export default class Runner {
         if (env.get('backend') === 'wasm') {
             // the initialization of wasm backend relies on the generated weightMap
             this.model = Object.assign(this.model, this.runnerConfig);
-            const modelTimeList = await GLOBALS.backendInstance.initWasm(this.model, this.weightMap);
-            return modelTimeList;
+            this.model.index = await GLOBALS.backendInstance.initWasm(this.model, this.weightMap);
+            return [];
         }
 
         if (this.needPreheat) {

@@ -14,7 +14,7 @@ import Wasm from './wasm';
 export default class WasmBackend extends PaddlejsBackend {
     wasm: Wasm;
     total: number; // 模型总数
-    cur: number = -1; // 当前模型index
+    cur: number; // 当前模型index
     modelConfigList: RunnerConfig[];
     modelTimeList: number[];
     constructor() {
@@ -27,10 +27,10 @@ export default class WasmBackend extends PaddlejsBackend {
 
     async init() {
         // 多个模型并行加载，wasm只初始化一次
-        await Promise.all([this.initFirst(), this.initSecond()]);
+        await Promise.all([this.initForFirstTime(), this.initSubsequently()]);
     }
 
-    async initFirst() {
+    async initForFirstTime() {
         if (!this.wasm) {
             const wasm = new Wasm();
             this.wasm = wasm;
@@ -38,7 +38,7 @@ export default class WasmBackend extends PaddlejsBackend {
         }
     }
 
-    async initSecond() {
+    async initSubsequently() {
         let timer;
         return new Promise(resolve => {
             timer = setInterval(() => {
@@ -50,15 +50,14 @@ export default class WasmBackend extends PaddlejsBackend {
         });
     }
 
-    initWasm(modelConfig?: RunnerConfig, weightMap?: OpExecutor[]) {
+    initWasm(modelConfig?: RunnerConfig, weightMap?: OpExecutor[]): number {
         this.total++;
         const cur = this.total;
         modelConfig.index = cur;
-        // const wasmMemoryType = modelConfig.wasmMemoryType || WasmMemoryType.memory100;
         this.modelConfigList.push(modelConfig);
         const modelInfo = this.genGraphContentStr(weightMap, modelConfig.dataLayout);
-        const modelTimeList = this.wasm.init(modelInfo, cur);
-        return modelTimeList;
+        this.wasm.init(modelInfo, cur);
+        return cur;
     }
 
     async predict(imageData, index: number) {

@@ -228,12 +228,8 @@ function mainFunc(
         int gg = int(oPos.g);
         int bb = int(oPos.b);
         int aa = int(oPos.a);
-        // int rr = 0;
-        // int gg = 1;
-        // int bb = 0;
-        // int aa = 0;
-        // 输出坐标转换为输入坐标
 
+        // 输出坐标转换为输入坐标
         int index = rr * ${numbers_shape[0]} + gg * ${numbers_shape[1]} + bb * ${numbers_shape[2]} + aa;
         ivec4 realOutPos = getTensorPosFromArrayIndex_out1(index);
         int h = realOutPos.r;

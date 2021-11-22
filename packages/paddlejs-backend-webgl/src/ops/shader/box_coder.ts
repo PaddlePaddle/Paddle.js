@@ -65,10 +65,6 @@ function mainFunc(
         int g = int(oPos.g);
         int b = int(oPos.b);
         int a = int(oPos.a);
-        // int r = 0;
-        // int g = 0;
-        // int b = 0;
-        // int a = 0;
         // 输出坐标转换为输入坐标
         float o = 0.0;
 

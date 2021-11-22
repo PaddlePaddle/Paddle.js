@@ -14,7 +14,7 @@ function mainFunc(
     void main(void) {
         float res = 0.0;
         if (${pooling_type} == 1) {
-            float res = -1. / 0.;
+            res = -1. / 0.;
         }
         // 获取output的坐标
         ivec4 out_pos = getOutputTensorPos();

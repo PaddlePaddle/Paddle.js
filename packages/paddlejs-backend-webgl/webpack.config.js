@@ -6,7 +6,7 @@ module.exports = {
     mode: 'development',
     entry: {
         op: './test/op/opTest.js',
-        model: './test/model/modelTest.js'
+        model: './test/model/index.ts'
     },
     devtool: 'inline-source-map',
     devServer: {

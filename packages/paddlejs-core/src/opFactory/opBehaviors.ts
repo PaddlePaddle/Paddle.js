@@ -207,7 +207,12 @@ const behaviors : Behaviors = {
 
         if (this.input.Y) {
             const yShape = Utils.formatShape(this.input.Y[0].shape);
-            this.attrs.append_num = yShape[axis];
+            this.attrs.counter_num = yShape[axis];
+        }
+
+        if (this.input.Z) {
+            const zShape = Utils.formatShape(this.input.Z[0].shape);
+            this.attrs.append_num = zShape[axis];
         }
 
         if (this.input.M) {

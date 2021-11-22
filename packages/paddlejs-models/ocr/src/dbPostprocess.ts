@@ -34,7 +34,7 @@ export default class DBPostprocess {
 
     public outputBox() {
         // eslint-disable-next-line new-cap
-        const src = new CV.matFromArray(640, 640, CV.CV_8UC1, this.segmentation);
+        const src = new CV.matFromArray(this.width, this.height, CV.CV_8UC1, this.segmentation);
         const contours = new CV.MatVector();
         const hierarchy = new CV.Mat();
         // 获取轮廓
@@ -161,7 +161,7 @@ export default class DBPostprocess {
         CV.fillPoly(mask, pts, color, 1);
         const sliceArr = [];
         for (let i = ymin; i < ymax + 1; i++) {
-            sliceArr.push(...bitmap.slice(640 * i + xmin, 640 * i + xmax + 1));
+            sliceArr.push(...bitmap.slice(this.width * i + xmin, this.height * i + xmax + 1));
         }
         const mean = this.mean(sliceArr, mask.data);
         mask.delete();

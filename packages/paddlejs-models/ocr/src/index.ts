@@ -59,7 +59,7 @@ export async function load() {
     const detectInit = detectRunner.init();
 
     recRunner = new Runner({
-        modelPath: 'https://paddlejs.cdn.bcebos.com/models/ocr_rec_crnn_320_new_1',
+        modelPath: 'https://paddlejs.cdn.bcebos.com/models/ocr_rec_crnn_320_new_2',
         feedShape: {
             fw: RECWIDTH,
             fh: RECHEIGHT
@@ -83,7 +83,7 @@ export async function detect(image) {
     const targetHeight = DETSHAPE;
     canvas_det.width = targetWidth;
     canvas_det.height = targetHeight;
-    // 通过canvas将上传原图大小转换为目标尺寸（640*640）
+    // 通过canvas将上传原图大小转换为目标尺寸
     const ctx = canvas_det.getContext('2d');
     ctx.fillStyle = '#fff';
     ctx.fillRect(0, 0, targetHeight, targetWidth);

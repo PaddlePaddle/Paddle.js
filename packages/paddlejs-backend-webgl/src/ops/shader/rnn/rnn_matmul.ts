@@ -9,7 +9,7 @@ function mainFunc(
     {
         input_axis,
         state_axis,
-        batch = 25,
+        batch,
         reverse = false
     }
 ) {

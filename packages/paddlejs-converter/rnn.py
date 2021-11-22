@@ -15,6 +15,7 @@ def splice_rnn_op(model_info, rnn_index):
 
     is_bidirec = 2 if op['attrs']['is_bidirec'] else 1
     num_layers = op['attrs']['num_layers']
+    hidden_size = op['attrs']['hidden_size']
     layer_num = num_layers * is_bidirec
 
     for index in range(layer_num):
@@ -98,7 +99,8 @@ def splice_rnn_op(model_info, rnn_index):
 
             cell_op = {
                 'attrs': {
-                    "state_axis": index if bat == 0 else 0
+                    "state_axis": index if bat == 0 else 0,
+                    "hidden_size": hidden_size
                 },
                 'inputs': {
                     "X": [matmul_output_name],
@@ -119,7 +121,8 @@ def splice_rnn_op(model_info, rnn_index):
 
             hidden_op = {
                 'attrs': {
-                    "state_axis": index if bat == 0 else 0
+                    "state_axis": index if bat == 0 else 0,
+                    "hidden_size": hidden_size
                 },
                 'inputs': {
                     "X": [matmul_output_name],

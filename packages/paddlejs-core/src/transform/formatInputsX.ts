@@ -12,13 +12,11 @@ export default class FormatInputsX extends Transformer {
     transform(...args: any) {
         const [originOp] = args;
 
-        if (originOp.type !== 'concat'
-        && originOp.type !== 'connect'
-        && originOp.type !== 'rnn_origin'
-        && originOp.type !== 'rnn_matmul'
-        ) {
+        const transformOpList = ['concat', 'connect', 'fc', 'rnn_origin', 'rnn_matmul'];
+        if (!transformOpList.includes(originOp.type)) {
             return;
         }
+
         const {
             inputs
         } = originOp;
@@ -30,12 +28,13 @@ export default class FormatInputsX extends Transformer {
             return;
         }
 
-        if (inputs.X.length > 4) {
+        const inputsX = inputs.X || inputs.Input;
+        if (inputsX.length > 4) {
             throw Error('Not yet supporting concat input tensors more than 4.');
         }
-        if (inputs.X.length > 1) {
+        if (inputsX.length > 1) {
             // 兼容key为X,value是个长度大于1的数组的情况，如concat
-            const [x_name, y_name, z_name, m_name] = inputs.X;
+            const [x_name, y_name, z_name, m_name] = inputsX;
             inputs['X'] = [x_name];
             y_name && (inputs['Y'] = [y_name]);
             if (z_name) {
@@ -48,4 +47,3 @@ export default class FormatInputsX extends Transformer {
         }
     }
 }
-

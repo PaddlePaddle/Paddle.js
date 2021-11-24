@@ -148,13 +148,14 @@ export default class WebGLBackend extends PaddlejsBackend {
         await this.createAndWaitForFence();
         const result = this.downloadFloat32TensorFromBuffer(pbo);
         let shape = fetchInfo ? fetchInfo.shape : [];
+
         if (env.get('webgl_pack_output')) {
             return result.slice(0, getSizeFromShape(shape));
         }
 
         shape = env.get('debug') && env.get('shape')
             ? env.get('shape')
-            : (this.program as GLProgram).shape;
+            : (this.program as GLProgram).shape as number[];
 
         const [N, C, H, W] = shape;
         const nhwcFetchShape = [N, H, W, C];

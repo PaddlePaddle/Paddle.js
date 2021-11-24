@@ -11,7 +11,7 @@ function mainFunc(
     void main() {
         ivec4 oPos = getOutputTensorPos();
         float res = 0.0;
-        int c1 = int(mod(float(oPos[1]), 4.0));
+        int c1 = calMod(oPos[1], 4);
         vec4 o = getValueFromTensorPosPacking_origin(oPos[0], oPos[1] / 4, oPos[2], oPos[3]);
 
         if (c1 == 0) {

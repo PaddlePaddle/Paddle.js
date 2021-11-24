@@ -29,5 +29,9 @@ export default `
     void setPackedOutput(vec4 result) {
         gl_FragColor = result;
     }
+
+    int calMod(int a, int b) {
+        return a - a / b * b;
+    }
 `;
 

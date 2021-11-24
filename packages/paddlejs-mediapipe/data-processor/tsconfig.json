@@ -1,0 +1,15 @@
+{
+    "extends": "../../../tsconfig",
+    "include": [
+        "src/",
+    ],
+    "exclude": [
+        "node_modules/"
+    ],
+    "compilerOptions": {
+        "outDir": "dist",
+        "allowJs": true,
+        "types": ["jest", "node"],
+        "baseUrl": ".",
+    }
+}

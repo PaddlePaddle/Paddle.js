@@ -14,10 +14,10 @@ interface OutParams {
 function getOutputTensorPos({ height_shape, channel }: OutParams): string {
     return `
     ivec4 getOutputTensorPos() {
-        vec2 outCoord = vCoord.xy * _2d_shape_texture_out;
+        vec2 outCoord = vCoord.xy * (_2d_shape_texture_out);
         int x = int(outCoord.x / float(${channel}));
-        int c = int(mod(outCoord.x, float(${channel})));
-        int y = int(mod(outCoord.y, float(${height_shape})));
+        int c = calMod(int(outCoord.x), ${channel});
+        int y = calMod(int(outCoord.y), ${height_shape});
         int b = int(outCoord.y / float(${height_shape}));
         return ivec4(b, c, y, x);
     }
@@ -32,10 +32,10 @@ function getOutputTensorPosLimit({ height_shape, width_shape, channel }: OutPara
         float offsetY = floor(outCoord.y / float(${height_shape}));
         int x = int(outCoord.x / float(${channel}));
         if (mod(offsetY, 4.0) > 0.0) {
-            x += int(mod(offsetY, 4.0)) * int(ceil(float(${width_shape}) / 4.0));
+            x += calMod(int(offsetY), 4) * int(ceil(float(${width_shape}) / 4.0));
         }
-        int y = int(mod(outCoord.y, float(${height_shape})));
-        int c = int(mod(outCoord.x, float(${channel})));
+        int y = calMod(int(outCoord.y), ${height_shape});
+        int c = calMod(int(outCoord.x), ${channel});
         int b = int(outCoord.y / float(4 * ${height_shape}));
         return ivec4(b, c, y, x);
     }

@@ -99,7 +99,6 @@ export default class WebglFeedProcess extends Transformer {
             },
             isPacked: true
         };
-
         ops.splice(1, 0, imgPreProcessOp);
         ops.splice(1, 0, imgOriginOp);
     }

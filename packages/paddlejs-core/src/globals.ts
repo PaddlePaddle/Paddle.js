@@ -1,5 +1,5 @@
 import { OpInfo, Ops } from './commons/interface';
-import { getOrMakeGlobalProperty } from './commons/utils';
+import { getOrMakeGlobalProperty, getGlobalInterface } from './commons/utils';
 
 interface OpRegistry {
     ops: Ops;
@@ -69,5 +69,6 @@ GLOBALS = getOrMakeGlobalProperty('GLOBALS', GLOBALS);
 export {
     GLOBALS,
     registerBackend,
-    registerOp
+    registerOp,
+    getGlobalInterface
 };

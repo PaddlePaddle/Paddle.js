@@ -1,47 +1,19 @@
 /**
  * @file transpose2
  */
-
 function mainFunc(
+    {},
     {
-        origin
-    },
-    {
-        axis
+        perm_arr,
+        perm_size
     }
 ) {
-
-    const length_unformatted_shape = origin.length_unformatted_shape;
-    let arrayPerm : number[] = axis;
-    let length = arrayPerm.length;
-
-    const diffLength = length - length_unformatted_shape;
-    if (diffLength > 0) {
-        arrayPerm = arrayPerm
-            .map(item => item - 1)
-            .filter(item => item >= 0);
-        length = arrayPerm.length;
-    }
-    if (length > 4) {
-        throw Error(`op transpoes2 axis length exceeds maximum length 4, get ${length}`);
-    }
-    const temp = new Array(length).fill(0);
-    for (let i = 0; i < length; i++) {
-        const index = arrayPerm[i];
-        temp[index] = i;
-    }
-    const perm_arr = [];
-    for (let i = 0; i < 4; i++) {
-        perm_arr[i] = temp[i] || 0;
-    }
     const [
         perm_0,
         perm_1,
         perm_2,
         perm_3
     ] = perm_arr;
-    const perm_size = length;
-
     return `
     // start函数
     void main(void) {
@@ -77,7 +49,6 @@ function mainFunc(
             );
         }
 
-
         setOutput(float(o));
     }
     `;
@@ -85,9 +56,13 @@ function mainFunc(
 export default {
     mainFunc,
     params: [
-        'axis'
+        'perm_arr',
+        'perm_size'
     ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos']
-    }
+    },
+    behaviors: [
+        'normalizePerm'
+    ]
 };

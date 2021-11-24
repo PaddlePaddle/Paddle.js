@@ -1,0 +1,41 @@
+{
+  "name": "@paddlejs-mediapipe/data-processor",
+  "version": "1.0.0",
+  "description": "data processor of Paddle.js",
+  "main": "lib/index.js",
+  "scripts": {
+    "start": "webpack serve --config webpack.config.js",
+    "build": "webpack --config webpack.prod.js",
+    "test": "jest --coverage"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/numjs": "^0.14.5",
+    "html-webpack-plugin": "^4.5.0",
+    "husky": "^4.3.0",
+    "jest": "^26.0.0",
+    "jest-fetch-mock": "^3.0.3",
+    "lerna": "^3.22.1",
+    "lint-staged": "^10.5.1",
+    "ts-jest": "^26.4.4",
+    "ts-loader": "^8.0.11",
+    "typescript": "^4.0.5",
+    "webpack": "^5.6.0",
+    "webpack-cli": "^4.2.0",
+    "webpack-dev-server": "^3.11.0",
+    "node-pre-gyp": "^0.17.0",
+    "numjs": "^0.16.0",
+    "path-browserify": "^1.0.1"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.ts$": "ts-jest",
+      "^.+\\.js$": "babel-jest"
+    }
+  }
+}

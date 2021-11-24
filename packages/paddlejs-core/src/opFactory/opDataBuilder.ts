@@ -3,11 +3,11 @@ import {
     AttrsData, BufferType, OpUniform
 } from '../commons/interface';
 import { GLOBALS } from '../globals';
+import { env } from '../';
+import { findVarByKey } from '../commons/utils';
 import Tensor from './tensor';
 import opBehaviors from './opBehaviors';
 import * as Utils from './utils';
-import { findVarByKey } from '../commons/utils';
-
 // model的名字和paddleJS的tensor名字mapping
 
 export default class OpData {
@@ -143,7 +143,9 @@ export default class OpData {
             bias: 'bias',
             mean: 'mean',
             variance: 'variance',
-            mask: 'out'
+            mask: 'out',
+            boxes: 'out',
+            variances: 'out'
         };
 
 
@@ -167,7 +169,7 @@ export default class OpData {
         const opKey = `${GLOBALS.backend}_${name}`;
         const op = GLOBALS.opRegistry.ops[opKey];
         try {
-            if (!op) {
+            if (!op && env.get('backend') !== 'wasm') {
                 throw new Error(`[unregistered op] ${name}`);
             }
             const inputTensors = this.inputTensors;
@@ -193,11 +195,15 @@ export default class OpData {
                 this.name = 'conv2d_elementwise_add';
             }
 
-            if (this.name.indexOf('flatten2') > -1) {
+            else if (this.name.indexOf('reshape') > -1) {
                 this.name = 'reshape2';
             }
 
-            if (this.name.indexOf('max_pool2d_with_index') > -1) {
+            else if (this.name.indexOf('flatten2') > -1) {
+                this.name = 'reshape2';
+            }
+
+            else if (this.name.indexOf('max_pool2d_with_index') > -1) {
                 this.name = 'pool2d_max';
             }
 

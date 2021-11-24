@@ -45,7 +45,7 @@ function getValueFromTensorPosLimit(
     // 超限布局根据tensor坐标获取这个tensor位置的值
     float getValueFromTensorPos_${textureName}(int r, int g, int b, int a) {
         float pieceW = ceil(float(${width_shape}) / 4.0);
-        int x = int(mod(float(a), pieceW));
+        int x = calMod(a, int(pieceW));
         int offsetY = 0;
 
         if ((float(a) / pieceW) >= 3.0) {
@@ -73,9 +73,9 @@ function getValueFromTensorPosPackingLimit(
 ) {
     return `
     // 超限布局根据tensor坐标获取这个tensor位置的值
-    float getValueFromTensorPosPacking_${textureName}(int r, int g, int b, int a) {
+    vec4 getValueFromTensorPosPacking_${textureName}(int r, int g, int b, int a) {
         float pieceW = ceil(float(${width_shape}) / 4.0);
-        int x = int(mod(float(a), pieceW));
+        int x = calMod(a, int(pieceW));
         int offsetY = 0;
 
         if ((float(a) / pieceW) >= 3.0) {
@@ -118,9 +118,9 @@ export function getValueFromTensorPosPacked(
     // 超限布局根据tensor坐标获取这个tensor位置的值
     float getValueFromTensorPosPacked_${textureName}(int r, int g, int b, int a) {
         int y = b / 2;
-        int yOffset = int(mod(float(b), 2.0));
+        int yOffset = calMod(b, 2);
         int x = a / 2;
-        int xOffset = int(mod(float(a), 2.0));
+        int xOffset = calMod(a, 2);
         int height = ${height_shape} + ${offset_y};
         vec4 pixels = TEXTURE2D(
             texture_${textureName},
@@ -151,7 +151,7 @@ export function getTensorPosFromArrayIndex(
     if (length_shape === 1) {
         return `
             int getTensorPosFromArrayIndex_${textureName}(int n) {
-                return int(mod(float(n), float(${numbers_shape[0]})));
+                return calMod(n, ${numbers_shape[0]});
             }
         `;
     }
@@ -163,7 +163,7 @@ export function getTensorPosFromArrayIndex(
         ivec${length_shape} pos;
         pos[0] = n / shapeVec_${textureName}[0];
         for (int i = 1; i < ${length_shape}; i++) {
-            n = int(mod(float(n), float(shapeVec_${textureName}[i - 1])));
+            n = calMod(n, shapeVec_${textureName}[i - 1]);
             pos[i] = n / shapeVec_${textureName}[i];
         }
         return pos;

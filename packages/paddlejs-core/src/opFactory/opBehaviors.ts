@@ -191,6 +191,37 @@ const behaviors : Behaviors = {
         }
     },
 
+    normalizePerm(tensorData = []) {
+        const input = tensorData.find(item => item.tensorName === 'origin');
+        const length_unformatted_shape = input.shape.length;
+        const axis = this.attrs.axis;
+        let arrayPerm : number[] = axis;
+        let length = arrayPerm.length;
+
+        const diffLength = length - length_unformatted_shape;
+        if (diffLength > 0) {
+            arrayPerm = arrayPerm
+                .map(item => item - 1)
+                .filter(item => item >= 0);
+            length = arrayPerm.length;
+        }
+        if (length > 4) {
+            throw Error(`op transpoes2 axis length exceeds maximum length 4, get ${length}`);
+        }
+        const temp = new Array(length).fill(0);
+        for (let i = 0; i < length; i++) {
+            const index = arrayPerm[i];
+            temp[index] = i;
+        }
+        const perm_arr = [];
+        for (let i = 0; i < 4; i++) {
+            perm_arr[i] = temp[i] || 0;
+        }
+
+        this.attrs.perm_arr = perm_arr;
+        this.attrs.perm_size = length;
+    },
+
     normalizeDim() {
         const originShape = this.input.X[0].shape;
         const shape = Utils.formatShape(originShape);
@@ -204,6 +235,7 @@ const behaviors : Behaviors = {
         // 保存 输入 tensor 对应dim 的长度
         this.attrs.inputs_dim = shape[axis];
         this.attrs.dim = axis;
+        this.attrs.fourInputs = false;
 
         if (this.input.Y) {
             const yShape = Utils.formatShape(this.input.Y[0].shape);
@@ -283,7 +315,7 @@ const behaviors : Behaviors = {
         const suffix = this.realName.replace(mergeType + '-', '');
         this.name = 'conv2d_elementwise_add';
         if (suffix === 'leaky_relu') {
-            this.data['multi_value'] = this.attrs.alpha;
+            this.attrs.alpha && (this.data['multi_value'] = this.attrs.alpha);
             this.data['active_function'] = 'leakyRelu';
         }
     }

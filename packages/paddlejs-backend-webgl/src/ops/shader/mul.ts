@@ -33,7 +33,7 @@ function getTensorPosFromArrayIndex(name, numbers_shape, length_shape) {
     if (length_shape === 1) {
         return `
             int getTensorPosFromArrayIndex_${name}(int n) {
-                return int(mod(float(n), float(${numbers_shape[0]})));
+                return calMod(n, ${numbers_shape[0]});
             }
         `;
     }
@@ -47,7 +47,7 @@ function getTensorPosFromArrayIndex(name, numbers_shape, length_shape) {
         ivec${length_shape} pos;
         pos[0] = n / shapeVec_${name}[0];
         for (int i = 1; i < ${length_shape}; i++) {
-            n = int(mod(float(n), float(shapeVec_${name}[i - 1])));
+            n = calMod(n, shapeVec_${name}[i - 1]);
             pos[i] = n / shapeVec_${name}[i];
         }
         return pos;

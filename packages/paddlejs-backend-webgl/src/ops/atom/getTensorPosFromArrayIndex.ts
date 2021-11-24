@@ -9,7 +9,7 @@ export default function (tensorName: string, { numbers_shape, length_shape }) {
         i${length_shape} pos;
         pos[0] = n / ${numbers_shape}[0];
         for (int i = 1; i < ${length_shape}; i++) {
-            n = int(mod(float(n), float(${numbers_shape}[i - 1])));
+            n = calMod(n, ${numbers_shape}[i - 1]);
             pos[i] = n / ${numbers_shape}[i];
         }
         return pos;

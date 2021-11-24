@@ -63,23 +63,31 @@ export function findVarByKey(vars, key) {
  */
 export function AddItemToVars(vars, item) {
     const isVarsArray = Array.isArray(vars);
-    const isItemArray = Array.isArray(item);
-    if (isItemArray) {
-        if (isVarsArray) {
-            vars.splice(vars.length - 1, 0, ...item);
+    const itemArray = Array.isArray(item) ? item : [item];
+    if (!isVarsArray) {
+        itemArray.forEach(curItem => {
+            vars[curItem.name] = curItem;
+        });
+        return;
+    }
+
+    itemArray.forEach(curItem => {
+        // 判断插入的item是否存在
+        let existedIndex = null;
+        for (let i = 0; i < vars.length; i++) {
+            const varItem = vars[i];
+            if (varItem.name === curItem.name) {
+                existedIndex = i;
+                break;
+            }
+        }
+        if (existedIndex !== null) {
+            vars[existedIndex] = curItem;
         }
         else {
-            item.forEach(varItem => {
-                vars[varItem.name] = varItem;
-            });
+            vars.push(curItem);
         }
-        return;
-    }
-    if (isVarsArray) {
-        vars.push(item);
-        return;
-    }
-    vars[item.name] = item;
+    });
 }
 
 /**

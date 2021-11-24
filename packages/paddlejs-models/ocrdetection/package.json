@@ -15,14 +15,14 @@
     "@paddlejs/paddlejs-core": "^2.1.0"
   },
   "devDependencies": {
+    "d3-polygon": "^2.0.0",
     "html-webpack-plugin": "^3.2.0",
     "js-clipper": "^1.0.1",
+    "number-precision": "^1.5.0",
     "ts-loader": "^8.0.12",
     "typescript": "^3.9.5",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0",
-    "webpack-dev-server": "^3.2.1",
-    "d3-polygon": "^2.0.0",
-    "number-precision": "^1.5.0"
+    "webpack-dev-server": "^3.2.1"
   }
 }

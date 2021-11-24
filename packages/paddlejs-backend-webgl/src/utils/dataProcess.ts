@@ -1,7 +1,6 @@
 /**
  * @file data process
  */
-
 function nhwc2nchw(data: number[] | Float32Array, shape: number[]) {
     const N = shape[0];
     const H = shape[1];
@@ -39,8 +38,42 @@ function getSizeFromShape(shape: number[]): number {
     return shape.reduce((acc, cur) => acc * cur, 1);
 }
 
+function genFpDataCode(dataArr: number[], key) {
+    if (dataArr.length === 1) {
+        return `float ${key} = float(${dataArr[0]});`;
+    }
+    const len = dataArr.length;
+    let dataStr = `
+        vec${len} ${key} = vec${len}(
+    `;
+
+    for (let i = 0; i < len; i++) {
+        dataStr += `float(${dataArr[i]}),`;
+    }
+    dataStr = dataStr.slice(0, -1) + ');';
+    return dataStr;
+}
+
+function genIntDataCode(dataArr: number[], key) {
+    if (dataArr.length === 1) {
+        return `int ${key} = int(${dataArr[0]});`;
+    }
+    const len = dataArr.length;
+    let dataStr = `
+        ivec${len} ${key} = ivec${len}(
+    `;
+
+    for (let i = 0; i < len; i++) {
+        dataStr += `${dataArr[i]},`;
+    }
+    dataStr = dataStr.slice(0, -1) + ');';
+    return dataStr;
+}
+
 export {
-    getSizeFromShape,
     nhwc2nchw,
-    reduceShape
+    getSizeFromShape,
+    reduceShape,
+    genFpDataCode,
+    genIntDataCode
 };

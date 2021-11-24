@@ -10,6 +10,7 @@
     "init": "npm install && lerna bootstrap",
     "cpu": "lerna run start  --scope=@paddlejs/paddlejs-backend-cpu  --stream",
     "webgl": "lerna run start  --scope=@paddlejs/paddlejs-backend-webgl  --stream",
+    "wasm": "lerna run start  --scope=@paddlejs/paddlejs-backend-wasm  --stream",
     "webgpu": "lerna run start  --scope=@paddlejs/paddlejs-backend-webgpu  --stream",
     "nodegl-op": "lerna run start  --scope=@paddlejs/paddlejs-backend-nodegl  --stream",
     "nodegl-model": "lerna run dev-model --scope=@paddlejs/paddlejs-backend-nodegl  --stream",
@@ -19,7 +20,8 @@
     "build:webgl": "lerna run build  --scope=@paddlejs/paddlejs-backend-webgl  --stream",
     "build:core": "lerna run build  --scope=@paddlejs/paddlejs-core  --stream",
     "build:nodegl": "lerna run build  --scope=@paddlejs/paddlejs-backend-nodegl  --stream",
-    "e2e": "jest --config e2e/jest.config.js"
+    "build:wasm": "lerna run build  --scope=@paddlejs/paddlejs-backend-wasm  --stream",
+    "e2e": "rm -rf e2e/dist/*.js && jest --config e2e/jest.config.js"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.12.11",
@@ -35,7 +37,6 @@
     "@webgpu/types": "0.0.32",
     "babel-jest": "^27.0.0-next.1",
     "base64-img": "^1.0.4",
-    "canvas": "^2.6.1",
     "clean-webpack-plugin": "^3.0.0",
     "conventional-changelog-cli": "^2.1.1",
     "eslint": "^7.13.0",
@@ -50,11 +51,11 @@
     "husky": "^4.3.0",
     "jest": "^26.0.0",
     "jest-fetch-mock": "^3.0.3",
-    "jest-puppeteer": "^4.4.0",
+    "jest-puppeteer": "^5.0.4",
     "lerna": "^3.22.1",
     "lint-staged": "^10.5.1",
     "nodemon": "^2.0.7",
-    "puppeteer": "^5.3.1",
+    "raw-loader": "^4.0.2",
     "ts-jest": "^26.4.4",
     "ts-loader": "^8.0.11",
     "ts-node": "^9.1.1",
@@ -62,8 +63,7 @@
     "webpack": "^5.6.0",
     "webpack-cli": "^4.2.0",
     "webpack-dev-middleware": "^4.1.0",
-    "webpack-dev-server": "^3.11.0",
-    "raw-loader": "^4.0.2"
+    "webpack-dev-server": "^3.11.0"
   },
   "keywords": [
     "paddlejs",

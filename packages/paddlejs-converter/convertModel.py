@@ -35,7 +35,7 @@ sliceDataSize = 4 * 1024
 # paddlepaddle运行程序实例
 program = None
 # 存放模型结构
-modelInfo = {"vars": {}, "ops": [], "chunkNum": 0, "dataLayout": "nhwc"}
+modelInfo = {"vars": {}, "ops": [], "chunkNum": 0, "dataLayout": "nhwc", "feedShape": None}
 # 存放参数数值（未排序）
 paramValuesDict = {}
 
@@ -236,7 +236,6 @@ def organizeModelVariableInfo(result):
                 break
     # 对var信息dict，按照key（var名）进行字母顺序排序
     varInfoOrderDict = sortDict(varInfoDict)
-
     # 将var信息按照顺序，添加到model info的vars中
     for key, value in varInfoOrderDict.items():
         value["name"] = key
@@ -274,7 +273,7 @@ def organizeModelOpInfo():
         # 获取OP output
         outputs = {}
         # 将outputs转换为数组
-        if (op.type == 'density_prior_box' or op.type == 'box_coder'):
+        if op.type == 'density_prior_box' or op.type == 'prior_box' or op.type == 'box_coder' or op.type == 'box_coder':
             outputs['Out'] = []
             for name in opOutputs:
                 value = op.output(name)
@@ -410,6 +409,34 @@ def appendConnectOp(fetch_targets):
     modelInfo['multiOutputs'] = targets
     return targets
 
+
+
+def genModelFeedShape(feed):
+    if len(feed) != 1:
+        print("\033[33;1mModel has more than one input feed.\033[0m")
+        return
+
+    originFeedShape = modelInfo['vars'][feed[0]]['shape']
+    feedShape = {}
+    if len(originFeedShape) == 3:
+        feedShape['fc'] = originFeedShape[0]
+        feedShape['fh'] = originFeedShape[1]
+        feedShape['fw'] = originFeedShape[2]
+    elif len(originFeedShape) == 4:
+        feedShape['fc'] = originFeedShape[1]
+        feedShape['fh'] = originFeedShape[2]
+        feedShape['fw'] = originFeedShape[3]
+    elif len(originFeedShape) == 2:
+        feedShape['fh'] = originFeedShape[0]
+        feedShape['fw'] = originFeedShape[1]
+    else:
+        print("\033[33;1mFeedShape length is " + str(len(originFeedShape)) + ".\033[0m")
+        return
+
+    modelInfo['feedShape'] = feedShape
+    print("\033[32mModel FeedShape set successfully.\033[0m")
+
+
 def convertToPaddleJSModel():
     """ 转换fluid modle为paddleJS model """
 
@@ -424,6 +451,7 @@ def convertToPaddleJSModel():
     global program
     program = result[0]
     fetch_targets = result[2]
+    feed_target_names = result[1]
 
     # 获取program中所有的op，按op顺序加入到model info
     organizeModelOpInfo()
@@ -464,6 +492,9 @@ def convertToPaddleJSModel():
 
     # model.json 设置分片参数
     addChunkNumToJson(paramValues)
+
+    # model.json 设置 feedShape 输入 shape 信息
+    genModelFeedShape(feed_target_names)
 
     # 去掉无意义的 tensor 和对应 op
     pruningNoSenseTensor(modelInfo)

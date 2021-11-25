@@ -45,6 +45,7 @@ export enum WasmMemoryType {
 }
 export interface Model {
     chunkNum?: number;
+    feedShape?: FeedShape | null;
     dataLayout?: string;
     ops: ModelOp[];
     vars: ModelVar[];
@@ -53,14 +54,15 @@ export interface Model {
     index?: number;
 }
 
+export interface FeedShape {
+    fc?: number;
+    fw: number;
+    fh: number;
+};
 export interface RunnerConfig {
     modelPath: string;
     modelName?: string;
-    feedShape: {
-        fc?: number;
-        fw: number;
-        fh: number;
-    };
+    feedShape?: FeedShape;
     fill?: string; // 缩放后用什么颜色填充不足方形部分
     mean?: number[];
     std?: number[];

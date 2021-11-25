@@ -1,6 +1,6 @@
 import Loader from './loader';
 import Graph from './graph';
-import { Model, RunnerConfig, ModelOp, InputFeed, ModelVar, GraphType } from './commons/interface';
+import { Model, RunnerConfig, ModelOp, InputFeed, ModelVar, GraphType, FeedShape } from './commons/interface';
 import OpData from './opFactory/opDataBuilder';
 import Tensor from './opFactory/tensor';
 import { GLOBALS } from './globals';
@@ -28,6 +28,7 @@ export default class Runner {
     multiOutputs?: ModelOp[];
     postOps?: ModelOp[];
     index?: number;
+    feedShape: FeedShape = {} as FeedShape;
 
     constructor(options: RunnerConfig | null) {
         this.runnerConfig = Object.assign({}, options);
@@ -153,7 +154,7 @@ export default class Runner {
     }
 
     async predictWithFeed(data: number[] | InputFeed[] | ImageData, callback?, shape?: number[]) {
-        const { fc = 3, fw, fh } = this.runnerConfig.feedShape;
+        const { fc = 3, fw, fh } = this.feedShape;
         let inputFeed;
 
         if (Array.isArray(data)) {
@@ -208,7 +209,8 @@ export default class Runner {
 
     genFeedData() {
         const { type, feedShape } = this.runnerConfig;
-        const { fc = 3, fh, fw } = feedShape;
+        this.feedShape = this.model.feedShape || feedShape;
+        const { fc = 3, fh, fw } = this.feedShape;
         const vars = this.model.vars;
         let preheatFeedData;
         if (type === GraphType.MultipleInput) {

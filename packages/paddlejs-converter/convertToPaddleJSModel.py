@@ -20,7 +20,8 @@ def grantWritePermission(func, path, execinfo):
     func(path)
 
 
-if __name__ == "__main__":
+
+def main():
     """
     Example:
     'python convertToPaddleJSModel.py --modelPath=../infer_model/MobileNetV2/model --paramPath=../infer_model/MobileNetV2/params --outputDir=../jsmodel --optimize=1'
@@ -105,3 +106,7 @@ if __name__ == "__main__":
         print("\033[31mA fetal error occured. Failed to convert model.\033[0m")
         print(traceback.format_exc())
         pass
+
+
+if __name__ == "__main__":
+    main()

@@ -37,10 +37,20 @@ def main():
         p.add_argument("--sliceDataSize", type=int, default=4096, help='分片输出参数文件时，每片文件的大小，单位：KB，非必要参数，默认4096KB', required=False)
 
         args = p.parse_args()
+        # 获取当前用户使用的 python 解释器 bin 位置
+        pythonCmd = sys.executable
 
         # TODO: 由于PaddleLite和PaddlePaddle存在包冲突，因此将整个模型转换工具拆成两个python文件，由一个入口python文件通过命令行调用
-        optimizeCmd = " optimizeModel.py"
-        convertCmd = " convertModel.py"
+        # 区分本地执行和命令行执行
+        if os.path.exists("optimizeModel.py"):
+            optimizeCmd = pythonCmd + " optimizeModel.py"
+        else:
+            optimizeCmd = "pdjsOptimizeModel"
+
+        if os.path.exists("convertModel.py"):
+            convertCmd = pythonCmd + " convertModel.py"
+        else:
+            convertCmd = "pdjsConvertModel"
 
         inputDir = args.inputDir
         modelPath = args.modelPath
@@ -83,18 +93,17 @@ def main():
         print("enableLogModelInfo: " + str(enableLogModelInfo))
         print("sliceDataSize:" + str(sliceDataSize))
 
-        pythonCmd = "python3"
 
         print("Starting...")
         if enableOptimization:
             print("Optimizing model...")
-            os.system(pythonCmd + optimizeCmd)
+            os.system(optimizeCmd)
             print("\033[32m\nOptimizing model successfully.\033[0m")
         else:
             print("\033[33mYou choosed not to optimize model, consequently, optimizing model is skiped.\033[0m")
 
         print("Converting model...")
-        os.system(pythonCmd + convertCmd)
+        os.system(convertCmd)
         print("\033[32mConverting model successfully.\033[0m")
 
         if enableOptimization:

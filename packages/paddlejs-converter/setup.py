@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="paddlejsconverter",
-    version="0.0.2",
+    version="1.0.0",
     author="paddlejs",
     author_email="382248373@qq.com",
     description="Paddlejs model converter",
@@ -29,7 +29,9 @@ setuptools.setup(
     ],
     entry_points={
         "console_scripts": [
-            "paddlejsconverter = convertToPaddleJSModel:main"
+            "paddlejsconverter = convertToPaddleJSModel:main",
+            "pdjsConvertModel = convertModel:main",
+            "pdjsOptimizeModel = optimizeModel:main"
         ]
     }
 )

@@ -98,7 +98,7 @@ def sortDict(oldDict, reverse=False):
         orderDict[key] = oldDict[key]
     return orderDict
 
-def dumpModelToJsonFile():
+def dumpModelToJsonFile(outputDir):
     """ 导出模型数据到json文件 """
     print("Dumping model structure to json file...")
     if not os.path.exists(outputDir):
@@ -108,7 +108,7 @@ def dumpModelToJsonFile():
         json.dump(modelInfo, outputFile, indent=4, separators=(", ", ": "), sort_keys=True)
     print("Dumping model structure to json file successfully")
 
-def sliceDataToBinaryFile(paramValueList):
+def sliceDataToBinaryFile(paramValueList, outputDir):
     """ 将参数数据分片输出到文件，默认分片策略为按4M分片 """
     totalParamValuesCount = len(paramValueList)
     countPerSlice = int(sliceDataSize * 1024 / 4)
@@ -437,7 +437,7 @@ def genModelFeedShape(feed):
     print("\033[32mModel FeedShape set successfully.\033[0m")
 
 
-def convertToPaddleJSModel():
+def convertToPaddleJSModel(modelDir, modelName, paramsName, outputDir):
     """ 转换fluid modle为paddleJS model """
 
 
@@ -500,14 +500,18 @@ def convertToPaddleJSModel():
     pruningNoSenseTensor(modelInfo)
 
     # 导出模型文件到json
-    dumpModelToJsonFile()
+    dumpModelToJsonFile(outputDir)
 
     # 导出分片参数文件
-    sliceDataToBinaryFile(paramValues)
+    sliceDataToBinaryFile(paramValues, outputDir)
 
 
 
-if __name__ == "__main__":
+def main():
+
+    global sliceDataSize
+    global enableLogModelInfo
+
     try:
         p = argparse.ArgumentParser(description='模型转换参数解析')
         p.add_argument('--inputDir', help='fluid模型所在目录。当且仅当使用分片参数文件时使用该参数。将过滤modelPath和paramsPath参数，且模型文件名必须为`__model__`', required=False)
@@ -521,6 +525,7 @@ if __name__ == "__main__":
         modelDir = args.inputDir
         modelPath = args.modelPath
         paramPath = args.paramPath
+
         if not modelDir:
             modelDir, modelName = os.path.split(modelPath)
             paramDir, paramsName = os.path.split(paramPath)
@@ -533,9 +538,13 @@ if __name__ == "__main__":
         if args.logModelInfo == 1:
             enableLogModelInfo = True
 
-        convertToPaddleJSModel()
+        convertToPaddleJSModel(modelDir, modelName, paramsName, outputDir)
 
     except Exception as identifier:
         print("\033[31mA fetal error occured. Failed to convert model.\033[0m")
         print(traceback.format_exc())
         pass
+
+
+if __name__ == "__main__":
+    main()

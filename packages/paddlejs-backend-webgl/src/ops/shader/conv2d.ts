@@ -4,7 +4,7 @@
 
 /* eslint-disable max-lines-per-function */
 function mainFunc(
-    { origin, filter, out },
+    { origin, filter, out, bias },
     {
         groups = 1,
         strides = [],
@@ -19,6 +19,7 @@ function mainFunc(
     const [stride_v = 1, stride_h = 1] = strides;
     const [padTop = 0, padLeft = 0] = paddings;
     const [dilation_v = 1, dilation_h = 1] = dilations;
+
     return `
     // start函数
     void main(void) {
@@ -101,8 +102,8 @@ function mainFunc(
             oy += ${dilation_v};
         }
 
-        float bi = getValueFromTensorPos_bias(0, 0, 0, c);
-        res += bi;
+        ${bias ? 'res += getValueFromTensorPos_bias(0, 0, 0, c);' : ''}
+
         if (${fuse_relu}) {
             res = max(0.0, res);
         }

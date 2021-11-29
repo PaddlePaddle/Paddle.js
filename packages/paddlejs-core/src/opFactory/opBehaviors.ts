@@ -98,21 +98,6 @@ const behaviors : Behaviors = {
             const newShape = [shape[shape.length - 1] / 4, 1, 1];
             bias.shape = newShape;
         }
-        else if (!bias) {
-            const outShape = tensorData.find(item => item.tensorName === 'out').shape;
-            const outC = outShape[outShape.length - 3];
-            const biasShape = this.isPackedOp ? [outC, 1, 1] : [outC];
-            const biasDataLength = this.isPackedOp ? outC * 4 : outC;
-            tensorData.push({
-                name: 'conv1_scale_offset_custom',
-                packed: this.isPackedOp,
-                needBatch: true,
-                persistable: true,
-                shape: biasShape,
-                data: Array.from(new Float32Array(biasDataLength), () => 0),
-                tensorName: 'bias'
-            });
-        }
     },
 
     isMax() {

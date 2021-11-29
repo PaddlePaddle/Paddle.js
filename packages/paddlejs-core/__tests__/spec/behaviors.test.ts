@@ -1,5 +1,5 @@
 import behaviors from '../../src/opFactory/opBehaviors';
-import { OpData, ModelVar } from '../../src/commons/interface';
+import { OpData } from '../../src/commons/interface';
 
 const conv2d = {
     attrs: {
@@ -223,14 +223,6 @@ describe('test op behaviors', () => {
     it('test behavior isApplySeparableConv', () => {
         behaviors.isApplySeparableConv.call(conv2dOp as unknown as OpData, conv2dOp.tensorData);
         expect(conv2dOp.name).toBe('conv2d_depthwise');
-    });
-
-    it('test behavior processBias', () => {
-        behaviors.processBias.call(conv2dOp as unknown as OpData, conv2dOp.tensorData);
-        const bias = conv2dOp.tensorData.find(item => item.tensorName === 'bias') as ModelVar;
-        expect(bias.shape).toEqual([1]);
-        bias.shape = [10];
-        expect(bias.shape).toEqual([10]);
     });
 
     it('test behavior batchComputeConv2d', () => {

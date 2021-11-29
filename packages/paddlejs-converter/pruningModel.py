@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 
-# pruning op tensor and relatad op which has no sense, like ShapeTensor and OutSize
+# pruning op tensor and relatad op with no sense, like ShapeTensor and OutSize
 def pruningNoSenseTensor(model):
    global ops
    ops = model["ops"]

@@ -1,6 +1,8 @@
 # Ignore all files in root
 /*
+src/*
 # Except the ones we want to publish
+!lib/
 !package.json
 !README.md
 !README_cn.md

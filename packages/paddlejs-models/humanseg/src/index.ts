@@ -20,17 +20,19 @@ blurFilter.reset();
 blurFilter.addFilter('blur', 10);
 
 
-export async function load(needPreheat = true, enableLightModel = false) {
+export async function load(needPreheat = true, enableLightModel = false, customModel = null) {
     const modelpath = 'https://paddlejs.cdn.bcebos.com/models/shufflenetv2_398x224/model.json';
     const lightModelPath = 'https://paddlejs.cdn.bcebos.com/models/shufflenetv2_288x160/model.json';
-    const modelPath = enableLightModel ? lightModelPath : modelpath;
+    const path = customModel
+        ? customModel
+        : enableLightModel ? lightModelPath : modelpath;
     if (enableLightModel) {
         WIDTH = 288;
         HEIGHT = 160;
     }
 
     runner = new Runner({
-        modelPath: modelPath,
+        modelPath: path,
         needPreheat: needPreheat !== undefined ? needPreheat : true,
         feedShape: {
             fw: WIDTH,
@@ -44,10 +46,13 @@ export async function load(needPreheat = true, enableLightModel = false) {
     env.set('webgl_pack_channel', true);
     env.set('webgl_pack_output', true);
     env.set('webgl_feed_process', true);
-    env.set('webgl_force_half_float_texture', true);
-
 
     await runner.init();
+
+    if (runner.feedShape) {
+        WIDTH = runner.feedShape.fw;
+        HEIGHT = runner.feedShape.fh;
+    }
 }
 
 export async function preheat() {

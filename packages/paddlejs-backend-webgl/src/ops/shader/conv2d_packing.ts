@@ -3,7 +3,7 @@
  */
 
 function mainFunc(
-    { origin, filter, out },
+    { origin, filter, out, bias },
     {
         groups = 1,
         strides = [],
@@ -16,6 +16,7 @@ function mainFunc(
     const [stride_v = 1, stride_h = 1] = strides;
     const [padTop = 0, padLeft = 0] = paddings;
     const [dilation_v = 1, dilation_h = 1] = dilations;
+
     return `
     void main() {
         ivec4 oPos = getOutputTensorPos();
@@ -75,7 +76,8 @@ function mainFunc(
             oy += ${dilation_v};
         }
 
-        res += getValueFromTensorPosPacking_bias(0, c, 0, 0);
+        ${bias ? 'res += getValueFromTensorPosPacking_bias(0, c, 0, 0);' : ''}
+
         if (${fuse_relu}) {
             res = max(vec4(0.0, 0.0, 0.0, 0.0), res);
         }

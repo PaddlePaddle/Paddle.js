@@ -27,8 +27,8 @@ export default class MediaProcessor {
      * 处理图像方法
      * @param inputs
      */
-    process(media, modelConfig): InputFeed[] {
-        const { feedShape, fill, mean, std, bgr } = modelConfig;
+    process(media, modelConfig, feedShape): InputFeed[] {
+        const { fill, mean, std, bgr } = modelConfig;
         const { fc = 3, fh, fw } = feedShape;
         const input = media;
 

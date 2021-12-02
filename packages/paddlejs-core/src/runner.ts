@@ -134,7 +134,8 @@ export default class Runner {
         else {
             inputFeed = this.mediaProcessor.process(
                 media,
-                this.runnerConfig
+                this.runnerConfig,
+                this.feedShape
             );
         }
 

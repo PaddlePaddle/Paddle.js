@@ -25,5 +25,6 @@ registerWebGLBackend();
 export {
     glInstance,
     GLHelper,
-    webgl_types
+    webgl_types,
+    ops
 };

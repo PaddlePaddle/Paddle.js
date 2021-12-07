@@ -2,30 +2,26 @@
 
 ## 一、RNN理解
 
-RNN：循环神经网络，是由输入层、一个隐藏层和一个输出层组成：
-![图片](https://pic4.zhimg.com/80/v2-3884f344d71e92d70ec3c44d2795141f_1440w.jpg)
+**RNN** 是循环神经网络，由输入层、隐藏层和输出层组成，擅长对序列数据进行处理。
 
-U：输入层到隐藏层的权重矩阵
-V：隐藏层到输出层的权重矩阵
-
-
+![RNN](https://user-images.githubusercontent.com/43414102/144739164-d6c4b9ff-d885-4812-8d05-5bf045d3a11b.png)
 paddle官网文档：https://www.paddlepaddle.org.cn/documentation/docs/zh/api/paddle/nn/RNN_cn.html#rnn
 
 paddle源码实现：https://github.com/PaddlePaddle/Paddle/blob/develop/paddle/fluid/operators/rnn_op.h#L812
 
-
 ##二、RNN计算方式
-![图片](http://bos.bj.bce-internal.sdns.baidu.com/agroup-bos-bj/bj-2e9e106bc9e13aaeb18e9ae10dd7a5cd3b57a6c4)
-<center><font size=2>RNN时间线展开图</font></center>
 
-$网络在  t  时刻接收到输入  X_t  之后，隐藏层的值是 S_t  ，输出值是  O_t 。关键一点是， S_t 的值不仅仅取决于  X_t ，还取决于  S_{t-1} $。可以用下面的公式来表示循环神经网络的计算方法：
+ t 时刻，输入层为 ![图片](https://paddlejs.bj.bcebos.com/doc/xt.svg) ，隐藏层为 ![图片](https://paddlejs.bj.bcebos.com/doc/st.svg) ，输出层为 ![图片](https://paddlejs.bj.bcebos.com/doc/ot.svg)  。由上图可知，![图片](https://paddlejs.bj.bcebos.com/doc/st.svg) 的值不仅仅取决于 ![图片](https://paddlejs.bj.bcebos.com/doc/xt.svg)  ，还取决于 ![图片](https://paddlejs.bj.bcebos.com/doc/st1.svg) 。计算公式如下：
 
-![图片](http://bos.bj.bce-internal.sdns.baidu.com/agroup-bos-bj/bj-dc5982fcfcc1c78f1394e34c768337da70efe0ee)
-<center><font size=2>RNN公式</font></center>
+![RNN公式](https://user-images.githubusercontent.com/43414102/144739185-92724c8c-25f7-4559-9b1d-f1d76e65d965.jpeg)
 
 ## 三、pdjs中RNN算子实现
 
-### 以ch_ppocr_mobile_v2.0_rec_infer 模型 rnn算子为例：
+因为 RNN 有梯度消失问题，不能获取更多上下文信息，所以 CRNN 中使用的是 **LSTM（Long Short Term Memory）**，LSTM 是一种特殊的 RNN，能够保存长期的依赖关系。
+
+基于图像的序列，两个方向的上下文是相互有用且互补的。由于 LSTM 是单向的，所以将两个 LSTM，一个向前和一个向后组合到一个**双向 LSTM** 中。此外，可以堆叠多层双向 LSTM。ch_PP-OCRv2_rec_infer 识别模型就是使用的双层双向 LSTM 结构。计算过程如下图所示：
+
+#### 以ch_ppocr_mobile_v2.0_rec_infer 模型 rnn算子为例：
 ```javascript
 {
 	Attr: {
@@ -62,10 +58,9 @@ $网络在  t  时刻接收到输入  X_t  之后，隐藏层的值是 S_t  ，�
 }
 ```
 
-### 整体计算过程
-![图片](http://bos.bj.bce-internal.sdns.baidu.com/agroup-bos-bj/bj-6cb50a05114867914a7f4fdff193e9590375e028)
-
-### rnn 计算中新增op：
+#### 整体计算过程
+![LSTM计算过程](https://user-images.githubusercontent.com/43414102/144739246-daf839ad-1d96-4e1d-8f34-38ed0bc5f288.png)
+#### rnn 计算中新增op：
 1）rnn_origin
 
 计算公式： blas.MatMul(Input,  WeightList_ih, blas_ih) + blas.MatMul(PreState,  WeightList_hh,  blas_hh)

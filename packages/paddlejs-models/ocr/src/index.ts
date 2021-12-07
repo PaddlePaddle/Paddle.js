@@ -9,6 +9,17 @@ import RecProcess from './recPostprocess';
 import cv from '@paddlejs-mediapipe/opencv/library/opencv_ocr';
 import { flatten, int, clip } from './util';
 
+interface DrawBoxOptions {
+    canvas?: HTMLCanvasElement;
+    style?: CanvasStyleOptions;
+}
+
+interface CanvasStyleOptions {
+    strokeStyle?: string;
+    lineWidth?: number;
+    fillStyle?: string;
+}
+
 const DETSHAPE = 640;
 const RECWIDTH = 320;
 const RECHEIGHT = 32;
@@ -44,13 +55,9 @@ function initCanvas(canvas) {
     document.body.appendChild(canvas);
 }
 
-export async function load() {
+export async function init() {
     detectRunner = new Runner({
-        modelPath: 'https://paddlejs.cdn.bcebos.com/models/ocr_det',
-        feedShape: {
-            fw: DETSHAPE,
-            fh: DETSHAPE
-        },
+        modelPath: 'https://paddlejs.bj.bcebos.com/models/ocr_det_new',
         fill: '#fff',
         mean: [0.485, 0.456, 0.406],
         std: [0.229, 0.224, 0.225],
@@ -59,11 +66,7 @@ export async function load() {
     const detectInit = detectRunner.init();
 
     recRunner = new Runner({
-        modelPath: 'https://paddlejs.cdn.bcebos.com/models/ocr_rec_crnn_320_new_2',
-        feedShape: {
-            fw: RECWIDTH,
-            fh: RECHEIGHT
-        },
+        modelPath: 'https://paddlejs.bj.bcebos.com/models/ocr_rec_new',
         fill: '#000',
         mean: [0.5, 0.5, 0.5],
         std: [0.5, 0.5, 0.5],
@@ -77,7 +80,7 @@ export async function load() {
     return await Promise.all([detectInit, recInit]);
 }
 
-export async function detect(image) {
+async function detect(image) {
     // 目标尺寸
     const targetWidth = DETSHAPE;
     const targetHeight = DETSHAPE;
@@ -132,12 +135,12 @@ export async function detect(image) {
     return points;
 }
 
-export async function drawBox(
+function drawBox(
+    points: number[],
     image: HTMLImageElement,
     canvas: HTMLCanvasElement,
-    color?: string
+    style?: CanvasStyleOptions
 ) {
-    const points = await detect(image);
     canvas.width = image.naturalWidth;
     canvas.height = image.naturalHeight;
     const ctx = canvas.getContext('2d');
@@ -146,19 +149,39 @@ export async function drawBox(
         // 开始一个新的绘制路径
         ctx.beginPath();
         // 设置绘制线条颜色，默认为黑色
-        ctx.strokeStyle = color || '#000';
+        ctx.strokeStyle = style?.strokeStyle || '#000';
+        // 设置线段宽度，默认为1
+        ctx.lineWidth = style?.lineWidth || 1;
+        // 设置填充颜色，默认透明
+        ctx.fillStyle = style?.fillStyle || 'transparent';
         // 设置路径起点坐标
         ctx.moveTo(point[0][0], point[0][1]);
         ctx.lineTo(point[1][0], point[1][1]);
         ctx.lineTo(point[2][0], point[2][1]);
         ctx.lineTo(point[3][0], point[3][1]);
+        // 进行内容填充
+        ctx.fill();
         ctx.closePath();
         ctx.stroke();
+        ctx.restore();
     });
 }
 
-export async function recognize(image: HTMLImageElement) {
+/**
+ * 文本识别
+ * @param {HTMLImageElement} image 原图
+ * @param {Object} options 绘制文本框配置参数
+ */
+export async function recognize(
+    image: HTMLImageElement,
+    options?: DrawBoxOptions
+) {
+    // 文本框选坐标点
     const point = await detect(image);
+    // 绘制文本框
+    if (options.canvas) {
+        drawBox(point, image, options.canvas, options.style);
+    }
     const boxes = sorted_boxes(point);
     const text_list = [];
     for (let i = 0; i < boxes.length; i++) {

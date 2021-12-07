@@ -4,7 +4,7 @@
 
 Ocr is a text recognition module, which includes two models: ocr_detection and ocr_recognition。 Ocr_detection model detects the region of the text in the picture, ocr_recognition model can recognize the characters (Chinese / English / numbers) in each text area. 
 
-The module provides three interfaces. Users only need to input a text picture to draw the text box selection area and obtain the text box selection coordinates and text recognition results.
+The module provides a simple and easy-to-use interface. Users only need to upload pictures to obtain text recognition results.
 
 The input shape of the ocr_recognition model is [1, 3, 32, 320], and the selected area of the picture text box will be processed before the model reasoning: the width height ratio of the selected area of the picture text box is < = 10, and the whole selected area will be transferred into the recognition model; If the width height ratio of the frame selected area is > 10, the frame selected area will be cropped according to the width, the cropped area will be introduced into the recognition model, and finally the recognition results of each part of the cropped area will be spliced.
 
@@ -20,18 +20,18 @@ __tip：At present, model recognition is only applied to PC terminal, and the re
 
 import * as ocr from '@paddlejs-models/ocr';
 
-// Load ocr_detect model
-await ocr.load();
+// Model initialization
+await ocr.init();
 
-// Get text area points
-const res = await ocr.detect(img);
-// Draw the selected area of the text box, canvas passes in the selected element of the text box to be drawn, color is the color of the drawn line (black by default)
-await ocr.drawBox(img, canvas, color);
-// Get text area points and recognition results
-const res = await ocr.recognize(img);
-// recognition results
+// Get the text recognition result API, img is the user's upload picture, and option is an optional parameter
+// option.canvas as HTMLElementCanvas：if the user needs to draw the selected area of the text box, pass in the canvas element
+// option.style as object：if the user needs to configure the canvas style, pass in the style object
+// option.style.strokeStyle as string：select a color for the text box
+// option.style.lineWidth as number：width of selected line segment in text box
+// option.style.fillStyle as string：select the fill color for the text box
+const res = await ocr.recognize(img, option?);
+// character recognition results
 console.log(res.text);
 // text area points
 console.log(res.points);
-
 ```

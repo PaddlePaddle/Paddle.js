@@ -1,0 +1,71 @@
+<!--pages/play.wxml-->
+
+<import src="../../skeleton/loading.skeleton.wxml"/>
+<template is="skeleton" wx:if="{{loading}}"/>
+
+<view
+	class="page-container {{loading ? 'move-hidden' : ''}}"
+>
+	<camera
+		device-position="{{cameraBack ? 'back' : 'front'}}"
+		resolution="medium"
+		frame-size="medium"
+		flash="off"
+		bindinitdone="cameraInitdone"
+		binderror="cameraError"
+		bindstop="cameraUnexpectedStop"
+		class="camera"
+	></camera>
+
+	<top-bar>
+		<!-- 时钟 -->
+		<timer
+			class="timer-wrapper"
+			timer-status="{{timerStatus}}"
+			game-time="{{gameTime}}"
+			bindendGame="navToFinal"
+		/>
+		<!-- 积分 -->
+		<view class="score-icon"></view>
+		<view class="score-num">{{score}}</view>
+		<!-- 顶bar外部插槽 -->
+		<view
+			slot="topbar-outer-right"
+			class="camera-direction-btn"
+			bindtap="switchCamera"
+		></view>
+	</top-bar>
+
+	<!-- 物品寻找UI组件 -->
+	<finder-ui
+		wx:if="{{ startGame }}"
+		target-idx="{{targetIdx}}"
+		current-idx="{{currentIdx}}"
+		is-match="{{isMatch}}"
+		bindnextItem="nextItem"
+		bindstartRecognize="turnOnTimer"
+	/>
+
+	<!-- 预加载图片组件 -->
+	<img-preloader img-list="{{preloadImgList}}"/>
+
+	<!-- 游戏开始倒计时动画 -->
+	<start-animation
+		wx:if="{{ !startGame }}"
+		start-countdown="{{startCountdown}}"
+		bindstartGame="startGame"
+	/>
+
+<!-- 测试 -->
+	<!-- <view class="test-board" style="position:fixed;bottom: 30vw;">
+		<button
+			style="width:18vw;height:15vw;font-size:3vw;padding:0;"
+			class="inner-element-center"
+			wx:if="{{timerStatus !== 'pause'}}"
+			type="primary"
+			bindtap="success"
+		>识别成功</button>
+	</view> -->
+</view>
+
+<!--  -->

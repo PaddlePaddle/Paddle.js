@@ -1,0 +1,33 @@
+/* pages/play/components/timer/timer.wxss */
+.timer-container {
+    margin-left: 3.38vw;
+    display: flex;
+    align-items: center;
+    /* flex-wrap: nowrap; */
+}
+
+.timer-icon {
+    margin-right: 1.44vw;
+    width: 8.05vw;
+    height: 8.05vw;
+    background: url(https://mms-voice-fe.cdn.bcebos.com/pdproject/clas/wx-project/time_icon.png) no-repeat;
+    background-size: 100% 100%;
+}
+
+.timer-num {
+    min-width: 15vw;
+    color: #323232;
+    font-family: RMTT;
+    font-size: 6vw;
+    font-weight: bold;
+}
+
+.timer-num .num {
+    display: inline-block;
+    width: 10vw;
+    text-align: center;
+}
+
+.font-red {
+    color: red
+}

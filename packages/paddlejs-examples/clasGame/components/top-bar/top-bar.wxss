@@ -1,0 +1,15 @@
+/* components/top-bar/top-bar.wxss */
+.top-bar-container {
+	position: fixed;
+	top: 0;
+	width: 100vw;
+	background: rgba(200, 200, 200, 0.6);
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	z-index: 99;
+}
+
+.topbar-outer-container {
+	position: absolute;
+}

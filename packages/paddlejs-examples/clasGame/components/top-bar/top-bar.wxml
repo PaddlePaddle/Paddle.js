@@ -1,0 +1,15 @@
+<!--components/top-bar/top-bar.wxml-->
+<view
+    class="top-bar-container"
+    style="padding-top: {{paddingTop + 'px'}};height: {{height + 'px'}}"
+>
+    <!-- 顶bar外部的元素 插槽 -->
+    <slot></slot>
+    <view
+        class="topbar-outer-container"
+        style="top: {{paddingTop + height + 'px'}};"
+    >
+        <slot name="topbar-outer-left"></slot>
+        <slot name="topbar-outer-right"></slot>
+    </view>
+</view>

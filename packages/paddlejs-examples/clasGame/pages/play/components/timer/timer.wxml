@@ -1,0 +1,11 @@
+<!--pages/play/components/timer/timer.wxml-->
+<view class="timer-container">
+    <view class="timer-icon"></view>
+    <view
+        class="timer-num inner-element-center"
+    >
+        <view
+            class="num animate__animated animate__infinite {{isRemind && 'font-red animate__pulsePro'}}"
+        >{{counter}}</view>s
+    </view>
+</view>

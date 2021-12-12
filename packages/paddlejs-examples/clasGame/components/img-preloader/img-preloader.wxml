@@ -1,0 +1,7 @@
+<!--components/img-preloader/img-preloader.wxml-->
+<image
+    class="hidden-img"
+ 	style="position:fixed;width:100px;height:100px;top:50%;left:0;visibility:hidden;"
+	src="{{src}}"
+	bindload="loadImg"
+></image>

@@ -1,0 +1,26 @@
+/* pages/play/components/start-animation/start-animation.wxss */
+.start-animation-container {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right:0;
+}
+
+.clock-container {
+    width: 53.30vw;
+    height: 53.30vw;
+    background: url(https://mms-voice-fe.cdn.bcebos.com/pdproject/clas/wx-project/clock_210909.png) no-repeat;
+    background-size: 100% 100%;
+    font-family: 'RMTT';
+    font-weight: 500;
+    font-size: 26.65vw;
+    color: #4184C3;
+}
+
+.start {
+    font-family: 'RMTT';
+    font-weight: 500;
+    font-size: 40vw;
+    color: #4184C3;
+}

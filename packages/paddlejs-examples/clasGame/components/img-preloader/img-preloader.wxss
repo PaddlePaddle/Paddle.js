@@ -1,0 +1,9 @@
+/* components/img-preloader/img-preloader.wxss */
+.hidden-img {
+    position: fixed;
+    width: 1px;
+    height: 1px;
+    top: -50px;
+    left: 0;
+    visibility:hidden;
+}

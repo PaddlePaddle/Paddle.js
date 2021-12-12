@@ -1,0 +1,45 @@
+/**index.wxss**/
+@import "../../skeleton/loading.skeleton.wxss";
+
+.index-container {
+	background-image: url(https://mms-voice-fe.cdn.bcebos.com/pdproject/clas/wx-project/home_bg_2109011341.png);
+	/* background-color: #548fb1; */
+}
+
+.title {
+	margin: 29.23vh auto 0;
+	width: 84.46vw;
+	height: 28.09vw;
+}
+
+.introduction {
+	margin: 10px auto 0;
+	width: 56.92vw;
+	height: 29vw;
+	background-image: url(https://mms-voice-fe.cdn.bcebos.com/pdproject/clas/wx-project/introduction_bg.png);
+	box-sizing: border-box;
+	background-size: 100% 100%;
+	padding: 2vw 2vw 2vw 3vw;
+	font-size: 3.7vw;
+	color: #166FA1;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}
+
+.handle-area {
+	margin: 3.54vw auto 0;
+}
+
+.logo-wrapper {
+	position: absolute;
+	bottom: 3vw;
+	width: 100%;
+}
+
+.loading {
+	width: 48.87vw;
+	height: 15.45vw;
+	background-image: url(https://mms-voice-fe.cdn.bcebos.com/pdproject/clas/wx-project/loading_2109011341.png);
+}

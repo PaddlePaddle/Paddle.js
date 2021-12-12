@@ -1,0 +1,52 @@
+<!--pages/play/components/finder-ui/finder-ui.wxml-->
+<view class="finder-ui-container inner-element-center">
+
+    <!-- 展示目标物品 -->
+    <view
+        wx:if="{{ showTargetItem }}"
+        class="middle-area tips-box inner-element-center animate__animated animate__fadeIn animate__duration-500ms"
+    >
+        <view
+            style="background-image: url({{CONFIG.config.modelInfo.itemsIconUrlPrefix + CONFIG.config.modelInfo.itemMap[targetIdx].iconFilename}})"
+            class="ques-img"
+        ></view>
+        <view
+            class="my-font ques-text"
+        >找出【{{CONFIG.config.modelInfo.itemMap[targetIdx].name}}】</view>
+    </view>
+
+    <!-- 展示【找到了】提示 -->
+    <view
+        wx:if="{{ isMatch }}"
+        class="middle-area inner-element-center animate__animated animate__tada animate__duration-300ms"
+    >
+        <view class="match-icon"></view>
+        <view class="my-font match-text">找到啦!</view>
+    </view>
+
+    <view class="bottom-area">
+        <view  class="tips">
+            <block wx:if="{{ !showTargetItem }}">
+                <view class="figure-icon"></view>
+                <view class="tips-text">
+                    找到了{{currentIdx && CONFIG.config.modelInfo.itemMap[currentIdx].name || '...'}}
+                </view>
+            </block>
+        </view>
+        <view wx:if="{{ !showTargetItem }}" class="target-tips inner-element-center">
+            <image src="{{CONFIG.config.modelInfo.itemsIconUrlPrefix + CONFIG.config.modelInfo.itemMap[targetIdx].iconFilename}}"></image>
+            <view class="my-font">{{CONFIG.config.modelInfo.itemMap[targetIdx].name}}</view>
+        </view>
+        <view class="options-btn-area">
+            <view
+                class="options-btn exit-btn"
+                bindtap="navBack"
+            ></view>
+            <view
+                wx:if="{{!showTargetItem && !isMatch}}"
+                class="options-btn next-btn"
+                bindtap="nextItem"
+            ></view>
+        </view>
+    </view>
+</view>

@@ -1,0 +1,33 @@
+<!--index.wxml-->
+<view
+	class="page-container index-container bg-cover"
+>
+	<view
+		style="background-image: url({{titleBgUrl}});"
+		class="title bg-cover animate__animated {{titleEntranceAniName}} animate__duration-600ms"
+	></view>
+
+	<view class="introduction my-font animate__animated animate__infinite animate__duration-2000ms animate__pulse">
+		<view>将手机摄像头打开，对准真实世界的物品，神经网络模型会实时检测识别到的物品是什么。</view>
+		<view>倒计时结束前看看你能找到多少物品，快来开始吧！</view>
+	</view>
+
+	<view class="handle-area inner-element-center animate__animated animate__infinite animate__duration-2000ms animate__pulse">
+		<custom-btn
+			wx:if="{{isLoaded}}"
+			width="68.43vw"
+			height="21.65vw"
+			bgUrl="https://mms-voice-fe.cdn.bcebos.com/pdproject/clas/wx-project/start_btn.png"
+			bind:buttonTap="navToPlay"
+		/>
+		<view
+			wx:else
+			class="loading bg-cover"
+		></view>
+	</view>
+
+	<pdjs-logo
+		class="logo-wrapper"
+		powered-by-text="Paddleclas"
+	/>
+</view>

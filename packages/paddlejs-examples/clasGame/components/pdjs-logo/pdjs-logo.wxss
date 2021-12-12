@@ -1,0 +1,36 @@
+/* components/common/logo/logo.wxss */
+.logo-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    margin-left: 3.62vw;
+    width: 25.28vw;
+    height: 7.81vw;
+    background: url(https://mms-voice-fe.cdn.bcebos.com/pdproject/clas/wx-project/paddle_logo_2109011341.png) no-repeat;
+    background-size: contain;
+}
+
+.powered-by {
+    margin: 0 1vw 1vw 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 4.02vw;
+    color: #e1e1e1;
+}
+
+.dec-fontsize {
+    font-size: 3.38vw;
+}
+
+.link-label {
+    display: inline-block;
+    background: url(https://mms-voice-fe.cdn.bcebos.com/pdproject/clas/wx-project/label-bg.png);
+    padding: 0 2vw;
+    text-align: center;
+    background-size: 100% 100%;
+}

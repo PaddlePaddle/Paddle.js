@@ -1,0 +1,136 @@
+/* pages/play/components/finder-ui/finder-ui.wxss */
+.finder-ui-container {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.middle-area {
+    position: relative;
+    width: 70vw;
+    height: 50vw;
+    flex-direction: column;
+}
+
+.tips-box {
+    background-color: rgba(0, 116, 210, 0.3); 
+    border: 1vw solid rgb(119, 192, 247);
+    border-radius: 4vw;
+    transition: all ;
+}
+
+.ques-text {
+    font-size: 7.3vw;
+    color: #fff;
+}
+
+.shallow {
+    transition-property: all;
+    transition-duration: 1s;
+    opacity: 0.2;
+    border-color: rgba(119, 192, 247,0.4);
+}
+
+.ques-img {
+    width: 32.6vw;
+    height: 32.6vw;
+    background-size: 100% 100%;
+}
+
+.match-icon {
+    width: 28vw;
+    height: 28vw;
+    margin-bottom: 3.94vw;
+    background: url(https://mms-voice-fe.cdn.bcebos.com/pdproject/clas/wx-project/correct_test.png);
+    background-size: 100% 100%;
+}
+
+.match-text {
+    font-size: 14vw;
+}
+
+.bottom-area {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+	justify-content: space-between;
+}
+
+.bottom-area .tips {
+    position: relative;
+    width: 35vw;
+    margin: 0 0 4.26vw 5.63vw;
+}
+
+.figure-icon {
+    width: 21.17vw;
+    height: 21.17vw;
+    background: url(https://mms-voice-fe.cdn.bcebos.com/pdproject/clas/wx-project/figure_icon.png) no-repeat;
+    background-size: contain;
+}
+
+.tips .tips-text {
+    position: absolute;
+    width: 21vw;
+    left: 5%;
+    bottom: calc(100% + 2.5vw);
+    padding: 1vw;
+    background-color: #efefef;
+    border-radius: 2vw;
+    font-size: 3.5vw;
+}
+
+.tips .tips-text:before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: 6vw;
+    top: calc(100% - 1px);
+    border: 2vw solid;
+    border-color: #efefef transparent transparent transparent;
+}
+
+.target-tips {
+    position: absolute;
+    padding-bottom: 4vw;
+    left: 50%;
+    transform: translateX(-50%);
+    flex-direction: column;
+}
+
+.target-tips image {
+    width: 12vw;
+    height: 12vw;
+    margin-bottom: 1vw;
+}
+
+.target-tips view {
+    color: #e6e6e6;
+    font-size: 4.5vw;
+}
+
+.options-btn-area {
+    display: flex;
+    flex-direction: column-reverse;
+    width: 28vw;
+    margin: 0 1.77vw 2.81vw 0;
+}
+
+.options-btn {
+    height: 10.23vw;
+    background-size: 100% 100%;
+    margin-bottom: 1.45vw;
+}
+
+.next-btn{
+    background-image: url(https://mms-voice-fe.cdn.bcebos.com/pdproject/clas/wx-project/next_btn.png);
+}
+
+.exit-btn{
+    background-image: url(https://mms-voice-fe.cdn.bcebos.com/pdproject/clas/wx-project/exit_btn.png);
+}

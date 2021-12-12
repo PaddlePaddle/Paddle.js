@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "custom-btn": "../../components/custom-btn/custom-btn",
+		"pdjs-logo": "../../components/pdjs-logo/pdjs-logo"
+  }
+}

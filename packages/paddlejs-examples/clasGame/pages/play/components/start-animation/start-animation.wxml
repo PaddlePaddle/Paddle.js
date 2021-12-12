@@ -1,0 +1,15 @@
+<!--pages/play/components/start-animation/start-animation.wxml-->
+<view
+    wx:if="{{start}}"
+    class="start-animation-container inner-element-center"
+>
+    <view
+        wx:if="{{showCountdownAni}}"
+        class="clock-container inner-element-center animate__animated {{countdownEntranceAni ? 'animate__flipInY animate__duration-700ms' : ''}} {{countdownExitAni ? 'animate__fadeOut animate__duration-300ms' : ''}}"
+    >{{ count }}</view>
+
+    <view
+        wx:else
+        class="start animate__animated animate__fadeInDownBig {{GOExitAni ? 'animate__zoomOut' : ''}} animate__duration-300ms"
+    >GO!</view>
+</view>

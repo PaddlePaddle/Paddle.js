@@ -1,0 +1,82 @@
+/* pages/final/final.wxss */
+@import "../../skeleton/loading.skeleton.wxss";
+
+.final-container {
+    background-image: url(https://mms-voice-fe.cdn.bcebos.com/pdproject/clas/wx-project/final_bg.png);
+}
+
+.items-display-area {
+    margin: 10vh auto 0;
+    width: 80vw;
+    height: 60vw;
+    border-radius: 5vw;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.item-wrapper {
+    /* flex-grow: 1; 
+    flex-shrink: 1;
+    flex-basis: 10px; */
+    box-sizing: border-box;
+    padding: 3vw;
+    /* background-color: red; */
+}
+
+.nothing-tips {
+    font-size: 12vw;
+    font-family: 'RMTT';
+    color: #eee;
+}
+
+.item {
+    width: 100%;
+    height: 100%;
+    background-size: 100% 100%;
+}
+
+.info {
+    position: relative;
+    margin-top: 10vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.result-text {
+    font-size: 7.08vw;
+}
+
+.btn-top-gap {
+    margin-top: 10vw;
+}
+
+.share {
+    position: relative;
+    margin-top: 4vw;
+    width: 85vw;
+    font-size: 6vw;
+    color: #fff;
+}
+
+.share-icon {
+    width: 8vw;
+    height: 8vw;
+    background: url(https://mms-voice-fe.cdn.bcebos.com/pdproject/clas/wx-project/share_icon_2.png);
+    background-size: 100% 100%;
+    margin: 0 1.7vw;
+}
+
+.cover-button {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.logo-wrapper {
+	position: absolute;
+	bottom: 3vw;
+	width: 100%;
+}

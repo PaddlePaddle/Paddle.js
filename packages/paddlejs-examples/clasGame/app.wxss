@@ -1,0 +1,42 @@
+/**app.wxss**/
+@import "./assets/fontRMTT.wxss";
+@import "./animate.wxss";
+
+.page-container {
+	position: relative;
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden;
+}
+
+.bg-cover {
+	background-size: cover;
+	background-repeat: no-repeat;
+}
+
+.inner-element-center {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.paddle-blue {
+	color: #003cd4;
+}
+
+.my-font {
+	font-family: "RMTT";
+	font-size: 80px;
+	color: #FFFFFF;
+}
+
+button {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	border-radius: 0;
+	-webkit-tap-highlight-color: transparent;
+	overflow: hidden;
+	color: #000000;
+	background-color: transparent;
+}

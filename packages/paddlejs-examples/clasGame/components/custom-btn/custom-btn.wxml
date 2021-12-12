@@ -1,0 +1,11 @@
+<!--components/common/custom-btn.wxml-->
+<view
+    style="width:{{ width }};height:{{ height }};background-image:{{'url(' + bgUrl + ')'}};background-color:{{ bgColor }};"
+    class="custom-btn-container"
+>
+    <view
+        style="font-size:{{ fontSize }};color:{{ color }};line-height:{{ height }};"
+        class="custom-btn"
+        bind:tap="bindButtonTap"
+    >{{ btnText }}</view>
+</view>

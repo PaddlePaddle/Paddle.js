@@ -1,0 +1,50 @@
+/* pages/play.wxss */
+@import "../../skeleton/loading.skeleton.wxss";
+.move-hidden {
+	transform: translateX(-101%);
+}
+
+
+.camera {
+	width: 100vw;
+	height: 100vh;
+	background: #eee;
+}
+
+.timer-wrapper {
+	margin-right: 5vw;
+}
+
+.time-count {
+	width: 10vw;
+	background: #ccc;
+	font-size: 20px;
+	height: 10vw;
+	margin-right: 5vw;
+}
+
+.score-icon {
+	/* 141:153 */
+	margin-right: 1.44vw;
+	width: 7.41vw;
+	height: 8.05vw;
+	background: url(https://mms-voice-fe.cdn.bcebos.com/pdproject/clas/wx-project/score_icon.png);
+	background-size: 100% 100%;
+}
+
+.score-num {
+	color: #3961D4;
+	font-family: 'RMTT';
+    font-size: 6vw;
+    font-weight: bold;
+}
+
+.camera-direction-btn {
+	position: fixed;
+	margin-top: 5vw;
+	right: 4.26vw;
+	width: 8vw;
+	height: 8vw;
+	background: url(https://mms-voice-fe.cdn.bcebos.com/pdproject/clas/wx-project/switch_btn_2109021418_128.png);
+	background-size: 100% 100%;
+}

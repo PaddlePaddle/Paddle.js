@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-import math
-
 def splice_rnn_op(model_info, rnn_index):
 
-    global input_shape, weight_0_shape, weight_1_shape, rnn_input_name
+    global input_shape
+    global weight_0_shape
+    global weight_1_shape
+    global rnn_input_name
     ops = model_info['ops']
     vars = model_info['vars']
     op = ops[rnn_index]
@@ -18,8 +19,106 @@ def splice_rnn_op(model_info, rnn_index):
     hidden_size = op['attrs']['hidden_size']
     layer_num = num_layers * is_bidirec
 
+    def concat_mul(index, list, num):
+        global rnn_input_name
+        end = len(list)
+
+        if end < 4:
+            concat_output_name = 'lstm_' + str(index - 1) + '_' + str(num) + '.tmp_concat'
+
+            # 非最后一层遍历，将concat作为下一层输入
+            if index < is_bidirec * num_layers - 1:
+                rnn_input_name = concat_output_name
+
+            # 最后一层遍历，将rnn_output_name赋给最后一个concat
+            else:
+                concat_output_name = rnn_output_name
+
+            if end > 1:
+                x_input_name = 'lstm_' + str(index - 1) + '_' + str(list[0]) + '.tmp_concat'
+                y_input_name = 'lstm_' + str(index - 1) + '_' + str(list[1]) + '.tmp_concat'
+
+                concat_op = {
+                    'attrs': {
+                        "axis": 0
+                    },
+                    'inputs': {
+                        "X": [x_input_name],
+                        "Y": [y_input_name]
+                    },
+                    'outputs': {'Out': [concat_output_name]},
+                    'type': 'concat'
+                }
+
+                concat_output_shape = vars[x_input_name]['shape'][0] + vars[y_input_name]['shape'][0]
+
+                if end > 2:
+                    z_input_name = 'lstm_' + str(index - 1) + '_' + str(list[2]) + '.tmp_concat'
+                    concat_op['inputs']['Z'] = [z_input_name]
+                    concat_op['type'] = 'concat_mul'
+                    concat_output_shape += vars[z_input_name]['shape'][0]
+
+                concat_var = {
+                    'name': concat_output_name,
+                    'persistable': False,
+                    'shape': [concat_output_shape, 1, weight_1_shape[1] * 2]
+                }
+                ops.append(concat_op)
+
+                if index < is_bidirec * num_layers - 1:
+                    vars[concat_output_name] = concat_var
+
+            return
+
+        # concat新列表
+        new_list = []
+
+        for i in range(0, end, 4):
+            if i + 4 > end:
+                for n in range(i, end):
+                    new_list.append(list[n])
+                break
+
+            concat_output_name = 'lstm_' + str(index - 1) + '_' + str(num) + '.tmp_concat'
+            x_input_name = 'lstm_' + str(index - 1) + '_' + str(list[i]) + '.tmp_concat'
+            y_input_name = 'lstm_' + str(index - 1) + '_' + str(list[i + 1]) + '.tmp_concat'
+            z_input_name = 'lstm_' + str(index - 1) + '_' + str(list[i + 2]) + '.tmp_concat'
+            m_input_name = 'lstm_' + str(index - 1) + '_' + str(list[i + 3]) + '.tmp_concat'
+
+            concat_op = {
+                'attrs': {
+                    "axis": 0
+                },
+                'inputs': {
+                    "X": [x_input_name],
+                    "Y": [y_input_name],
+                    "Z": [z_input_name],
+                    "M": [m_input_name]
+                },
+                'outputs': {'Out': [concat_output_name]},
+                'type': 'concat_mul'
+            }
+
+            concat_output_shape =\
+                vars[x_input_name]['shape'][0] \
+                + vars[y_input_name]['shape'][0] \
+                + vars[z_input_name]['shape'][0] \
+                + vars[m_input_name]['shape'][0]
+
+            concat_var = {
+                'name': concat_output_name,
+                'persistable': False,
+                'shape': [concat_output_shape, 1, weight_1_shape[1] * 2]
+            }
+
+            ops.append(concat_op)
+            vars[concat_output_name] = concat_var
+            new_list.append(num)
+            num += 1
+
+        concat_mul(index, new_list, num)
+
     for index in range(layer_num):
-        input_name = rnn_input_name
         last_hidden = op['inputs']['PreState'][0]
         last_cell = op['inputs']['PreState'][1]
         weight_list_0 = op['inputs']['WeightList'][index * 2]
@@ -28,8 +127,7 @@ def splice_rnn_op(model_info, rnn_index):
         weight_list_3 = op['inputs']['WeightList'][(index + num_layers * is_bidirec) * 2 + 1]
         output_name = 'rnn_origin_' + str(index)
 
-        input_shape = vars[input_name]['shape']
-
+        input_shape = vars[rnn_input_name]['shape']
         batch = input_shape[0]
 
         if vars[weight_list_0]:
@@ -46,7 +144,7 @@ def splice_rnn_op(model_info, rnn_index):
                 "state_axis": index
             },
             'inputs': {
-                "Input": [input_name],
+                "Input": [rnn_input_name],
                 "PreState": [last_hidden],
                 "WeightList": [
                     weight_list_0,
@@ -146,6 +244,9 @@ def splice_rnn_op(model_info, rnn_index):
 
         # concat
         if index % 2 == 1:
+
+            concat_list = []
+            concat_num = 0
             # concat forword and backword
             for bat in range(batch):
                 x_input_name = 'lstm_' + str(index - 1) + '_' + str(bat) + '.tmp_h'
@@ -170,165 +271,10 @@ def splice_rnn_op(model_info, rnn_index):
                 }
                 ops.append(concat_op)
                 vars[concat_output_name] = concat_var
+                concat_list.append(bat)
+                concat_num += 1
 
-            time = 1
-            concat_num = batch
-            concat_mul_num = 4
-            splice_arr = []
-            concat_sum = 0
-            concat_input_num = 0
-
-            # concat_mul 递归
-            while math.floor(concat_num / concat_mul_num) > 0:
-                concat_sum += concat_num
-                concat_output_num = concat_sum
-                concat_output_shape = int(math.pow(concat_mul_num, time))
-                splice_num = int(concat_num % concat_mul_num)
-                splice_arr_tmp = []
-
-                for i in range(0, concat_num, 4):
-                    if i + 4 > concat_num:
-                        break
-
-                    concat_output_name = 'lstm_' + str(index - 1) + '_' + str(concat_output_num) + '.tmp_concat'
-                    concat_output_num += 1
-
-                    x_input_name = 'lstm_' + str(index - 1) + '_' + str(concat_input_num + i) + '.tmp_concat'
-                    y_input_name = 'lstm_' + str(index - 1) + '_' + str(concat_input_num + i + 1) + '.tmp_concat'
-                    z_input_name = 'lstm_' + str(index - 1) + '_' + str(concat_input_num + i + 2) + '.tmp_concat'
-                    m_input_name = 'lstm_' + str(index - 1) + '_' + str(concat_input_num + i + 3) + '.tmp_concat'
-
-                    concat_op = {
-                        'attrs': {
-                            "axis": 0
-                        },
-                        'inputs': {
-                            "X": [x_input_name],
-                            "Y": [y_input_name],
-                            "Z": [z_input_name],
-                            "M": [m_input_name]
-                        },
-                        'outputs': {'Out': [concat_output_name]},
-                        'type': 'concat_mul'
-                    }
-
-                    concat_var = {
-                        'name': concat_output_name,
-                        'persistable': False,
-                        'shape': [concat_output_shape, 1, weight_1_shape[1] * 2]
-                    }
-                    ops.append(concat_op)
-                    vars[concat_output_name] = concat_var
-
-                # 保存没有用concat_mul合并的算子
-                if splice_num > 0:
-
-                    for num in range(splice_num, 0, -1):
-                        add_num = concat_sum - num
-                        splice_arr_tmp.append(add_num)
-
-                splice_arr = splice_arr_tmp + splice_arr
-                concat_input_num += concat_num
-                concat_num = math.floor(concat_num / concat_mul_num)
-                time += 1
-
-            # 合并没有用concat_mul处理的算子
-            while math.floor(len(splice_arr) / concat_mul_num) > 0:
-                for i in range(0, len(splice_arr), 4):
-                    if i + 4 > len(splice_arr):
-                        break
-
-                    concat_sum += 1
-                    concat_output_name = 'lstm_' + str(index - 1) + '_' + str(concat_sum) + '.tmp_concat'
-
-                    x_input_name = 'lstm_' + str(index - 1) + '_' + str(splice_arr[i]) + '.tmp_concat'
-                    y_input_name = 'lstm_' + str(index - 1) + '_' + str(splice_arr[i + 1]) + '.tmp_concat'
-                    z_input_name = 'lstm_' + str(index - 1) + '_' + str(splice_arr[i + 2]) + '.tmp_concat'
-                    m_input_name = 'lstm_' + str(index - 1) + '_' + str(splice_arr[i + 3]) + '.tmp_concat'
-
-                    concat_op = {
-                        'attrs': {
-                            "axis": 0
-                        },
-                        'inputs': {
-                            "X": [x_input_name],
-                            "Y": [y_input_name],
-                            "Z": [z_input_name],
-                            "M": [m_input_name]
-                        },
-                        'outputs': {'Out': [concat_output_name]},
-                        'type': 'concat_mul'
-                    }
-
-                    concat_output_shape = \
-                        vars[x_input_name]['shape'][0] \
-                        + vars[y_input_name]['shape'][0] \
-                        + vars[z_input_name]['shape'][0] \
-                        + vars[m_input_name]['shape'][0]
-
-                    concat_var = {
-                        'name': concat_output_name,
-                        'persistable': False,
-                        'shape': [concat_output_shape, 1, weight_1_shape[1] * 2]
-                    }
-                    ops.append(concat_op)
-                    vars[concat_output_name] = concat_var
-
-                    del splice_arr[0: 4]
-
-                    splice_arr.insert(0, concat_sum)
-
-            if len(splice_arr):
-                # 将合并后的最后算子插入 splice_arr 中
-                splice_arr.insert(0, concat_input_num)
-                splice_arr_len = len(splice_arr)
-                concat_sum += 1
-                concat_output_name = 'lstm_' + str(index - 1) + '_' + str(concat_sum) + '.tmp_concat'
-                x_input_name = 'lstm_' + str(index - 1) + '_' + str(splice_arr[0]) + '.tmp_concat'
-                y_input_name = 'lstm_' + str(index - 1) + '_' + str(splice_arr[1]) + '.tmp_concat'
-
-                if index < is_bidirec * num_layers - 1:
-                    rnn_input_name = concat_output_name
-
-                else:
-                    concat_output_name = rnn_output_name
-
-                concat_op = {
-                    'attrs': {
-                        "axis": 0
-                    },
-                    'inputs': {
-                        "X": [x_input_name],
-                        "Y": [y_input_name]
-                    },
-                    'outputs': {'Out': [concat_output_name]},
-                    'type': 'concat'
-                }
-
-                concat_output_shape = vars[x_input_name]['shape'][0] + vars[y_input_name]['shape'][0]
-
-                if splice_arr_len > 2:
-                    z_input_name = 'lstm_' + str(index - 1) + '_' + str(splice_arr[2]) + '.tmp_concat'
-                    concat_op['inputs']['Z'] = [z_input_name]
-                    concat_op['type'] = 'concat_mul'
-                    concat_output_shape += vars[z_input_name]['shape'][0]
-
-                    if splice_arr_len > 3:
-                        m_input_name = 'lstm_' + str(index - 1) + '_' + str(splice_arr[3]) + '.tmp_concat'
-                        concat_op['inputs']['M'] = [m_input_name]
-                        concat_output_shape += vars[m_input_name]['shape'][0]
-
-                concat_var = {
-                    'name': concat_output_name,
-                    'persistable': False,
-                    'shape': [concat_output_shape, 1, weight_1_shape[1] * 2]
-                }
-                ops.append(concat_op)
-
-                if index < is_bidirec * num_layers - 1:
-                    vars[concat_output_name] = concat_var
-                    splice_arr.insert(0, concat_sum)
+            concat_mul(index, concat_list, concat_num)
 
     # 删除rnn op
     del ops[rnn_index]
-

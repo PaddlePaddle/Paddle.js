@@ -53,7 +53,7 @@ def getExceedMaxShape(shape, name):
     width = shape[1]
 
     if width > PC_TEXTURE_LIMIT:
-        # 先按照 width 拆分 4 份，height 叠加 4 份拆分，是否满足
+        # 先按照 width 拆分 4 份，height 叠加 4 份拆分，是否满足，再看拆分 8 份
         if not((width / 4 <= PC_TEXTURE_LIMIT and height * 4 <= PC_TEXTURE_LIMIT)
             or (width / 8 <= PC_TEXTURE_LIMIT and height * 8 <= PC_TEXTURE_LIMIT)
         ):
@@ -62,7 +62,7 @@ def getExceedMaxShape(shape, name):
                 'name': name
             })
     elif height > PC_TEXTURE_LIMIT:
-        # 先按照 height 拆分 4 份，width 叠加 4 份拆分，是否满足
+        # 先按照 height 拆分 4 份，width 叠加 4 份拆分，是否满足，再看拆分 8 份
         if not((height / 4 <= PC_TEXTURE_LIMIT and width * 4 <= PC_TEXTURE_LIMIT)
             or (height / 8 <= PC_TEXTURE_LIMIT and width * 8 <= PC_TEXTURE_LIMIT)
         ):
@@ -72,7 +72,7 @@ def getExceedMaxShape(shape, name):
             })
 
     if width > WISE_TEXTURE_LIMIT:
-        # 先按照 width 拆分 4 份，height 叠加 4 份拆分，是否满足
+        # 先按照 width 拆分 4 份，height 叠加 4 份拆分，是否满足，再看拆分 8 份
         if not((width / 4 <= WISE_TEXTURE_LIMIT and height * 4 <= WISE_TEXTURE_LIMIT)
             or (width / 8 <= WISE_TEXTURE_LIMIT and height * 8 <= WISE_TEXTURE_LIMIT)
         ):
@@ -82,7 +82,7 @@ def getExceedMaxShape(shape, name):
             })
 
     elif height > WISE_TEXTURE_LIMIT:
-        # 先按照 width 拆分 4 份，height 叠加 4 份拆分，是否满足
+        # 先按照 width 拆分 4 份，height 叠加 4 份拆分，是否满足，再看拆分 8 份
         if not((height / 4 <= WISE_TEXTURE_LIMIT and width * 4 <= WISE_TEXTURE_LIMIT)
             or (height / 8 <= WISE_TEXTURE_LIMIT and width * 8 <= WISE_TEXTURE_LIMIT)
         ):
@@ -119,8 +119,10 @@ def read_txt_data(file_name, num_per_line=1):
 def checkOpInfo(ops):
     # remove duplicate types
     opsType = list(set([op.type for op in ops]))
+    dirname, filename = os.path.split(os.path.abspath(__file__))
+    opsPath = os.path.join(dirname, 'ops.txt')
     # read ops txt
-    opsSupportList = read_txt_data('./ops.txt')
+    opsSupportList = read_txt_data(opsPath)
     for type in opsType:
         if type not in opsSupportList:
             notSupportOps.append(type)

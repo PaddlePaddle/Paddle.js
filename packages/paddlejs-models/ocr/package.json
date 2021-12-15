@@ -1,8 +1,8 @@
 {
   "name": "@paddlejs-models/ocr",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "description": "",
-  "main": "src/index",
+  "main": "lib/index",
   "scripts": {
     "dev": "webpack server --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js"

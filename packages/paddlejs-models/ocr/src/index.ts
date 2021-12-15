@@ -20,8 +20,8 @@ interface CanvasStyleOptions {
     fillStyle?: string;
 }
 
-const DETSHAPE = 640;
-const RECWIDTH = 320;
+let DETSHAPE = 640;
+let RECWIDTH = 320;
 const RECHEIGHT = 32;
 const canvas_det = document.createElement('canvas') as HTMLCanvasElement;
 const canvas_rec = document.createElement('canvas') as HTMLCanvasElement;
@@ -55,9 +55,11 @@ function initCanvas(canvas) {
     document.body.appendChild(canvas);
 }
 
-export async function init() {
+export async function init(detCustomModel = null, recCustomModel = null) {
+    const detModelPath = 'https://paddlejs.bj.bcebos.com/models/ocr_det_new';
+    const recModelPath = 'https://paddlejs.bj.bcebos.com/models/ocr_rec_new';
     detectRunner = new Runner({
-        modelPath: 'https://paddlejs.bj.bcebos.com/models/ocr_det_new',
+        modelPath: detCustomModel ? detCustomModel : detModelPath,
         fill: '#fff',
         mean: [0.485, 0.456, 0.406],
         std: [0.229, 0.224, 0.225],
@@ -66,7 +68,7 @@ export async function init() {
     const detectInit = detectRunner.init();
 
     recRunner = new Runner({
-        modelPath: 'https://paddlejs.bj.bcebos.com/models/ocr_rec_new',
+        modelPath: recCustomModel ? recCustomModel : recModelPath,
         fill: '#000',
         mean: [0.5, 0.5, 0.5],
         std: [0.5, 0.5, 0.5],
@@ -77,7 +79,14 @@ export async function init() {
     });
     const recInit = recRunner.init();
 
-    return await Promise.all([detectInit, recInit]);
+    await Promise.all([detectInit, recInit]);
+
+    if (detectRunner.feedShape) {
+        DETSHAPE = detectRunner.feedShape.fw;
+    }
+    if (recRunner.feedShape) {
+        RECWIDTH = recRunner.feedShape.fw;
+    }
 }
 
 async function detect(image) {
@@ -179,7 +188,7 @@ export async function recognize(
     // 文本框选坐标点
     const point = await detect(image);
     // 绘制文本框
-    if (options.canvas) {
+    if (options?.canvas) {
         drawBox(point, image, options.canvas, options.style);
     }
     const boxes = sorted_boxes(point);

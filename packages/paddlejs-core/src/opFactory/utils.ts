@@ -3,58 +3,6 @@
  * @author zhangjingyuan
  */
 
-import { GLOBALS } from '../globals';
-
-/**
- * 获取texture形状和补0个数
- * @param {Array} shape tensor的形状
- * @param {boolean} isPacked 是否是packed op
- * @returns {Object} texture信息
- */
-export function getTextureInfoFromTensorShape(shape: number[] = [], isPacked = false) {
-    const GPU_TEXTURE_MAX_SIZE = GLOBALS.backendInstance.MAX_TEXTURE_SIZE || 4096;
-    const b = shape[0];
-    const c = shape[1];
-    const h = shape[2];
-    const w = shape[3];
-    let height = b * h;
-    let width = c * w;
-
-    // 安卓和ios的max texture size是4096, 改造存储空间(4bh, cw / 4)
-    let exceedMax = false;
-    if (isPacked) {
-        const packed_c = c;
-        const zeroNumber = height * packed_c * w * 4 - height * width;
-        return {
-            exceedMax,
-            shape: [4, height, width],
-            packedShape: [b, packed_c, h, w],
-            packedTextureShape: [4, height, packed_c * w],
-            zeroNumber
-        };
-    }
-    // trick TEXTURE_SIZE 超限问题，后续升级更优解
-    if (height > GPU_TEXTURE_MAX_SIZE || width > GPU_TEXTURE_MAX_SIZE) {
-        console.error('大小超限', shape);
-        height *= 4;
-        width = c * (Math.ceil(w / 4));
-        exceedMax = true;
-        if (height > GPU_TEXTURE_MAX_SIZE || width > GPU_TEXTURE_MAX_SIZE) {
-            const requested = `[${width}x${height}]`;
-            const max = `[${GPU_TEXTURE_MAX_SIZE}x${GPU_TEXTURE_MAX_SIZE}]`;
-            throw new Error(
-                'Requested texture size ' + requested
-                + ' greater than WebGL maximum on this browser / GPU ' + max + '.');
-        }
-    }
-
-    return {
-        exceedMax,
-        shape: [4, height, width],
-        zeroNumber: 0
-    };
-}
-
 
 /**
  * tensor shape 标准化为 4维

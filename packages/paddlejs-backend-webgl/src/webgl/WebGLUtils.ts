@@ -5,6 +5,7 @@
 
 import { env } from '@paddlejs/paddlejs-core';
 import { WebGLContextAttributes, UniformType } from './webgl_types';
+import { Tensor } from '../types';
 
 // 枚举类
 export enum EShaderType
@@ -396,4 +397,40 @@ export class GLHelper {
                 break;
         }
     }
+
+    public static genTextureInfoFromTensorShape(
+        MAX_TEXTURE_SIZE: number,
+        tensor: Tensor): void {
+        const GL_TEXTURE_MAX_SIZE = MAX_TEXTURE_SIZE || 4096;
+        const {
+            shape = []
+        } = tensor;
+        const b = shape[0];
+        const c = shape[1];
+        const h = shape[2];
+        const w = shape[3];
+        let height = b * h;
+        let width = c * w;
+
+        let exceedMax = false;
+        // trick TEXTURE_SIZE 超限问题，后续升级更优解
+        if (height > GL_TEXTURE_MAX_SIZE || width > GL_TEXTURE_MAX_SIZE) {
+            console.error('大小超限', shape);
+            height *= 8;
+            width = c * (Math.ceil(w / 8));
+            console.log(`[${width}x${height}]`);
+            exceedMax = true;
+            if (height > GL_TEXTURE_MAX_SIZE || width > GL_TEXTURE_MAX_SIZE) {
+                const requested = `[${width}x${height}]`;
+                const max = `[${GL_TEXTURE_MAX_SIZE}x${GL_TEXTURE_MAX_SIZE}]`;
+                throw new Error(
+                    'Requested texture size ' + requested
+                    + ' greater than WebGL maximum on this browser / GPU ' + max + '.');
+            }
+        }
+
+        tensor.shape_texture = [4, height, width];
+        tensor.exceedMax = exceedMax;
+    }
+
 }

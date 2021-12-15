@@ -3,9 +3,10 @@
  * @author yueshuangyan
  */
 
+import { Tensor } from '../types';
 import { env } from '@paddlejs/paddlejs-core';
 import { WebGLContextAttributes, UniformType } from './webgl_types';
-import { Tensor } from '../types';
+
 
 // 枚举类
 export enum EShaderType
@@ -82,6 +83,10 @@ export class GLHelper {
 
     public static getWebglVersion() {
         return env.get('webglVersion');
+    }
+
+    public static getWebglTextureLimitCut() {
+        return 8;
     }
 
     public static createCanvas() {
@@ -415,10 +420,10 @@ export class GLHelper {
         let exceedMax = false;
         // trick TEXTURE_SIZE 超限问题，后续升级更优解
         if (height > GL_TEXTURE_MAX_SIZE || width > GL_TEXTURE_MAX_SIZE) {
-            console.error('大小超限', shape);
-            height *= 8;
-            width = c * (Math.ceil(w / 8));
-            console.log(`[${width}x${height}]`);
+            const textureCut = this.getWebglTextureLimitCut();
+            env.get('debug') && console.error('大小超限', shape);
+            height *= textureCut;
+            width = c * (Math.ceil(w / textureCut));
             exceedMax = true;
             if (height > GL_TEXTURE_MAX_SIZE || width > GL_TEXTURE_MAX_SIZE) {
                 const requested = `[${width}x${height}]`;
@@ -429,7 +434,7 @@ export class GLHelper {
             }
         }
 
-        tensor.shape_texture = [4, height, width];
+        tensor.shape_texture = [height, width];
         tensor.exceedMax = exceedMax;
     }
 

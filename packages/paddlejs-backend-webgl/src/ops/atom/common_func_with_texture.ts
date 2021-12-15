@@ -3,6 +3,8 @@
  * @author yueshuangyan
  */
 
+import { GLHelper } from '../../webgl/WebGLUtils';
+
 function getValueFromTensorPosNoLimit(textureName: string, { channel, height_shape, width_texture, height_texture }) {
     return `
     // 根据tensor坐标获取这个tensor位置的值
@@ -35,32 +37,46 @@ function getValueFromTensorPosPackingNoLimit(
     }`;
 }
 
+function genOffsetYIfConditions(cut, height) {
+    const curIndexArr = Array.from({ length: cut }, (_, i) => i).reverse();
 
+    return curIndexArr.reduce((acc, cur, idx) => {
+        const curIf = cur > 0
+            ? idx === 0
+                ? `
+                if ((float(a) / pieceW) >= float(${cur})) {
+                    offsetY = int(${cur}) * ${height};
+                }
+                `
+                : `
+                else if ((float(a) / pieceW) >= float(${cur})) {
+                    offsetY = int(${cur}) * ${height};
+                }
+                `
+            : '';
+        return acc + curIf;
+    }, '');
+}
 
 function getValueFromTensorPosLimit(
     textureName: string,
     { width_shape, height_shape, channel, width_texture, height_texture }
 ) {
+    const limitCut = GLHelper.getWebglTextureLimitCut();
     return `
     // 超限布局根据tensor坐标获取这个tensor位置的值
     float getValueFromTensorPos_${textureName}(int r, int g, int b, int a) {
-        float pieceW = ceil(float(${width_shape}) / 4.0);
+        float limitCut = float(${limitCut});
+        float pieceW = ceil(float(${width_shape}) / limitCut);
         int x = calMod(a, int(pieceW));
         int offsetY = 0;
 
-        if ((float(a) / pieceW) >= 3.0) {
-            offsetY = 3 * ${height_shape};
-        }
-        else if (float(a) / pieceW >= 2.0) {
-            offsetY = 2 * ${height_shape};
-        }
-        else if (float(a) >= pieceW) {
-            offsetY = ${height_shape};
-        }
+        ${genOffsetYIfConditions(limitCut, height_shape)}
+
         vec4 pixels = TEXTURE2D(texture_${textureName},
             vec2(
                 (float(x * ${channel} + g) + 0.5) / float(${width_texture}),
-                (float(r * 4 * ${height_shape} + b + offsetY) + 0.5) / float(${height_texture})
+                (float(r * int(limitCut) * ${height_shape} + b + offsetY) + 0.5) / float(${height_texture})
             )
         );
         return pixels.r;

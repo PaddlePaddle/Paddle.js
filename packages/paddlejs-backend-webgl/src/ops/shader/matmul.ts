@@ -6,10 +6,14 @@ function mainFunc(
     { origin },
     {
         transpose_X = false,
-        transpose_Y = false
+        transpose_Y = false,
+        trans_x = false,
+        trans_y = false
     }
 ) {
-    const sharedDim = transpose_X ? origin.height_shape : origin.width_shape;
+    const tX = transpose_X || trans_x;
+    const tY = transpose_Y || trans_y;
+    const sharedDim = tX ? origin.height_shape : origin.width_shape;
 
     return `
     void main() {
@@ -17,22 +21,22 @@ function mainFunc(
         // 获取output的坐标
         ivec4 out_pos = getOutputTensorPos();
         ivec4 origin_pos = out_pos;
-        if (${transpose_X}) {
+        if (${tX}) {
             origin_pos[3] = origin_pos[2];
         }
         ivec4 counter_pos = out_pos;
-        if (${transpose_Y}) {
+        if (${tY}) {
             counter_pos[2] = counter_pos[3];
         }
 
         for (int j = 0; j < ${sharedDim}; j++) {
-            if (${transpose_X}) {
+            if (${tX}) {
                 origin_pos[2] = j;
             }
             else {
                 origin_pos[3] = j;
             }
-            if (${transpose_Y}) {
+            if (${tY}) {
                 counter_pos[3] = j;
             }
             else {
@@ -51,7 +55,9 @@ export default {
     mainFunc,
     params: [
         'transpose_X',
-        'transpose_Y'
+        'transpose_Y',
+        'trans_x',
+        'trans_y'
     ],
     textureFuncConf: {
         counter: ['getValueFromTensorPos'],

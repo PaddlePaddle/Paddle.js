@@ -15,6 +15,7 @@ import pool2d_winograd from './shader/pool2d_winograd';
 import elementwise_add from './shader/elementwise_add';
 import mul from './shader/mul';
 import matmul from './shader/matmul';
+import matmul_v2 from './shader/matmul_v2';
 import fc from './shader/fc';
 import dropout from './shader/dropout';
 import concat from './shader/concat';
@@ -81,6 +82,7 @@ const ops = {
     elementwise_sub,
     mul,
     matmul,
+    matmul_v2,
     fc,
     dropout,
     concat,

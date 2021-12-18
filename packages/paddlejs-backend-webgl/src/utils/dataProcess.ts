@@ -38,6 +38,17 @@ function getSizeFromShape(shape: number[]): number {
     return shape.reduce((acc, cur) => acc * cur, 1);
 }
 
+function genFpFloatArr(arr, key) {
+    if (arr.length === 0) {
+        return '';
+    }
+    return arr.reduce((acc, cur, index) => {
+        const item = `float(${cur})` + (index === arr.length - 1 ? ');' : ',');
+        return acc + item;
+    }, `float ${key}[${arr.length}] = float[](`);
+}
+
+
 function genFpDataCode(dataArr: number[], key) {
     if (dataArr.length === 1) {
         return `float ${key} = float(${dataArr[0]});`;
@@ -75,5 +86,6 @@ export {
     getSizeFromShape,
     reduceShape,
     genFpDataCode,
+    genFpFloatArr,
     genIntDataCode
 };

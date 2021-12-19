@@ -71,7 +71,11 @@ density_prior_box,
 rnn,
 instance_nore,
 instance_mean,
-instance_variance
+instance_variance,
+prior_box,
+multiclass_nms,
+flatten2,
+reshape
 
 
 

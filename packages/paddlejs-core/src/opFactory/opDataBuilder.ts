@@ -253,19 +253,6 @@ export default class OpData {
     }
 
     buildShaderParams() {
-        // 从tensor对象中获取的数据
-        const tensorAttrs = [
-            'length_shape',
-            'length_unformatted_shape',
-            'width_shape',
-            'height_shape',
-            'width_texture',
-            'height_texture',
-            'limit',
-            'channel',
-            'total_shape',
-            'binding'
-        ];
 
         for (const key in this.attrs) {
             if (Object.prototype.hasOwnProperty.call(this.attrs, key)) {
@@ -273,21 +260,10 @@ export default class OpData {
                 this.data[key] = item;
             }
         }
-        // 遍历 获取input tensor的数据
-        this.inputTensors.forEach((inputTensor: Tensor) => {
-            tensorAttrs.forEach(attr => {
-                this.data[attr + '_' + inputTensor.name] = inputTensor[attr];
-            });
-        });
 
         // 根据out tensor 个数 生成对应的 fShader 个数
-        this.outputTensors.forEach((outTensor: Tensor) => {
+        this.outputTensors.forEach(() => {
             const params = JSON.parse(JSON.stringify(this.data));
-            // 获取output tensor的数据
-
-            tensorAttrs.forEach(attr => {
-                params[attr + '_' + outTensor.name] = outTensor[attr];
-            });
             this.fShaderParams.push(params);
         });
     }

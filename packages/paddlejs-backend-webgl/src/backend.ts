@@ -93,8 +93,10 @@ export default class WebGLBackend extends PaddlejsBackend {
 
 
     createProgram({ op, outTensor, inputTensors, shaderParams, runtime, isFinalOp }) {
-        // genFscode  buildShader
-        const fsCode = buildShader(this.textureConf, op, inputTensors, shaderParams, runtime);
+        const tensors = [outTensor, ...inputTensors];
+        tensors.forEach(tensor => GLHelper.genTextureInfoFromTensorShape(this.MAX_TEXTURE_SIZE, tensor));
+        // genFscode
+        const fsCode = buildShader(this.textureConf, op, tensors, shaderParams, runtime);
 
         const programInstance = new GLProgram(this.gl, this.vShader as WebGLShader, fsCode, outTensor);
         programInstance.fsCode = fsCode;
@@ -109,7 +111,6 @@ export default class WebGLBackend extends PaddlejsBackend {
 
     runProgram(opData: OpData, isRendered: boolean) {
         let query = queryProcess.beginQuery(this.gl, this.glVersion);
-
         const isPacked = opData.isPackedOp;
         // 设置gpu参数
         opData.program.forEach((program: GLProgram, index) => {
@@ -329,7 +330,7 @@ export default class WebGLBackend extends PaddlejsBackend {
         isPacked: Boolean = false
     ) {
         const {
-            inputTensors: data = [],
+            inputTensors = [],
             uniform = null,
             iLayer = 0,
             modelName
@@ -337,7 +338,7 @@ export default class WebGLBackend extends PaddlejsBackend {
         const gl = this.gl;
         let textureIndex = 0;
 
-        data.forEach(item => {
+        inputTensors.forEach(item => {
             this.initTexture(textureIndex, item, isPacked);
             const loc = this.getUniformLoc('texture_' + item.name, iLayer, isRendered, index, modelName);
             if (!loc) {
@@ -376,7 +377,6 @@ export default class WebGLBackend extends PaddlejsBackend {
         gl.activeTexture(gl[`TEXTURE${index}`]);
         gl.bindTexture(gl.TEXTURE_2D, texture);
         const data = item.data;
-
         if (data) {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);

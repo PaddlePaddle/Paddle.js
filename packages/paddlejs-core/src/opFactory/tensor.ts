@@ -56,13 +56,7 @@ export default class Tensor {
         if (opts.noLayout) {
             return;
         }
-        // 获取转换到texture后的信息
-        const {
-            exceedMax,
-            shape: shape_texture
-        } = Utils.getTextureInfoFromTensorShape(shape, opts.isPacked);
-        this.shape_texture = shape_texture;
-        this.exceedMax = exceedMax;
+
         // tensor数据
         if (opts.data && opts.data.length) {
             this.data = Utils.genTensorData(opts.data, this.dataLayout, shape, this.isPacked);
@@ -72,12 +66,12 @@ export default class Tensor {
 
     get width_texture() {
         const length = this.shape_texture.length;
-        return this.shape_texture[length - 1];
+        return this.shape_texture[length - 1] || 1;
     }
 
     get height_texture() {
         const length = this.shape_texture.length;
-        return this.shape_texture[length - 2];
+        return this.shape_texture[length - 2] || 1;
     }
 
     get width_shape() {

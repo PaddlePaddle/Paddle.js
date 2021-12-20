@@ -11,7 +11,7 @@ describe('e2e test ocr model', () => {
         const res = await page.evaluate(async () => {
             const word = document.querySelector('#ocr');
             const ocr = paddlejs['ocr'];
-            await ocr.load();
+            await ocr.init();
             const res = await ocr.recognize(word);
 
             return res;

@@ -93,7 +93,7 @@ function mainFunc(
         ${floatArraydataCode}
 
     `;
-    return runtime === 0
+    return runtime === 1
         ? `
             ${genFpDataCode(variances, 'variances')}
             ${prefix}

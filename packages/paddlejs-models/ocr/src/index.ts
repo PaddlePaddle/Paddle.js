@@ -20,7 +20,7 @@ interface CanvasStyleOptions {
     fillStyle?: string;
 }
 
-let DETSHAPE = 640;
+let DETSHAPE = 960;
 let RECWIDTH = 320;
 const RECHEIGHT = 32;
 const canvas_det = document.createElement('canvas') as HTMLCanvasElement;
@@ -56,8 +56,8 @@ function initCanvas(canvas) {
 }
 
 export async function init(detCustomModel = null, recCustomModel = null) {
-    const detModelPath = 'https://paddlejs.bj.bcebos.com/models/ocr_det_new';
-    const recModelPath = 'https://paddlejs.bj.bcebos.com/models/ocr_rec_new';
+    const detModelPath = 'https://paddlejs.bj.bcebos.com/models/ocr_v2_det_new/model.json';
+    const recModelPath = 'https://paddlejs.bj.bcebos.com/models/ocr_v2_rec_320/model.json';
     detectRunner = new Runner({
         modelPath: detCustomModel ? detCustomModel : detModelPath,
         fill: '#fff',

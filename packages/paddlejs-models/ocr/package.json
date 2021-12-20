@@ -1,6 +1,6 @@
 {
   "name": "@paddlejs-models/ocr",
-  "version": "1.0.4",
+  "version": "1.1.2",
   "description": "",
   "main": "lib/index",
   "scripts": {
@@ -11,8 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "@paddlejs-mediapipe/opencv": "0.0.3",
-    "@paddlejs/paddlejs-backend-webgl": "^1.1.2",
-    "@paddlejs/paddlejs-core": "^2.1.4"
+    "@paddlejs/paddlejs-backend-webgl": "^1.1.4",
+    "@paddlejs/paddlejs-core": "^2.1.7"
   },
   "devDependencies": {
     "d3-polygon": "^2.0.0",

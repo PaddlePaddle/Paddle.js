@@ -20,9 +20,7 @@ inputElement.addEventListener('change', (e: Event) => {
 imgElement.onload = async () => {
     txt.innerHTML = '';
     // 获取文本检测坐标及识别内容
-    const res = await ocr.recognize(imgElement, {
-        canvas: canvasOutput
-    });
+    const res = await ocr.recognize(imgElement, { canvas: canvasOutput });
     if (res.text?.length) {
         // 页面展示识别内容
         txt.innerHTML = res.text.reduce((total, cur) => total + `<p>${cur}</p>`);

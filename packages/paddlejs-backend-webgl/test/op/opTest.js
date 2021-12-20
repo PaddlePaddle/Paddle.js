@@ -1,7 +1,7 @@
 import { Runner } from '@paddlejs/paddlejs-core';
 import { glInstance } from '../../src/index';
 
-const opName = 'arg_max';
+const opName = 'prior_box';
 const modelDir = '/test/op/data/';
 const modelPath = `${modelDir}${opName}.json`;
 
@@ -10,8 +10,8 @@ async function run() {
     const runner = new Runner({
         modelPath,
         feedShape: {
-            fw: 3,
-            fh: 3
+            fw: 6,
+            fh: 9
         },
         needPreheat: false
     });

@@ -56,6 +56,7 @@ import rnn_origin from './shader/rnn/rnn_origin';
 import pool2d_avg from './shader/pool2d_avg';
 import density_prior_box from './shader/density_prior_box';
 import box_coder from './shader/box_coder';
+import prior_box from './shader/prior_box';
 
 import {
     imgFeed, pack_out, nhwc_2_nchw, unpacked_2_packed,
@@ -90,6 +91,7 @@ const ops = {
     split,
     softmax,
     batchnorm,
+    reshape: reshape2,
     reshape2,
     bilinear_interp,
     transpose2,
@@ -97,6 +99,7 @@ const ops = {
     packed_2_unpacked,
     unsqueeze2,
     flatten_contiguous_range,
+    flatten2: reshape2,
     greater_than,
     reduce_sum,
     where,
@@ -131,7 +134,8 @@ const ops = {
     feedPost,
     imgFeed,
     box_coder,
-    density_prior_box
+    density_prior_box,
+    prior_box
 };
 export {
     ops

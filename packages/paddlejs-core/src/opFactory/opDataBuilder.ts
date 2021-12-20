@@ -194,15 +194,6 @@ export default class OpData {
             if (this.name.indexOf('conv2d-elementwise_add') > -1) {
                 this.name = 'conv2d_elementwise_add';
             }
-
-            else if (this.name.indexOf('reshape') > -1) {
-                this.name = 'reshape2';
-            }
-
-            else if (this.name.indexOf('flatten2') > -1) {
-                this.name = 'reshape2';
-            }
-
             else if (this.name.indexOf('max_pool2d_with_index') > -1) {
                 this.name = 'pool2d_max';
             }

@@ -1,6 +1,6 @@
 {
   "name": "@paddlejs/paddlejs-core",
-  "version": "2.1.5",
+  "version": "2.1.7",
   "description": "",
   "main": "lib/index",
   "scripts": {

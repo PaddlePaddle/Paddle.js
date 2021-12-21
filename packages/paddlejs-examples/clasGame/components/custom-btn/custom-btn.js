@@ -1,4 +1,5 @@
 // components/common/custom-btn.js
+// eslint-disable-next-line no-undef
 Component({
     properties: {
         width: {
@@ -39,4 +40,4 @@ Component({
             this.triggerEvent('buttonTap');
         }
     }
-})
+});

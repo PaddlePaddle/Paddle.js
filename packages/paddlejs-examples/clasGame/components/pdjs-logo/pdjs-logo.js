@@ -1,4 +1,5 @@
 // components/common/logo/logo.js
+// eslint-disable-next-line no-undef
 Component({
     options: {
         // 对于自定义组件 如需使用app.wxss样式 需要配置样式穿透选项
@@ -16,10 +17,11 @@ Component({
     },
     methods: {
         navToWebview(event) {
-            let src = event.currentTarget.dataset.src;
+            const src = event.currentTarget.dataset.src;
+            // eslint-disable-next-line no-undef
             wx.navigateTo({
-				url: `../webview/webview?src=${src}`
-			})
+                url: `../webview/webview?src=${src}`
+            });
         }
     }
-})
+});

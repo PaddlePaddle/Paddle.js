@@ -1,7 +1,9 @@
 // pages/play/components/start-animation/start-animation.js
 import Timer from '../../../../lib/Timer';
+
 let startCountdownTimer = null;
 
+// eslint-disable-next-line no-undef
 Component({
     options: {
         styleIsolation: 'apply-shared',
@@ -64,29 +66,29 @@ Component({
     },
     attached() {
         startCountdownTimer = new Timer({
-			duration: 3,
+            duration: 3,
             interval: this.data._countdownEntranceAniDuration + this.data._countdownExitAniDuration, // 间隔时间为倒计时入场退场延时之和
-			intervalCallBack: time => {
-				// 间隔回调
-				if  (time === 0) {
+            intervalCallBack: time => {
+                // 间隔回调
+                if (time === 0) {
                     return;
                 }
                 this.setData({
-					count: time
-				});
-			},
-			endCallback: () => {
-				// 结束回调
-                this.setData({showCountdownAni: false});
+                    count: time
+                });
+            },
+            endCallback: () => {
+                // 结束回调
+                this.setData({ showCountdownAni: false });
                 setTimeout(() => {
                     // 执行GO退场动画
-                    this.setData({GOExitAni: true});
+                    this.setData({ GOExitAni: true });
                     // 结束事件
                     setTimeout(() => {
                         this.triggerEvent('startGame');
                     }, this.data._GOExitAniDuration);
                 }, this.data._GOEntranceAniDuration + 300);
-			}
-		});
+            }
+        });
     }
-})
+});

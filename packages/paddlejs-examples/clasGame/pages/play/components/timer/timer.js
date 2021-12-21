@@ -1,6 +1,7 @@
 // pages/play/components/timer/timer.js
 import Timer from '../../../../lib/Timer';
 
+// eslint-disable-next-line no-undef
 Component({
     options: {
         styleIsolation: 'apply-shared',
@@ -17,18 +18,18 @@ Component({
         }
     },
     data: {
-	    isPaused: false,
-	    counter: '',
+        isPaused: false,
+        counter: '',
         isRemind: false,
         _gameTimer: null
-	},
+    },
     observers: {
         timerStatus(val) {
-            let gameTimer = this.data._gameTimer;
+            const gameTimer = this.data._gameTimer;
             if (!gameTimer) {
                 return;
             }
-            switch(val) {
+            switch (val) {
                 case 'start':
                     gameTimer.start();
                     break;
@@ -38,34 +39,36 @@ Component({
                 case 'continue':
                     gameTimer.continue();
                     break;
+                default:
+                    break;
             }
         }
     },
     attached() {
-		this.data._gameTimer = new Timer({
-			duration: this.data.gameTime,
-			intervalCallBack: time => {
-				// 间隔回调
-				this.setData({
-					counter: time
-				});
+        this.data._gameTimer = new Timer({
+            duration: this.data.gameTime,
+            intervalCallBack: time => {
+                // 间隔回调
+                this.setData({
+                    counter: time
+                });
                 if (time === 5) {
                     this.setData({
                         isRemind: true
                     });
                 }
-			},
-			endCallback: () => {
-				// 结束回调
+            },
+            endCallback: () => {
+                // 结束回调
                 this.triggerEvent('endGame');
-			}
-		});
+            }
+        });
         this.setData({
-			counter: this.data.gameTime
-		});
-	},
+            counter: this.data.gameTime
+        });
+    },
     detached() {
         // 销毁定时器setInterval
         this.data._gameTimer.destory();
     }
-})
+});

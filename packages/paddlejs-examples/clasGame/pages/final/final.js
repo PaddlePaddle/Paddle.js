@@ -1,13 +1,15 @@
 // pages/final/final.js
-import {CONFIG} from '../../config.js';
+import { CONFIG } from '../../config.js';
 
+// eslint-disable-next-line no-undef
 const app = getApp();
 
+// eslint-disable-next-line no-undef
 Component({
     options: {
         pureDataPattern: /^_/ // 指定所有 _ 开头的数据字段为纯数据字段
     },
-	properties: {
+    properties: {
         itemsNum: Number,
         default: 0
     },
@@ -21,7 +23,6 @@ Component({
         foundList: []
     },
     attached() {
-        console.log(this.data.foundList);
         this.setData({
             foundList: app.globalData.recognizeSuccessList
         });
@@ -37,12 +38,12 @@ Component({
         } while (c * r < this.data.foundList.length);
         this.data._itemColNum = c;
         this.data._itemRowNum = r;
-        let width =  80 / this.data._itemColNum;
-        let height = 60 / this.data._itemRowNum;
+        const width = 80 / this.data._itemColNum;
+        const height = 60 / this.data._itemRowNum;
         this.setData({
             itemWidth: width > height ? height : width
         });
-        setTimeout(() =>{
+        setTimeout(() => {
             this.setData({
                 loading: false
             });
@@ -51,11 +52,12 @@ Component({
     detached() {
         app.globalData.recognizeSuccessList = [];
     },
-	methods: {
+    methods: {
         navToPlay() {
+            // eslint-disable-next-line no-undef
             wx.redirectTo({
-				url: '../play/play'
-			})
-		}
-	}
-})
+                url: '../play/play'
+            });
+        }
+    }
+});

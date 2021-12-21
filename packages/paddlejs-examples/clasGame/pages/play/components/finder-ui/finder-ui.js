@@ -1,7 +1,9 @@
 // pages/play/components/finder-ui/finder-ui.js
-import {CONFIG} from '../../../../config.js';
+import { CONFIG } from '../../../../config.js';
+
 let showTimer = null;
 
+// eslint-disable-next-line no-undef
 Component({
     options: {
         styleIsolation: 'apply-shared',
@@ -26,7 +28,7 @@ Component({
         showTips: false,
         CONFIG: CONFIG,
         _showTargetDuration: 1500, // 展示下一个物品延时
-        _matchShowDuration: 1000, // 匹配成功展示延时
+        _matchShowDuration: 1000 // 匹配成功展示延时
     },
     observers: {
         targetIdx(val) {
@@ -57,10 +59,11 @@ Component({
     },
     methods: {
         navBack() {
+            // eslint-disable-next-line no-undef
             wx.navigateBack();
         },
         nextItem() {
             this.triggerEvent('nextItem');
         }
     }
-})
+});

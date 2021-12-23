@@ -55,7 +55,10 @@ const runner = new Runner({
         fw: 256,
         fh: 256
     },
-    fill?: '#fff' // fill color when resize image, default value is #fff
+    fill?: '#fff', // fill color when resize image, default value is #fff
+    webglFeedProcess?: true  // 开启 `webglFeedProcess`，将模型前处理部分全部转换为 shader GPU 处理，并保留原始图片 texture
+    ```
+
 });
 
 // init runner
@@ -103,12 +106,6 @@ const res = await runner.predict(mediadata, callback?);
 
     ```js
     env.set('webgl_force_half_float_texture', true);
-    ```
-
-    #### 开启 `webgl_feed_process`，将模型前处理部分全部转换为 shader GPU 处理，并保留原始图片 texture
-
-    ```js
-    env.set('webgl_feed_process', true);
     ```
 
     #### 开启 `webgl_gpu_pipeline`，将模型前处理部分全部转换为 shader GPU 处理，且将模型推理结果上屏渲染到 webgl backend 的  `WebGL2RenderingContext` 上。开发者可对输出结果 texture 和原始图片 texture 进行模型后处理，来实现 GPU 全流程：前处理+推理+后处理（渲染处理），获得高性能，可参考 humanseg model 案例。

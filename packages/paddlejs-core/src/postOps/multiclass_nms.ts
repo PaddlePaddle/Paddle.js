@@ -13,6 +13,9 @@ function getMaxScore(scores, threshold, topK) {
 
 function getBoxArea(box) {
     const [x1, y1, x2, y2] = box;
+    if (x2 < x1 || y2 < y1) {
+        return 0;
+    }
     return (x2 - x1) * (y2 - y1);
 }
 
@@ -72,8 +75,9 @@ export default function compute(inputs, attrs) {
     } = attrs;
 
     // 添加label
-    const finalBox = [];
+    let finalBox = [];
     for (let i = 0, len = scores.length; i < len; i++) {
+        const boxList = [];
         if (i === background_label) {
             continue;
         }
@@ -84,15 +88,14 @@ export default function compute(inputs, attrs) {
         }
         const maxScoreMap = scoresMapList.shift();
         const maxIndice = maxScoreMap.i;
-        const box1 = bbox[maxIndice];
-        finalBox.push({ ...maxScoreMap, box: box1, label: i });
+        let box1 = bbox[maxIndice];
+        boxList.push({ ...maxScoreMap, box: box1, label: i });
 
-        for (const scoreMap of scoresMapList) {
-            const index = scoreMap.i;
-            const box1 = bbox[index];
+        while (scoresMapList.length) {
+            const scoreMap = scoresMapList.shift();
+            box1 = bbox[scoreMap.i];
             let keep = true;
-            for (const { box: box2 } of finalBox) {
-                // const box2 = bbox[index];
+            for (const { box: box2 } of boxList) {
                 if (calNMS(box1, box2) > nms_threshold) {
                     keep = false;
                     break;
@@ -100,17 +103,20 @@ export default function compute(inputs, attrs) {
             }
 
             if (keep) {
-                finalBox.push({ ...scoreMap, box: box1, label: index });
+                boxList.push({ ...scoreMap, box: box1, label: i });
             }
             if (keep && nms_eta < 1 && nms_threshold > 0.5) {
                 nms_threshold *= nms_eta;
             }
         }
+
+        finalBox = finalBox.concat(boxList);
     }
 
     const finalData = finalBox
         .sort((a, b) => b.score - a.score)
         .slice(0, keep_top_k)
+        .sort((a, b) => a.label - b.label) // 按照label排序
         .map(item => [item.label, item.score, ...item.box]);
     return finalData && finalData.length ? finalData : [];
 }

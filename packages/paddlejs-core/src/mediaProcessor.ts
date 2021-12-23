@@ -74,7 +74,7 @@ export default class MediaProcessor {
         this.pixelWidth = (pixels as HTMLImageElement).naturalWidth || pixels.width;
         this.pixelHeight = (pixels as HTMLImageElement).naturalHeight || pixels.height;
 
-        const inGPU = env.get('webgl_gpu_pipeline') || env.get('webgl_feed_process');
+        const inGPU = env.get('webgl_gpu_pipeline') || opt.webglFeedProcess;
         this.fitToTargetSize(isImageElementLike ? input.path : input, imageDataInfo, inGPU);
         data = this.getImageData(imageDataInfo);
         // process imageData in webgl

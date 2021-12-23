@@ -79,6 +79,7 @@ export interface RunnerConfig {
     dataLayout?: string;
     multiOutputs?: ModelOp[];
     postOps?: ModelOp[];
+    webglFeedProcess?: boolean; // to convert all pre-processing parts of the model to shader processing, and keep the original image
 }
 export interface OpInputs {
     [key: string]: any;

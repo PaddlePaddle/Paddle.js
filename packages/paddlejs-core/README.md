@@ -2,7 +2,7 @@
 
 # Paddle.js Core
 As the core part of the Paddle.js ecosystem, this package hosts `@paddlejs/paddlejs-core`,
-which is responsible for the operation of the inference process of the entire engine, 
+which is responsible for the operation of the inference process of the entire engine,
 and provides interfaces for backend registration and environment variable registration.
 
 
@@ -56,7 +56,8 @@ const runner = new Runner({
         fw: 256,
         fh: 256
     },
-    fill?: '#fff' // fill color when resize image, default value is #fff
+    fill?: '#fff', // fill color when resize image, default value is #fff
+    webglFeedProcess?: true // Turn on `webglFeedProcess` to convert all pre-processing parts of the model to shader processing, and keep the original image texture.
 });
 
 // init runner
@@ -65,7 +66,7 @@ await runner.init();
 const res = await runner.predict(mediadata, callback?);
 ```
 
-**Note**: If you are importing the Core package, you also need to import a backend (e.g., 
+**Note**: If you are importing the Core package, you also need to import a backend (e.g.,
 [paddlejs-backend-webgl](/packages/paddlejs-backend-webgl), [paddlejs-backend-webgpu](/packages/paddlejs-backend-webgpu)).
 
 
@@ -103,13 +104,6 @@ const res = await runner.predict(mediadata, callback?);
     env.set('webgl_force_half_float_texture', true);
     ```
     Enable `webgl_force_half_float_texture`, feature map uses half float `HALF_FLOAT`.
-
-
-    ```js
-    env.set('webgl_feed_process', true);
-    ```
-    Turn on `webgl_feed_process` to convert all pre-processing parts of the model to shader processing, and keep the original image texture.
-
 
     ```js
     env.set('webgl_gpu_pipeline', true);

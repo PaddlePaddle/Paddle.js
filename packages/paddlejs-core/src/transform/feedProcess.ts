@@ -15,10 +15,10 @@ export default class WebglFeedProcess extends Transformer {
     }
 
     transform(...args: any) {
-        if (!env.get('webgl_feed_process') && !env.get('webgl_gpu_pipeline')) {
+        const [ops, vars, modelConfig] = args;
+        if (!modelConfig.webglFeedProcess && !env.get('webgl_gpu_pipeline')) {
             return;
         }
-        const [ops, vars, modelConfig] = args;
         const {
             mean = [0, 0, 0],
             std = [1, 1, 1],

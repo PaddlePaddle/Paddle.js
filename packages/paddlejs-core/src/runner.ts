@@ -128,7 +128,7 @@ export default class Runner {
         }
 
         let inputFeed = [];
-        if (env.get('webgl_feed_process')) {
+        if (this.runnerConfig.webglFeedProcess) {
             inputFeed = [media];
         }
         else {
@@ -209,7 +209,7 @@ export default class Runner {
     }
 
     genFeedData() {
-        const { type, feedShape } = this.runnerConfig;
+        const { type, feedShape, webglFeedProcess } = this.runnerConfig;
         this.feedShape = this.model.feedShape || feedShape;
         const { fc = 3, fh, fw } = this.feedShape;
         const vars = this.model.vars;
@@ -230,7 +230,7 @@ export default class Runner {
             }
         }
         else {
-            const feedC = env.get('backend') !== 'wasm' && env.get('webgl_feed_process') ? 4 : fc;
+            const feedC = env.get('backend') !== 'wasm' && webglFeedProcess ? 4 : fc;
             preheatFeedData = findVarByKey(vars, 'image');
             const imageBaseInfo = {
                 name: 'image',
@@ -265,7 +265,7 @@ export default class Runner {
         imageInputTensor.data = feed.data;
 
         // todo
-        if (env.get('webgl_feed_process') || env.get('webgl_gpu_pipeline')) {
+        if (this.runnerConfig.webglFeedProcess || env.get('webgl_gpu_pipeline')) {
             // support imageDataLike feed which has unit8ClampedArray data and width + height or shape
             // support ImageElementLike feed which is HTMLImageElement or HTMLVideoElement or HTMLCanvasElement
             let shape = feed.shape || [1, 1, feed.height, feed.width];

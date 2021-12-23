@@ -273,7 +273,7 @@ def organizeModelOpInfo():
         # 获取OP output
         outputs = {}
         # 将outputs转换为数组
-        if op.type == 'density_prior_box' or op.type == 'prior_box' or op.type == 'box_coder' or op.type == 'box_coder':
+        if op.type == 'density_prior_box' or op.type == 'prior_box' or op.type == 'box_coder':
             outputs['Out'] = []
             for name in opOutputs:
                 value = op.output(name)

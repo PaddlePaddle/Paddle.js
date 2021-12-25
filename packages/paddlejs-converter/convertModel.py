@@ -543,8 +543,7 @@ def main():
     except Exception as identifier:
         print("\033[31mA fetal error occured. Failed to convert model.\033[0m")
         print(traceback.format_exc())
-        pass
-
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

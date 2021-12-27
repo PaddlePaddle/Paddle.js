@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="paddlejsconverter",
-    version="1.0.0",
+    version="1.0.3",
     author="paddlejs",
     author_email="382248373@qq.com",
     description="Paddlejs model converter",

@@ -93,13 +93,13 @@ def main():
             print("Optimizing model...")
             for param in ["inputDir", "modelPath", "paramPath", "outputDir"]:
                 if optArgs.__dict__[param]:
-                    optimizeCmd += " --" + param + "=" + str(optArgs.__dict__[param])
-            print(optimizeCmd)
+                    # 用""框起命令参数值，解决路径中的空格问题
+                    optimizeCmd += " --" + param + "="+ '"' + str(optArgs.__dict__[param]) + '"'
             os.system(optimizeCmd)
             try:
                 os.listdir(optimizedModelTempDir)
             except Exception as identifier:
-                print("\033[31m\nOptimizing model failed.\033[0m")
+                print("\n\033[31mOptimizing model failed.\033[0m")
                 # restore inputDir or modelPath paramPath from optimize
                 if inputDir:
                     args.inputDir = inputDir
@@ -107,14 +107,15 @@ def main():
                     args.modelPath = modelPath
                     args.paramPath = paramPath
             else:
-                print("\033[32m\nOptimizing model successfully.\033[0m")
+                print("\n\033[32mOptimizing model successfully.\033[0m")
         else:
             print("\033[33mYou choosed not to optimize model, consequently, optimizing model is skiped.\033[0m")
 
         print("\nConverting model...")
         for param in args.__dict__:
             if args.__dict__[param]:
-                convertCmd += " --" + param + "=" + str(args.__dict__[param])
+                # 用""框起参数，解决路径中的空格问题
+                convertCmd += " --" + param + "=" + '"' + str(args.__dict__[param]) + '"'
         os.system(convertCmd)
         try:
             file = os.listdir(outputDir)

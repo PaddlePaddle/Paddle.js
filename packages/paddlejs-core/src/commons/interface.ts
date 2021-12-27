@@ -68,6 +68,7 @@ export interface RunnerConfig {
     std?: number[];
     bgr?: boolean;
     type?: GraphType; // model type
+    keepRatio?: boolean;
     needPreheat?: boolean;
     plugins?: { // tranform graph plugins
         preTransforms?: Transformer[]; // before creating graph

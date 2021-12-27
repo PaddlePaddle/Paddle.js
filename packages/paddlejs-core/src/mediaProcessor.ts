@@ -28,7 +28,7 @@ export default class MediaProcessor {
      * @param inputs
      */
     process(media, modelConfig, feedShape): InputFeed[] {
-        const { fill, mean, std, bgr } = modelConfig;
+        const { fill, mean, std, bgr, keepRatio = true } = modelConfig;
         const { fc = 3, fh, fw } = feedShape;
         const input = media;
 
@@ -38,6 +38,7 @@ export default class MediaProcessor {
             mean: mean || this.mean,
             std: std || this.std,
             bgr: bgr || this.bgr,
+            keepRatio,
             targetSize: {
                 width: fw,
                 height: fh
@@ -75,7 +76,7 @@ export default class MediaProcessor {
         this.pixelHeight = (pixels as HTMLImageElement).naturalHeight || pixels.height;
 
         const inGPU = env.get('webgl_gpu_pipeline') || opt.webglFeedProcess;
-        this.fitToTargetSize(isImageElementLike ? input.path : input, imageDataInfo, inGPU);
+        this.fitToTargetSize(isImageElementLike ? input.path : input, imageDataInfo, opt.keepRatio, inGPU);
         data = this.getImageData(imageDataInfo);
         // process imageData in webgl
         if (inGPU) {
@@ -133,9 +134,9 @@ export default class MediaProcessor {
 
 
     /**
-     * 缩放成目标尺寸并居中
+     * 缩放成目标尺寸, keepRatio 为 true 则保持比例拉伸并居中，为 false 则变形拉伸为目标尺寸
      */
-    fitToTargetSize(image, imageDataInfo, inGPU = false) {
+    fitToTargetSize(image, imageDataInfo, keepRatio = true, inGPU = false) {
         // 目标尺寸
         const targetWidth = imageDataInfo.dWidth;
         const targetHeight = imageDataInfo.dHeight;
@@ -147,26 +148,28 @@ export default class MediaProcessor {
         let sh = inGPU ? this.pixelHeight : targetHeight;
         let x = 0;
         let y = 0;
-        // target的长宽比大些 就把原图的高变成target那么高
-        if (targetWidth / targetHeight * this.pixelHeight / this.pixelWidth >= 1) {
-            if (inGPU) {
-                canvasWidth = Math.round(sh * targetWidth / targetHeight);
-                x = Math.floor((canvasWidth - sw) / 2);
+        if (keepRatio) {
+            // target的长宽比大些 就把原图的高变成target那么高
+            if (targetWidth / targetHeight * this.pixelHeight / this.pixelWidth >= 1) {
+                if (inGPU) {
+                    canvasWidth = Math.round(sh * targetWidth / targetHeight);
+                    x = Math.floor((canvasWidth - sw) / 2);
+                }
+                else {
+                    sw = Math.round(sh * this.pixelWidth / this.pixelHeight);
+                    x = Math.floor((targetWidth - sw) / 2);
+                }
             }
+            // target的长宽比小些 就把原图的宽变成target那么宽
             else {
-                sw = Math.round(sh * this.pixelWidth / this.pixelHeight);
-                x = Math.floor((targetWidth - sw) / 2);
-            }
-        }
-        // target的长宽比小些 就把原图的宽变成target那么宽
-        else {
-            if (inGPU) {
-                canvasHeight = Math.round(sw * targetHeight / targetWidth);
-                y = Math.floor((canvasHeight - sh) / 2);
-            }
-            else {
-                sh = Math.round(sw * this.pixelHeight / this.pixelWidth);
-                y = Math.floor((targetHeight - sh) / 2);
+                if (inGPU) {
+                    canvasHeight = Math.round(sw * targetHeight / targetWidth);
+                    y = Math.floor((canvasHeight - sh) / 2);
+                }
+                else {
+                    sh = Math.round(sw * this.pixelHeight / this.pixelWidth);
+                    y = Math.floor((targetHeight - sh) / 2);
+                }
             }
         }
 
@@ -175,7 +178,7 @@ export default class MediaProcessor {
         this.targetCanvas.width = canvasWidth;
         this.targetCanvas.height = canvasHeight;
         this.targetContext.fillStyle = imageDataInfo.gapFillWith;
-        this.targetContext.fillRect(0, 0, canvasHeight, canvasWidth);
+        this.targetContext.fillRect(0, 0, canvasWidth, canvasHeight);
         this.targetContext.drawImage(image, x, y, sw, sh);
     }
 

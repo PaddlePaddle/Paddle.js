@@ -1,10 +1,14 @@
 import * as mobilenet from '@paddlejs-models/mobilenet';
 import map from './data/map.json';
 
-declare let window: Window & {
-    statistic: any
-};
-window.statistic = {};
+const img = document.getElementById('image') as HTMLImageElement;
+const txt = document.getElementById('txt') as HTMLElement;
+const time = document.getElementById('all-performance-time') as HTMLElement;
+const uploadImg = document.getElementById('uploadImg') as HTMLInputElement;
+const loading = document.getElementById('loading');
+
+let startTime = 0;
+let endTime = 0;
 
 load();
 
@@ -15,38 +19,28 @@ async function load() {
         mean: [0.485, 0.456, 0.406],
         std: [0.229, 0.224, 0.225]
     }, map);
-    document.getElementById('loading')!.style.display = 'none';
+    loading.style.display = 'none';
 }
 
 async function run(input: HTMLElement) {
-    window.statistic.startTime = (+new Date());
+    startTime = +new Date();
     const res = await mobilenet.classify(input);
-    window.statistic.endTime = (+new Date()) - window.statistic.startTime;
-    document.getElementById('txt')!.innerHTML = res;
-    document.getElementById('all-performance-time')!.innerHTML = '计算时间是' + window.statistic.endTime;
+    endTime = +new Date() - startTime;
+    txt.innerText = res;
+    time.innerHTML = '计算时间是' + endTime;
 }
 
 // selectImage
-document.getElementById('uploadImg')!.onchange = function () {
-    selectImage(this);
-};
-
-function selectImage(file) {
-    if (!file.files || !file.files[0]) {
-        return;
-    }
+uploadImg.onchange = (e: Event) => {
     const reader = new FileReader();
-    const initInnerHTML: string = '...';
-    document.getElementById('txt')!.innerHTML = initInnerHTML;
-    document.getElementById('all-performance-time')!.innerHTML = initInnerHTML;
-    reader.onload = function (evt) {
-        const img = document.getElementById('image') as HTMLImageElement;
-        if (evt.target && typeof evt.target.result === 'string') {
-            img.src = evt.target.result;
-        }
-        img.onload = function () {
+    const initInnerText = '...';
+    txt.innerText = initInnerText;
+    time.innerText = initInnerText;
+    reader.onload = () => {
+        img.src = URL.createObjectURL((e.target as HTMLInputElement).files[0]);
+        img.onload = () => {
             run(img);
         };
     };
-    reader.readAsDataURL(file.files[0]);
-}
+    reader.readAsDataURL((e.target as HTMLInputElement).files[0]);
+};

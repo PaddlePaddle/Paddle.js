@@ -43,8 +43,8 @@ const ocr = new ConfigInfo('ocr', ocrWebpackConfig, true);
     if (instance.isModelSdk) {
         config.resolve = Object.assign({}, config.resolve, {
             alias: {
-                '@paddlejs/paddlejs-core': path.resolve(DIST_DIR, './core_bundle.js'),
-                '@paddlejs/paddlejs-backend-webgl': path.resolve(DIST_DIR, './webgl_bundle.js')
+                '@paddlejs/paddlejs-core': path.resolve(__dirname, '../packages/paddlejs-core/src/'),
+                '@paddlejs/paddlejs-backend-webgl': path.resolve(__dirname, '../packages/paddlejs-backend-webgl/src/')
             }
         });
     }

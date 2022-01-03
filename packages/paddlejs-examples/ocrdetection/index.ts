@@ -1,23 +1,21 @@
 import * as ocr from '@paddlejs-models/ocrdet';
 
-const loading = document.getElementById('isLoading');
-const inputElement = document.getElementById('uploadImg');
-const imgElement = document.getElementById('image1') as HTMLImageElement;
-const canvasOutput = document.getElementById('canvas') as HTMLCanvasElement;
-
-load();
+const $uploadImg = document.getElementById('uploadImg') as HTMLInputElement;
+const $img = document.getElementById('image') as HTMLImageElement;
 
 async function load() {
     await ocr.load();
-    loading.style.display = 'none';
+    document.getElementById('isLoading').style.display = 'none';
 }
 
-function drawBox(points: number[]) {
-    canvasOutput.width = imgElement.naturalWidth;
-    canvasOutput.height = imgElement.naturalHeight;
-    const ctx = canvasOutput.getContext('2d');
-    ctx.drawImage(imgElement, 0, 0, canvasOutput.width, canvasOutput.height);
-    points.forEach(point => {
+async function run(input: HTMLImageElement) {
+    const res = await ocr.detect(input);
+    const $canvas = document.getElementById('canvas') as HTMLCanvasElement;
+    $canvas.width = input.naturalWidth;
+    $canvas.height = input.naturalHeight;
+    const ctx = $canvas.getContext('2d');
+    ctx.drawImage(input, 0, 0, $canvas.width, $canvas.height);
+    res && res.forEach(point => {
         // 开始一个新的绘制路径
         ctx.beginPath();
         // 设置线条颜色为蓝色
@@ -32,14 +30,15 @@ function drawBox(points: number[]) {
     });
 }
 
-inputElement.addEventListener('change', (e: Event) => {
-    imgElement.src = URL.createObjectURL((e.target as HTMLInputElement).files[0]);
-}, false);
+load();
 
-imgElement.onload = async function () {
-    canvasOutput.width = imgElement.width;
-    canvasOutput.height = imgElement.height;
-    // 获取文本检测坐标
-    const res = await ocr.detect(imgElement);
-    drawBox(res);
+$uploadImg.onchange = (e: Event) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+        $img.src = URL.createObjectURL((e.target as HTMLInputElement).files[0]);
+        $img.onload = () => {
+            run($img);
+        };
+    };
+    reader.readAsDataURL((e.target as HTMLInputElement).files[0]);
 };

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>paddle ocr detection demo</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <style>
+        .wrapper {
+            text-align: center;
+        }
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            width: 100vw;
+            height: 100vh;
+            line-height: 100vh;
+            background-color: rgba(0, 0, 0, .4);
+            color: #fff;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .title {
+            font-size: 30px;
+            font-weight: 700;
+            padding: 20px 0;
+        }
+
+        .contain {
+            position: relative;
+            width: 800px;
+            min-height: 500px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 20px auto 50px;
+        }
+
+        .blur-contain {
+            width: 400px;
+            height: 100%;
+            position: absolute;
+            overflow: hidden;
+            border-right: 2px solid #000;
+        }
+
+        #icon {
+            position: absolute;
+            top: 50%;
+            left: 380px;
+            width: 40px;
+            height: 40px;
+            background: url(https://paddlejs.bj.bcebos.com/website/icon.png) center center no-repeat;
+            background-size: cover;
+        }
+
+        #image {
+            max-width: none;
+            opacity: 0;
+            position: absolute;
+            z-index: -1;
+        }
+
+        #blur, #origin {
+            vertical-align: middle;
+        }
+
+        .left {
+            padding: 5px 8px;
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background-color: rgba(0, 0, 0, .4);
+            border-radius: 15px;
+            color: #fff;
+        }
+
+        .right {
+            padding: 5px 8px;
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, .4);
+            z-index: 2;
+            border-radius: 15px;
+            color: #fff;
+        }
+
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <p class="title">人像分割</p>
+    <span>上传人物图片：</span>
+    <input type="file" id="uploadImg">
+    <div class="contain">
+        <img id="image" src="./bg.jpg" />
+        <!-- 原图展示-->
+        <div class="blur-contain">
+            <canvas id="origin"></canvas>
+        </div>
+        <canvas id="blur"></canvas>
+        <div id="icon"></div>
+        <div class="left">原图</div>
+        <div class="right">效果图</div>
+    </div>
+</div>
+<div id="loading">loading...</div>
+
+</body>
+</html>

@@ -1,8 +1,8 @@
 {
-    "name": "@paddlejs-models/mobilenet",
-    "version": "1.0.2",
+    "name": "humanseg",
+    "version": "1.0.0",
     "description": "",
-    "main": "lib/index",
+    "main": "index.ts",
     "scripts": {
         "dev": "webpack-dev-server --config webpack.dev.js",
         "build": "webpack --config webpack.prod.js"
@@ -10,8 +10,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@paddlejs/paddlejs-backend-webgl": "^1.1.4",
-        "@paddlejs/paddlejs-core": "^2.1.7"
+        "@paddlejs-models/humanseg": "^1.1.1"
     },
     "devDependencies": {
         "html-webpack-plugin": "^3.2.0",

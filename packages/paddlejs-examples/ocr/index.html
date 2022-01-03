@@ -20,6 +20,13 @@
             margin-bottom: 10px;
         }
 
+        .left {
+            display: flex;
+            flex-wrap: wrap;
+            width: min-content;
+            min-width: 55%;
+        }
+
         .box {
             min-width: 320px;
             border: 1px solid #ddd;
@@ -40,6 +47,11 @@
         #image {
             display: block;
             margin-top: 10px;
+        }
+
+        #txt {
+            line-height: 2;
+            height: min-content;
         }
 
         #isLoading {
@@ -63,14 +75,20 @@
 </head>
 <body>
 <div class="wrapper">
-    <div class="tool box">
-        <p class="title">上传文本图片：</p>
-        <input type="file" id="uploadImg"/>
-        <img id="image"/>
+    <div class="left">
+        <div class="tool box">
+            <p class="title">上传文本图片：</p>
+            <input type="file" id="uploadImg" />
+            <img id="image" />
+        </div>
+        <div class="canvas box">
+            <p class="title">文字区域框选：</p>
+            <canvas id="canvas"></canvas>
+        </div>
     </div>
-    <div class="canvas box">
-        <p class="title">文字区域框选：</p>
-        <canvas id="canvas"></canvas>
+    <div class="box">
+        <p class="title">文字识别结果：</p>
+        <div id="txt"></div>
     </div>
 </div>
 

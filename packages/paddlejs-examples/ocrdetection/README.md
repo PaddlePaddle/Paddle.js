@@ -4,6 +4,21 @@
 
 ocr_detect model is used to detect the text area in the image.
 
+# Setup
+```
+npm install
+```
+
+### Compiles and hot-reloads for development
+```
+npm run dev
+```
+
+### Compiles and minifies for production
+```
+npm run build
+```
+
 # Usage
 
 ```js

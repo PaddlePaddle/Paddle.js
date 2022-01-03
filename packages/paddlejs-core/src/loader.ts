@@ -70,7 +70,7 @@ export default class ModelLoader {
         if (this.separateChunk) {
             if (this.dataType === 'binary') {
                 await this.fetchChunks().then(allChunksData =>
-                    this.traverse(modelInfo.vars, allChunksData)
+                    ModelLoader.allocateParamsVar(modelInfo.vars, allChunksData)
                 );
             }
         }
@@ -105,9 +105,7 @@ export default class ModelLoader {
                 this.fetchOneChunk(this.urlConf.dir + this.getFileName(i))
             );
         }
-        // console.time('加载时间');
         return Promise.all(chunkArray).then(chunks => {
-            // console.timeEnd('加载时间');
             let chunksLength = 0;
             const f32Array: any[] = [];
             let float32Chunk;
@@ -128,7 +126,7 @@ export default class ModelLoader {
         });
     }
 
-    traverse(vars, allChunksData: Float32Array) {
+    static allocateParamsVar(vars, allChunksData: Float32Array) {
         let marker = 0; // 读到哪个位置了
         let len; // 当前op长度
         traverseVars(vars, item => {

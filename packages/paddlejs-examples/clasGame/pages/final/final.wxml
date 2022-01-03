@@ -1,0 +1,49 @@
+<!--pages/final/final.wxml-->
+<!-- 骨架屏 -->
+<import src="../../skeleton/loading.skeleton.wxml"/>
+<template is="skeleton" wx:if="{{loading}}"/>
+
+<view
+    style="visibility: {{loading ? 'hidden' : 'visible'}}"
+    class="page-container final-container bg-cover"
+>
+	<view class="items-display-area">
+        <block wx:if="{{foundList.length}}">
+            <view
+                wx:for="{{foundList}}"
+                wx:key="*this"
+                style="width: {{itemWidth + 'vw'}};height: {{itemWidth + 'vw'}}"
+                class="item-wrapper"
+            >
+                <view
+                    class="item"
+                    style="background-image: url({{urlPrefix + modelInfo.itemMap[item]['iconFilename']}});"
+                ></view>
+            </view>
+        </block>
+        <block wx:else>
+            <view class="item-wrapper nothing-tips inner-element-center">空无一物~</view>
+        </block>
+    </view>
+
+    <view class="info">
+        <view class="my-font result-text">
+            找出【{{foundList.length}}】个物品
+        </view>
+        <custom-btn
+            class="animate__animated animate__infinite animate__duration-2000ms animate__pulse btn-top-gap"
+            width="68.43vw"
+            height="21.65vw"
+            bgUrl="https://mms-voice-fe.cdn.bcebos.com/pdproject/clas/wx-project/replay_btn.png"
+            bind:buttonTap="navToPlay"
+        />
+        <view class="share my-font inner-element-center">
+            『快点我<view class="share-icon"></view>分享给小伙伴~』
+            <button style="width:100%" class="cover-button" open-type="share" hover-class="none"></button>
+        </view>
+    </view>
+	<pdjs-logo
+		class="logo-wrapper"
+		powered-by-text="Paddleclas"
+	/>
+</view>

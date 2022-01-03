@@ -1,0 +1,13 @@
+/* components/common/custom-btn.wxss */
+.custom-btn-container {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.custom-btn {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}

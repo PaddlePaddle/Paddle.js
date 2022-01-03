@@ -1,0 +1,13 @@
+<!--components/common/logo/logo.wxml-->
+<view class="logo-container">
+    <view class="logo"></view>
+    <view class="powered-by">
+        <view>Powered by</view>
+        <view class="dec-fontsize">
+            <!-- TODO -->
+            <text data-src="{{poweredByLink}}" class="link-label inner-element-center" bindtap="navToWebview">{{poweredByText}}</text>
+            &
+            <text data-src="https://www.paddlepaddle.org.cn" class="link-label inner-element-center" bindtap="navToWebview">Paddle.js</text>
+        </view>
+    </view>
+</view>

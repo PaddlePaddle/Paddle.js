@@ -1,0 +1,30 @@
+{
+    "setting": {},
+    "condition": {
+        "plugin": {
+            "list": []
+        },
+        "game": {
+            "list": []
+        },
+        "gamePlugin": {
+            "list": []
+        },
+        "miniprogram": {
+            "list": [
+                {
+                    "name": "play页",
+                    "pathName": "pages/play/play",
+                    "query": "",
+                    "scene": null
+                },
+                {
+                    "name": "pages/final/final",
+                    "pathName": "pages/final/final",
+                    "query": "",
+                    "scene": null
+                }
+            ]
+        }
+    }
+}

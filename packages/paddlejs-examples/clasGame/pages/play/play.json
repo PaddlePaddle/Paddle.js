@@ -1,0 +1,9 @@
+{
+  "usingComponents": {
+    "top-bar": "../../components/top-bar/top-bar",
+    "timer": "./components/timer/timer",
+    "start-animation": "./components/start-animation/start-animation",
+    "finder-ui": "./components/finder-ui/finder-ui",
+    "img-preloader": "../../components/img-preloader/img-preloader"
+  }
+}

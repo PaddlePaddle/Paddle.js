@@ -1,0 +1,25 @@
+/*
+此文件为开发者工具生成，生成时间: 2021/9/7 下午4:09:08
+
+在 /Users/liuqihua/Desktop/code/WeChatProjects/paddlejs demo/clas/pages/play/play.wxss 中引入样式
+```
+@import "./play.skeleton.wxss";
+```
+
+更多详细信息可以参考文档：https://developers.weixin.qq.com/miniprogram/dev/devtools/skeleton.html
+*/
+.sk-container {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: #fff;
+}
+
+.sk-loading {
+  width: 100vw;
+  height: 75vw;
+  background: url(https://mms-voice-fe.cdn.bcebos.com/pdproject/clas/wx-project/loading/loading_3.png) no-repeat; 
+  background-size: 100% 100%;
+}

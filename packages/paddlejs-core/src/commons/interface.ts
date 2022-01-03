@@ -59,8 +59,14 @@ export interface FeedShape {
     fw: number;
     fh: number;
 };
+
+interface ModelObj {
+    model: Model;
+    params: Float32Array
+}
 export interface RunnerConfig {
-    modelPath: string;
+    modelPath?: string;
+    modelObj?: ModelObj;
     modelName?: string;
     feedShape?: FeedShape;
     fill?: string; // 缩放后用什么颜色填充不足方形部分

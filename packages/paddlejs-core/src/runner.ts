@@ -74,9 +74,19 @@ export default class Runner {
     }
 
     async load() {
-        const { modelPath } = this.runnerConfig;
-        const loader = new Loader(modelPath);
-        this.model = await loader.load();
+        const { modelPath, modelObj = null } = this.runnerConfig;
+        if (modelPath) {
+            const loader = new Loader(modelPath);
+            this.model = await loader.load();
+        }
+        else if (modelObj?.model && modelObj?.params) {
+            const {
+                model,
+                params
+            } = modelObj;
+            Loader.allocateParamsVar(model.vars, params);
+            this.model = model;
+        }
     }
 
     genGraph() {
@@ -373,8 +383,8 @@ export default class Runner {
 
         if (env.get('debug')
             && op.opData?.outputTensors
-            && op.opData.outputTensors[0]
-            && op.opData.outputTensors[0].tensorId === this.modelName + '_'
+            && op.opData.outputTensors[op.opData.outputTensors.length - 1]
+            && op.opData.outputTensors[op.opData.outputTensors.length - 1].tensorId === this.modelName + '_'
                 + (env.get('ns').layerName || env.get('layerName'))) {
             console.info(op.opData.name + '_' + op.opData.iLayer, 'runner op');
             return;

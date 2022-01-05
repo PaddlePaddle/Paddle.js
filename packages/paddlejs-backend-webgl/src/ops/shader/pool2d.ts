@@ -13,9 +13,6 @@ function mainFunc(
     // start函数
     void main(void) {
         float res = 0.0;
-        if (${pooling_type} == 1) {
-            res = -1. / 0.;
-        }
         // 获取output的坐标
         ivec4 out_pos = getOutputTensorPos();
         // X、Y方向的移动步长

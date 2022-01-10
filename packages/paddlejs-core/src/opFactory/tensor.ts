@@ -73,7 +73,7 @@ export default class Tensor {
 
         // tensor数据
         if (varData && varData.length) {
-            this.data = Utils.genTensorData(varData, this.dataLayout, shape, this.isPacked);
+            this.data = Utils.genTensorData(varData, this.dataLayout, this.shape, this.isPacked);
             opts.data = null;
         }
     }

@@ -112,9 +112,10 @@ export function genTensorData(data: number[] | Float32Array, dataLayout: string,
     if (dataLayout === 'nhwc') {
         return new Float32Array(data);
     }
+    const [shapeN, shapeC, shapeH, shapeW] = shape;
     const nhwcData: Float32Array | number[] = nchw2nhwc(
         data,
-        [shape[0], shape[1] * (isPacked ? 4 : 1), shape[2], shape[3]]
+        [shapeN, shapeC * (isPacked ? 4 : 1), shapeH, shapeW]
     );
     return new Float32Array(nhwcData);
 }

@@ -16,10 +16,10 @@ interface TensorParams {
     binding?: number;
     noLayout?: boolean;
     dataLayout?: string;
+    runtime?: number;
 }
 
 export default class Tensor {
-    opts: TensorParams = {} as TensorParams;
     isPacked: boolean = false;
     name: string = '';
     tensorId: string = '';
@@ -32,34 +32,48 @@ export default class Tensor {
     persistable: boolean = false;
     interpType: string = 'NEAREST';
     dataLayout: string = '';
+    runtime: number = 0;
+    binding: number = 0;
 
     constructor(opts: TensorParams) {
-        this.opts = opts;
+        const {
+            isPacked = false,
+            name,
+            runtime = 0,
+            persistable = false,
+            type,
+            dataLayout,
+            interpType = 'NEAREST',
+            shape,
+            data: varData,
+            binding = 0
+        } = opts;
         // 数据存储方式
-        this.isPacked = opts.isPacked || false;
+        this.isPacked = isPacked;
         // 设置tensor名字
-        this.name = opts.name;
-        this.persistable = opts.persistable || false;
-        this.interpType = opts.interpType || 'NEAREST';
+        this.name = name;
+        this.runtime = runtime;
+        this.binding = binding;
+        this.persistable = persistable;
+        this.interpType = interpType;
         // 设置 tensorId
-        this.tensorId = opts.type;
+        this.tensorId = type;
         // set dataLayout
-        this.dataLayout = opts.dataLayout;
+        this.dataLayout = dataLayout;
         // 保留 model 原生 shape 长度
-        this.unformattedShapeLength = opts.shape.length;
+        this.unformattedShapeLength = shape.length;
         // tensor的形状
-        this.shape = Utils.formatShape(opts.shape);
-        const shape = this.shape;
+        this.shape = Utils.formatShape(shape);
         // 原始数据个数
-        this.total = shape.reduce((all: number, num: number) => all * num);
+        this.total = this.shape.reduce((all: number, num: number) => all * num);
 
         if (opts.noLayout) {
             return;
         }
 
         // tensor数据
-        if (opts.data && opts.data.length) {
-            this.data = Utils.genTensorData(opts.data, this.dataLayout, shape, this.isPacked);
+        if (varData && varData.length) {
+            this.data = Utils.genTensorData(varData, this.dataLayout, shape, this.isPacked);
             opts.data = null;
         }
     }
@@ -87,10 +101,6 @@ export default class Tensor {
     get channel() {
         const length = this.shape.length;
         return this.shape[length - 3];
-    }
-
-    get binding() {
-        return this.opts.binding;
     }
 
     get limit() {

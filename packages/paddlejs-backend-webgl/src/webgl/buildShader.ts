@@ -47,7 +47,6 @@ export default function buildShader(textureConf, op, tensors, fShaderParams, run
     catch (e) {
         console.error(`[${name}]: ` + e);
     }
-
     return code;
 }
 

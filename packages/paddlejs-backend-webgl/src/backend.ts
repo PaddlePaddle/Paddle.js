@@ -357,7 +357,7 @@ export default class WebGLBackend extends PaddlejsBackend {
     initTexture(index, item, isPacked) {
         const gl = this.gl;
         const textureConf = this.textureConf as TextureConfig;
-        const tensorName = item.opts.type;
+        const tensorName = item.tensorId;
         const packed = isPacked || item.isPacked;
         let texture;
 

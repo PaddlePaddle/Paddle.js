@@ -15,7 +15,6 @@ export default class OpExecutor {
     next: string = '';
     opData: OpData = null;
     isPacked: boolean = false;
-    finish: boolean = false;
     bufferType: BufferType = BufferType.FrameBuffer;
     uniform: OpUniform| null = null;
 
@@ -39,7 +38,6 @@ export default class OpExecutor {
         this.type = type;
         this.isPacked = isPacked;
         this.bufferType = bufferType;
-        this.finish = false;
         this.next = '';
         this.opData = null;
     }

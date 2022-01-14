@@ -7,6 +7,12 @@ import { GLHelper } from '@paddlejs/paddlejs-backend-webgl';
 import segImg from './customOp/segImg';
 import AppendDealOriginOpToNN from './customTransformer/appendCustomOpToNN';
 
+interface LoadOptions {
+    needPreheat?: boolean,
+    enableLightModel?: boolean,
+    canvasWidth?: number,
+    canvasHeight?: number
+}
 
 let runner = null as Runner;
 
@@ -45,18 +51,24 @@ const gl = createWebglContext(renderCanvas);
 
 let segImgOp = null;
 
-export async function load(needPreheat = true, enableLightModel = false) {
+export async function load(options: LoadOptions = {
+    needPreheat: true,
+    enableLightModel: false,
+    canvasWidth: 500,
+    canvasHeight: 280
+}) {
     const modelpath = 'https://paddlejs.cdn.bcebos.com/models/shufflenetv2_398x224/model.json';
     const lightModelPath = 'https://paddlejs.cdn.bcebos.com/models/shufflenetv2_288x160/model.json';
-    const modelPath = enableLightModel ? lightModelPath : modelpath;
-    if (enableLightModel) {
+    const modelPath = options.enableLightModel ? lightModelPath : modelpath;
+
+    if (options.enableLightModel) {
         WIDTH = 288;
         HEIGHT = 160;
     }
 
     runner = new Runner({
         modelPath: modelPath,
-        needPreheat: needPreheat !== undefined ? needPreheat : true,
+        needPreheat: options.needPreheat !== undefined ? options.needPreheat : true,
         feedShape: {
             fw: WIDTH,
             fh: HEIGHT
@@ -65,7 +77,7 @@ export async function load(needPreheat = true, enableLightModel = false) {
         mean: [0.5, 0.5, 0.5],
         std: [0.5, 0.5, 0.5],
         plugins: {
-            preTransforms: [new AppendDealOriginOpToNN()]
+            preTransforms: [new AppendDealOriginOpToNN(options.canvasWidth, options.canvasHeight)]
         }
     });
 

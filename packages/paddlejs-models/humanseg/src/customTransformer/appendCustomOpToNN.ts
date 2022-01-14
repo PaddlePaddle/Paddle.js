@@ -6,14 +6,17 @@ import { Transformer, env, interfaces } from '@paddlejs/paddlejs-core';
 
 const IMG_ORIGIN = 'image';
 const FINAL_PACK_OP_NAME = 'fetch_pack';
-
-const WIDTH = 500;
-const HEIGHT = 280;
+const DEFAULT_WIDTH = 500;
+const DEFAULT_HEIGHT = 280;
 
 export default class DealOrigin extends Transformer {
+    private width;
+    private height;
 
-    constructor() {
+    constructor(width?: number, height?: number) {
         super('DealOrigin');
+        this.width = width || DEFAULT_WIDTH;
+        this.height = height || DEFAULT_HEIGHT;
     }
 
     transform(...args: any) {
@@ -44,10 +47,9 @@ export default class DealOrigin extends Transformer {
             }
         };
 
-
         const packOutVar = {
             name: FINAL_PACK_OP_NAME,
-            shape: [1, 1, HEIGHT, WIDTH],
+            shape: [1, 1, this.height, this.width],
             persistable: false
         };
 

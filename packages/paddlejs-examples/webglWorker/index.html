@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>1000-Clas in WebWorker</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <style>
+        .wrapper {
+            text-align: center;
+        }
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            width: 100vw;
+            height: 100vh;
+            line-height: 100vh;
+            background-color: rgba(0, 0, 0, .4);
+            color: #fff;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .title {
+            font-size: 30px;
+            font-weight: 700;
+            padding: 20px 0;
+        }
+        #image {
+            height: 400px;
+            display: inline-block;
+        }
+
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <p class="title">1000-Clas in WebWorker</p>
+    <img id="image" src="./lego.png" /><br/>
+    <span>上传图片：</span>
+    <input type="file" id="uploadImg">
+    <p id="result"></p>
+</div>
+<div id="loading">loading...</div>
+
+</body>
+</html>

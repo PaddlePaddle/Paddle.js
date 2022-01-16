@@ -55,7 +55,7 @@ export default class CpuBackend extends PaddlejsBackend {
         opData.program.forEach((curProgram: Program) => {
 
             try {
-                const result = curProgram.main(tensorMap, opData.data, curProgram.runtime);
+                const result = curProgram.main(tensorMap, opData.processedAttrs, curProgram.runtime);
                 this.dataMap.set(curProgram.outName, result);
             }
             catch (e) {

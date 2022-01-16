@@ -174,7 +174,7 @@ export default class WasmBackend extends PaddlejsBackend {
             });
 
             const tensorDataStr = tensorData.join('#@');
-            const attrs = op.opData.data;
+            const attrs = op.opData.processedAttrs;
 
             const opName = op.opData.name;
             if (opName === 'conv2d_depthwise') {

@@ -31,6 +31,9 @@ export interface ModelVar {
     total?: number;
     runtime?: number;
 }
+export interface ModelVarMap {
+    [key: string]: ModelVar;
+}
 
 export enum WasmMemoryType {
     memory100 = '100',
@@ -140,7 +143,6 @@ export interface OpExecutor {
     next: string | null;
     opData: OpData;
     isPacked: boolean;
-    finish: boolean;
     inputsName: string[];
     outputsName: string[];
     execute: Function;
@@ -174,21 +176,16 @@ export interface Ops {
 
 export interface OpData {
     name: string;
-    realName: string;
     isPackedOp: boolean;
     bufferType: BufferType;
-    input: OpInputs;
-    output: OpOutputs;
-    attrs: any;
-    subAttrs: object[];
-    data: AttrsData;
+    subAttrs: AttrsData[];
+    processedAttrs: AttrsData;
     inputTensors: any;
     outputTensors: any;
-    fShaderParams: any;
-    vars: ModelVar[];
     iLayer: number;
     program: any;
-    tensorData: any[];
+    tensorDataMap: ModelVarMap;
+    tensorData: ModelVar[];
     modelName: string;
     uniform: OpUniform | null;
 }

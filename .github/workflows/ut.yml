@@ -10,7 +10,7 @@ name: Run Unit Test
 
 on:
   push:
-    branches: [beta]
+    branches: [master]
 
 jobs:
   test:

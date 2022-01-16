@@ -31,8 +31,9 @@ describe('e2e test humanseg model', () => {
             const segImageData = seg_ctx.getImageData(0, 0, seg_canvas.width, seg_canvas.height).data;
 
             let diffPixelsNum = 0;
+            const MAX_TOLERANCE = 10;
             for (let index = 0; index < backImageData.length; index++) {
-                if (backImageData[index] !== segImageData[index]) {
+                if (Math.abs(backImageData[index] - segImageData[index]) > MAX_TOLERANCE) {
                     diffPixelsNum++;
                 }
             }

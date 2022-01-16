@@ -11,6 +11,8 @@ name: Run Unit Test
 on:
   push:
     branches: [master]
+  pull_request:
+    branches: [master]
 
 jobs:
   test:
@@ -25,6 +27,8 @@ jobs:
           node-version: '12'
 
       - run: npm install
+      
+      - run: npm install canvas --canvas_binary_host_mirror=https://npm.taobao.org/mirrors/node-canvas-prebuilt/
 
       - name: Run Tests
         run: npm test

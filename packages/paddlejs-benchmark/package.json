@@ -1,10 +1,10 @@
 {
   "name": "@paddlejs/paddlejs-benchmark",
   "version": "0.0.1",
+  "private": true,
   "description": "",
   "main": "lib/index",
   "scripts": {
-    "build": "webpack --config webpack.prod.js",
     "start": "webpack serve"
   },
   "author": "",

@@ -61,10 +61,13 @@ export default class MediaProcessor {
 
         const input = pixels;
         const isImageElementLike = pixels.path && pixels.width && pixels.height;
-        if (!isImageElementLike && !(pixels instanceof ImageBitmap
-            || pixels instanceof HTMLVideoElement
-            || pixels instanceof HTMLImageElement
-            || pixels instanceof HTMLCanvasElement)) {
+        if (
+            !isImageElementLike
+            && !(pixels instanceof ImageBitmap
+                || pixels instanceof HTMLVideoElement
+                || pixels instanceof HTMLImageElement
+                || pixels instanceof HTMLCanvasElement)
+        ) {
             return [{
                 data: data,
                 shape: opt.shape || opt.targetShape,

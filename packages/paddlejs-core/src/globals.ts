@@ -66,6 +66,12 @@ function registerBackend(backend: string, backendInstance: any, ops: Ops) {
 
 GLOBALS = getOrMakeGlobalProperty('GLOBALS', GLOBALS);
 
+const ns = getGlobalInterface();
+// in case 'ReferenceError: ImageBitmap is not defined'
+if (!ns.ImageBitmap) {
+    ns.ImageBitmap = function () {};
+}
+
 export {
     GLOBALS,
     registerBackend,

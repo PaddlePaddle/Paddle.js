@@ -21,7 +21,7 @@
     "build:core": "lerna run build  --scope=@paddlejs/paddlejs-core  --stream",
     "build:nodegl": "lerna run build  --scope=@paddlejs/paddlejs-backend-nodegl  --stream",
     "build:wasm": "lerna run build  --scope=@paddlejs/paddlejs-backend-wasm  --stream",
-    "e2e": "rm -rf e2e/dist/*.js && jest --config e2e/jest.config.js"
+    "e2e": "rm -rf e2e/dist/*.js && JEST_PUPPETEER_CONFIG=./e2e/jest-puppeteer.config.js jest --config e2e/jest.config.js"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.12.11",

@@ -1,5 +1,6 @@
 import base64Img from 'base64-img';
 import MediaProcessor from '../../src/mediaProcessor';
+import '../../src/globals';
 
 const path = require('path');
 const { Image, createCanvas } = require('canvas');

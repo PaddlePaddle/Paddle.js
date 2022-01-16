@@ -19,11 +19,11 @@ uploadDom.onchange = (e: Event) => {
         img.src = URL.createObjectURL((e.target as HTMLInputElement).files[0]);
         img.onload = () => {
             createImageBitmap(img, 0, 0, img.naturalWidth, img.naturalHeight)
-                .then(ImageBitmap => {
+                .then(imageBitmap => {
                     worker.postMessage({
                         event: 'predict',
-                        data: ImageBitmap
-                    }, [ImageBitmap]);
+                        data: imageBitmap
+                    }, [imageBitmap]);
                 });
         };
     };

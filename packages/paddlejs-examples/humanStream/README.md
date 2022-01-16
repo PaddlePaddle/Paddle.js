@@ -23,8 +23,12 @@ cd Paddle.js/packages/paddlejs-examples/humanStream && npm install
 # 执行命令
 npm run dev
 
-# 访问 http://0.0.0.0:8866/ ，即可体验人像分割处理图片应用
+# 访问  http://localhost:8866/ ，即可体验人像分割处理图片应用
 ```
+
+如果启动浏览器后，一直停留在 loading 状态，请查看是否允许  http://localhost:8866/ 访问摄像头，chrome 配置入口如下：
+![image](https://user-images.githubusercontent.com/10822846/148914253-abf82a36-5fce-4fc2-9091-ad6ec55abcc6.png)
+
 
 ### 2.3 效果展示
 

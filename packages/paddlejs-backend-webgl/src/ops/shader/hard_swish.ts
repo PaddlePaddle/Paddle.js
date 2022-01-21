@@ -22,11 +22,6 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [
-        'offset',
-        'scale',
-        'threshold'
-    ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos']
     }

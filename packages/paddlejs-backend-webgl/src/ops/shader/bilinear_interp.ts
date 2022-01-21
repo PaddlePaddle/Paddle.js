@@ -62,10 +62,6 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [
-        'align_corners',
-        'align_mode'
-    ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos']
     }

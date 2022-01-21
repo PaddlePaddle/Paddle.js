@@ -55,10 +55,6 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [
-        'perm_arr',
-        'perm_size'
-    ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos']
     },

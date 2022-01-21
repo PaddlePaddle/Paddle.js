@@ -96,9 +96,6 @@ function mainFunc(
 
 export default {
     mainFunc,
-    params: [
-        'code_type'
-    ],
     textureFuncConf: {
         targetbox: ['getValueFromTensorPos'],
         priorbox: ['getValueFromTensorPos'],

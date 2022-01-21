@@ -21,7 +21,6 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [],
     textureFuncConf: {
         origin: ['getValueFromTensorPosPacking']
     }

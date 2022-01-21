@@ -57,12 +57,6 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [
-        'strides',
-        'paddings',
-        'pooling_type',
-        'ksize'
-    ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos']
     },

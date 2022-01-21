@@ -87,10 +87,6 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [
-        'axis',
-        'flatten'
-    ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos']
     }

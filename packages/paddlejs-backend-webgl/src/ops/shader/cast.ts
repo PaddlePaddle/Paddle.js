@@ -53,9 +53,6 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [
-        'out_dtype'
-    ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos']
     }

@@ -46,9 +46,6 @@ function mainFunc(
 
 export default {
     mainFunc,
-    params: [
-        'state_axis'
-    ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos'],
         prestate: ['getValueFromTensorPos'],

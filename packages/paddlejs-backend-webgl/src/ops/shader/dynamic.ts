@@ -33,11 +33,6 @@ function mainFunc(
 export default function (funcName) {
     return {
         mainFunc,
-        params: [
-            'multi_value',
-            'bias_value',
-            'active_function'
-        ],
         textureFuncConf: {
             origin: ['getPixelsFromTexturePos']
         },

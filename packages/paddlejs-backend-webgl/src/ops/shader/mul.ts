@@ -117,10 +117,6 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [
-        'x_num_col_dims',
-        'y_num_col_dims'
-    ],
     textureFuncConf: {
         counter: ['getValueFromTensorPos'],
         origin: ['getValueFromTensorPos']

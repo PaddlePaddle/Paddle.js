@@ -50,12 +50,6 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [
-        'input_axis',
-        'state_axis',
-        'reverse',
-        'batch'
-    ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos'],
         prestate: ['getValueFromTensorPos'],

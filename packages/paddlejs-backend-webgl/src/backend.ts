@@ -98,19 +98,25 @@ export default class WebGLBackend extends PaddlejsBackend {
 
 
     createProgram({ op, outTensor, inputTensors, shaderParams, runtime, isFinalOp }) {
-        const tensors = [outTensor, ...inputTensors];
-        tensors.forEach(tensor => GLHelper.genTextureInfoFromTensorShape(this.MAX_TEXTURE_SIZE, tensor));
-        // genFscode
-        const fsCode = buildShader(this.textureConf, op, tensors, shaderParams, runtime);
+        let programInstance = null;
+        try {
+            const tensors = [outTensor, ...inputTensors];
+            tensors.forEach(tensor => GLHelper.genTextureInfoFromTensorShape(this.MAX_TEXTURE_SIZE, tensor));
+            // genFscode
+            const fsCode = buildShader(this.textureConf, op, tensors, shaderParams, runtime);
 
-        const programInstance = new GLProgram(this.gl, this.vShader as WebGLShader, fsCode, outTensor);
-        programInstance.fsCode = fsCode;
+            programInstance = new GLProgram(this.gl, this.vShader as WebGLShader, fsCode, outTensor);
+            programInstance.fsCode = fsCode;
 
-        const outTexture = GLTexture.genOutputTexture(this.gl, this.textureConf, outTensor, isFinalOp);
+            const outTexture = GLTexture.genOutputTexture(this.gl, this.textureConf, outTensor, isFinalOp);
 
-        this.texturesMap[outTensor.tensorId] = outTexture;
+            this.texturesMap[outTensor.tensorId] = outTexture;
 
-        this.program = programInstance;
+            this.program = programInstance;
+        }
+        catch (e) {
+            console.error(`webgl createProgram: ${op.name} -- ` + e);
+        }
         return programInstance;
     }
 

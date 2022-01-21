@@ -35,9 +35,9 @@ const baseParams = {
     ]
 };
 
-function getTensorParams(tensors: Tensor[], ownParams: [], fShaderParams: object, runtime: number): opInfo {
+function getTensorParams(tensors: Tensor[], fShaderParams: object, runtime: number): opInfo {
     const tensorsParams = {};
-    const opParams = {};
+    const opParams = Object.assign({}, fShaderParams);
     const tensorNames = [] as string[];
     // tensorParams
     for (const tensor of tensors) {
@@ -52,16 +52,6 @@ function getTensorParams(tensors: Tensor[], ownParams: [], fShaderParams: object
 
         tensorsParams[name] = tensorVars;
         tensorNames.push(name);
-    }
-
-
-    // ownParams
-    if (ownParams) {
-        for (const param of ownParams) {
-            if (typeof (fShaderParams[param]) !== 'undefined') {
-                opParams[param] = fShaderParams[param];
-            }
-        }
     }
 
     // baseParams

@@ -211,25 +211,6 @@ const behaviors : Behaviors = {
         // 保存 输入 tensor 对应dim 的长度
         this.processedAttrs.inputs_dim = shape[axis];
         this.processedAttrs.dim = axis;
-        this.processedAttrs.fourInputs = false;
-
-        const counter = this.tensorDataMap['counter'];
-        if (counter) {
-            const yShape = Utils.formatShape(counter.shape);
-            this.processedAttrs.counter_num = yShape[axis];
-        }
-        const appender = this.tensorDataMap['appender'];
-        if (appender) {
-            const zShape = Utils.formatShape(appender.shape);
-            this.processedAttrs.append_num = zShape[axis];
-        }
-
-        const fourth = this.tensorDataMap['fourth'];
-        if (fourth) {
-            this.processedAttrs.fourInputs = true;
-            const mShape = Utils.formatShape(fourth.shape);
-            this.processedAttrs.fourth_num = mShape[axis];
-        }
     },
 
     processAxis() {

@@ -53,12 +53,6 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [
-        'transpose_X',
-        'transpose_Y',
-        'trans_x',
-        'trans_y'
-    ],
     textureFuncConf: {
         counter: ['getValueFromTensorPos'],
         origin: ['getValueFromTensorPos']

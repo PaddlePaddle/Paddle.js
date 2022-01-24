@@ -91,13 +91,6 @@ function mainFunc(
 
 export default {
     mainFunc,
-    params: [
-        'strides',
-        'paddings',
-        'dilations',
-        'groups',
-        'act_type'
-    ],
     textureFuncConf: {
         filter: ['getValueFromTensorPosPacking'],
         origin: ['getValueFromTensorPosPacking'],

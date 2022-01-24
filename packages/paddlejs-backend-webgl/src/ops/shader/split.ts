@@ -20,11 +20,6 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [
-        'target_length',
-        'num',
-        'dim'
-    ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos']
     },

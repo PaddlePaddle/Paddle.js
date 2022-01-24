@@ -15,8 +15,5 @@ function mainFunc(
 `;
 }
 export default {
-    mainFunc,
-    params: [
-        'value'
-    ]
+    mainFunc
 };

@@ -36,7 +36,7 @@ export default class CpuBackend extends PaddlejsBackend {
         const tensorDataList = opData.tensorData;
         const tensorMap = new Map<string, Tensor>();
 
-        const tensorDatas = tensorDataList as Value[];
+        const tensorDatas = tensorDataList;
 
         for (let i = 0, len = tensorDatas.length; i < len; i++) {
             // @ts-ignore

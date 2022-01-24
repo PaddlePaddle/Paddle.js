@@ -28,10 +28,6 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [
-        'state_axis',
-        'hidden_size'
-    ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos'],
         counter: ['getValueFromTensorPos']

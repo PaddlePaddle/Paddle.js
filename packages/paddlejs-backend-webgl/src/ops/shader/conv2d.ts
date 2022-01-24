@@ -118,15 +118,6 @@ function mainFunc(
 
 export default {
     mainFunc,
-    params: [
-        'strides',
-        'paddings',
-        'dilations',
-        'groups',
-        'filter_nearest_vec4',
-        'filter_remainder_vec4',
-        'act_type'
-    ],
     textureFuncConf: {
         filter: ['getValueFromTensorPos'],
         origin: ['getValueFromTensorPos'],

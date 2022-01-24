@@ -189,24 +189,6 @@ function mainFunc(
 
 export default {
     mainFunc,
-    params: [
-        'variances',
-        'aspect_ratios',
-        'min_sizes',
-        'max_sizes',
-        'flip',
-        'fixed_sizes',
-        'fixed_ratios',
-        'densities',
-        'flatten_to_2d',
-        'min_max_aspect_ratios_order',
-        'clip',
-        'step_w',
-        'step_h',
-        'offset',
-        'runtime',
-        'numbers_shape'
-    ],
     textureFuncConf: {
         image: ['getValueFromTensorPos'],
         origin: ['getValueFromTensorPos']

@@ -120,20 +120,7 @@ export default class OpData {
         const intputTensorName = {
             input: 'origin',
             x: 'origin',
-            filter: 'filter',
-            y: 'counter',
-            z: 'appender',
-            m: 'fourth',
-            scale: 'scale',
-            bias: 'bias',
-            mean: 'mean',
-            variance: 'variance',
-            w: 'weight',
-            weightlist_0: 'weightlist_0',
-            weightlist_1: 'weightlist_1',
-            weightlist_2: 'weightlist_2',
-            weightlist_3: 'weightlist_3',
-            prestate: 'prestate'
+            y: 'counter'
         };
 
         const outTensorName = {

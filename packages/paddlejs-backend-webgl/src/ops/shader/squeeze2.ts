@@ -31,9 +31,6 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [
-        'axes'
-    ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos']
     }

@@ -108,11 +108,6 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [
-        'paddings',
-        'mode',
-        'value'
-    ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos']
     }

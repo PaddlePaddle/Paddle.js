@@ -119,8 +119,7 @@
                 "axis": 0
             },
             "inputs": {
-                "X": ["split_1.tmp_0"],
-                "Y": ["split_1.tmp_1"]
+                "X": ["split_1.tmp_0", "split_1.tmp_1"]
             },
             "outputs": {
                 "Out": ["concat.tmp_2"]

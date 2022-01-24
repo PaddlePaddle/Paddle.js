@@ -71,9 +71,6 @@ function mainFunc(
 
 export default {
     mainFunc,
-    params: [
-        'group'
-    ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos']
     },

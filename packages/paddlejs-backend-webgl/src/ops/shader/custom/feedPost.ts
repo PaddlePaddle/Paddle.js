@@ -38,10 +38,6 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [
-        'mean',
-        'std'
-    ],
     textureFuncConf: {
         origin: ['getValueFromTensorPosPacking']
     }

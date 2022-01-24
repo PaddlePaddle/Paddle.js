@@ -30,9 +30,6 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [
-        'epsilon'
-    ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos'],
         scale: ['getPixelsFromTexturePos'],

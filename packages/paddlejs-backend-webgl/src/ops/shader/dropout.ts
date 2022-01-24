@@ -24,14 +24,7 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [
-        'dropout_implementation',
-        'dropout_prob'
-    ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos']
-    },
-    behaviors: [
-        'normalizeDim'
-    ]
+    }
 };

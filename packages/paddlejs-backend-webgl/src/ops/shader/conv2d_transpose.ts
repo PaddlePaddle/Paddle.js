@@ -77,12 +77,6 @@ function mainFunc({
 }
 export default {
     mainFunc,
-    params: [
-        'strides',
-        'paddings',
-        'dilations',
-        'groups'
-    ],
     textureFuncConf: {
         filter: ['getValueFromTensorPos'],
         origin: ['getValueFromTensorPos']

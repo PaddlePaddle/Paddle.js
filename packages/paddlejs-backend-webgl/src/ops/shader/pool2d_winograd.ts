@@ -61,11 +61,6 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [
-        'strides',
-        'paddings',
-        'type_pool'
-    ],
     textureFuncConf: {
         origin: ['getValueFromTensorPosPacked']
     },

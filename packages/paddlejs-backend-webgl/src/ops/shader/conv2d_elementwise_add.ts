@@ -63,16 +63,6 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [
-        'active_function',
-        'groups',
-        'axis',
-        'strides',
-        'paddings',
-        'dilations',
-        'multi_value',
-        'bias_value'
-    ],
     textureFuncConf: {
         filter: ['getValueFromTensorPos'],
         origin: ['getValueFromTensorPos'],

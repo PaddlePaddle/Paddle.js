@@ -28,7 +28,7 @@ export default class GLProgram {
             gl.linkProgram(program);
         }
         catch (e) {
-            console.error(e);
+            throw new Error(e);
         }
     }
 

@@ -12,16 +12,16 @@ import * as textureFunc from '../ops/atom/common_func_with_texture';
 
 export default function buildShader(textureConf, op, tensors, fShaderParams, runtime: number) {
     let code = '';
-    const { name, params = {}, mainFunc, textureFuncConf = {}, commonFuncConf } = op;
+    const { name, mainFunc, textureFuncConf = {}, commonFuncConf } = op;
     try {
         // textureList: [filter, origin, bias]
         const { textureParams, opParams, active_function } = getTensorParams(
-            tensors, params, fShaderParams, runtime
+            tensors, fShaderParams, runtime
         );
 
         const prefixCode = genPrefixCode(textureConf);
 
-        const textureCode = genTextureFuncCode(textureFuncConf, textureParams, opParams);
+        const textureCode = genTextureFuncCode(textureFuncConf, textureParams, opParams, tensors);
 
         const runtimeCode = genRuntimeCode(runtime);
 
@@ -47,6 +47,7 @@ export default function buildShader(textureConf, op, tensors, fShaderParams, run
     catch (e) {
         console.error(`[${name}]: ` + e);
     }
+
     return code;
 }
 
@@ -73,19 +74,23 @@ function genCommonFuncCode(commonFuncConf) {
     }
     return code;
 }
-function genTextureFuncCode(textureFuncConf, textureParams, opParams) {
+function genTextureFuncCode(textureFuncConf, textureParams, opParams, tensors) {
     if (!textureFuncConf) {
         return '';
     }
 
+    const funcConf = Object.assign({}, textureFuncConf);
+    if (funcConf['@all']) {
+        dealAllInputTensors(funcConf, tensors);
+    }
     let textureCode = '';
     let samplerCode = '';
-    for (const textureName of Object.keys(textureFuncConf)) {
+    for (const textureName of Object.keys(funcConf)) {
         if (!textureParams[textureName]) {
             continue;
         }
         samplerCode += textureFunc['getSamplerCode'](textureName);
-        const funcs = textureFuncConf[textureName];
+        const funcs = funcConf[textureName];
         for (const funcName of funcs) {
             if (textureFunc[funcName]) {
                 try {
@@ -110,4 +115,20 @@ function populateData(result: string): string {
     const glVersion = env.get('webglVersion');
     const texture2d = glVersion === 1 ? 'texture2D' : 'texture';
     return result.replace(/\bTEXTURE2D\b/g, texture2d);
+}
+
+function dealAllInputTensors(textureFuncConf, tensors) {
+    // get all input tensors
+    const inputTensors = tensors.filter(tensor => tensor.name !== 'out');
+    const funcArr = textureFuncConf['@all'];
+    inputTensors.forEach(tensor => {
+        const name = tensor.name;
+        if (textureFuncConf[name]) {
+            textureFuncConf[name].concat(funcArr);
+        }
+        else {
+            textureFuncConf[name] = funcArr;
+        }
+    });
+    delete textureFuncConf['@all'];
 }

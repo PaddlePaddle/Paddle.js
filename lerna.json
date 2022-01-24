@@ -8,6 +8,23 @@
             "npmClientArgs": [
                 "--no-package-lock"
             ]
+        },
+        "publish": {
+            "ignoreChanges": [
+                "paddlejs-converter/**", "paddlejs-benchmark/**", "paddlejs-examples/**",
+                "__test__/**", "tools/**", "e2e/**",
+                "**/*.md", "*.md", "lerna.json"
+            ],
+            "message": "chore: publish",
+            "registry": "https://registry.npmjs.org"
+        },
+        "version": {
+            "allowBranch": ["master", "release/*"],
+            "ignoreChanges": [
+                "paddlejs-converter/**", "paddlejs-benchmark/**", "paddlejs-examples/**",
+                "__test__/**", "tools/**", "e2e/**",
+                "**/*.md", "*.md", "lerna.json"
+            ]
         }
     },
     "version": "independent"

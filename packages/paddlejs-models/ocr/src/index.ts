@@ -57,7 +57,7 @@ function initCanvas(canvas) {
 
 export async function init(detCustomModel = null, recCustomModel = null) {
     const detModelPath = 'https://paddlejs.bj.bcebos.com/models/ocr_v2_det_new/model.json';
-    const recModelPath = 'https://paddlejs.bj.bcebos.com/models/ocr_v2_rec_320/model.json';
+    const recModelPath = 'https://paddlejs.bj.bcebos.com/models/ocr_v2_rec_320_new/model.json';
     detectRunner = new Runner({
         modelPath: detCustomModel ? detCustomModel : detModelPath,
         fill: '#fff',

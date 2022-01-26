@@ -120,7 +120,8 @@ export default class OpData {
         const intputTensorName = {
             input: 'origin',
             x: 'origin',
-            y: 'counter'
+            y: 'counter',
+            w: 'weight'
         };
 
         const outTensorName = {

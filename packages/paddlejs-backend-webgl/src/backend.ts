@@ -68,9 +68,7 @@ export default class WebGLBackend extends PaddlejsBackend {
         this.textureConf = GLTexture.getTextureConfig(gl);
 
         // use 2048 as MAX_TEXTURE_SIZE in half float mode.
-        this.MAX_TEXTURE_SIZE = env.get('webgl_force_half_float_texture') && this.textureConf.textureHalfFloat
-            ? 2048
-            : env.get('MAX_TEXTURE_SIZE') || gl.getParameter(gl.MAX_TEXTURE_SIZE);
+        this.MAX_TEXTURE_SIZE = env.get('MAX_TEXTURE_SIZE') || gl.getParameter(gl.MAX_TEXTURE_SIZE);
 
         // 关闭相关功能
         gl.disable(gl.DEPTH_TEST);

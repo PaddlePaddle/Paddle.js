@@ -3,37 +3,8 @@
  */
 
 import { reduceShape, genFpDataCode, genIntDataCode } from '../../utils/dataProcess';
-// import { getTensorPosFromArrayIndex } from '../atom/common_func_with_texture';
+import { getTensorPosFromArrayIndex } from '../atom/common_func_with_texture';
 /* eslint-disable max-lines-per-function */
-function getTensorPosFromArrayIndex(
-    textureName: string,
-    {
-        numbers_shape,
-        length_shape
-    }
-) {
-    if (length_shape === 1) {
-        return `
-            int getTensorPosFromArrayIndex_${textureName}(int n) {
-                return int(mod(float(n), float(${numbers_shape[0]})));
-            }
-        `;
-    }
-
-    const shapeVec = `ivec${length_shape}(${numbers_shape.join(', ')})`;
-    return `
-    ivec${length_shape} shapeVec_${textureName} = ${shapeVec};
-    ivec${length_shape} getTensorPosFromArrayIndex_${textureName}(int n) {
-        ivec${length_shape} pos;
-        pos[0] = n / shapeVec_${textureName}[0];
-        for (int i = 1; i < ${length_shape}; i++) {
-            n = n - pos[i - 1] * shapeVec_${textureName}[i - 1];
-            pos[i] = n / shapeVec_${textureName}[i];
-        }
-        return pos;
-    }
-    `;
-}
 
 function genCallRemainFunc(density_acc_shape) {
     let callRemainStr = 'ivec2 calRemain(int remain, int curAccIndex, int s) {';
@@ -291,7 +262,7 @@ function mainFunc(
 
             ${clipCode}
 
-            setOutput(float(v));
+            setOutput(v);
         }
         `;
 }

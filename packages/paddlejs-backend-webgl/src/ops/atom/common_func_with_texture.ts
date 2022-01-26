@@ -44,12 +44,12 @@ function genOffsetYIfConditions(cut, height) {
         const curIf = cur > 0
             ? idx === 0
                 ? `
-                if ((float(a) / pieceW) >= float(${cur})) {
+                if (float(a) / float(pieceW) >= float(${cur})) {
                     offsetY = int(${cur}) * ${height};
                 }
                 `
                 : `
-                else if ((float(a) / pieceW) >= float(${cur})) {
+                else if (float(a) / float(pieceW) >= float(${cur})) {
                     offsetY = int(${cur}) * ${height};
                 }
                 `
@@ -66,9 +66,9 @@ function getValueFromTensorPosLimit(
     return `
     // 超限布局根据tensor坐标获取这个tensor位置的值
     float getValueFromTensorPos_${textureName}(int r, int g, int b, int a) {
-        float limitCut = float(${limitCut});
-        float pieceW = ceil(float(${width_shape}) / limitCut);
-        int x = calMod(a, int(pieceW));
+        int limitCut = ${limitCut};
+        int pieceW = calCeil(${width_shape}, ${limitCut});
+        int x = calMod(a, pieceW);
         int offsetY = 0;
 
         ${genOffsetYIfConditions(limitCut, height_shape)}
@@ -76,7 +76,7 @@ function getValueFromTensorPosLimit(
         vec4 pixels = TEXTURE2D(texture_${textureName},
             vec2(
                 (float(x * ${channel} + g) + 0.5) / float(${width_texture}),
-                (float(r * int(limitCut) * ${height_shape} + b + offsetY) + 0.5) / float(${height_texture})
+                (float(r * limitCut * ${height_shape} + b + offsetY) + 0.5) / float(${height_texture})
             )
         );
         return pixels.r;
@@ -173,15 +173,19 @@ export function getTensorPosFromArrayIndex(
     }
 
     const shapeVec = `ivec${length_shape}(${numbers_shape.join(', ')})`;
+
+    let posStr = `pos[0] = n / ${numbers_shape[0]};`;
+    for (let i = 1; i < length_shape; i++) {
+        posStr += `
+            n = calMod(n, ${numbers_shape[i - 1]});
+            pos[${i}] = calDivision(n, ${numbers_shape[i]});
+        `;
+    }
     return `
     ivec${length_shape} shapeVec_${textureName} = ${shapeVec};
     ivec${length_shape} getTensorPosFromArrayIndex_${textureName}(int n) {
         ivec${length_shape} pos;
-        pos[0] = n / shapeVec_${textureName}[0];
-        for (int i = 1; i < ${length_shape}; i++) {
-            n = calMod(n, shapeVec_${textureName}[i - 1]);
-            pos[i] = n / shapeVec_${textureName}[i];
-        }
+        ${posStr}
         return pos;
     }
     `;

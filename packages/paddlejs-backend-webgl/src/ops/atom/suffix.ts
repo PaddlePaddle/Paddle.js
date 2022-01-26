@@ -36,7 +36,7 @@ function getOutputTensorPosLimit({ height_shape, width_shape, channel }: OutPara
         float offsetY = floor(outCoord.y / float(${height_shape}));
         int x = int(outCoord.x / float(${channel}));
         if (mod(offsetY, limitCut) > 0.0) {
-            x += calMod(int(offsetY), int(limitCut)) * int(ceil(float(${width_shape}) / limitCut));
+            x += calMod(int(offsetY), int(limitCut)) * calCeil(${width_shape}, int(limitCut));
         }
         int y = calMod(int(outCoord.y), ${height_shape});
         int c = calMod(int(outCoord.x), ${channel});

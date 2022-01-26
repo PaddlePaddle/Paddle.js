@@ -1,6 +1,8 @@
 <template lang="pug">
     div
         el-row(type=flex justify="start" align="middle")
+            div renderer: {{ renderer }}
+        el-row(type=flex justify="start" align="middle")
             el-col(:span="8")
                 el-row.model-row(align="middle" type="flex")
                     el-col(:span="6")
@@ -46,15 +48,15 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { Runner } from '@paddlejs/paddlejs-core';
-import { GLOBALS } from '@paddlejs/paddlejs-core/src/globals';
-import '@paddlejs/paddlejs-backend-webgl';
+import { Runner, env } from '@paddlejs/paddlejs-core';
+import { glInstance } from '@paddlejs/paddlejs-backend-webgl';
 import Utils from './utils';
 
 export default Vue.extend({
     name: 'config',
     data() {
         return {
+            renderer: '',
             modelList:  [
                 {
                     name: 'mobileNetV2',
@@ -62,7 +64,7 @@ export default Vue.extend({
                         fw: 224,
                         fh: 224
                     },
-                    fetchShape: [1, 1000, 10, 1],
+                    fetchShape: [1, 1000, 1, 1],
                     fill: '#fff',
                     needPreheat: false
                 },
@@ -72,7 +74,7 @@ export default Vue.extend({
                         fw: 224,
                         fh: 224
                     },
-                    fetchShape: [1, 1000, 10, 1],
+                    fetchShape: [1, 1000, 1, 1],
                     fill: '#fff',
                     needPreheat: false
                 },
@@ -107,12 +109,12 @@ export default Vue.extend({
                     needPreheat: false
                 },
                 {
-                    name: 'humanseg',
+                    name: 'shufflenetv2_398x224',
                     feedShape: {
-                        fw: 192,
-                        fh: 192
+                        fw: 398,
+                        fh: 224
                     },
-                    fetchShape: [1, 2, 192, 192],
+                    fetchShape: [1, 2, 398, 224],
                     fill: '#fff',
                     needPreheat: false
                 }
@@ -147,6 +149,9 @@ export default Vue.extend({
             ]
         }
     },
+    created() {
+        this.renderer = this.getHardwareInfo();
+    },
     methods: {
         tableRowClassName({row}): string | Boolean {
             return row.name === 'total' && 'detail-index-row';
@@ -170,12 +175,13 @@ export default Vue.extend({
                 needPreheat: false,
                 fileDownload: false,
             });
+
             const start = Date.now();
             await paddle.init();
             this.loadT = Date.now() - start + '';
             this.stage = 2;
 
-            this.gl = GLOBALS.backendInstance.gl;
+            this.gl = glInstance.gl;
         },
         async preheat(): Promise<void> {
             const start = Date.now();
@@ -205,6 +211,7 @@ export default Vue.extend({
             let totaltimeList = [];
             let opCount = 0;
             const ops = [];
+
             while(curTimes <= totalTimes) {
                 const start = Date.now();
                 await this.paddle.execute();
@@ -212,7 +219,7 @@ export default Vue.extend({
                 remainWholeT += t;
                     // this.remainOthersT = +(remainWholeT / (curTimes - 2).toFixed(4));
 
-                const queryList = GLOBALS.backendInstance.queryList;
+                const queryList = glInstance.queryList;
 
 
                 if (queryList && queryList.length) {
@@ -309,6 +316,16 @@ export default Vue.extend({
                 acc[name].count += count;
             }
             return acc;
+        },
+        getHardwareInfo() {
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('webgl2');
+            const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+            if (!debugInfo) {
+                return '';
+            }
+            const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+            return renderer;
         }
     }
 })

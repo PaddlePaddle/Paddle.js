@@ -211,6 +211,8 @@ export async function recognize(
             text_list_tmp = text_list_tmp.concat(text.text);
         }
         text_list.push(text_list_tmp);
+        img_crop.delete();
+        img_resize.delete();
     }
     return { text: text_list, points: point };
 }
@@ -261,7 +263,6 @@ function get_rotate_crop_image(img: HTMLCanvasElement | HTMLImageElement, points
     const dst_img_height = dst.matSize[0];
     const dst_img_width = dst.matSize[1];
 
-    let data = dst;
     if (dst_img_height / dst_img_width >= 1.5) {
         const dst_rot = new cv.Mat();
         const dsize_rot = new cv.Size(dst.rows, dst.cols);
@@ -269,9 +270,16 @@ function get_rotate_crop_image(img: HTMLCanvasElement | HTMLImageElement, points
         // 图像旋转
         const M = cv.getRotationMatrix2D(center, 90, 1);
         cv.warpAffine(dst, dst_rot, M, dsize_rot, cv.INTER_CUBIC, cv.BORDER_REPLICATE, new cv.Scalar());
-        data = dst_rot;
+        dst.delete();
+        src.delete();
+        srcTri.delete();
+        dstTri.delete();
+        return dst_rot;
     }
-    return data;
+    src.delete();
+    srcTri.delete();
+    dstTri.delete();
+    return dst;
 }
 
 function linalg_norm(x, y) {

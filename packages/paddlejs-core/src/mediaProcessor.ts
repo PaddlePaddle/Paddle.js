@@ -4,6 +4,7 @@
 
 import { InputFeed } from './commons/interface';
 import env from './env';
+import { nhwc2nchw } from './opFactory/utils';
 
 type Color = string;
 
@@ -112,7 +113,7 @@ export default class MediaProcessor {
      * @param opt.std 方差
      * @param opt.targetShape 输出shape
      */
-    allReshapeToRGB(imageData, opt) {
+    allReshapeToRGB(imageData, opt): Float32Array {
         // mean和std是介于0-1之间的
         const { mean, std, targetShape, bgr, normalizeType = 0 } = opt;
         const [, c, h, w] = targetShape;
@@ -133,7 +134,9 @@ export default class MediaProcessor {
                 }
             }
         }
-        return result;
+
+        const nchwPixels: Float32Array = nhwc2nchw(result, [1, h, w, c]);
+        return nchwPixels;
     }
 
 

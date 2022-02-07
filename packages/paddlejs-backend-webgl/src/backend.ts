@@ -10,7 +10,7 @@ import { GLTexture, TextureConfig } from './webgl/WebGLTexture';
 import { vShaderSource, vShaderData } from './ops/vShader';
 import buildShader from './webgl/buildShader';
 import GLProgram from './webgl/WebGLProgram';
-import { getSizeFromShape, nhwc2nchw } from './utils/dataProcess';
+import { getSizeFromShape } from './utils/dataProcess';
 import queryProcess from './utils/queryProcess';
 
 export default class WebGLBackend extends PaddlejsBackend {
@@ -157,19 +157,13 @@ export default class WebGLBackend extends PaddlejsBackend {
         const pbo = this.createPBO();
         await this.createAndWaitForFence();
         const result = this.downloadFloat32TensorFromBuffer(pbo);
-        let shape = fetchInfo ? fetchInfo.shape : [];
 
+        const shape = fetchInfo ? fetchInfo.shape : [];
         if (env.get('webgl_pack_output')) {
             return result.slice(0, getSizeFromShape(shape));
         }
 
-        shape = env.get('debug') && env.get('shape')
-            ? env.get('shape')
-            : (this.program as GLProgram).shape as number[];
-
-        const [N, C, H, W] = shape;
-        const nhwcFetchShape = [N, H, W, C];
-        return nhwc2nchw(result, nhwcFetchShape);
+        return result;
     }
 
     createPBO() {

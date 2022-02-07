@@ -26,7 +26,7 @@ export function formatShape(shape: number[]): number[] {
  * @returns {number} total length of shape
  */
 export function accShape(shape: number[]): number {
-    return shape.reduce((all, num) => all * num);
+    return shape.reduce((all, num) => all + num);
 }
 
 /**
@@ -77,47 +77,51 @@ export function packOpData(opData, packedName) {
 }
 
 
+
 /**
- * 将nchw排布数据转为nhwc排布数据
- * @param {Array} data tensor data
- * @param {Array} shape nchw
- * @returns {Array} nhwc data
- */
-function nchw2nhwc(data: number[] | Float32Array, shape: number[]): number[] | Float32Array {
-    const [N, C, H, W] = shape;
-    const HXW = H * W;
-    const CXHXW = C * H * W;
-    const nhwcData: number[] | Float32Array = [];
+  * 将nhwc排布数据转为nchw排布数据
+  * @param {Array} data tensor data
+  * @param {Array} shape nchw
+  * @returns {Array} nhwc data
+  */
+export function nhwc2nchw(data: number[] | Float32Array, shape: number[]): Float32Array {
+    const N = shape[0];
+    const H = shape[1];
+    const W = shape[2];
+    const C = shape[3];
+    const WXC = W * C;
+    const HXWXC = H * W * C;
+    const nchwData = [];
     for (let n = 0; n < N; n++) {
-        for (let h = 0; h < H; h++) {
-            for (let w = 0; w < W; w++) {
-                for (let c = 0; c < C; c++) {
-                    nhwcData.push(data[n * CXHXW + c * HXW + h * W + w]);
+        for (let c = 0; c < C; c++) {
+            for (let h = 0; h < H; h++) {
+                for (let w = 0; w < W; w++) {
+                    nchwData.push(data[n * HXWXC + h * WXC + w * C + c]);
                 }
             }
         }
     }
-    return nhwcData;
+    return new Float32Array(nchwData);
 }
 
 /**
- * 生成 tensor data，如果数据排布为 nhwc 则直接返回 Float32Array，否则进行排布变换
+ * 生成 tensor data，如果数据排布为 nhwc 则进行排布变换 nhwc -> nchw；默认为 nchw，不处理
  * @param {Array} data tensor data
  * @param {string} dataLayout layout
  * @param {Array} shape nchw
  * @param {boolean} isPacked
- * @returns {Float32Array} nhwc data
+ * @returns {Float32Array} nchw data
  */
 export function genTensorData(data: number[] | Float32Array, dataLayout: string, shape: number[], isPacked: boolean) {
     if (dataLayout === 'nhwc') {
-        return new Float32Array(data);
+        const [shapeN, shapeC, shapeH, shapeW] = shape;
+        const nhcwData: Float32Array | number[] = nhwc2nchw(
+            data,
+            [shapeN, shapeH, shapeW, shapeC * (isPacked ? 4 : 1)]
+        );
+        return new Float32Array(nhcwData);
     }
-    const [shapeN, shapeC, shapeH, shapeW] = shape;
-    const nhwcData: Float32Array | number[] = nchw2nhwc(
-        data,
-        [shapeN, shapeC * (isPacked ? 4 : 1), shapeH, shapeW]
-    );
-    return new Float32Array(nhwcData);
+    return new Float32Array(data);
 }
 /**
  * reshape

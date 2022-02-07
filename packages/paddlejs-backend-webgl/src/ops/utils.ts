@@ -18,7 +18,6 @@ const tensorParams = [
     'height_texture',
     'offset_x',
     'offset_y',
-    'limit',
     'channel',
     'total_shape',
     'numbers_shape'

@@ -20,6 +20,7 @@ interface TensorParams {
 }
 
 export default class Tensor {
+    opts: TensorParams = {} as TensorParams;
     isPacked: boolean = false;
     name: string = '';
     tensorId: string = '';
@@ -48,6 +49,7 @@ export default class Tensor {
             data: varData,
             binding = 0
         } = opts;
+        this.opts = opts;
         // 数据存储方式
         this.isPacked = isPacked;
         // 设置tensor名字
@@ -101,10 +103,6 @@ export default class Tensor {
     get channel() {
         const length = this.shape.length;
         return this.shape[length - 3];
-    }
-
-    get limit() {
-        return this.exceedMax ? 'Limit' : '';
     }
 
     get length_shape() {

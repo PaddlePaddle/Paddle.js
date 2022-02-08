@@ -6,6 +6,7 @@
 import { Tensor } from '../types';
 import { env } from '@paddlejs/paddlejs-core';
 import { WebGLContextAttributes, UniformType } from './webgl_types';
+import { getSmallestDivisor } from '../utils/dataProcess';
 
 
 // 枚举类
@@ -83,10 +84,6 @@ export class GLHelper {
 
     public static getWebglVersion() {
         return env.get('webglVersion');
-    }
-
-    public static getWebglTextureLimitCut() {
-        return 8;
     }
 
     public static createCanvas() {
@@ -410,21 +407,19 @@ export class GLHelper {
         const {
             shape = []
         } = tensor;
-        const b = shape[0];
-        const c = shape[1];
-        const h = shape[2];
-        const w = shape[3];
-        let height = b * h;
-        let width = c * w;
+        const [smallest, sec, third, biggest] = [...shape].sort((prev, cur) => prev - cur);
+        let texW = smallest * biggest;
+        let texH = sec * third;
 
-        // trick TEXTURE_SIZE 超限问题，后续升级更优解
-        if (height > GL_TEXTURE_MAX_SIZE || width > GL_TEXTURE_MAX_SIZE) {
-            const textureCut = this.getWebglTextureLimitCut();
-            env.get('debug') && console.error('大小超限', shape);
-            height *= textureCut;
-            width = c * (Math.ceil(w / textureCut));
-            if (height > GL_TEXTURE_MAX_SIZE || width > GL_TEXTURE_MAX_SIZE) {
-                const requested = `[${width}x${height}]`;
+        if (texW > GL_TEXTURE_MAX_SIZE || texH > GL_TEXTURE_MAX_SIZE) {
+            const [smaller, bigger] = [texW, texH].sort((prev, cur) => prev - cur);
+            const baseCut = Math.ceil(bigger / GL_TEXTURE_MAX_SIZE);
+            const cut = getSmallestDivisor(bigger, baseCut);
+            texW = smaller * cut;
+            texH = Math.ceil(bigger / cut);
+            env.get('debug') && console.error('大小超限', shape, [texH, texW]);
+            if (texW > GL_TEXTURE_MAX_SIZE || texH > GL_TEXTURE_MAX_SIZE) {
+                const requested = `[${texW}x${texH}]`;
                 const max = `[${GL_TEXTURE_MAX_SIZE}x${GL_TEXTURE_MAX_SIZE}]`;
                 throw new Error(
                     'Requested texture size ' + requested
@@ -432,7 +427,7 @@ export class GLHelper {
             }
         }
 
-        tensor.shape_texture = [height, width];
+        tensor.shape_texture = [texH, texW];
     }
 
 }

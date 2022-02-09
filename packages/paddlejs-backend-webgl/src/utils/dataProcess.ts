@@ -81,11 +81,26 @@ function genIntDataCode(dataArr: number[], key) {
     return dataStr;
 }
 
+function getSmallestDivisor(number, base) {
+    let divisor = base;
+    if (number % divisor === 0) {
+        return divisor;
+    }
+    while (divisor < number) {
+        if (number % divisor === 0) {
+            break;
+        }
+        divisor++;
+    }
+    return divisor;
+}
+
 export {
     nhwc2nchw,
     getSizeFromShape,
     reduceShape,
     genFpDataCode,
     genFpFloatArr,
-    genIntDataCode
+    genIntDataCode,
+    getSmallestDivisor
 };

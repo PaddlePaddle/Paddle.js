@@ -417,14 +417,12 @@ export class GLHelper {
         let height = b * h;
         let width = c * w;
 
-        let exceedMax = false;
         // trick TEXTURE_SIZE 超限问题，后续升级更优解
         if (height > GL_TEXTURE_MAX_SIZE || width > GL_TEXTURE_MAX_SIZE) {
             const textureCut = this.getWebglTextureLimitCut();
             env.get('debug') && console.error('大小超限', shape);
             height *= textureCut;
             width = c * (Math.ceil(w / textureCut));
-            exceedMax = true;
             if (height > GL_TEXTURE_MAX_SIZE || width > GL_TEXTURE_MAX_SIZE) {
                 const requested = `[${width}x${height}]`;
                 const max = `[${GL_TEXTURE_MAX_SIZE}x${GL_TEXTURE_MAX_SIZE}]`;
@@ -435,7 +433,6 @@ export class GLHelper {
         }
 
         tensor.shape_texture = [height, width];
-        tensor.exceedMax = exceedMax;
     }
 
 }

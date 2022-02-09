@@ -26,6 +26,15 @@ export function formatShape(shape: number[]): number[] {
  * @returns {number} total length of shape
  */
 export function accShape(shape: number[]): number {
+    return shape.reduce((all, num) => all * num);
+}
+
+/**
+ * calculate the sum of shape
+ * @param {Array} shape shape of tensor
+ * @returns {number} sum of shape
+ */
+export function getSumOfShape(shape: number[]): number {
     return shape.reduce((all, num) => all + num);
 }
 

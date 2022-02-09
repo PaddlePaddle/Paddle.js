@@ -35,7 +35,7 @@ sliceDataSize = 4 * 1024
 # paddlepaddle运行程序实例
 program = None
 # 存放模型结构
-modelInfo = {"vars": {}, "ops": [], "chunkNum": 0, "dataLayout": "nhwc", "feedShape": None}
+modelInfo = {"vars": {}, "ops": [], "chunkNum": 0, "dataLayout": "nchw", "feedShape": None}
 # 存放参数数值（未排序）
 paramValuesDict = {}
 
@@ -193,12 +193,6 @@ def organizeModelVariableInfo(result):
         # persistable数据存入paramValuesDict，等待排序
         if v.persistable:
             tensor = np.array(fluid.global_scope().find_var(v.name).get_tensor())
-            # nchw 转 nhwc
-            if len(tensor.shape) == 3:
-                tensor = np.transpose(tensor, (1, 2, 0))
-            elif len(tensor.shape) == 4:
-                tensor = np.transpose(tensor, (0, 2, 3, 1))
-
             data = tensor.flatten().tolist()
             paramValuesDict[v.name] = data
 

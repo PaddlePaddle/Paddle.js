@@ -190,13 +190,12 @@ describe('test op behaviors', () => {
         expect(mergedOp.processedAttrs['active_function']).toBe('leakyRelu');
     });
 
-    it('test behavior processAxis', () => {
-        behaviors.processAxis.call(elementwiseAddOp as unknown as OpData);
+    it('test behavior processElementwiseAxis', () => {
+        behaviors.processElementwiseAxis.call(elementwiseAddOp as unknown as OpData);
         expect(elementwiseAddOp.processedAttrs.axis).toBe(0);
     });
 
     it('test behavior flattenShape', () => {
-        console.log(JSON.stringify(fcOp));
         behaviors.flattenShape.call(fcOp as unknown as OpData);
         const origin = fcOp.tensorDataMap['origin'];
         expect(origin.shape).toEqual([2, 9]);

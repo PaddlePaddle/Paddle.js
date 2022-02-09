@@ -30,7 +30,7 @@ export default {
         origin: ['getValueFromTensorPos']
     },
     behaviors: [
-        'processAxis',
+        'processElementwiseAxis',
         'genElementwiseCounterPos'
     ]
 };

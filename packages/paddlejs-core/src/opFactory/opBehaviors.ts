@@ -213,14 +213,14 @@ const behaviors : Behaviors = {
         this.processedAttrs.dim = axis;
     },
 
-    processAxis() {
+    processElementwiseAxis() {
         const shape_x = this.tensorDataMap['origin'].shape;
         const shape_y = this.tensorDataMap['counter'].shape;
         let axis = this.processedAttrs.axis || -1;
 
         this.processedAttrs.counterLen = shape_y.length;
         // shape x === shape y
-        if (Utils.accShape(shape_x) === Utils.accShape(shape_y)) {
+        if (Utils.getSumOfShape(shape_x) === Utils.getSumOfShape(shape_y)) {
             this.processedAttrs.axis = 0;
             this.processedAttrs.counterLen = 4;
         }

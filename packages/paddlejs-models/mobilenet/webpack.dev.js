@@ -9,7 +9,7 @@ module.exports = {
     devtool: 'inline-source-map',
     devServer: {
         host: '0.0.0.0',
-        port: 8866
+        port: 8867
     },
     plugins: [
         new HtmlWebpackPlugin({

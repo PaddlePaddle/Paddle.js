@@ -2,7 +2,7 @@
  * @file ocr_rec model
  */
 
-import { Runner, Transformer } from '@paddlejs/paddlejs-core';
+import { Runner, Transformer, env } from '@paddlejs/paddlejs-core';
 import '@paddlejs/paddlejs-backend-webgl';
 import DBProcess from './dbPostprocess';
 import RecProcess from './recPostprocess';
@@ -58,6 +58,8 @@ function initCanvas(canvas) {
 export async function init(detCustomModel = null, recCustomModel = null) {
     const detModelPath = 'https://paddlejs.bj.bcebos.com/models/ocr_v2_det_new/model.json';
     const recModelPath = 'https://paddlejs.bj.bcebos.com/models/ocr_v2_rec_320_new/model.json';
+    env.set('webgl_pack_output', true);
+    env.set('webgl_feed_process', true);
     detectRunner = new Runner({
         modelPath: detCustomModel ? detCustomModel : detModelPath,
         fill: '#fff',

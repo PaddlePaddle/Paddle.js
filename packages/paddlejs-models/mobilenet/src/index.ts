@@ -38,6 +38,7 @@ export async function load(config: ModelConfig, map: string[] | MobilenetMap) {
         fill: '#fff',
         mean: mean || [],
         std: std || [],
+        scale: 256,
         needPreheat
     });
     env.set('webgl_feed_process', true);

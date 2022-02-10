@@ -12,7 +12,7 @@ describe('e2e test mobilenet model', () => {
         page.on('console', msg => console.log('PAGE LOG:', msg.text()));
         const res = await page.evaluate(async map => {
             const carImg = document.querySelector('#car');
-            const catImg = document.querySelector('#cat');
+            const catImg = document.querySelector('#banana');
             const path = 'https://paddlejs.cdn.bcebos.com/models/mobilenetV2_nchw';
             const mobilenet = paddlejs['mobilenet'];
 
@@ -30,7 +30,7 @@ describe('e2e test mobilenet model', () => {
         }, map);
 
         const expected0 = 'sports car, sport car';
-        const expected1 = 'Egyptian cat';
+        const expected1 = 'banana';
         await expect(res[0]).toEqual(expected0);
         await expect(res[1]).toEqual(expected1);
     });

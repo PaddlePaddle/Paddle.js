@@ -44,7 +44,7 @@ export function getValueFromTensorPosPacking(
                 (float(pos_h) + 0.5) / float(${height_texture})
             )
         );
-        // 只用了r通道
+        // 返回 vec4 数据
         return pixels;
     }`;
 }

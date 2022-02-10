@@ -76,6 +76,7 @@ export interface RunnerConfig {
     mean?: number[];
     std?: number[];
     bgr?: boolean;
+    scale?: number; // 按照 scale 大小原图进行等比拉伸并裁剪
     type?: GraphType; // model type
     keepRatio?: boolean;
     needPreheat?: boolean;

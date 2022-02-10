@@ -37,7 +37,7 @@ export default class ModelLoader {
     };
 
     constructor(modelPath: string) {
-        let modelDir = '';
+        let modelDir = modelPath;
         let filename = 'model.json';
         if (modelPath.endsWith('.json')) {
             const dirPosIndex = modelPath.lastIndexOf('/') + 1;

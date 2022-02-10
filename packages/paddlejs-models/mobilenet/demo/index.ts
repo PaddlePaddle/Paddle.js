@@ -4,13 +4,15 @@ import map from './map.json';
 load();
 
 async function load() {
-    const path = 'https://paddlejs.cdn.bcebos.com/models/mobilenetV2_nchw';
+    const path = 'https://paddlejs.cdn.bcebos.com/models/mobilenetv2_opt_nchw';
     await mobilenet.load({
         path,
         mean: [0.485, 0.456, 0.406],
         std: [0.229, 0.224, 0.225]
     }, map);
     document.getElementById('loading')!.style.display = 'none';
+    const img = document.getElementById('image') as HTMLImageElement;
+    run(img);
 }
 
 async function run(input?: HTMLElement) {

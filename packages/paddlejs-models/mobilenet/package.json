@@ -1,6 +1,6 @@
 {
     "name": "@paddlejs-models/mobilenet",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "",
     "main": "lib/index",
     "scripts": {
@@ -10,8 +10,8 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@paddlejs/paddlejs-backend-webgl": "^1.1.4",
-        "@paddlejs/paddlejs-core": "^2.1.7"
+        "@paddlejs/paddlejs-backend-webgl": "^1.1.11",
+        "@paddlejs/paddlejs-core": "^2.1.11"
     },
     "devDependencies": {
         "html-webpack-plugin": "^3.2.0",

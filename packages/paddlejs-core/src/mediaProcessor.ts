@@ -147,7 +147,7 @@ export default class MediaProcessor {
     /**
      * 缩放成目标尺寸, keepRatio 为 true 则保持比例拉伸并居中，为 false 则变形拉伸为目标尺寸
      */
-    fitToTargetSize(image, imageDataInfo, opt) {
+    fitToTargetSize(image, imageDataInfo, opt?) {
         const {
             keepRatio = true,
             inGPU = false,

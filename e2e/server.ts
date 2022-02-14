@@ -8,6 +8,7 @@ const mobilenetWebpackConfig = require('../packages/paddlejs-models/mobilenet/we
 const gestureWebpackConfig = require('../packages/paddlejs-models/gesture/webpack.prod');
 const humansegWebpackConfig = require('../packages/paddlejs-models/humanseg/webpack.prod');
 const ocrWebpackConfig = require('../packages/paddlejs-models/ocr/webpack.prod');
+const detectWebpackConfig = require('../packages/paddlejs-models/detect/webpack.prod');
 
 const DIST_DIR = path.join(__dirname, 'dist');
 
@@ -33,9 +34,10 @@ const mobilenet = new ConfigInfo('mobilenet', mobilenetWebpackConfig, true);
 const gesture = new ConfigInfo('gesture', gestureWebpackConfig, true);
 const humanseg = new ConfigInfo('humanseg', humansegWebpackConfig, true);
 const ocr = new ConfigInfo('ocr', ocrWebpackConfig, true);
+const detect = new ConfigInfo('detect', detectWebpackConfig, true);
 
 // edit webpack config
-[core, webgl, mobilenet, gesture, humanseg, ocr].forEach(instance => {
+[core, webgl, mobilenet, gesture, humanseg, ocr, detect].forEach(instance => {
     const config = instance.config;
     config.output.path = DIST_DIR;
     config.output.filename = `${instance.key}_bundle.js`;
@@ -64,6 +66,7 @@ const app = express()
     .use(middleware(gesture.compiler))
     .use(middleware(humanseg.compiler))
     .use(middleware(ocr.compiler))
+    .use(middleware(detect.compiler))
     .use(express.static(DIST_DIR));
 
 app.listen(port, () => {

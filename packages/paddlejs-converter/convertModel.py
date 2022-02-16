@@ -322,7 +322,7 @@ def organizeModelOpInfo():
             rnnList.append(index)
 
         # multiclass_nms 单独处理
-        if (op.type == 'multiclass_nms'):
+        if (op.type.startswith('multiclass_nms')):
             postOps.append(opInfo)
         else:
             # 存入modelInfo
@@ -464,7 +464,7 @@ def convertToPaddleJSModel(modelDir, modelName, paramsName, outputDir):
 
     if (postOps and len(postOps) > 0):
         for op in postOps:
-            if (op['type'] == 'multiclass_nms'):
+            if (op['type'].startswith('multiclass_nms')):
                 inputNames = []
                 for input, value in op['inputs'].items():
                     if len(value) <= 0:

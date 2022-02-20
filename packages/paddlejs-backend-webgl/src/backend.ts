@@ -362,6 +362,7 @@ export default class WebGLBackend extends PaddlejsBackend {
         const textureConf = this.textureConf as TextureConfig;
         const tensorName = item.tensorId;
         const packed = isPacked || item.isPacked;
+        const data = item.data;
         let texture;
 
         if (!item.persistable) {
@@ -369,99 +370,26 @@ export default class WebGLBackend extends PaddlejsBackend {
         }
         else {
             this.cacheTextures = this.cacheTextures || {};
-            if (this.cacheTextures[tensorName]) {
-                texture = this.cacheTextures[tensorName];
+            const cacheTexture = this.cacheTextures[tensorName];
+
+            if (cacheTexture) {
+                texture = cacheTexture;
+                // 一般情况下 cacheTexture 对应的tensor 数据在上传后已销毁
+                // 如果 data 和 cacheTexture 共存，说明 tensor data 和 shape 已改变，比如用户输入图像 image tensor
+                data && GLHelper.genTextureInfoFromTensorShape(this.MAX_TEXTURE_SIZE, item);
             }
             else {
                 texture = gl.createTexture();
                 this.cacheTextures[tensorName] = texture;
             }
         }
+
         gl.activeTexture(gl[`TEXTURE${index}`]);
         gl.bindTexture(gl.TEXTURE_2D, texture);
-        const data = item.data;
+
         if (data) {
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
-            if (data instanceof Uint8Array || data instanceof Uint8ClampedArray) {
-                // 输入为0~255之间的像素数据，类型为Uint8Array 或 Uint8ClampedArray
-                gl.texImage2D(
-                    gl.TEXTURE_2D,
-                    0,
-                    gl.RGBA,
-                    item.width_texture,
-                    item.height_texture,
-                    0,
-                    gl.RGBA,
-                    gl.UNSIGNED_BYTE,
-                    data
-                );
-            }
-            else if (!(data instanceof Float32Array || data instanceof Array)) {
-                // 输入数据不是数组类型，包括Array、Float32Array、Uint8Array和Uint8ClampedArray
-                // 输入数据可能是HTMLImageElement、HTMLVideoElement、HTMLCanvasElement、小程序中图像的临时path string。
-                gl.texImage2D(
-                    gl.TEXTURE_2D,
-                    0,
-                    gl.RGBA,
-                    gl.RGBA,
-                    gl.UNSIGNED_BYTE,
-                    data
-                );
-            }
-            else if (this.glVersion === 2) {
-                // 输入数据类型是Float32Array
-                const useHalfFloat = env.get('webgl_force_half_float_texture');
-                const internalFormat = packed
-                    ? useHalfFloat
-                        ? textureConf.internalFormatPackedHalfFloat
-                        : textureConf.internalFormatPacked
-                    : useHalfFloat
-                        ? textureConf.internalFormatHalfFloat
-                        : textureConf.internalFormat;
-
-                const textureFormat = packed ? gl.RGBA : textureConf.textureFormat;
-
-                gl.texImage2D(
-                    gl.TEXTURE_2D,
-                    0,
-                    internalFormat,
-                    item.width_texture,
-                    item.height_texture,
-                    0,
-                    textureFormat,
-                    gl.FLOAT,
-                    data as Float32Array
-                );
-            }
-            else {
-                // 输入数据类型是Float32Array
-                const temp = new Float32Array(item.width_texture * item.height_texture * 4);
-                for (let i = 0; i < item.data.length; i++) {
-                    if (packed) {
-                        temp[i] = item.data[i];
-                    }
-                    else {
-                        // 填充 r 通道数据，其他通道 为 0
-                        temp[i * 4] = item.data[i];
-                        temp[i * 4 + 1] = 0;
-                        temp[i * 4 + 2] = 0;
-                        temp[i * 4 + 3] = 0;
-                    }
-                }
-                gl.texImage2D(gl.TEXTURE_2D,
-                    0,
-                    gl.RGBA,
-                    item.width_texture,
-                    item.height_texture,
-                    0,
-                    gl.RGBA,
-                    gl.FLOAT,
-                    temp);
-            }
+            GLTexture.uploadDataToTexture(gl, textureConf, item, packed);
+            // 数据上传至 texture 后进行销毁
             item.data = null;
         }
     }

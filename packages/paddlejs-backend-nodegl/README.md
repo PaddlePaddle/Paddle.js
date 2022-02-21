@@ -9,7 +9,7 @@ Npm package [gl](https://github.com/stackgl/headless-gl) provides a WebGL contex
 
 ## Importing
 
-You can install the backend package via npm. `@paddlejs/paddlejs-backend-nodelgl`.
+You can install the backend package via npm. `@paddlejs/paddlejs-backend-nodegl`.
 
 
 ```js

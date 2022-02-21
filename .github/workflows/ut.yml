@@ -28,7 +28,7 @@ jobs:
 
       - run: npm install
       
-      - run: npm install canvas --canvas_binary_host_mirror=https://npm.taobao.org/mirrors/node-canvas-prebuilt/
+      - run: npm install canvas --canvas_binary_host_mirror=https://registry.npmmirror.com/-/binary/canvas
 
       - name: Run Tests
         run: npm test

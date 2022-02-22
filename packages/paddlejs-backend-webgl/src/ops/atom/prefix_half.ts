@@ -2,7 +2,7 @@
  * @file prefix code of half float type
  */
 
-import { calMod, calDivision } from './common_func_adaptor';
+import { adapterFunctions } from './common_func_adaptor';
 
 export default function () {
     return ` #ifdef GL_FRAGMENT_PRECISION_HIGH
@@ -32,8 +32,7 @@ export default function () {
                 gl_FragColor = result;
             }
 
-            ${calMod()}
-            ${calDivision()}
+            ${adapterFunctions()}
 
             int calCeil(int a, int b) {
                 return int(ceil(float(a) / float(b)));

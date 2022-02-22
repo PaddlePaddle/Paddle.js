@@ -32,3 +32,19 @@ export function calDivision() {
         `;
 }
 
+export function calTanh() {
+    return `
+    float tanh_calc(float num) {
+        float res = (exp(2.0 * num) - 1.0) / (exp(2.0 * num) + 1.0);
+        return res;
+    }
+    `;
+}
+
+export function adapterFunctions() {
+    return `
+    ${calMod()}
+    ${calDivision()}
+    ${calTanh()}
+    `;
+}

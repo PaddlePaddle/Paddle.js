@@ -5,7 +5,7 @@
 import { env } from '@paddlejs/paddlejs-core';
 import prefix_uint from './prefix_uint';
 import prefix_half from './prefix_half';
-import { calMod, calDivision } from './common_func_adaptor';
+import { adapterFunctions } from './common_func_adaptor';
 
 function prefixV1() {
     return ` #ifdef GL_FRAGMENT_PRECISION_HIGH
@@ -26,8 +26,7 @@ function prefixV1() {
             int calCeil(int a, int b) {
                 return int(ceil(float(a) / float(b)));
             }
-            ${calMod()}
-            ${calDivision()}
+            ${adapterFunctions()}
     `;
 }
 function prefixV2() {
@@ -52,8 +51,7 @@ function prefixV2() {
         int calCeil(int a, int b) {
             return int(ceil(float(a) / float(b)));
         }
-        ${calMod()}
-        ${calDivision()}
+        ${adapterFunctions()}
     `;
 }
 

@@ -21,8 +21,8 @@ function mainFunc(
         float i = 1.0 / (1.0 + exp(-origin));
         float f = 1.0 / (1.0 + exp(-cell));
         float o = 1.0 / (1.0 + exp(-fourth));
-        float c = f * counter + i * tanh(appender);
-        float h = o * tanh(c);
+        float c = f * counter + i * tanh_calc(appender);
+        float h = o * tanh_calc(c);
         
         setOutput(h);
     }

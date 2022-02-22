@@ -4,7 +4,6 @@ import type Transformer from './transformer';
 import SplitOp from './splitOp';
 import PackOutOp from './packOutOp';
 import FeedProcess from './feedProcess';
-import Nhwc2nchw from './nhwc2nchw';
 
 interface TransformerAction {
     preTransforms: Transformer[];
@@ -16,8 +15,7 @@ const actions: TransformerAction = {
     preTransforms: [
         new SplitOp(),
         new PackOutOp(),
-        new FeedProcess(),
-        new Nhwc2nchw()
+        new FeedProcess()
     ],
     transforms: [
         new FormatInputsX(),

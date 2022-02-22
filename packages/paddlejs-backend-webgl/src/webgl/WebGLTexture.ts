@@ -157,57 +157,75 @@ export class GLTexture {
         return isFrameBufferComplete;
     }
 
-    /**
-     * 初始化材质
-     * @param {int} index 材质索引
-     * @param {string} tSampler 材质名称
-     * @param {Object} bufferData 数据
-     * @param {boolean} isRendered 是否已运行过
-     */
-    public static initTexture(gl: WebGLRenderingContext, index: number, textureInfo: any) {
-        const textureConf = this.getTextureConfig(gl);
-        const texture = gl.createTexture();
-        gl.activeTexture(gl[`TEXTURE${index}`]);
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-        if (textureInfo) {
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-            if (env.get('webglVersion') === 2) {
-                gl.texImage2D(gl.TEXTURE_2D,
-                    0,
-                    textureConf.internalFormat,
-                    textureInfo.width_texture,
-                    textureInfo.height_texture,
-                    0,
-                    textureConf.textureFormat,
-                    gl.FLOAT,
-                    textureInfo.data
-                );
-            }
-            else {
-                const temp = new Float32Array(textureInfo.width_texture * textureInfo.height_texture * 4);
-                for (let i = 0; i < textureInfo.data.length; i++) {
-                    temp[i * 4] = (textureInfo.data[i]);
+    public static uploadDataToTexture(gl, textureConf, inputTensor, isPacked) {
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+        const {
+            width_texture,
+            height_texture,
+            data
+        } = inputTensor;
+
+        let internalformat = gl.RGBA;
+        let texelformat = gl.RGBA;
+        let texeltype = gl.FLOAT;
+        let pixels = data;
+
+        if (
+            data instanceof Uint8Array
+            || data instanceof Uint8ClampedArray
+            || !(data instanceof Float32Array || data instanceof Array)) {
+            // case1: 输入为0~255之间的像素数据，类型为Uint8Array 或 Uint8ClampedArray
+            // case2: 小程序环境，输入数据可能是HTMLImageElement、HTMLVideoElement、HTMLCanvasElement、小程序中图像的临时path string。
+            texeltype = gl.UNSIGNED_BYTE;
+        }
+        else if (env.get('webglVersion') === 2) {
+            // 输入数据类型是Float32Array
+            const useHalfFloat = env.get('webgl_force_half_float_texture');
+            internalformat = isPacked
+                ? useHalfFloat
+                    ? textureConf.internalFormatPackedHalfFloat
+                    : textureConf.internalFormatPacked
+                : useHalfFloat
+                    ? textureConf.internalFormatHalfFloat
+                    : textureConf.internalFormat;
+
+            texelformat = isPacked ? gl.RGBA : textureConf.textureFormat;
+        }
+        else {
+            // webgl 1.0
+            // 输入数据类型是Float32Array
+            const temp = new Float32Array(width_texture * height_texture * 4);
+            for (let i = 0; i < data.length; i++) {
+                if (isPacked) {
+                    temp[i] = data[i];
+                }
+                else {
+                    // 填充 r 通道数据，其他通道 为 0
+                    temp[i * 4] = data[i];
                     temp[i * 4 + 1] = 0;
                     temp[i * 4 + 2] = 0;
                     temp[i * 4 + 3] = 0;
                 }
-                gl.texImage2D(gl.TEXTURE_2D,
-                    0,
-                    gl.RGBA,
-                    textureInfo.width_texture,
-                    textureInfo.height_texture,
-                    0,
-                    gl.RGBA,
-                    gl.FLOAT,
-                    temp
-                );
             }
+
+            pixels = temp;
         }
 
-        return texture;
+        gl.texImage2D(
+            gl.TEXTURE_2D,
+            0,
+            internalformat,
+            width_texture,
+            height_texture,
+            0,
+            texelformat,
+            texeltype,
+            pixels
+        );
     }
 
     public static genOutputTexture(gl, textureConf, outTensor, isFinalOp): WebGLTexture {

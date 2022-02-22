@@ -24,13 +24,13 @@ function mainFunc({
         vec2 sourceTextureSize = vec2(${out.width_shape}, ${out.height_shape});
         vec2 sourceTexelSize = 1.0 / sourceTextureSize;
 
-        float kernel[MSIZE]; // 5
+        float kernel[MSIZE]; // 3
         kernel[0] = 0.12579369017522166;
         kernel[1] = 0.13298;
         kernel[2] = 0.12579369017522166;
 
 
-        float origin_alpha = TEXTURE2D(texture_origin, outCoord.xy / 2.0 + (0.5, 0.5)).r;
+        float origin_alpha = TEXTURE2D(texture_origin, vec2(outCoord.x, outCoord.y / 2.0 + 0.5)).r;
         vec4 counter = TEXTURE2D(texture_counter, outCoord.xy);
         vec4 res = vec4(0.0);
 
@@ -52,8 +52,7 @@ function mainFunc({
                 weightsum += weight;
             }
             
-            res = accumulation / weightsum / 255.0;            
-            // res = res / 255.0;
+            res = accumulation / weightsum;
             if (origin_alpha > ${THRESHHOLD}) {
                 res = counter;
             }
@@ -80,7 +79,7 @@ function mainFunc({
                 for (int j=-kSize; j <= kSize; ++j) {
                     // color at pixel in the neighborhood
                     vec2 coord = outCoord.xy + vec2(float(i), float(j))*sourceTexelSize.xy;
-                    float r = TEXTURE2D(texture_origin, coord.xy / 2.0 + (0.5, 0.5)).r;
+                    float r = TEXTURE2D(texture_origin, vec2(outCoord.x, outCoord.y / 2.0 + 0.5)).r;
                     temp = r > ${THRESHHOLD} ? r : 0.0;
 
                     // compute the gaussian smoothed

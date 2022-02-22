@@ -85,8 +85,7 @@ export async function load(options: LoadOptions = {
 
     env.set('webgl_pack_channel', true);
     env.set('webgl_gpu_pipeline', true);
-    // env.set('webgl_force_half_float_texture', true);
-
+    env.set('webgl_force_half_float_texture', true);
 
     await runner.init();
 }

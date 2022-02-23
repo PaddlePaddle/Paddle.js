@@ -1,5 +1,5 @@
 // pages/play/components/timer/timer.js
-import Timer from '../../../../lib/Timer';
+import Timer from '../../../../tool/Timer';
 
 // eslint-disable-next-line no-undef
 Component({

@@ -1,7 +1,7 @@
 // pages/play.js
 // let gameTimer; // 游戏计时器
 import { CONFIG } from '../../config.js';
-import { PaddleJS } from '../../lib/paddleRegister';
+import { PaddleJS } from '../../tool/paddleRegister';
 import { shuffle } from '../../utils/util';
 
 // eslint-disable-next-line no-undef

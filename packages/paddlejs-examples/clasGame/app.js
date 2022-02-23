@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 // app.js
 import { CONFIG } from './config';
-import { PaddleJS } from './lib/paddleRegister';
+import { PaddleJS } from './tool/paddleRegister';
 
 App({
     onLaunch() {

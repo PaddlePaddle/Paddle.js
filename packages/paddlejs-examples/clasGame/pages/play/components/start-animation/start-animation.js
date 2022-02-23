@@ -1,5 +1,5 @@
 // pages/play/components/start-animation/start-animation.js
-import Timer from '../../../../lib/Timer';
+import Timer from '../../../../tool/Timer';
 
 let startCountdownTimer = null;
 

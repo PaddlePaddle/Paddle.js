@@ -9,6 +9,8 @@
 * [申请微信小程序账号](https://mp.weixin.qq.com/)
 * [微信小程序开发者工具](https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html)
 * 前端开发环境准备：node、npm
+* 小程序管理后台配置服务器域名，如果使用默认模型请配置为 https://mms-voice-fe.cdn.bcebos.com  
+详情参考:https://mp.weixin.qq.com/wxamp/devprofile/get_profile?token=1132303404&lang=zh_CN)
 
 ### 2.2 启动步骤
 #### **1. clone Paddle.js**
@@ -28,8 +30,8 @@ cd Paddle.js/packages/paddlejs-examples/xxx && npm install
 小程序管理界面 --> 设置 --> 第三方设置 --> 插件管理 --> 添加插件 --> 搜索 `wx7138a7bb793608c3` 并添加  
 [参考文档](https://developers.weixin.qq.com/miniprogram/dev/framework/plugin/using.html)
 
-#### **5. 构建依赖**
-点击开发者工具中的菜单栏：工具 --> 构建 npm  
+#### <font color="red">**5. 构建依赖**</font>  
+<font color="red">**！！（易遗漏） 点击开发者工具中的菜单栏：工具 --> 构建 npm**</font>  
 ***原因**：node_modules 目录不会参与编译、上传和打包中，小程序想要使用 npm 包必须走一遍“构建 npm”的过程，构建完成会生成一个 miniprogram_npm 目录，里面会存放构建打包后的 npm 包，也就是小程序真正使用的 npm 包。*  
 [参考文档](https://developers.weixin.qq.com/miniprogram/dev/devtools/npm.html)
 

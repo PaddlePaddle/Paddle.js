@@ -288,6 +288,14 @@ def organizeModelOpInfo():
 
         opInfo["outputs"] = outputs
 
+        # 收敛outputs[name]
+        if "Output" in opInfo["outputs"]:
+            opInfo["outputs"]["Out"] = opInfo["outputs"]["Output"]
+            del opInfo["outputs"]["Output"]
+
+        elif "Y" in opInfo["outputs"]:
+            opInfo["outputs"]["Out"] = opInfo["outputs"]["Y"]
+            del opInfo["outputs"]["Y"]
 
         # 有的模型如人脸关键点，会出现两个算子合并的情况，如lmk_demo，elementwise_add后接了relu算子，relu的输入输出相等，兼容一下
         # inputs与outputs只有一个，名称相等，则，输入加后缀，改上一层算子。
@@ -333,7 +341,6 @@ def organizeModelOpInfo():
         logModel("")
         index += 1
     print("Organizing model operators info successfully.")
-
 
 def addChunkNumToJson(paramValueList):
     totalParamValuesCount = len(paramValueList)
@@ -403,8 +410,6 @@ def appendConnectOp(fetch_targets):
     modelInfo['multiOutputs'] = targets
     return targets
 
-
-
 def genModelFeedShape(feed):
     if len(feed) != 1:
         print("\033[33;1mModel has more than one input feed.\033[0m")
@@ -430,8 +435,7 @@ def genModelFeedShape(feed):
     modelInfo['feedShape'] = feedShape
     print("\033[32mModel FeedShape set successfully.\033[0m")
 
-
-def convertToPaddleJSModel(modelDir, modelName, paramsName, outputDir):
+def convertToPaddleJSModel(modelDir, modelName, paramsName, outputDir, useGPUOpt):
     """ 转换fluid modle为paddleJS model """
 
 
@@ -457,6 +461,10 @@ def convertToPaddleJSModel(modelDir, modelName, paramsName, outputDir):
     if len(rnnList):
         for index in rnnList:
             rnn.splice_rnn_op(modelInfo, index)
+
+    if useGPUOpt:
+        # 算子融合
+        opListFuse()
 
     # 对多输出模型追加connect算子
     if len(fetch_targets) > 1:
@@ -499,7 +507,36 @@ def convertToPaddleJSModel(modelDir, modelName, paramsName, outputDir):
     # 导出分片参数文件
     sliceDataToBinaryFile(paramValues, outputDir)
 
+def opListFuse():
+    """ 算子融合 """
+    fuseOpList = [
+        'relu',
+        'relu6',
+        'leaky_relu',
+        'scale',
+        'sigmoid',
+        'hard_sigmoid',
+        'pow',
+        'sqrt',
+        'tanh'
+    ]
+    ops = modelInfo['ops']
 
+    for index in reversed(range(len(ops))):
+        if index > 0:
+            for fuse in fuseOpList:
+                op = ops[index]
+                if op['type'] == fuse:
+                    prevOp = ops[index - 1]
+                    prevOp['attrs']['fuse_opt'] = {}
+                    if 'fuse_opt' in op['attrs']:
+                        prevOp['attrs']['fuse_opt'] = op['attrs']['fuse_opt']
+                        del op['attrs']['fuse_opt']
+
+                    prevOp['attrs']['fuse_opt'][fuse] = op['attrs']
+
+                    prevOp['outputs']['Out'] = op['outputs']['Out']
+                    del ops[index]
 
 def main():
 
@@ -514,11 +551,13 @@ def main():
         p.add_argument("--outputDir", help='paddleJS模型输出路径，必要参数', required=True)
         p.add_argument("--logModelInfo", type=int, default=0, help='是否输出模型结构信息，非必要参数，0为不输出，1为输出，默认不输出', required=False)
         p.add_argument("--sliceDataSize", type=int, default=4096, help='分片输出参数文件时，每片文件的大小，单位：KB，非必要参数，默认4096KB', required=False)
+        p.add_argument('--useGPUOpt', help='转换模型是否执行GPU优化方法', required=False)
 
         args = p.parse_args()
         modelDir = args.inputDir
         modelPath = args.modelPath
         paramPath = args.paramPath
+        useGPUOpt = args.useGPUOpt
 
         if not modelDir:
             modelDir, modelName = os.path.split(modelPath)
@@ -532,7 +571,7 @@ def main():
         if args.logModelInfo == 1:
             enableLogModelInfo = True
 
-        convertToPaddleJSModel(modelDir, modelName, paramsName, outputDir)
+        convertToPaddleJSModel(modelDir, modelName, paramsName, outputDir, useGPUOpt)
 
     except Exception as identifier:
         print("\033[31mA fetal error occured. Failed to convert model.\033[0m")

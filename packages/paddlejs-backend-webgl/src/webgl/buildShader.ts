@@ -7,6 +7,8 @@ import { env } from '@paddlejs/paddlejs-core';
 import { getTensorParams } from '../ops/utils';
 import genPrefixCode from '../ops/atom/prefix';
 import genSuffixCode from '../ops/atom/suffix';
+import genFuseOpCode from '../ops/atom/fuse_ops';
+import genPrecisionCode from '../ops/atom/precision';
 import * as commonFunc from '../ops/atom/common_func';
 import * as textureFunc from '../ops/atom/common_func_with_texture';
 
@@ -19,7 +21,11 @@ export default function buildShader(textureConf, op, tensors, fShaderParams, run
             tensors, fShaderParams, runtime
         );
 
+        const precisionCode = genPrecisionCode();
+
         const prefixCode = genPrefixCode(textureConf);
+
+        const fuseOpCode = genFuseOpCode(opParams);
 
         const textureCode = genTextureFuncCode(textureFuncConf, textureParams, opParams, tensors);
 
@@ -33,7 +39,9 @@ export default function buildShader(textureConf, op, tensors, fShaderParams, run
         const mainCode = mainFunc(textureParams, opParams);
 
         code
-        = ` ${prefixCode}
+        = ` ${precisionCode}
+            ${fuseOpCode}
+            ${prefixCode}
             ${commonFuncCode}
             ${activeFuncCode}
             ${textureCode}

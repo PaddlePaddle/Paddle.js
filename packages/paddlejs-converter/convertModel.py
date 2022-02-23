@@ -18,6 +18,7 @@ import copy
 from functools import reduce
 import rnn
 from pruningModel import pruningNoSenseTensor
+from fuseOps import opListFuse
 
 
 # 输入模型所在目录
@@ -297,6 +298,10 @@ def organizeModelOpInfo():
             opInfo["outputs"]["Out"] = opInfo["outputs"]["Y"]
             del opInfo["outputs"]["Y"]
 
+        if "Out" not in opInfo["outputs"]:
+            print("\033[31moutputs[name] not exist Out.\033[0m")
+            sys.exit(1)
+
         # 有的模型如人脸关键点，会出现两个算子合并的情况，如lmk_demo，elementwise_add后接了relu算子，relu的输入输出相等，兼容一下
         # inputs与outputs只有一个，名称相等，则，输入加后缀，改上一层算子。
         if 'X' in inputs and 'Out' in outputs:
@@ -464,7 +469,7 @@ def convertToPaddleJSModel(modelDir, modelName, paramsName, outputDir, useGPUOpt
 
     if useGPUOpt:
         # 算子融合
-        opListFuse()
+        opListFuse(modelInfo['ops'])
 
     # 对多输出模型追加connect算子
     if len(fetch_targets) > 1:
@@ -506,37 +511,6 @@ def convertToPaddleJSModel(modelDir, modelName, paramsName, outputDir, useGPUOpt
 
     # 导出分片参数文件
     sliceDataToBinaryFile(paramValues, outputDir)
-
-def opListFuse():
-    """ 算子融合 """
-    fuseOpList = [
-        'relu',
-        'relu6',
-        'leaky_relu',
-        'scale',
-        'sigmoid',
-        'hard_sigmoid',
-        'pow',
-        'sqrt',
-        'tanh'
-    ]
-    ops = modelInfo['ops']
-
-    for index in reversed(range(len(ops))):
-        if index > 0:
-            for fuse in fuseOpList:
-                op = ops[index]
-                if op['type'] == fuse:
-                    prevOp = ops[index - 1]
-                    prevOp['attrs']['fuse_opt'] = {}
-                    if 'fuse_opt' in op['attrs']:
-                        prevOp['attrs']['fuse_opt'] = op['attrs']['fuse_opt']
-                        del op['attrs']['fuse_opt']
-
-                    prevOp['attrs']['fuse_opt'][fuse] = op['attrs']
-
-                    prevOp['outputs']['Out'] = op['outputs']['Out']
-                    del ops[index]
 
 def main():
 

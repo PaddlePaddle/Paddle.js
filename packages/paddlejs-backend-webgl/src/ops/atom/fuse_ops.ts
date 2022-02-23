@@ -4,7 +4,7 @@
 
 import * as func from './common_func';
 
-interface OutParams {
+interface OpParams {
     fuse_opt?: {
         scale?: {
             scale?: number;
@@ -31,7 +31,7 @@ interface OutParams {
     }
 }
 
-export default function genFuseOpCode(params: OutParams) {
+export default function genFuseOpCode(params: OpParams) {
     let activation_func = '';
     let calculation_str = '';
 

@@ -36,6 +36,7 @@ def main():
         p.add_argument("--disableOptimize", type=int, default=0, help='是否关闭模型优化，非必要参数，1为关闭优化，0为开启优化，默认开启优化', required=False)
         p.add_argument("--logModelInfo", type=int, default=0, help='是否输出模型结构信息，非必要参数，0为不输出，1为输出，默认不输出', required=False)
         p.add_argument("--sliceDataSize", type=int, default=4096, help='分片输出参数文件时，每片文件的大小，单位：KB，非必要参数，默认4096KB', required=False)
+        p.add_argument('--useGPUOpt', help='转换模型是否执行GPU优化方法', required=False)
 
         args = p.parse_args()
         # 获取当前用户使用的 python 解释器 bin 位置

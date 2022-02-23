@@ -6,9 +6,6 @@ import { adapterFunctions } from './common_func_adaptor';
 
 export default function () {
     return `
-        precision highp float;
-        precision highp int;
-
         varying vec2 vCoord;
         varying vec4 outColor;
 
@@ -63,6 +60,7 @@ export default function () {
         }
 
         void setOutput(float result) {
+                result = fuse_op(result);
                 gl_FragColor = encode_float(result);
         }
         `;

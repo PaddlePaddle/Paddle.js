@@ -66,7 +66,7 @@ const pow_func = `
 
 const tanh_func = `
 float tanh_func(float x, float y, float z) {
-    return tanh(x);
+    return tanh_calc(x);
 }`;
 
 export {

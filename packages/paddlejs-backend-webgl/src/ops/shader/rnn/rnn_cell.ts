@@ -20,7 +20,7 @@ function mainFunc(
         float counter  = getValueFromTensorPos_counter(oPos.r, ${state_axis}, oPos.b, oPos.a);
         float i = 1.0 / (1.0 + exp(-origin));
         float f = 1.0 / (1.0 + exp(-cell));
-        float c = f * counter + i * tanh(appender);
+        float c = f * counter + i * tanh_calc(appender);
         
         setOutput(c);
     }

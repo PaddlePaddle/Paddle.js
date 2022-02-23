@@ -2,7 +2,7 @@
  * @file prefix code of uint type
  */
 
-import { calMod, calDivision } from './common_func_adaptor';
+import { adapterFunctions } from './common_func_adaptor';
 
 export default function () {
     return `
@@ -20,8 +20,7 @@ export default function () {
             return (val > 0. || val < 1. || val == 0.) ? false : true;
         }
 
-        ${calMod()}
-        ${calDivision()}
+        ${adapterFunctions()}
 
         int calCeil(int a, int b) {
             return int(ceil(float(a) / float(b)));

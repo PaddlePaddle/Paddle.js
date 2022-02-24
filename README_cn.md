@@ -45,11 +45,13 @@ Paddle.js 是百度 PaddlePaddle 的 web 方向子项目，是一个运行在浏
 如果不想将模型放入网络时，可以使用方式二，直接将模型对象传入
 
 ## 模型库
-- [gesture model](./packages/paddlejs-models/gesture/README.md) 手势识别库
-- [mobilenet model](./packages/paddlejs-models/mobilenet/README.md) 物品分类库，可以上传自己的分类模型和分类
-- [humanseg model](./packages/paddlejs-models/humanseg/README.md) 人像分割库
-- [ocr model](./packages/paddlejs-models/ocr/README.md) optical 文字识别库
-- [ocr detection model](./packages/paddlejs-models/ocrdetection/README.md) 文本检测库
+- [facedetect model](./packages/paddlejs-models/facedetect/README_cn.md) 人脸检测
+- [gesture model](./packages/paddlejs-models/gesture/README_cn.md) 手势识别库
+- [mobilenet model](./packages/paddlejs-models/mobilenet/README_cn.md) 物品分类库，可以上传自己的分类模型和分类
+- [humanseg model](./packages/paddlejs-models/humanseg/README_cn.md) 人像分割库
+- [ocr model](./packages/paddlejs-models/ocr/README_cn.md) optical 文字识别库
+- [ocr detection model](./packages/paddlejs-models/ocrdetection/README_cn.md) 文本检测库
+
 
 ## Examples
 - [image classification game](./packages/paddlejs-examples/clasGame/README.md) 物品识别微信小程序——寻物小游戏

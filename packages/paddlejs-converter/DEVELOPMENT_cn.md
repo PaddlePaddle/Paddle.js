@@ -66,6 +66,7 @@ python convertToPaddleJSModel.py --inputDir=<fluid_model_directory> --outputDir=
 --disableOptimize | 是否关闭模型优化， `1` 为关闭优化，`0` 为开启优化（需安装 PaddleLite ），默认执行优化
 --logModelInfo | 是否打印模型结构信息， `0` 为不打印， `1` 为打印，默认不打印
 --sliceDataSize | 分片输出 Paddle.js 参数文件时，每片文件的大小，单位：KB，默认 4096
+--useGPUOpt | 是否开启模型 GPU 优化，默认不开启（当模型准备运行在 webgl/webgpu 计算方案时，可以设置为 True 开启，在 wasm/plainjs 方案，则不用开启）
 
 ## 3. 其他信息
 若需要转换的模型为 `TensorFlow/Caffe/ONNX` 格式，可使用 PaddlePaddle 项目下的 `X2Paddle`工具，将其他格式的模型转为 fluid 模型后，再使用本工具转化为 Paddle.js 模型。

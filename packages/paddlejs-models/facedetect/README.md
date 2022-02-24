@@ -20,7 +20,7 @@ const res = await faceDetector.detect(
 );
 ```
 
-# 效果
+# Performance
 + **multi small-sized face**  
 <img width="500"  src="https://mms-voice-fe.cdn.bcebos.com/pdmodel/face/detection/pic/small.png"/>
 

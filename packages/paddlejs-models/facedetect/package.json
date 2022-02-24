@@ -1,7 +1,7 @@
 {
-    "name": "@paddlejs-models/mobilenet",
-    "version": "1.0.3",
-    "description": "",
+    "name": "@paddlejs-models/facedetect",
+    "version": "1.0.0",
+    "description": "face detect",
     "main": "lib/index",
     "scripts": {
         "dev": "webpack-dev-server --config webpack.dev.js",

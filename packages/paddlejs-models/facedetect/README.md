@@ -13,7 +13,7 @@ const faceDetector = new FaceDetector();
 await faceDetector.init();
 // Required parameter：imgEle(HTMLImageElement)
 // Optional parameter: shrink, threshold
-// Result is face area information. It includes left, top, width, height
+// Result is face area information. It includes left, top, width, height, confidence
 const res = await faceDetector.detect(
     imgEle,
     { shrink: 0.4, threshold: 0.6}

@@ -12,7 +12,7 @@ import { FaceDetector } from '@paddlejs-models/facedetect';
 const faceDetector = new FaceDetector();
 await faceDetector.init();
 // 使用时必传图像元素（HTMLImageElement），支持指定图片缩小比例（shrink）、置信阈值（threshold）
-// 结果为人脸区域信息，包括：左侧 left，上部 top，区域宽 width，区域高 height
+// 结果为人脸区域信息，包括：左侧 left，上部 top，区域宽 width，区域高 height，置信度 confidence
 const res = await faceDetector.detect(
     imgEle,
     { shrink: 0.4, threshold: 0.6}

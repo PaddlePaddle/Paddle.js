@@ -15,8 +15,8 @@ def opListFuse(ops):
         'tanh'
     ]
 
-    # 判断op是否存在多个子节点
-    def opExistMultiChildNode(opName):
+    # 判断op是否为单节点
+    def opExistSingleNode(opName):
         name = opName
         if name:
             nodeNum = 0
@@ -43,7 +43,7 @@ def opListFuse(ops):
                 if op['type'] == fuse:
                     prevOp = ops[index - 1]
 
-                    if opExistMultiChildNode(prevOp['outputs']['Out'][0]):
+                    if opExistSingleNode(prevOp['outputs']['Out'][0]):
                         prevOp['attrs']['fuse_opt'] = {}
                         if 'fuse_opt' in op['attrs']:
                             prevOp['attrs']['fuse_opt'] = op['attrs']['fuse_opt']

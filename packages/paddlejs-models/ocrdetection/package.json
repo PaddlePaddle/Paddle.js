@@ -10,9 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@paddlejs-mediapipe/opencv": "0.0.3",
-    "@paddlejs/paddlejs-backend-webgl": "^1.1.4",
-    "@paddlejs/paddlejs-core": "^2.1.7"
+    "@paddlejs/paddlejs-backend-webgl": "^1.1.15",
+    "@paddlejs/paddlejs-core": "^2.1.14",
+    "@paddlejs-mediapipe/opencv": "0.0.3"
   },
   "devDependencies": {
     "d3-polygon": "^2.0.0",

@@ -9,9 +9,11 @@
   },
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "@paddlejs/paddlejs-backend-webgl": "^1.1.15",
+    "@paddlejs/paddlejs-core": "^2.1.14"
+  },
   "devDependencies": {
-    "@paddlejs/paddlejs-backend-webgl": "^1.1.11",
-    "@paddlejs/paddlejs-core": "^2.1.11",
     "html-webpack-plugin": "^5.5.0",
     "ts-loader": "^8.0.12",
     "webpack": "^5.40.0",

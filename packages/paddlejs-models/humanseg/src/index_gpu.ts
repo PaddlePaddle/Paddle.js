@@ -57,8 +57,8 @@ export async function load(options: LoadOptions = {
     canvasWidth: 500,
     canvasHeight: 280
 }) {
-    const modelpath = 'https://paddlejs.cdn.bcebos.com/models/shufflenetv2_398x224/model.json';
-    const lightModelPath = 'https://paddlejs.cdn.bcebos.com/models/shufflenetv2_288x160/model.json';
+    const modelpath = 'https://paddlejs.bj.bcebos.com/models/fuse/humanseg/humanseg_398x224_fuse_activation/model.json';
+    const lightModelPath = 'https://paddlejs.bj.bcebos.com/models/fuse/humanseg/humanseg_288x160_fuse_activation/model.json';
     const modelPath = options.enableLightModel ? lightModelPath : modelpath;
 
     if (options.enableLightModel) {

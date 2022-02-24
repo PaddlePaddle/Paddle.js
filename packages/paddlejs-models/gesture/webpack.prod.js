@@ -18,7 +18,7 @@ module.exports = {
             },
             {
                 test: /\.txt$/i,
-                loader: 'raw-​loader',
+                loader: 'raw-loader',
                 exclude: /node_modules/
             }
         ]

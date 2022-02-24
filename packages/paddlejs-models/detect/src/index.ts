@@ -9,7 +9,7 @@ let detectRunner = null as Runner;
 
 export async function init() {
     detectRunner = new Runner({
-        modelPath: 'https://paddlejs.bj.bcebos.com/models/detect_js/model.json',
+        modelPath: 'https://paddlejs.bj.bcebos.com/models/fuse/detect/detect_fuse_activation/model.json',
         fill: '#fff',
         mean: [0.5, 0.5, 0.5],
         std: [0.5, 0.5, 0.5],

@@ -133,7 +133,7 @@ export default class TexturePacking extends Transformer {
             outputs
         } = originOp;
         const connectInputName = inputs.Input[0];
-        const connectOutputName = outputs.Output[0];
+        const connectOutputName = outputs.Output ? outputs.Output[0] : outputs.Out[0];
         const unpacked2packedOp = createUnpacked2packedOp({
             inputName: connectInputName,
             outputName: `${connectInputName}_packed`

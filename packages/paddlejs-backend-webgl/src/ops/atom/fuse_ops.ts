@@ -44,7 +44,8 @@ export default function genFuseOpCode(params: OpParams) {
             switch (fuse) {
                 case 'scale': {
                     const bias_after_scale = params.fuse_opt.scale.bias_after_scale;
-                    multi_value = params.fuse_opt.scale.scale || 0;
+                    const scale = params.fuse_opt.scale.scale;
+                    multi_value = scale !== undefined ? scale : 1;
                     bias_value = params.fuse_opt.scale.bias || 0;
                     if (bias_after_scale === false && bias_after_scale !== undefined) {
                         act_name = 'scaleWidthBias';

@@ -13,7 +13,7 @@ describe('e2e test mobilenet model', () => {
         const res = await page.evaluate(async map => {
             const carImg = document.querySelector('#car');
             const catImg = document.querySelector('#banana');
-            const path = 'https://paddlejs.cdn.bcebos.com/models/mobilenetV2_nchw';
+            const path = 'https://paddlejs.bj.bcebos.com/models/fuse/mobilenet/mobileNetV2_fuse_activation';
             const mobilenet = paddlejs['mobilenet'];
 
             await mobilenet.load({

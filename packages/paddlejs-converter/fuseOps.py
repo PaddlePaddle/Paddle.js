@@ -15,17 +15,41 @@ def opListFuse(ops):
         'tanh'
     ]
 
+    # 判断op是否存在多个子节点
+    def opExistMultiChildNode(opName):
+        name = opName
+        if name:
+            nodeNum = 0
+            for i in range(len(ops)):
+                op = ops[i]
+                if 'X' not in op['inputs']:
+                    continue
+
+                inputName = op['inputs']['X']
+                for x in inputName:
+                    if x == name:
+                        nodeNum = nodeNum + 1
+
+            return True if nodeNum == 1 else False
+
+        else:
+            return False
+
+
     for index in reversed(range(len(ops))):
         if index > 0:
             for fuse in fuseOpList:
                 op = ops[index]
                 if op['type'] == fuse:
                     prevOp = ops[index - 1]
-                    prevOp['attrs']['fuse_opt'] = {}
-                    if 'fuse_opt' in op['attrs']:
-                        prevOp['attrs']['fuse_opt'] = op['attrs']['fuse_opt']
-                        del op['attrs']['fuse_opt']
 
-                    prevOp['attrs']['fuse_opt'][fuse] = op['attrs']
-                    prevOp['outputs']['Out'] = op['outputs']['Out']
-                    del ops[index]
+                    if opExistMultiChildNode(prevOp['outputs']['Out'][0]):
+                        prevOp['attrs']['fuse_opt'] = {}
+                        if 'fuse_opt' in op['attrs']:
+                            prevOp['attrs']['fuse_opt'] = op['attrs']['fuse_opt']
+                            del op['attrs']['fuse_opt']
+
+                        prevOp['attrs']['fuse_opt'][fuse] = op['attrs']
+                        prevOp['outputs']['Out'] = op['outputs']['Out']
+
+                        del ops[index]

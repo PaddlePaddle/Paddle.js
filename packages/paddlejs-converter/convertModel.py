@@ -469,6 +469,7 @@ def convertToPaddleJSModel(modelDir, modelName, paramsName, outputDir, useGPUOpt
 
     if useGPUOpt:
         # 算子融合
+        modelInfo['gpuOpt'] = True
         opListFuse(modelInfo['ops'])
 
     # 对多输出模型追加connect算子

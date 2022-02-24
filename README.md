@@ -50,6 +50,7 @@ If you dont' want to put model on the network, you can use method 2.
 - [humanseg model](./packages/paddlejs-models/humanseg/README.md) human segmentation library
 - [ocr model](./packages/paddlejs-models/ocr/README.md) optical character recognition library
 - [ocr detection model](./packages/paddlejs-models/ocrdetection/README.md) optical character detection library
+- [facedetect model](./packages/paddlejs-models/facedetect/README.md) face detection library
 
 ## Examples
 - [image classification game](./packages/paddlejs-examples/clasGame/README.md) image classification game example in wx miniprogram

@@ -59,6 +59,50 @@ export default Vue.extend({
             renderer: '',
             modelList:  [
                 {
+                    name: 'face_detect_fuse',
+                    path: 'https://paddlejs.cdn.bcebos.com/models/fuse/facedetect'
+                },
+                {
+                    name: 'ocr_rec_fuse',
+                    path: 'https://paddlejs.bj.bcebos.com/models/fuse/ocr/ch_PP-OCRv2_rec_fuse_activation'
+                },
+                {
+                    name: 'ocr_det_fuse',
+                    path: 'https://paddlejs.bj.bcebos.com/models/fuse/ocr/ch_PP-OCRv2_det_fuse_activation'
+                },
+                {
+                    name: 'mobileNetV2_fuse',
+                    path: 'https://paddlejs.bj.bcebos.com/models/fuse/mobilenet/mobileNetV2_fuse_activation'
+                },
+                {
+                    name: 'detect_fuse',
+                    path: 'https://paddlejs.bj.bcebos.com/models/fuse/detect/detect_fuse_activation'
+                },
+                {
+                    name: 'gesture_det_fuse',
+                    path: 'https://paddlejs.bj.bcebos.com/models/fuse/gesture/gesture_det_fuse_activation'
+                },
+                {
+                    name: 'gesture_rec_fuse',
+                    path: 'https://paddlejs.bj.bcebos.com/models/fuse/gesture/gesture_rec_fuse_activation'
+                },
+                {
+                    name: 'humanseg_288x160_fuse',
+                    path: 'https://paddlejs.bj.bcebos.com/models/fuse/humanseg/humanseg_288x160_fuse_activation'
+                },
+                {
+                    name: 'humanseg_398x224_fuse',
+                    path: 'https://paddlejs.bj.bcebos.com/models/fuse/humanseg/humanseg_398x224_fuse_activation'
+                },
+                {
+                    name: 'detect',
+                    path: 'https://paddlejs.bj.bcebos.com/models/detect_js'
+                },
+                {
+                    name: 'face_detect',
+                    path: 'https://paddlejs.cdn.bcebos.com/models/face_detect'
+                },
+                {
                     name: 'mobileNetV2',
                     feedShape: {
                         fw: 224,
@@ -89,7 +133,7 @@ export default Vue.extend({
                     needPreheat: false
                 },
                 {
-                    name: 'gesture_detect',
+                    name: 'gesture_detection',
                     feedShape: {
                         fw: 256,
                         fh: 256
@@ -99,7 +143,7 @@ export default Vue.extend({
                     needPreheat: false
                 },
                 {
-                    name: 'gesture_rec',
+                    name: 'gesture_recognization',
                     feedShape: {
                         fw: 224,
                         fh: 224
@@ -124,7 +168,7 @@ export default Vue.extend({
             modelPath: '',
             curModel: null,
             progressText: '',
-            times: null,
+            times: 1,
             stage: null,
             loadT: '--',
             preheatT: '--',
@@ -162,7 +206,7 @@ export default Vue.extend({
         changeModel(value: Row): void {
             // console.log(value);
             this.modelSeleted = value.name;
-            this.modelPath = this.modelPathPrefix + value.name;
+            this.modelPath = value.path ? value.path : this.modelPathPrefix + value.name;
             // console.log(this.modelPath);
             this.curModel = {...value, modelPath: this.modelPath};
         },

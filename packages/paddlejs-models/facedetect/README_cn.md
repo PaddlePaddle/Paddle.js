@@ -15,9 +15,17 @@ await faceDetector.init();
 // 结果为人脸区域信息，包括：左侧 left，上部 top，区域宽 width，区域高 height，置信度 confidence
 const res = await faceDetector.detect(
     imgEle,
-    { shrink: 0.4, threshold: 0.6}
+    { shrink: 0.4, threshold: 0.6 }
 );
 ```
+
+# 运行 Demo
+1. 在当前目录下执行
+``` bash
+npm install
+npm run dev
+```
+2. 浏览器访问 http://0.0.0.0:8867 
 
 # 效果
 + **多个小尺寸人脸**  
@@ -30,3 +38,6 @@ const res = await faceDetector.detect(
 此人脸检测模型对小尺寸人脸具有更好的识别效果，图像在预测前会进行缩小，因此需要对预测输出数据进行变换，及为**数据后处理过程**。示意如下：  
 <img width="500"  src="https://mms-voice-fe.cdn.bcebos.com/pdmodel/face/detection/pic/example.png"/>  
 红线标识的是预测输出结果，绿线标识的是经过转换后的结果，二者变换过程所涉及到的 dx dy fw fh均为已知量。
+
+# 参考
+[源模型链接](https://github.com/PaddlePaddle/PaddleHub/tree/release/v2.2/modules/image/face_detection/pyramidbox_lite_mobile)

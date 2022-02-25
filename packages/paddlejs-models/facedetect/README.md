@@ -16,9 +16,17 @@ await faceDetector.init();
 // Result is face area information. It includes left, top, width, height, confidence
 const res = await faceDetector.detect(
     imgEle,
-    { shrink: 0.4, threshold: 0.6}
+    { shrink: 0.4, threshold: 0.6 }
 );
 ```
+
+# Run Demo
+1. Execute in the current directory
+``` bash
+npm install
+npm run dev
+```
+2. Visit http://0.0.0.0:8867 
 
 # Performance
 + **multi small-sized face**  
@@ -31,3 +39,6 @@ const res = await faceDetector.detect(
 This model has a better recognition effect for small-sized faces, and the image will be shrink before prediction, so it is necessary to transform the prediction output data.  
 <img width="500"  src="https://mms-voice-fe.cdn.bcebos.com/pdmodel/face/detection/pic/example.png"/>  
 The red line indicates the predicted output result, and the green line indicates the converted result. dx dy fw fh are known parameters.
+
+# Reference
+[original model link](https://github.com/PaddlePaddle/PaddleHub/tree/release/v2.2/modules/image/face_detection/pyramidbox_lite_mobile)

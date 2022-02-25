@@ -10,6 +10,7 @@ declare interface TableData {
 
 declare interface Row {
     name?: string;
+    path?: string;
 }
 
 declare interface ModelInfo {

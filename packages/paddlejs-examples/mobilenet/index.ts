@@ -13,7 +13,7 @@ let endTime = 0;
 load();
 
 async function load() {
-    const path = 'https://paddlejs.cdn.bcebos.com/models/mobilenetV2_nchw';
+    const path = 'https://paddlejs.bj.bcebos.com/models/fuse/mobilenet/mobileNetV2_fuse_activation';
     await mobilenet.load({
         path,
         mean: [0.485, 0.456, 0.406],

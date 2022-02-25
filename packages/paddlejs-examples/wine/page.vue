@@ -52,10 +52,10 @@ export default {
             this.isPredicting = false;
         },
         async load() {
-            const path = 'https://paddlejs.cdn.bcebos.com/models/wine';
+            // const path = 'https://paddlejs.cdn.bcebos.com/models/wine';
+            const path = 'https://paddlejs.bj.bcebos.com/models/fuse/mobilenet/wine_fuse_activation/model.json';
             await mobilenet.load({
                 path,
-                fileCount: 3,
                 mean: [0.485, 0.456, 0.406],
                 std: [0.229, 0.224, 0.225]
             }, map);

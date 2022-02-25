@@ -21,8 +21,8 @@ blurFilter.addFilter('blur', 10);
 
 
 export async function load(needPreheat = true, enableLightModel = false, customModel = null) {
-    const modelpath = 'https://paddlejs.cdn.bcebos.com/models/shufflenetv2_humanseg_398x224_nchw/model.json';
-    const lightModelPath = 'https://paddlejs.cdn.bcebos.com/models/shufflenetv2_humanseg_288x160_nchw/model.json';
+    const modelpath = 'https://paddlejs.bj.bcebos.com/models/fuse/humanseg/humanseg_398x224_fuse_activation/model.json';
+    const lightModelPath = 'https://paddlejs.bj.bcebos.com/models/fuse/humanseg/humanseg_288x160_fuse_activation/model.json';
     const path = customModel
         ? customModel
         : enableLightModel ? lightModelPath : modelpath;

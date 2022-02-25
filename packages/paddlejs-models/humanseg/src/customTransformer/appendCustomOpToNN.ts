@@ -55,6 +55,11 @@ export default class DealOrigin extends Transformer {
 
         fetchOp.inputs.X = [FINAL_PACK_OP_NAME];
         ops.push(segImgOp);
-        vars.push(...[packOutVar]);
+        if (vars instanceof Array) {
+            vars.push(...[packOutVar]);
+        }
+        else {
+            vars[FINAL_PACK_OP_NAME] = packOutVar;
+        }
     }
 }

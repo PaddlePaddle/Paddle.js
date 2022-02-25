@@ -31,10 +31,6 @@ export async function load(config: ModelConfig, map: string[] | MobilenetMap) {
 
     runner = new Runner({
         modelPath: path,
-        feedShape: {
-            fw: 224,
-            fh: 224
-        },
         fill: '#fff',
         mean: mean || [],
         std: std || [],

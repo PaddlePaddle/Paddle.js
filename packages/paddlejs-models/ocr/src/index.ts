@@ -56,8 +56,8 @@ function initCanvas(canvas) {
 }
 
 export async function init(detCustomModel = null, recCustomModel = null) {
-    const detModelPath = 'https://paddlejs.bj.bcebos.com/models/ocr_v2_det_new/model.json';
-    const recModelPath = 'https://paddlejs.bj.bcebos.com/models/ocr_v2_rec_320_new/model.json';
+    const detModelPath = 'https://paddlejs.bj.bcebos.com/models/fuse/ocr/ch_PP-OCRv2_det_fuse_activation/model.json';
+    const recModelPath = 'https://paddlejs.bj.bcebos.com/models/fuse/ocr/ch_PP-OCRv2_rec_fuse_activation/model.json';
     env.set('webgl_pack_output', true);
     env.set('webgl_feed_process', true);
     detectRunner = new Runner({

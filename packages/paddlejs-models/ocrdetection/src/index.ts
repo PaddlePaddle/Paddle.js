@@ -6,11 +6,11 @@ import { Runner } from '@paddlejs/paddlejs-core';
 import '@paddlejs/paddlejs-backend-webgl';
 import DBProcess from './dbPostprocess';
 
-const DETSHAPE = 640;
+const DETSHAPE = 960;
 const canvas = document.createElement('canvas') as HTMLCanvasElement;
 let detectRunner = null as Runner;
 
-// 通过canvas将上传原图大小转换为目标尺寸（640*640）
+// 通过canvas将上传原图大小转换为目标尺寸
 initCanvas(canvas);
 
 function initCanvas(canvas) {
@@ -24,11 +24,7 @@ function initCanvas(canvas) {
 
 export async function load() {
     detectRunner = new Runner({
-        modelPath: 'https://paddlejs.cdn.bcebos.com/models/ocr_mobile_v2.0',
-        feedShape: {
-            fw: DETSHAPE,
-            fh: DETSHAPE
-        },
+        modelPath: 'https://paddlejs.bj.bcebos.com/models/fuse/ocr/ch_PP-OCRv2_det_fuse_activation/model.json',
         fill: '#fff',
         mean: [0.485, 0.456, 0.406],
         std: [0.229, 0.224, 0.225],

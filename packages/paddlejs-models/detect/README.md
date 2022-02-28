@@ -4,6 +4,9 @@
 
 detect model is used to detect the position of label frame in the image.
 
+<img src="https://img.shields.io/npm/v/@paddlejs-models/detect?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddlejs-models/detect" alt="size"> <img src="https://img.shields.io/npm/dm/@paddlejs-models/detect?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddlejs-models/detect" alt="downloads">
+
+
 # Usage
 
 ```js

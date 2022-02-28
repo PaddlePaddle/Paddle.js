@@ -5,6 +5,8 @@
 实时的人像分割模型。使用者可以用于背景替换。需要使用接口 getGrayValue 获取灰度值。
 然后使用接口 drawHumanSeg 绘制分割出来的人像，实现背景替换；使用接口 blurBackground 实现背景虚化；也可以使用 drawMask 接口绘制背景，可以配置参数来获取全黑背景或者原图背景。
 
+<img src="https://img.shields.io/npm/v/@paddlejs-models/humanseg?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddlejs-models/humanseg" alt="size"> <img src="https://img.shields.io/npm/dm/@paddlejs-models/humanseg?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddlejs-models/humanseg" alt="downloads">
+
 # 使用
 
 ```js

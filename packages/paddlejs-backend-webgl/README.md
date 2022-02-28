@@ -4,6 +4,8 @@
 
 This package is WebGL backend accelerated by GPU registered automatically after importing.
 
+<img src="https://img.shields.io/npm/v/@paddlejs/paddlejs-backend-webgl?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddlejs/paddlejs-backend-webgl" alt="size"> <img src="https://img.shields.io/npm/dm/@paddlejs/paddlejs-backend-webgl?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddlejs/paddlejs-backend-webgl" alt="downloads">
+
 ## Via NPM
 
 ```js

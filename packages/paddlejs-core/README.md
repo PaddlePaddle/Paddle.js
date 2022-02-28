@@ -5,6 +5,8 @@ As the core part of the Paddle.js ecosystem, this package hosts `@paddlejs/paddl
 which is responsible for the operation of the inference process of the entire engine,
 and provides interfaces for backend registration and environment variable registration.
 
+<img src="https://img.shields.io/npm/v/@paddlejs/paddlejs-core?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddlejs/paddlejs-core" alt="size"> <img src="https://img.shields.io/npm/dm/@paddlejs/paddlejs-core?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddlejs/paddlejs-core" alt="downloads">
+
 
 ## RunnerConfig
 

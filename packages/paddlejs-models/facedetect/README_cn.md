@@ -4,6 +4,8 @@
 
 Facedetect 实现图像中的人脸检测，提供的接口简单，支持用户传入模型。
 
+<img src="https://img.shields.io/npm/v/@paddlejs-models/facedetect?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddlejs-models/facedetect" alt="size"> <img src="https://img.shields.io/npm/dm/@paddlejs-models/facedetect?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddlejs-models/facedetect" alt="downloads">
+
 # 使用
 
 ```js

@@ -4,6 +4,8 @@
 
 gesture 为手势识别模块，包括两个模型：gesture_detect和gesture_rec。gesture_detect模型识别图片中人物手掌区域，gesture_rec模型识别人物手势。模块提供的接口简单，使用者只需传入手势图片即可获得结果。
 
+<img src="https://img.shields.io/npm/v/@paddlejs-models/gesture?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddlejs-models/gesture" alt="size"> <img src="https://img.shields.io/npm/dm/@paddlejs-models/gesture?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddlejs-models/gesture" alt="downloads">
+
 # 使用
 
 ```js

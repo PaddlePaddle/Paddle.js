@@ -4,6 +4,7 @@
 
 是 Paddle.js 推理引擎的核心部分，npm 包名是 `@paddlejs/paddlejs-core`，负责整个引擎的推理流程运行，提供计算方案注册、环境变量注册的接口。
 
+<img src="https://img.shields.io/npm/v/@paddlejs/paddlejs-core?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddlejs/paddlejs-core" alt="size"> <img src="https://img.shields.io/npm/dm/@paddlejs/paddlejs-core?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddlejs/paddlejs-core" alt="downloads">
 
 ## 引擎配置 RunnerConfig
 注册引擎时需要对引擎进行配置，必须配置项为 `modelPath`、`feedShape`，所有项目配置如下：

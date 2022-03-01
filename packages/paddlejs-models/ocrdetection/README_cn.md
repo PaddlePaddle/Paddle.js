@@ -6,6 +6,14 @@ ocr_detect模型用于检测图像中文字区域。
 
 <img src="https://img.shields.io/npm/v/@paddlejs-models/ocrdet?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddlejs-models/ocrdet" alt="size"> <img src="https://img.shields.io/npm/dm/@paddlejs-models/ocrdet?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddlejs-models/ocrdet" alt="downloads">
 
+# 运行 Demo
+1. 在当前目录下执行
+``` bash
+npm install
+npm run dev
+```
+2. 访问 http://0.0.0.0:8870
+
 # 使用
 
 ```js

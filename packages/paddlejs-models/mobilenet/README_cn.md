@@ -5,6 +5,15 @@
 mobilenet 模型可以对图片进行分类，提供的接口简单，使用者传入自己的分类模型去分类。
 
 <img src="https://img.shields.io/npm/v/@paddlejs-models/mobilenet?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddlejs-models/mobilenet" alt="size"> <img src="https://img.shields.io/npm/dm/@paddlejs-models/mobilenet?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddlejs-models/mobilenet" alt="downloads">
+
+# 运行 Demo
+1. 在当前目录下执行
+``` bash
+npm install
+npm run dev
+```
+2. 访问 http://0.0.0.0:8867
+
 # 使用
 
 ```js

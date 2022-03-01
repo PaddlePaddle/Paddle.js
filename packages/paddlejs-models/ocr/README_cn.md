@@ -14,6 +14,14 @@ ocr_recognition模型输入shape为[1, 3, 32, 320],模型推理前会对图片�
 
 [ocr_recognition](https://paddlejs.bj.bcebos.com/models/ch_PP-OCRv2_static_320.zip)文本识别源模型是通过[ch_PP-OCRv2_rec_train](https://paddleocr.bj.bcebos.com/PP-OCRv2/chinese/ch_PP-OCRv2_rec_train.tar)预训练模型导出输入shape为[1, 3, 32, 320]的推理模型。
 
+# 运行 Demo
+1. 在当前目录下执行
+``` bash
+npm install
+npm run dev
+```
+2. 访问 http://0.0.0.0:8872
+
 # 使用
 
 ```js

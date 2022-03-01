@@ -1,13 +1,13 @@
 import setuptools
 
-PY_MODILES = ["convertToPaddleJSModel", "convertModel", "optimizeModel", "pruningModel", "rnn"]
+PY_MODILES = ["convertToPaddleJSModel", "convertModel", "optimizeModel", "pruningModel", "rnn", "fuseOps"]
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="paddlejsconverter",
-    version="1.0.5",
+    version="1.0.6",
     author="paddlejs",
     author_email="382248373@qq.com",
     description="Paddlejs model converter",

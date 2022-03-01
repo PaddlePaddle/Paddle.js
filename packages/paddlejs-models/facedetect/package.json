@@ -1,6 +1,6 @@
 {
     "name": "@paddlejs-models/facedetect",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "description": "face detect",
     "main": "lib/index",
     "scripts": {

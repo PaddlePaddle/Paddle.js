@@ -11,6 +11,8 @@ System Requirements:
 
 #### Install PaddleJsConverter
 
+<img src="https://img.shields.io/pypi/v/paddlejsconverter" alt="version">
+
 ```shell
 pip install paddlejsconverter
 

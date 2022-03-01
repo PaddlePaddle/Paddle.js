@@ -14,6 +14,15 @@ The input shape of the ocr_recognition model is [1, 3, 32, 320], and the selecte
 
 [ocr_recognition](https://paddlejs.bj.bcebos.com/models/ch_PP-OCRv2_static_320.zip) model is an inference model with an input shape of [1,3,32,320] derived from the [ch_PP-OCRv2_rec_train](https://paddleocr.bj.bcebos.com/PP-OCRv2/chinese/ch_PP-OCRv2_rec_train.tar) training model.
 
+
+# Run Demo
+1. Execute in the current directory
+``` bash
+npm install
+npm run dev
+```
+2. Visit http://0.0.0.0:8872
+
 # Usage
 
 ```js

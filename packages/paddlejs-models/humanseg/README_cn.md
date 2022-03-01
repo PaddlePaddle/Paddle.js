@@ -7,6 +7,16 @@
 
 <img src="https://img.shields.io/npm/v/@paddlejs-models/humanseg?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddlejs-models/humanseg" alt="size"> <img src="https://img.shields.io/npm/dm/@paddlejs-models/humanseg?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddlejs-models/humanseg" alt="downloads">
 
+# 运行 Demo
+1. 在当前目录下执行
+``` bash
+npm install
+npm run dev
+```
+2. 访问 http://0.0.0.0:8866
+3. 访问 gpu 全流程处理效果 http://0.0.0.0:8866/gpu.html
+
+
 # 使用
 
 ```js

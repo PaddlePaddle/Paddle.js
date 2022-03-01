@@ -6,6 +6,16 @@ gesture is a gesture recognition module, including two models: gesture_detect an
 
 <img src="https://img.shields.io/npm/v/@paddlejs-models/gesture?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddlejs-models/gesture" alt="size"> <img src="https://img.shields.io/npm/dm/@paddlejs-models/gesture?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddlejs-models/gesture" alt="downloads">
 
+
+# Run Demo
+1. Execute in the current directory
+``` bash
+npm install
+npm run dev
+```
+2. Visit http://0.0.0.0:8865
+
+
 # Usage
 
 ```js

@@ -6,6 +6,15 @@ gesture 为手势识别模块，包括两个模型：gesture_detect和gesture_re
 
 <img src="https://img.shields.io/npm/v/@paddlejs-models/gesture?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddlejs-models/gesture" alt="size"> <img src="https://img.shields.io/npm/dm/@paddlejs-models/gesture?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddlejs-models/gesture" alt="downloads">
 
+# 运行 Demo
+1. 在当前目录下执行
+``` bash
+npm install
+npm run dev
+```
+2. 访问 http://0.0.0.0:8865
+
+
 # 使用
 
 ```js

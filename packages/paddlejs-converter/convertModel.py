@@ -336,6 +336,7 @@ def organizeModelOpInfo():
 
         # multiclass_nms 单独处理
         if (op.type.startswith('multiclass_nms')):
+            opInfo["type"] = 'multiclass_nms'
             postOps.append(opInfo)
         else:
             # 存入modelInfo

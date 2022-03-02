@@ -8,8 +8,6 @@
 
 Paddle.js is a web project for Baidu PaddlePaddle, which is an open source deep learning framework running in the browser. Paddle.js can either load a pre-trained model, or transforming a model from paddle-hub with model transforming tools provided by Paddle.js. It could run in every browser with WebGL/WebGPU/WebAssembly supported. It could also run in Baidu Smartprogram and WX miniprogram.
 
-
-
 ## Ecosystem
 
 | Project                  | version                | Description         |
@@ -71,6 +69,9 @@ Paddle.js is a web project for Baidu PaddlePaddle, which is an open source deep 
 [facedetect-status]: https://img.shields.io/npm/v/@paddlejs-models/facedetect
 [facedetect-package]: https://npmjs.com/package/@paddlejs-models/facedetect
 
+## Website
+https://paddlejs.baidu.com
+
 ## Key Features
 
 ### Module
@@ -92,14 +93,39 @@ Paddle.js is a web project for Baidu PaddlePaddle, which is an open source deep 
 
 ## Examples
 - [image classification game](./packages/paddlejs-examples/clasGame/README.md) image classification game example in wx miniprogram
-- [gesture](./packages/paddlejs-examples/gesture/README.md) gesture recognition example
-- [humanStream](./packages/paddlejs-examples/humanStream/README.md) video-streaming human segmentation
-- [humanseg](./packages/paddlejs-examples/humanseg/README.md) human segmentation example
-- [ocr](./packages/paddlejs-examples/ocr/README.md) optical character recognition example
-- [ocr detection](./packages/paddlejs-examples/ocrdetection/README.md) optical character detection example
-- [mobilenet](./packages/paddlejs-examples/mobilenet) classify images into 1000 object categories
-- [wine](./packages/paddlejs-examples/wine) classify bottles into 7 categories
+- [gesture](./packages/paddlejs-examples/gesture/README.md) gesture recognition example [online experience](https://paddlejs.baidu.com/gesture)
+- [humanStream](./packages/paddlejs-examples/humanStream/README.md) video-streaming human segmentation [online experience](https://paddlejs.baidu.com/humanStream)
+- [humanseg](./packages/paddlejs-examples/humanseg/README.md) human segmentation example [online experience](https://paddlejs.baidu.com/humanseg)
+- [ocr](./packages/paddlejs-examples/ocr/README.md) optical character recognition example [online experience](https://paddlejs.baidu.com/ocr)
+- [ocr detection](./packages/paddlejs-examples/ocrdetection/README.md) optical character detection example [online experience](https://paddlejs.baidu.com/ocrdet)
+- [mobilenet](./packages/paddlejs-examples/mobilenet) classify images into 1000 object categories [online experience](https://paddlejs.baidu.com/mobilenet)
+- [wine](./packages/paddlejs-examples/wine) classify bottles into 7 categories [online experience](https://paddlejs.baidu.com/wine)
 - [webglworker](./packages/paddlejs-examples/webglWorker) This demo help us to use Paddle.js in WebWorker.
+
+<p>
+  <a target="_blank" href="./packages/paddlejs-examples/clasGame/README.md">
+    <img alt="clasGame" src="./packages/paddlejs-examples/clasGame/exampleImage/demo1.gif" style="width: 20%">
+  </a>
+  <a target="_blank" href="./packages/paddlejs-examples/wine/README.md">
+    <img alt="wine" src="https://user-images.githubusercontent.com/43414102/156372713-d07e190f-bdb6-433e-a5cd-866fffbbb5d6.gif" style="width: 20%">
+  </a>
+   <a target="_blank" href="./packages/paddlejs-examples/gesture/README.md">
+    <img alt="gesture" src="https://user-images.githubusercontent.com/43414102/156379706-065a4f57-cc75-4457-857a-18619589492f.gif" style="width: 20%">
+  </a>
+</p>
+<p>
+  <a target="_blank" href="./packages/paddlejs-examples/ocr/README.md">
+    <img alt="ocr" src="https://user-images.githubusercontent.com/43414102/156380942-2ee5ad8d-d023-4cd3-872c-b18ebdcbb3f3.gif" style="width: 60%">
+  </a>
+</p>
+<p>
+  <a target="_blank" href="./packages/paddlejs-examples/humanseg/README.md">
+    <img alt="humanseg" src="https://user-images.githubusercontent.com/43414102/156384741-83f42d25-7062-49e1-9106-677bbbefbcfb.jpg" style="width: 32%">
+  </a>
+  <a target="_blank" href="./packages/paddlejs-models/facedetect/README.md">
+    <img alt="facedetect" src="https://user-images.githubusercontent.com/43414102/156384732-cb053df6-826e-42d7-92ba-536ab67011c4.jpg" style="width: 28%">
+  </a>
+</p>
 
 
 ### Browser/Platforms Coverage

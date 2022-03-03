@@ -51,3 +51,10 @@ const canvas3 = document.getElementById('mask') as HTMLCanvasElement;
 await humanseg.drawMask(input, canvas3, back_canvas);
 
 ```
+
+# Online experience
+
+https://paddlejs.baidu.com/humanseg
+
+# Performance
+<img alt="humanseg" src="https://user-images.githubusercontent.com/43414102/156384741-83f42d25-7062-49e1-9106-677bbbefbcfb.jpg">

@@ -69,6 +69,8 @@ Paddle.js 是百度 PaddlePaddle 的 web 方向子项目，是一个运行在浏
 [facedetect-status]: https://img.shields.io/npm/v/@paddlejs-models/facedetect
 [facedetect-package]: https://npmjs.com/package/@paddlejs-models/facedetect
 
+## 官网
+https://paddlejs.baidu.com
 
 ## 主要特点
 
@@ -91,14 +93,39 @@ Paddle.js 是百度 PaddlePaddle 的 web 方向子项目，是一个运行在浏
 
 ## 案例 demo
 - [image classification game](./packages/paddlejs-examples/clasGame/README.md) 物品识别微信小程序——寻物小游戏
-- [gesture](./packages/paddlejs-examples/gesture/README.md) 手势识别 demo
-- [humanStream](./packages/paddlejs-examples/humanStream/README.md) 基于视频流的人像分割 demo
-- [humanseg](./packages/paddlejs-examples/humanseg/README.md) 人像分割 demo
-- [ocr](./packages/paddlejs-examples/ocr/README.md) 文本识别 demo
-- [ocr detection](./packages/paddlejs-examples/ocrdetection/README.md) 文本检测 demo
-- [mobilenet](./packages/paddlejs-examples/mobilenet) 1000 物品分类 demo
-- [wine](./packages/paddlejs-examples/wine) 酒瓶识别 demo
+- [gesture](./packages/paddlejs-examples/gesture/README.md) 手势识别 demo [在线体验](https://paddlejs.baidu.com/gesture)
+- [humanStream](./packages/paddlejs-examples/humanStream/README.md) 基于视频流的人像分割 demo [在线体验](https://paddlejs.baidu.com/humanStream)
+- [humanseg](./packages/paddlejs-examples/humanseg/README.md) 人像分割 demo [在线体验](https://paddlejs.baidu.com/humanseg)
+- [ocr](./packages/paddlejs-examples/ocr/README.md) 文本识别 demo [在线体验](https://paddlejs.baidu.com/ocr)
+- [ocr detection](./packages/paddlejs-examples/ocrdetection/README.md) 文本检测 demo [在线体验](https://paddlejs.baidu.com/ocrdet)
+- [mobilenet](./packages/paddlejs-examples/mobilenet) 1000 物品分类 demo [在线体验](https://paddlejs.baidu.com/mobilenet)
+- [wine](./packages/paddlejs-examples/wine) 酒瓶识别 demo [在线体验](https://paddlejs.baidu.com/wine)
 - [webglworker](./packages/paddlejs-examples/webglWorker) 如何在 Web Worker 中运行 Paddle.js
+
+<p>
+  <a target="_blank" href="./packages/paddlejs-examples/clasGame/README.md">
+    <img alt="clasGame" src="./packages/paddlejs-examples/clasGame/exampleImage/demo1.gif" style="width: 20%">
+  </a>
+  <a target="_blank" href="./packages/paddlejs-examples/wine/README.md">
+    <img alt="wine" src="https://user-images.githubusercontent.com/43414102/156372713-d07e190f-bdb6-433e-a5cd-866fffbbb5d6.gif" style="width: 20%">
+  </a>
+   <a target="_blank" href="./packages/paddlejs-examples/gesture/README.md">
+    <img alt="gesture" src="https://user-images.githubusercontent.com/43414102/156379706-065a4f57-cc75-4457-857a-18619589492f.gif" style="width: 20%">
+  </a>
+</p>
+<p>
+  <a target="_blank" href="./packages/paddlejs-examples/ocr/README.md">
+    <img alt="ocr" src="https://user-images.githubusercontent.com/43414102/156380942-2ee5ad8d-d023-4cd3-872c-b18ebdcbb3f3.gif" style="width: 60%">
+  </a>
+</p>
+<p>
+  <a target="_blank" href="./packages/paddlejs-examples/humanseg/README.md">
+    <img alt="humanseg" src="https://user-images.githubusercontent.com/43414102/156384741-83f42d25-7062-49e1-9106-677bbbefbcfb.jpg" style="width: 32%">
+  </a>
+  <a target="_blank" href="./packages/paddlejs-models/facedetect/README.md">
+    <img alt="facedetect" src="https://user-images.githubusercontent.com/43414102/156384732-cb053df6-826e-42d7-92ba-536ab67011c4.jpg" style="width: 28%">
+  </a>
+</p>
 
 ### 浏览器/系统覆盖范围
 

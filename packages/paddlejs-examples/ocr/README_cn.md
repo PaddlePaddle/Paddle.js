@@ -47,3 +47,10 @@ console.log(res.text);
 // 文本区域坐标
 console.log(res.points);
 ```
+
+# 在线体验
+
+https://paddlejs.baidu.com/ocr
+
+# 效果
+<img alt="ocr" src="https://user-images.githubusercontent.com/43414102/156380942-2ee5ad8d-d023-4cd3-872c-b18ebdcbb3f3.gif">

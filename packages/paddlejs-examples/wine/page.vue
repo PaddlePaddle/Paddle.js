@@ -52,7 +52,6 @@ export default {
             this.isPredicting = false;
         },
         async load() {
-            // const path = 'https://paddlejs.cdn.bcebos.com/models/wine';
             const path = 'https://paddlejs.bj.bcebos.com/models/fuse/mobilenet/wine_fuse_activation/model.json';
             await mobilenet.load({
                 path,

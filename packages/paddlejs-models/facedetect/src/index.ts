@@ -30,7 +30,7 @@ const defaultFeedShape: FeedShape = {
     fh: 1024
 };
 const defaultModelConfig: ModelConfig = {
-    modelPath: 'https://paddlejs.cdn.bcebos.com/models/fuse/facedetect',
+    modelPath: 'https://paddlejs.cdn.bcebos.com/models/fuse/facedetect_opt/model.json',
     mean: [0.407843137, 0.458823529, 0.482352941],
     std: [0.5, 0.5, 0.5]
 };

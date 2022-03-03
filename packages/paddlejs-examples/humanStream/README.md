@@ -53,3 +53,9 @@ npm 库 [@paddlejs-models/humanseg](https://github.com/PaddlePaddle/Paddle.js/tr
 
 ## 3.5 loading什么时候消失？
 模型第一次加载会有预热，导致第一次加载时间比较长，加载完成会自动去除loading，如长时间loading未消失，可在控制台查看是否环境有问题，导致无法调起摄像头。
+
+## 4. 在线体验
+
+弹幕效果：https://paddlejs.baidu.com
+
+视频流效果：https://paddlejs.baidu.com/humanStream

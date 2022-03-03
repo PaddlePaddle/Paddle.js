@@ -84,6 +84,12 @@ await humanseg.drawMask(input, canvas3, back_canvas);
 
 ```
 
+# Online experience
+
+image human segmentation：https://paddlejs.baidu.com/humanseg
+
+video-streaming human segmentation：https://paddlejs.baidu.com/humanStream
+
 # Performance
 
   <img width="800"  src="https://user-images.githubusercontent.com/10822846/126873788-1e2d4984-274f-45be-8716-2a87ddda8c75.png"/>

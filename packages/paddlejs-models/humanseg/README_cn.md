@@ -82,6 +82,12 @@ await humanseg.drawMask(input, canvas3, back_canvas);
 
 ```
 
+# 在线体验
+
+图片人像分割：https://paddlejs.baidu.com/humanseg
+
+基于视频流人像分割：https://paddlejs.baidu.com/humanStream
+
 # 效果
 
   从左到右：原图、背景虚化、背景替换、人型遮罩

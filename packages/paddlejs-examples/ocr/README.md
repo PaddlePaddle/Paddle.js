@@ -48,3 +48,10 @@ console.log(res.text);
 // text area points
 console.log(res.points);
 ```
+
+# Online experience
+
+https://paddlejs.baidu.com/ocr
+
+# Performance
+<img alt="ocr" src="https://user-images.githubusercontent.com/43414102/156380942-2ee5ad8d-d023-4cd3-872c-b18ebdcbb3f3.gif">

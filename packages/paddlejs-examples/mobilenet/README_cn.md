@@ -4,15 +4,15 @@
 
 mobilenet 模型可以对图片进行分类，提供的接口简单，使用者传入自己的分类模型去分类。
 
-<img src="https://img.shields.io/npm/v/@paddlejs-models/mobilenet?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddlejs-models/mobilenet" alt="size"> <img src="https://img.shields.io/npm/dm/@paddlejs-models/mobilenet?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddlejs-models/mobilenet" alt="downloads">
-
-# 运行 Demo
-1. 在当前目录下执行
-``` bash
+# 安装
+```
 npm install
+```
+
+### 编译
+```
 npm run dev
 ```
-2. 访问 http://0.0.0.0:8867
 
 # 使用
 
@@ -24,6 +24,7 @@ import * as mobilenet from '@paddlejs-models/mobilenet';
 // 还需要传递分类映射文件
 await mobilenet.load({
     path,
+    fileCount: 4,
     mean: [0.485, 0.456, 0.406],
     std: [0.229, 0.224, 0.225]
 }, map);
@@ -35,8 +36,6 @@ const res = await mobilenet.classify(img);
 # 在线体验
 
 1000物品识别：https://paddlejs.baidu.com/mobilenet
-
-酒瓶识别：https://paddlejs.baidu.com/wine
 
 # 效果
 <img alt="image" src="https://user-images.githubusercontent.com/43414102/156393394-ab1c9e4d-2960-4fcd-ba22-2072fa9b0e9d.png">

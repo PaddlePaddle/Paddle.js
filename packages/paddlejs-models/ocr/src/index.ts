@@ -59,13 +59,13 @@ export async function init(detCustomModel = null, recCustomModel = null) {
     const detModelPath = 'https://paddlejs.bj.bcebos.com/models/fuse/ocr/ch_PP-OCRv2_det_fuse_activation/model.json';
     const recModelPath = 'https://paddlejs.bj.bcebos.com/models/fuse/ocr/ch_PP-OCRv2_rec_fuse_activation/model.json';
     env.set('webgl_pack_output', true);
-    env.set('webgl_feed_process', true);
     detectRunner = new Runner({
         modelPath: detCustomModel ? detCustomModel : detModelPath,
         fill: '#fff',
         mean: [0.485, 0.456, 0.406],
         std: [0.229, 0.224, 0.225],
-        bgr: true
+        bgr: true,
+        webglFeedProcess: true
     });
     const detectInit = detectRunner.init();
 
@@ -75,6 +75,7 @@ export async function init(detCustomModel = null, recCustomModel = null) {
         mean: [0.5, 0.5, 0.5],
         std: [0.5, 0.5, 0.5],
         bgr: true,
+        webglFeedProcess: true,
         plugins: {
             preTransforms: [new OptModel()]
         }

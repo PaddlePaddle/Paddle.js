@@ -38,6 +38,7 @@ export default class ModelGraph {
         this.type = config.type || this.type;
         this.plugins = config.plugins;
         this.config = config;
+        model.feedShape && (this.config.feedShape = model.feedShape);
     }
 
     /**

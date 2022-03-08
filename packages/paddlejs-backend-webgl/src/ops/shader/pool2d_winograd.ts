@@ -96,6 +96,7 @@ export default {
     behaviors: [
         'isMax',
         'setPacked',
+        'setAdaptive',
         'isGlobalPooling'
     ]
 };

@@ -211,6 +211,10 @@ const behaviors : Behaviors = {
         // 保存 输入 tensor 对应dim 的长度
         this.processedAttrs.inputs_dim = shape[axis];
         this.processedAttrs.dim = axis;
+        if (this.processedAttrs.num === 0) {
+            this.processedAttrs.num = Object.values(this.tensorDataMap)
+                .filter(item => item.tensorName === 'out').length || 1;
+        }
     },
 
     processElementwiseAxis() {

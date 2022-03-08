@@ -107,3 +107,25 @@ export function traverseVars(vars, callback) {
         callback(vars[key]);
     });
 }
+
+/**
+ * delete useless data
+ * @param {Object} model
+ */
+export function delUselessData(model) {
+    model.ops = null;
+    if (model.vars instanceof Array) {
+        for (let i = 0; i < model.vars.length; i++) {
+            if (model.vars[i].data) {
+                delete model.vars[i].data;
+            }
+        }
+        return;
+    }
+    for (const name in model.vars) {
+        if (model.vars[name].data) {
+            delete model.vars[name].data;
+        }
+    }
+}
+

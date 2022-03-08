@@ -11,7 +11,20 @@ opencv3.4版本，包含大多数常用api，增加 cv.boxPoints api。
 
 # opencv_ocr.js
 
-封装ocr模块所用到的opencv api。
+封装ocr模块所用到的opencv api，含有如下api：
+```javascript
+[
+    'findContours', 
+    'minAreaRect', 
+    'boxPoints', 
+    'fillPoly',
+    'getPerspectiveTransform',
+    'warpPerspective',
+    'getRotationMatrix2D',
+    'warpAffine',
+    'resize'
+]
+```
 
 # 模块
 

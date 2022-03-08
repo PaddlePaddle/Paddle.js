@@ -1,13 +1,13 @@
 {
   "name": "@paddlejs-mediapipe/opencv",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "lightweight opencv.js",
   "main": "library/",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "opencv", "blur", "core"
+    "opencv", "blur", "core", "ocr"
   ],
   "author": "",
   "license": "ISC"

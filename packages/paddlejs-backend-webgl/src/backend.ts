@@ -139,7 +139,7 @@ export default class WebGLBackend extends PaddlejsBackend {
             this.program = program;
             this.render(opData, isRendered, index, isPacked);
         });
-
+        opData.tensorData = null;
         if (query) {
             this.queryList.push({ name: opData.name, query, count: 1 });
             query = queryProcess.endQuery(this.gl, this.glVersion, query);

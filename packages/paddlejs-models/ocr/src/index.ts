@@ -179,11 +179,7 @@ export async function recognize(
     const text_list = [];
     for (let i = 0; i < boxes.length; i++) {
         const tmp_box = JSON.parse(JSON.stringify(boxes[i]));
-        const img_crop = get_rotate_crop_image(image, tmp_box);
-        const img_resize = resize_img(img_crop);
-        canvas_det.width = img_resize.matSize[1];
-        canvas_det.height = img_resize.matSize[0];
-        cv.imshow(canvas_det, img_resize);
+        get_rotate_crop_image(image, tmp_box);
         const width_num = Math.ceil(canvas_det.width / RECWIDTH);
         let text_list_tmp = '';
         // 根据原图的宽度进行裁剪拼接
@@ -195,8 +191,6 @@ export async function recognize(
             text_list_tmp = text_list_tmp.concat(text.text);
         }
         text_list.push(text_list_tmp);
-        img_crop.delete();
-        img_resize.delete();
     }
     return { text: text_list, points: point };
 }
@@ -228,7 +222,6 @@ function get_rotate_crop_image(img: HTMLCanvasElement | HTMLImageElement, points
         linalg_norm(points[0], points[3]),
         linalg_norm(points[1], points[2])
     ));
-
     const pts_std = [
         [0, 0],
         [img_crop_width, 0],
@@ -246,24 +239,37 @@ function get_rotate_crop_image(img: HTMLCanvasElement | HTMLImageElement, points
     cv.warpPerspective(src, dst, M, dsize, cv.INTER_CUBIC, cv.BORDER_REPLICATE, new cv.Scalar());
     const dst_img_height = dst.matSize[0];
     const dst_img_width = dst.matSize[1];
-
+    let dst_rot;
+    // 图像旋转
     if (dst_img_height / dst_img_width >= 1.5) {
-        const dst_rot = new cv.Mat();
+        dst_rot = new cv.Mat();
         const dsize_rot = new cv.Size(dst.rows, dst.cols);
         const center = new cv.Point(dst.cols / 2, dst.cols / 2);
-        // 图像旋转
         const M = cv.getRotationMatrix2D(center, 90, 1);
         cv.warpAffine(dst, dst_rot, M, dsize_rot, cv.INTER_CUBIC, cv.BORDER_REPLICATE, new cv.Scalar());
-        dst.delete();
-        src.delete();
-        srcTri.delete();
-        dstTri.delete();
-        return dst_rot;
     }
+
+    const dst_resize = new cv.Mat();
+    const dsize_resize = new cv.Size(0, 0);
+    let scale;
+    if (dst_rot) {
+        scale = RECHEIGHT / dst_rot.matSize[0];
+        cv.resize(dst_rot, dst_resize, dsize_resize, scale, scale, cv.INTER_AREA);
+        dst_rot.delete();
+    }
+    else {
+        scale = RECHEIGHT / dst_img_height;
+        cv.resize(dst, dst_resize, dsize_resize, scale, scale, cv.INTER_AREA);
+    }
+    canvas_det.width = dst_resize.matSize[1];
+    canvas_det.height = dst_resize.matSize[0];
+    cv.imshow(canvas_det, dst_resize);
+
     src.delete();
+    dst.delete();
+    dst_resize.delete();
     srcTri.delete();
     dstTri.delete();
-    return dst;
 }
 
 function linalg_norm(x, y) {
@@ -281,14 +287,5 @@ function resize_norm_img_splice(
     const ctx = canvas_rec.getContext('2d');
     ctx.fillStyle = '#fff';
     ctx.clearRect(0, 0, canvas_rec.width, canvas_rec.height);
-    ctx.fillRect(0, 0, RECHEIGHT, RECWIDTH);
     ctx.drawImage(image, -index * RECWIDTH, 0, origin_width, origin_height);
-}
-
-function resize_img(src) {
-    const dst = new cv.Mat();
-    const dsize = new cv.Size(0, 0);
-    const scale = RECHEIGHT / src.matSize[0];
-    cv.resize(src, dst, dsize, scale, scale, cv.INTER_AREA);
-    return dst;
 }

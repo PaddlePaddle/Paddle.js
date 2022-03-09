@@ -1,6 +1,6 @@
 {
   "name": "@paddlejs-models/ocrdet",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "",
   "main": "lib/index",
   "scripts": {
@@ -10,9 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@paddlejs/paddlejs-backend-webgl": "^1.1.15",
-    "@paddlejs/paddlejs-core": "^2.1.14",
-    "@paddlejs-mediapipe/opencv": "0.0.3"
+    "@paddlejs-mediapipe/opencv": "0.0.3",
+    "@paddlejs/paddlejs-backend-webgl": "^1.1.19",
+    "@paddlejs/paddlejs-core": "^2.1.17"
   },
   "devDependencies": {
     "d3-polygon": "^2.0.0",

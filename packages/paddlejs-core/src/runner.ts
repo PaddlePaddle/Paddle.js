@@ -4,7 +4,12 @@ import { Model, RunnerConfig, ModelOp, InputFeed, ModelVar, GraphType, FeedShape
 import OpData from './opFactory/opDataBuilder';
 import Tensor from './opFactory/tensor';
 import { GLOBALS } from './globals';
-import { getGlobalInterface, findVarByKey, AddItemToVars } from './commons/utils';
+import {
+    getGlobalInterface,
+    findVarByKey,
+    AddItemToVars,
+    delUselessData
+} from './commons/utils';
 import MediaProcessor from './mediaProcessor';
 import env from './env';
 
@@ -111,6 +116,7 @@ export default class Runner {
                 op.opData = opData;
             }
         });
+        delUselessData(this.model);
     }
 
     async preheat() {

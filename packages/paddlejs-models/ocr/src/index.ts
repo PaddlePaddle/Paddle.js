@@ -2,7 +2,7 @@
  * @file ocr_rec model
  */
 
-import { Runner, Transformer, env } from '@paddlejs/paddlejs-core';
+import { Runner, env } from '@paddlejs/paddlejs-core';
 import '@paddlejs/paddlejs-backend-webgl';
 import DBProcess from './dbPostprocess';
 import RecProcess from './recPostprocess';
@@ -27,22 +27,6 @@ const canvas_det = document.createElement('canvas') as HTMLCanvasElement;
 const canvas_rec = document.createElement('canvas') as HTMLCanvasElement;
 let detectRunner = null as Runner;
 let recRunner = null as Runner;
-
-class OptModel extends Transformer {
-    constructor() {
-        super('OptModel');
-    }
-
-    transform(...args: any) {
-        const [ops] = args;
-        for (let opIndex = 0; opIndex < ops.length; opIndex++) {
-            const op = ops[opIndex];
-            if (op.type === 'pool2d' && op.attrs.pooling_type === 'avg') {
-                op.type += '_avg';
-            }
-        }
-    }
-}
 
 initCanvas(canvas_det);
 initCanvas(canvas_rec);
@@ -75,10 +59,7 @@ export async function init(detCustomModel = null, recCustomModel = null) {
         mean: [0.5, 0.5, 0.5],
         std: [0.5, 0.5, 0.5],
         bgr: true,
-        webglFeedProcess: true,
-        plugins: {
-            preTransforms: [new OptModel()]
-        }
+        webglFeedProcess: true
     });
     const recInit = recRunner.init();
 

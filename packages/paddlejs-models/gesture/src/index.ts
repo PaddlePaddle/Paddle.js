@@ -33,13 +33,12 @@ export async function load() {
 
     detectRunner = new Runner({
         modelPath: 'https://paddlejs.bj.bcebos.com/models/fuse/gesture/gesture_det_fuse_activation/model.json',
-        fill: '#fff'
+        webglFeedProcess: true
     });
     const detectInit = detectRunner.init();
 
     recRunner = new Runner({
-        modelPath: 'https://paddlejs.bj.bcebos.com/models/fuse/gesture/gesture_rec_fuse_activation/model.json',
-        fill: '#fff'
+        modelPath: 'https://paddlejs.bj.bcebos.com/models/fuse/gesture/gesture_rec_fuse_activation/model.json'
     });
     const recInit = recRunner.init();
 

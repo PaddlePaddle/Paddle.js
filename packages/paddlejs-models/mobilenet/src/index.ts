@@ -37,7 +37,6 @@ export async function load(config: ModelConfig, map: string[] | MobilenetMap) {
         scale: 256,
         needPreheat
     });
-    env.set('webgl_feed_process', true);
     env.set('webgl_pack_channel', true);
     await runner.init();
 }

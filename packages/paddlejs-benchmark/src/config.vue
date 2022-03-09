@@ -219,7 +219,7 @@ export default Vue.extend({
                 needPreheat: false,
                 fileDownload: false,
             });
-
+            env.set('performance', true);
             const start = Date.now();
             await paddle.init();
             this.loadT = Date.now() - start + '';

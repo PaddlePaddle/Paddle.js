@@ -34,18 +34,13 @@ export async function load(needPreheat = true, enableLightModel = false, customM
     runner = new Runner({
         modelPath: path,
         needPreheat: needPreheat !== undefined ? needPreheat : true,
-        feedShape: {
-            fw: WIDTH,
-            fh: HEIGHT
-        },
-        fill: '#fff',
         mean: [0.5, 0.5, 0.5],
-        std: [0.5, 0.5, 0.5]
+        std: [0.5, 0.5, 0.5],
+        webglFeedProcess: true
     });
 
     env.set('webgl_pack_channel', true);
     env.set('webgl_pack_output', true);
-    env.set('webgl_feed_process', true);
 
     await runner.init();
 

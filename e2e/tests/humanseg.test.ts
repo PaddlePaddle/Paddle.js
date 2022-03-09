@@ -40,7 +40,7 @@ describe('e2e test humanseg model', () => {
             return diffPixelsNum / backImageData.length;
         });
 
-        const expectedMAP = 0.05;
+        const expectedMAP = 0.06;
         await expect(mAP).toBeLessThanOrEqual(expectedMAP);
     });
 });

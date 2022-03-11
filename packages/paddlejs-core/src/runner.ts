@@ -142,7 +142,6 @@ export default class Runner {
         if (this.isPaused || !this.mediaProcessor) {
             return;
         }
-
         let inputFeed = [];
         if (this.runnerConfig.webglFeedProcess) {
             inputFeed = [media];
@@ -280,8 +279,11 @@ export default class Runner {
         );
         imageInputTensor.data = feed.data;
 
-        // todo
-        if (this.runnerConfig.webglFeedProcess || env.get('webgl_gpu_pipeline')) {
+        const {
+            webglFeedProcess = false,
+            keepRatio = false
+        } = this.runnerConfig;
+        if (webglFeedProcess || env.get('webgl_gpu_pipeline')) {
             // support imageDataLike feed which has unit8ClampedArray data and width + height or shape
             // support ImageElementLike feed which is HTMLImageElement or HTMLVideoElement or HTMLCanvasElement
             let shape = feed.shape || [1, 1, feed.height, feed.width];
@@ -305,6 +307,7 @@ export default class Runner {
             const [dh, dw] = imageOpData.outputTensors[0].shape.slice(-2);
             const scale = this.mediaProcessor.cover(w, h, dw, dh);
             imageOp.uniform.u_scale.value = scale;
+            imageOp.uniform.u_keep_ratio.value = +keepRatio;
         }
 
     }

@@ -14,6 +14,7 @@
 * [微信小程序开发者工具](https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html)
 * 前端开发环境准备：node、npm
 * 小程序管理后台配置服务器域名，或打开开发者工具【不校验合法域名】 
+
 详情参考:https://mp.weixin.qq.com/wxamp/devprofile/get_profile?token=1132303404&lang=zh_CN)
 
 ### 2.2 启动步骤
@@ -36,7 +37,8 @@ cd Paddle.js/packages/paddlejs-examples/ocrdetectXcx && npm install
 
 #### **5. 构建依赖**
 点击开发者工具中的菜单栏：工具 --> 构建 npm
-***原因**：node_modules 目录不会参与编译、上传和打包中，小程序想要使用 npm 包必须走一遍“构建 npm”的过程，构建完成会生成一个 miniprogram_npm 目录，里面会存放构建打包后的 npm 包，也就是小程序真正使用的 npm 包。*  
+
+原因：node_modules 目录不会参与编译、上传和打包中，小程序想要使用 npm 包必须走一遍“构建 npm”的过程，构建完成会生成一个 miniprogram_npm 目录，里面会存放构建打包后的 npm 包，也就是小程序真正使用的 npm 包。*  
 [参考文档](https://developers.weixin.qq.com/miniprogram/dev/devtools/npm.html)
 
 ### 2.3 效果展示
@@ -76,4 +78,4 @@ wx.canvasGetImageData({
 ```
 
 ## 4. 更多
-* [详细文档](https://mp.weixin.qq.com/s/GP1lc3FZ6lQyD7FJfU67xw)
+* [详细文档](https://mp.weixin.qq.com/s/KBjXawSfBreUCsIYbUgF-w)

@@ -29,7 +29,6 @@ describe('e2e test humanseg model', () => {
 
             const backImageData = back_ctx.getImageData(0, 0, back_canvas.width, back_canvas.height).data;
             const segImageData = seg_ctx.getImageData(0, 0, seg_canvas.width, seg_canvas.height).data;
-
             let diffPixelsNum = 0;
             const MAX_TOLERANCE = 10;
             for (let index = 0; index < backImageData.length; index++) {
@@ -40,7 +39,9 @@ describe('e2e test humanseg model', () => {
             return diffPixelsNum / backImageData.length;
         });
 
-        const expectedMAP = 0.06;
+
+        const expectedMAP = 0.05;
         await expect(mAP).toBeLessThanOrEqual(expectedMAP);
+
     });
 });

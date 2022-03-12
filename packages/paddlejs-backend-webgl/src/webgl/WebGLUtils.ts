@@ -407,6 +407,12 @@ export class GLHelper {
         const {
             shape = []
         } = tensor;
+
+        const [n, c, h, w] = shape;
+        if (n * h <= GL_TEXTURE_MAX_SIZE && c * w <=  GL_TEXTURE_MAX_SIZE) {
+            tensor.shape_texture = [n * h, c * w];
+            return;
+        }
         const [smallest, sec, third, biggest] = [...shape].sort((prev, cur) => prev - cur);
         let texW = smallest * biggest;
         let texH = sec * third;

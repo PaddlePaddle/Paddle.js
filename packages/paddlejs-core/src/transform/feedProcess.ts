@@ -95,6 +95,10 @@ export default class WebglFeedProcess extends Transformer {
                 u_pos: {
                     type: UniformType.uniform2fv,
                     value: [0, 0]
+                },
+                u_keep_ratio: {
+                    type: UniformType.uniform1f,
+                    value: 0
                 }
             },
             isPacked: true

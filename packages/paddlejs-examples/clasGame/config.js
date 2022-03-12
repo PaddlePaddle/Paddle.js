@@ -1,8 +1,7 @@
 export const CONFIG = {
     config: {
         modelInfo: {
-            path: 'https://mms-voice-fe.cdn.bcebos.com/pdmodel/clas/common/v4_2_0915',
-            fileCount: 1,
+            path: 'https://mms-voice-fe.cdn.bcebos.com/pdmodel/clas/fuse/v4_03082014',
             mean: [
                 0.485,
                 0.456,

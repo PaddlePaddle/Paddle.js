@@ -230,11 +230,6 @@ Page({
         const me = this;
         detectRunner = new paddlejs.Runner({
             modelPath: 'https://paddlejs.bj.bcebos.com/models/fuse/ocr/ch_PP-OCRv2_det_fuse_activation',
-            feedShape: {
-                fw: 960,
-                fh: 960
-            },
-            fill: '#fff',
             mean: [0.485, 0.456, 0.406],
             std: [0.229, 0.224, 0.225],
             bgr: true,

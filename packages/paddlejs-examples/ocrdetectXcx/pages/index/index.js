@@ -6,7 +6,9 @@ import { divide, enableBoundaryChecking, plus } from 'number-precision';
 // eslint-disable-next-line no-undef
 const plugin = requirePlugin('paddlejs-plugin');
 const Polygon = require('d3-polygon');
-const CV = require('./opencv');
+
+global.wasm_url = 'pages/index/wasm/opencv_js.wasm.br';
+const CV = require('./wasm/opencv.js');
 
 plugin.register(paddlejs, wx);
 

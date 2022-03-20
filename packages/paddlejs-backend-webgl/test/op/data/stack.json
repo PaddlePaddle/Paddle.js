@@ -1,0 +1,95 @@
+{
+    "chunkNum": 0, 
+    "ops": [
+        {
+            "attrs": {}, 
+            "inputs": {
+                "X": [
+                    "feed"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "image"
+                ]
+            }, 
+            "type": "feed"
+        }, 
+        {
+            "attrs": {
+                "axis": 2
+            }, 
+            "inputs": {
+                "X": [
+                    "stack_in_2", "stack_in", "stack_in_1"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "stack_out"
+                ]
+            }, 
+            "type": "stack"
+        },
+        {
+            "attrs": {
+                "op_device": ""
+            }, 
+            "inputs": {
+                "X": [
+                    "stack_out"
+                ]
+            }, 
+            "outputs": {
+                "Out": [
+                    "fetch"
+                ]
+            }, 
+            "type": "fetch"
+        }
+    ], 
+    "vars": [
+        {
+            "name": "stack_in_2", 
+            "shape": [
+                3,
+                3
+            ],
+            "data": [
+                1, 2, 3, 4, 5, 6, 7, 8, 9
+            ],
+            "persistable": true
+        }, 
+        {
+            "name": "stack_in", 
+            "shape": [
+                3,
+                3
+            ],
+            "data": [
+                11, 12, 13, 14, 15, 16, 17, 18, 19
+            ],
+            "persistable": true
+        },
+        {
+            "name": "stack_in_1", 
+            "shape": [
+                3,
+                3
+            ],
+            "data": [
+                21, 22, 23, 24, 25, 26, 27, 28, 29
+            ],
+            "persistable": true
+        }, 
+        {
+            "name": "stack_out",
+            "shape": [3, 3, 3],
+            "data": [
+                1, 2, 3, 4, 5, 6, 7, 8, 9,
+                11, 12, 13, 14, 15, 16, 17, 18, 19,
+                21, 22, 23, 24, 25, 26, 27, 28, 29
+            ]
+        }
+    ]
+}

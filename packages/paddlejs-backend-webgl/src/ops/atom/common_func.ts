@@ -69,9 +69,16 @@ float tanh_func(float x, float y, float z) {
     return tanh_calc(x);
 }`;
 
+const exp = `
+float exp(float x, float y, float z) {
+    float result = exp(x);
+    return result;
+}`;
+
 export {
     prelu,
     relu6,
+    exp,
     leakyRelu,
     scale,
     sigmoid,

@@ -1,6 +1,6 @@
 /**
  * @file concat_mul dynamic inputs
- * @description concat inputs X supports no more than 4 tensors, eg. [a1, a2, a3, a4]
+ * @description concat inputs X supports no more than 15 tensors, eg. [a1, a2, a3, a4, ... , a15]
  */
 
 /* eslint-disable max-lines */

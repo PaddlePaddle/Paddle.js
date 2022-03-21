@@ -5,7 +5,7 @@
  * @detail https://www.paddlepaddle.org.cn/documentation/docs/zh/api/paddle/stack_cn.html#stack
  */
 
-/* eslint-disable max-lines */
+
 function mainFunc(
     { out, ...inputs },
     attrs
@@ -21,7 +21,7 @@ function mainFunc(
     const batch = total_shape / (width_shape * height_shape * channel);
 
     const tensor_shape = [batch, channel, height_shape, width_shape];
-    const origin_shape = tensor_shape.slice(length_unformatted_shape);
+    const origin_shape = tensor_shape.slice(4 - length_unformatted_shape);
 
     const inputs_num = Object.keys(inputs).length;
 

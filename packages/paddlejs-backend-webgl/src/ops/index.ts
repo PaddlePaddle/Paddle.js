@@ -57,6 +57,8 @@ import pool2d_avg from './shader/pool2d_avg';
 import density_prior_box from './shader/density_prior_box';
 import box_coder from './shader/box_coder';
 import prior_box from './shader/prior_box';
+import stack from './shader/stack';
+import slice from './shader/slice';
 
 import {
     imgFeed, pack_out, nhwc_2_nchw, unpacked_2_packed,
@@ -125,6 +127,7 @@ const ops = {
     pow: dynamic('pow'),
     sqrt: dynamic('sqrt'),
     tanh: dynamic('tanh'),
+    exp: dynamic('exp'),
     squeeze2,
     pad3d,
     bilinear_interp_v2,
@@ -135,7 +138,9 @@ const ops = {
     imgFeed,
     box_coder,
     density_prior_box,
-    prior_box
+    prior_box,
+    stack,
+    slice
 };
 export {
     ops

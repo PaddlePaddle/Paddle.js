@@ -139,6 +139,10 @@ const behaviors : Behaviors = {
         this.processedAttrs['active_function'] = 'tanh_func';
     },
 
+    transToExp() {
+        this.processedAttrs['active_function'] = 'exp';
+    },
+
     transToScale() {
         const scale = this.processedAttrs['scale'];
         this.processedAttrs['multi_value'] = scale !== undefined ? scale : 1;

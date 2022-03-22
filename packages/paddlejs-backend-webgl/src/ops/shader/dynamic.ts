@@ -11,6 +11,7 @@ const commonFuncBehaviors = {
     sigmoid: ['transToSigmoid'],
     hard_sigmoid: ['transToHardSigmoid'],
     pow: ['transToPow'],
+    exp: ['transToExp'],
     sqrt: ['transToSqrt'],
     tanh: ['transToTanh']
 };

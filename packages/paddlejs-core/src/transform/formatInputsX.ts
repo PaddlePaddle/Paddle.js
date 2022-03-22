@@ -12,7 +12,7 @@ export default class FormatInputsX extends Transformer {
     transform(...args: any) {
         const [originOp] = args;
 
-        const transformOpList = ['concat', 'connect', 'fc', 'rnn_origin', 'rnn_matmul'];
+        const transformOpList = ['concat', 'connect', 'fc', 'rnn_origin', 'rnn_matmul', 'stack'];
         if (!transformOpList.includes(originOp.type)) {
             return;
         }

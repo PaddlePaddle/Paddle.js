@@ -4,6 +4,10 @@
  * @example x = [[1,2,3,4],[5,6,7,8]] axes=[1] starts=[2] ends=[3] => out [3,7]
  */
 
+import { env } from '@paddlejs/paddlejs-core';
+import { initializeGLSLArr, ArrTypeEnum } from '../atom/common_utils';
+
+
 function mainFunc(
     {
         out, origin
@@ -70,23 +74,39 @@ function mainFunc(
             }
         }
     }
-    // 生成 glsl arr =>  int arr = int[](x, x, x,... x);
-    const glslIndexArr = res_pos.reduce((acc, cur, index) => {
-        const tmp = index < res_pos.length - 1 ? `${cur}, ` : `${cur});`;
-        return acc + tmp;
-    }, 'int arr[] = int[](');
 
+    const glslIndexArr = initializeGLSLArr(res_pos, ArrTypeEnum.INT_TYPE);
+
+    const ifConditions = res_pos.reduce((acc, _, idx) => {
+        const ifCondition = idx === 0
+            ? `
+                int index = 0;
+                if (sumVal == ${idx}) {
+                    index = arr[${idx}];
+                }`
+            : `
+                else if (sumVal == ${idx}) {
+                    index = arr[${idx}];
+                }
+            `;
+        return acc + ifCondition;
+    }, '');
+
+    const getValueFromArrIndex = env.get('webglVersion') === 2
+        ? 'int index = arr[sumVal];'
+        : ifConditions;
     return `
     void main(void) {
         ivec4 oPos = getOutputTensorPos();
         ${glslIndexArr}
+
         // 输出坐标转换为输入坐标
         int sumVal = oPos.a
             + oPos.b * ${out.width_shape}
             + oPos.g * ${out.height_shape} * ${out.width_shape}
             + oPos.r * ${out.channel} * ${out.width_shape} * ${out.height_shape};
         
-        int index = arr[sumVal];
+        ${getValueFromArrIndex}
 
         float res = 0.0;
         ivec4 co = getTensorPosFromArrayIndex_origin(index);

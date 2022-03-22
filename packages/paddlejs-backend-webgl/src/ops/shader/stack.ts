@@ -66,14 +66,13 @@ function mainFunc(
             + oPos.g * ${out.height_shape} * ${out.width_shape}
             + oPos.r * ${out.channel} * ${out.width_shape} * ${out.height_shape};
 
-        int index = sumVal % ${pre_every_num};
+        int index = calMod(sumVal, ${pre_every_num});
 
         int layer = sumVal / ${pre_every_num};
 
         int i = index / ${post};
-        int j = index % ${post} + layer * ${post};
+        int j = calMod(index, ${post}) + layer * ${post};
 
-        
         float o = 0.0;
         ${getMultiInputsValue}
         setOutput(float(o));

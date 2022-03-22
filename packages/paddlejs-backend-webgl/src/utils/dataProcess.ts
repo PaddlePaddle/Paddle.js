@@ -1,6 +1,9 @@
 /**
  * @file data process
  */
+
+import { env } from '@paddlejs/paddlejs-core';
+
 function nhwc2nchw(data: number[] | Float32Array, shape: number[]) {
     const N = shape[0];
     const H = shape[1];
@@ -38,7 +41,7 @@ function getSizeFromShape(shape: number[]): number {
     return shape.reduce((acc, cur) => acc * cur, 1);
 }
 
-function genFpFloatArr(arr, key) {
+function genGLSLFloatArr(arr, key) {
     if (arr.length === 0) {
         return '';
     }
@@ -95,12 +98,71 @@ function getSmallestDivisor(number, base) {
     return divisor;
 }
 
+enum ArrTypeEnum {
+    INT_TYPE = 'int',
+    FLOAT_TYPE = 'float'
+}
+
+// GLSL ES 3.00 支持 arr =>  int arr = int[](x, x, x,... x);
+// GLSL ES 1.0 (1.0) 不支持  array constructor
+// '[]' : array constructor supported in GLSL ES 3.00 and above only
+function genGLSLArr(arr: Array<Number>, key: string, type: ArrTypeEnum) {
+    if (arr.length === 0) {
+        return '';
+    }
+
+    if (env.get('webglVersion') === 2) {
+        return arr.reduce((acc, cur, index) => {
+            const tmp = index < arr.length - 1 ? `${type}(${cur}), ` : `${type}(${cur}));`;
+            return acc + tmp;
+        }, `${type} ${key}[] = ${type}[](`);
+    }
+
+    const arr_value = arr.reduce((acc, cur, index) => {
+        return acc + `
+            ${key}[${index}] = ${type}(${cur});`;
+    }, '');
+
+    return `
+        ${type} ${key}[${arr.length}];
+        ${arr_value}
+    `;
+}
+
+function getValueFromArrByIndex(arr: Array<number>, arrKey: string, type: ArrTypeEnum) {
+    const ifConditions = arr.reduce((acc, _, idx) => {
+        const ifCondition = idx === 0
+            ? `
+            ${type} res = ${type}(0);
+            if (index == ${idx}) {
+                res = arr[${idx}];
+            }`
+            : `
+            else if (index == ${idx}) {
+                res = arr[${idx}];
+            }`;
+        return acc + ifCondition;
+    }, '');
+
+    return `
+    ${type} getValueFromArrByIndex_${arrKey}(${type}[${arr.length}] arr, int index) {
+        ${env.get('webglVersion') === 2
+        ? `${type} res = arr[index];`
+        : ifConditions}
+        return res;
+    }
+    `;
+}
+
 export {
     nhwc2nchw,
     getSizeFromShape,
     reduceShape,
     genFpDataCode,
-    genFpFloatArr,
+    genGLSLFloatArr,
     genIntDataCode,
-    getSmallestDivisor
+    getSmallestDivisor,
+    genGLSLArr,
+    ArrTypeEnum,
+    getValueFromArrByIndex
 };

@@ -6,7 +6,7 @@
 
 /* eslint-disable max-lines-per-function */
 
-import { genFpDataCode, genFpFloatArr } from '../../utils/dataProcess';
+import { genFpDataCode, genGLSLArr, ArrTypeEnum, getValueFromArrByIndex } from '../../utils/dataProcess';
 
 function mainFunc(
     { origin, image, out },
@@ -56,13 +56,18 @@ function mainFunc(
     // 这里没有使用 genFpDataCode 的原因是 aspect_ratios 长度很有可能超过 4
     // 但是 vec 最大是 vec4，所以用 float arr 更保险
     const floatArraydataCode = `
-        ${genFpFloatArr(min_sizes, 'min_sizes')}
-        ${genFpFloatArr(max_sizes, 'max_sizes')}
-        ${genFpFloatArr(aspect_ratios, 'aspect_ratios')}
+        ${genGLSLArr(min_sizes, 'min_sizes', ArrTypeEnum.FLOAT_TYPE)}
+        ${genGLSLArr(max_sizes, 'max_sizes', ArrTypeEnum.FLOAT_TYPE)}
+        ${genGLSLArr(aspect_ratios, 'aspect_ratios', ArrTypeEnum.FLOAT_TYPE)}
+    `;
+
+    const getValueFromArrByIndexGLSL = `
+        ${getValueFromArrByIndex(min_sizes, 'min_sizes', ArrTypeEnum.FLOAT_TYPE)}
+        ${getValueFromArrByIndex(max_sizes, 'max_sizes', ArrTypeEnum.FLOAT_TYPE)}
+        ${getValueFromArrByIndex(aspect_ratios, 'aspect_ratios', ArrTypeEnum.FLOAT_TYPE)}
     `;
 
     const clipCode = clip ? 'res = min(max(res, 0.), 1.);' : '';
-
 
 
     const prefix = `
@@ -80,6 +85,8 @@ function mainFunc(
             return tensor[3];
         }
     }
+
+    ${getValueFromArrByIndexGLSL}
 
     // start函数
     void main(void) {
@@ -119,26 +126,26 @@ function mainFunc(
 
             // 求idx 对应的 h w p m
             int h = int(idx / (num_priors * feature_width));
-            int w = (idx / num_priors) % feature_width;
-            int p = idx % num_priors;
+            int w = calMod(idx / num_priors, feature_width);
+            int p = calMod(idx, num_priors);
             int m = ${max_sizes.length > 0} ? int(p / (as_num + 1)) : int(p / as_num);
             float cx = (float(w) + offset) * step_width;
             float cy = (float(h) + offset) * step_height;
-            float min_size = float(min_sizes[m]);
+            float min_size = getValueFromArrByIndex_min_sizes(min_sizes, m);
             float bw = 0.0;
             float bh = 0.0;
 
             ${max_sizes.length > 0
         ? `
-            int s = p % (as_num + 1);
+            int s = calMod(p, as_num + 1);
             if (${!min_max_aspect_ratios_order}) {
                 if (s < as_num) {
-                    float ar = aspect_ratios[s];
+                    float ar = getValueFromArrByIndex_aspect_ratios(aspect_ratios, s);
                     bw = min_size * ar / 2.0;
                     bh = min_size / ar / 2.0;
                 }
                 else {
-                    float max_size = float(max_sizes[m]);
+                    float max_size = getValueFromArrByIndex_max_sizes(max_sizes, m);
                     bw = sqrt(min_size * max_size) / 2.0;
                     bh = bw;
                 }
@@ -149,19 +156,19 @@ function mainFunc(
                     bw = bh;
                 }
                 else if (s == 1) {
-                    float max_size = float(max_sizes[m]);
+                    float max_size = getValueFromArrByIndex_max_sizes(max_sizes, m);
                     bw = sqrt(min_size * max_size) / 2.0;
                     bh = bw;
                 }
                 else {
-                    float ar = aspect_ratios[s - 1];
+                    float ar = getValueFromArrByIndex_aspect_ratios(aspect_ratios, s - 1);
                     bw = min_size * sqrt(ar) / 2.0;
                     bh = min_size / sqrt(ar) / 2.0;
                 }
             }`
         : `
-            int s = p % as_num;
-            float ar = aspect_ratios[s];
+            int s = calMod(p, as_num);
+            float ar = getValueFromArrByIndex_aspect_ratios(aspect_ratios, s);
             bw = min_size * ar / 2.0;
             bh = min_size / ar / 2.0;
         `}

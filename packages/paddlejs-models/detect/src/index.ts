@@ -14,9 +14,10 @@ export async function init() {
         mean: [0.5, 0.5, 0.5],
         std: [0.5, 0.5, 0.5],
         bgr: true,
-        keepRatio: false,
+        keepRatio: true,
         webglFeedProcess: true
     });
+
     await detectRunner.init();
 }
 

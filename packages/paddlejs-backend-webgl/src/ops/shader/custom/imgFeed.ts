@@ -5,12 +5,12 @@
 function mainFunc() {
     return `
     uniform vec2 u_scale;
-    uniform float u_keep_ratio;
+    uniform int u_keep_ratio;
 
     void main(void) {
         vec2 outCoord = vCoord.xy;
         // 支持模型不按比例拉伸
-        if (float(u_keep_ratio) == 0.0) {
+        if (u_keep_ratio > 0) {
             vec4 origin = TEXTURE2D(texture_origin, outCoord);
             setPackedOutput(origin);
             return;
@@ -26,7 +26,7 @@ function mainFunc() {
             setPackedOutput(origin);
         }
         else {
-            setPackedOutput(vec4(1.0, 1.0, 1.0, 1.0));
+            setPackedOutput(vec4(1.0));
         }
     }
     `;

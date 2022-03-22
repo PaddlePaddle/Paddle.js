@@ -181,6 +181,15 @@ export class GLTexture {
             // case1: 输入为0~255之间的像素数据，类型为Uint8Array 或 Uint8ClampedArray
             // case2: 小程序环境，输入数据可能是HTMLImageElement、HTMLVideoElement、HTMLCanvasElement、小程序中图像的临时path string。
             texeltype = gl.UNSIGNED_BYTE;
+            gl.texImage2D(
+                gl.TEXTURE_2D,
+                0,
+                gl.RGBA,
+                gl.RGBA,
+                gl.UNSIGNED_BYTE,
+                data
+            );
+            return;
         }
         else if (env.get('webglVersion') === 2) {
             // 输入数据类型是Float32Array

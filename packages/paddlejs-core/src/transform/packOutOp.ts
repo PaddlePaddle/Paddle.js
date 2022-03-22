@@ -15,7 +15,7 @@ export default class PackOut extends Transformer {
     }
 
     transform(...args: any) {
-        if (!env.get('webgl_pack_output')) {
+        if (!env.get('webgl_pack_output') || env.get('webglVersion') === 1) {
             return;
         }
         const [ops, vars] = args;

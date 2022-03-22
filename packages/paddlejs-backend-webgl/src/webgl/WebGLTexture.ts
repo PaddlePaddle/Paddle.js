@@ -176,11 +176,12 @@ export class GLTexture {
 
         if (
             data instanceof Uint8Array
-            || data instanceof Uint8ClampedArray
-            || !(data instanceof Float32Array || data instanceof Array)) {
+            || data instanceof Uint8ClampedArray) {
             // case1: 输入为0~255之间的像素数据，类型为Uint8Array 或 Uint8ClampedArray
             // case2: 小程序环境，输入数据可能是HTMLImageElement、HTMLVideoElement、HTMLCanvasElement、小程序中图像的临时path string。
             texeltype = gl.UNSIGNED_BYTE;
+        }
+        else if (!(data instanceof Float32Array || data instanceof Array)) {
             gl.texImage2D(
                 gl.TEXTURE_2D,
                 0,

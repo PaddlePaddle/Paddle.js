@@ -10,7 +10,7 @@ function mainFunc() {
     void main(void) {
         vec2 outCoord = vCoord.xy;
         // 支持模型不按比例拉伸
-        if (u_keep_ratio > 0) {
+        if (u_keep_ratio == 0) {
             vec4 origin = TEXTURE2D(texture_origin, outCoord);
             setPackedOutput(origin);
             return;

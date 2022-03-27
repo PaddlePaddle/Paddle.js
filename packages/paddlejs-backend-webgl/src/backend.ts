@@ -156,14 +156,8 @@ export default class WebGLBackend extends PaddlejsBackend {
 
         const pbo = this.createPBO();
         await this.createAndWaitForFence();
-        const result = this.downloadFloat32TensorFromBuffer(pbo);
-
         const shape = fetchInfo ? fetchInfo.shape : [];
-        if (env.get('webgl_pack_output')) {
-            return result.slice(0, getSizeFromShape(shape));
-        }
-
-        return result;
+        return this.downloadFloat32TensorFromBuffer(pbo, shape);
     }
 
     createPBO() {
@@ -234,7 +228,7 @@ export default class WebGLBackend extends PaddlejsBackend {
         fn();
     }
 
-    downloadFloat32TensorFromBuffer(buffer) {
+    downloadFloat32TensorFromBuffer(buffer, shape) {
         const size: number = 4 * this.width_texture_out * this.height_texture_out;
         if (this.glVersion === 2) {
             const gl2 = this.gl as WebGL2RenderingContext;
@@ -242,17 +236,15 @@ export default class WebGLBackend extends PaddlejsBackend {
             gl2.bindBuffer(gl2.PIXEL_PACK_BUFFER, buffer);
             gl2.getBufferSubData(gl2.PIXEL_PACK_BUFFER, 0, pixels);
             gl2.bindBuffer(gl2.PIXEL_PACK_BUFFER, null);
-
             const result: number[] = [];
             if (env.get('webgl_pack_output')) {
-                return Array.from(pixels);
+                return Array.from(pixels).slice(0, getSizeFromShape(shape));
             }
             for (let i = 0; i < this.width_texture_out * this.height_texture_out; i++) {
                 result.push(pixels[4 * i]);
             }
             return result;
         }
-
         const pixels = buffer;
         const result = [] as number[];
         for (let i = 0; i < this.width_texture_out * this.height_texture_out; i++) {

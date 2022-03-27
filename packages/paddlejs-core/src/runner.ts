@@ -281,7 +281,7 @@ export default class Runner {
 
         const {
             webglFeedProcess = false,
-            keepRatio = false
+            keepRatio = true
         } = this.runnerConfig;
         if (webglFeedProcess || env.get('webgl_gpu_pipeline')) {
             // support imageDataLike feed which has unit8ClampedArray data and width + height or shape

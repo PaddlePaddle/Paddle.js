@@ -98,7 +98,7 @@ export default class WebglFeedProcess extends Transformer {
                 },
                 u_keep_ratio: {
                     type: UniformType.uniform1i,
-                    value: 0
+                    value: 1
                 }
             },
             isPacked: true

@@ -4,7 +4,9 @@ describe('e2e test custom model', () => {
     const CUR_URL = 'http://localhost:9898/';
 
     beforeAll(async () => {
-        await page.goto(CUR_URL);
+        await page.goto(CUR_URL, {
+            timeout: 0
+        });
     });
 
     it('check predict data', async () => {

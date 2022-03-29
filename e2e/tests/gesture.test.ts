@@ -3,7 +3,9 @@ describe('e2e test gesture model', () => {
     const CUR_URL = 'http://localhost:9898/';
 
     beforeAll(async () => {
-        await page.goto(CUR_URL);
+        await page.goto(CUR_URL, {
+            timeout: 0
+        });
     });
 
     it('gesture predict', async () => {

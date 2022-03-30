@@ -75,7 +75,7 @@ class Attrs {
 }
 
 const behaviors = [
-    'processAxis'
+    'processElementwiseAxis'
 ];
 
 const inputsName = [

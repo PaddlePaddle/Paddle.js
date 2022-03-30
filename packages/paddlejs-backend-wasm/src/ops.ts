@@ -60,25 +60,25 @@ export default {
     },
     elementwise_add: {
         behaviors: [
-            'processAxis',
+            'processElementwiseAxis',
             'genElementwiseCounterPos'
         ]
     },
     elementwise_div: {
         behaviors: [
-            'processAxis',
+            'processElementwiseAxis',
             'genElementwiseCounterPos'
         ]
     },
     elementwise_mul: {
         behaviors: [
-            'processAxis',
+            'processElementwiseAxis',
             'genElementwiseCounterPos'
         ]
     },
     elementwise_sub: {
         behaviors: [
-            'processAxis',
+            'processElementwiseAxis',
             'genElementwiseCounterPos'
         ]
     },

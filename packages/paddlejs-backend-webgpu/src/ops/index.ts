@@ -75,7 +75,7 @@ export const ops = {
         main: elementwise_add_main,
         deps: elementwise_add_deps,
         behaviors: [
-            'processAxis'
+            'processElementwiseAxis'
         ]
     },
     split: {

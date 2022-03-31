@@ -5,7 +5,7 @@
 System Requirements:
 
 * paddlepaddle >= 2.0.0
-* paddlelite == 2.7.1
+* paddlejslite >= 0.0.2
 * Python3： 3.5.1+ / 3.6 / 3.7
 * Python2： 2.7.15+
 

@@ -24,7 +24,7 @@ setuptools.setup(
     python_requires='>=3.6',
     install_requires=[
         "paddlepaddle >= 2.0.0",
-        "paddlelite==2.7.1",
+        "paddlejslite >= 0.0.2",
         "numpy"
     ],
     entry_points={

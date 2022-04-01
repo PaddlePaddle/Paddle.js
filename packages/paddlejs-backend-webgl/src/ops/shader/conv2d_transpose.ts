@@ -5,12 +5,15 @@
 function mainFunc({
     origin,
     filter,
-    out
+    out,
+    bias
 }, {
     groups = 1,
     strides = [],
     paddings = [],
-    dilations = []
+    dilations = [],
+    fuse_relu,
+    act_type
 }) {
     const [stride_v = 1, stride_h = 1] = strides;
     let [padLeft = 0, padTop = 0] = paddings;
@@ -71,6 +74,16 @@ function mainFunc({
             }
             oy += ${dilation_v};
         }
+        
+        ${bias ? 'res += getValueFromTensorPos_bias(0, 0, 0, c);' : ''}
+        
+        if (${fuse_relu}) {
+            res = max(0.0, res);
+        }
+        else if (${act_type === 'relu6'}) {
+            res = min(max(0.0, res), 6.0);
+        }
+        
         setOutput(float(res));
     }
 `;
@@ -79,7 +92,8 @@ export default {
     mainFunc,
     textureFuncConf: {
         filter: ['getValueFromTensorPos'],
-        origin: ['getValueFromTensorPos']
+        origin: ['getValueFromTensorPos'],
+        bias: ['getValueFromTensorPos']
     },
     behaviors: [
         'adaptPaddings',

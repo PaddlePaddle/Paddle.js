@@ -1,3 +1,4 @@
+import env from '../env';
 import { OpData } from '../commons/interface';
 import * as Utils from './utils';
 
@@ -218,6 +219,29 @@ const behaviors : Behaviors = {
         if (this.processedAttrs.num === 0) {
             this.processedAttrs.num = Object.values(this.tensorDataMap)
                 .filter(item => item.tensorName === 'out').length || 1;
+        }
+
+        // wasm backend is not support any number of inputs, retain temporarily
+        if (env.get('backend') === 'wasm') {
+            this.processedAttrs.fourInputs = false;
+
+            const counter = this.tensorDataMap['counter'];
+            if (counter) {
+                const yShape = Utils.formatShape(counter.shape);
+                this.processedAttrs.counter_num = yShape[axis];
+            }
+            const appender = this.tensorDataMap['appender'];
+            if (appender) {
+                const zShape = Utils.formatShape(appender.shape);
+                this.processedAttrs.append_num = zShape[axis];
+            }
+
+            const fourth = this.tensorDataMap['fourth'];
+            if (fourth) {
+                this.processedAttrs.fourInputs = true;
+                const mShape = Utils.formatShape(fourth.shape);
+                this.processedAttrs.fourth_num = mShape[axis];
+            }
         }
     },
 

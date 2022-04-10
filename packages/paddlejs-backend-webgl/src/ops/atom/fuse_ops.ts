@@ -28,6 +28,15 @@ interface OpParams {
         prelu?: {};
         sqrt?: {};
         tanh?: {};
+        hard_swish?: {
+            offset?: number;
+            scale?: number;
+            threshold?: number;
+        };
+        dropout?: {
+            dropout_implementation: string;
+            dropout_prob: number;
+        }
     }
 }
 
@@ -83,8 +92,32 @@ export default function genFuseOpCode(params: OpParams) {
                 default:
                     break;
             }
-            activation_func += func[act_name];
-            calculation_str += `res = ${act_name}(x, float(${multi_value}), float(${bias_value}));`;
+
+            if (fuse === 'hard_swish') {
+                const offset = params.fuse_opt.hard_swish.offset !== undefined
+                    ? params.fuse_opt.hard_swish.offset
+                    : 3;
+                const scale = params.fuse_opt.hard_swish.scale !== undefined
+                    ? params.fuse_opt.hard_swish.scale
+                    : 6;
+                const threshold = params.fuse_opt.hard_swish.threshold !== undefined
+                    ? params.fuse_opt.hard_swish.threshold
+                    : 6;
+                // eslint-disable-next-line max-len
+                calculation_str += `res = res * min(max(0.0, res + float(${offset})), float(${threshold})) / float(${scale});`;
+            }
+            else if (fuse === 'dropout') {
+                const dropout_implementation = params.fuse_opt.dropout.dropout_implementation;
+                const dropout_prob = params.fuse_opt.dropout.dropout_prob;
+                calculation_str += `
+                if (${dropout_implementation === 'downgrade_in_infer'}) {
+                    res = res * (1.0 - float(${dropout_prob}));
+                }`;
+            }
+            else {
+                activation_func += func[act_name];
+                calculation_str += `res = ${act_name}(res, float(${multi_value}), float(${bias_value}));`;
+            }
         }
     }
 

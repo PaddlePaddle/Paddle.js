@@ -58,8 +58,7 @@ export default class Runner {
             await Promise.all([this.load(), GLOBALS.backendInstance.init()]);
         }
         else {
-            GLOBALS.backendInstance.init();
-            this.isExecuted = false;
+            await GLOBALS.backendInstance.init();
             await this.load();
         }
         this.genFeedData();

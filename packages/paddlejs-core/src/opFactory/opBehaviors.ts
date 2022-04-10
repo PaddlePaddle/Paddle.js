@@ -248,7 +248,7 @@ const behaviors : Behaviors = {
     processElementwiseAxis() {
         const shape_x = this.tensorDataMap['origin'].shape;
         const shape_y = this.tensorDataMap['counter'].shape;
-        let axis = this.processedAttrs.axis || -1;
+        let axis = this.processedAttrs.axis === undefined ? -1 : this.processedAttrs.axis;
 
         this.processedAttrs.counterLen = shape_y.length;
         // shape x === shape y

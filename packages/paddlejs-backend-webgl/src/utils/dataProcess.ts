@@ -130,6 +130,10 @@ function genGLSLArr(arr: Array<Number>, key: string, type: ArrTypeEnum) {
 }
 
 function getValueFromArrByIndex(arr: Array<number>, arrKey: string, type: ArrTypeEnum) {
+    if (arr.length === 0) {
+        return '';
+    }
+
     const ifConditions = arr.reduce((acc, _, idx) => {
         const ifCondition = idx === 0
             ? `

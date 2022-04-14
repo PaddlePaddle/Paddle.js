@@ -89,6 +89,10 @@ export default function genFuseOpCode(params: OpParams) {
                     act_name = 'tanh_func';
                     break;
 
+                case 'exp':
+                    act_name = 'exp_func';
+                    break;
+
                 default:
                     break;
             }

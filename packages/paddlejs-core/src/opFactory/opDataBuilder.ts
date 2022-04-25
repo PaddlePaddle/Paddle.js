@@ -105,7 +105,9 @@ export default class OpData {
                 const tensorName = this.getExactTensorName(key, 'input');
                 if (tensorName) {
                     const tensor = data[0];
-                    tensor.tensorName = tensorName;
+                    if (tensor) {
+                        tensor.tensorName = tensorName;
+                    }
                     this.tensorDataMap[tensorName] = {
                         ...tensor,
                         tensorName
@@ -185,6 +187,16 @@ export default class OpData {
             }
             else if (this.name.indexOf('max_pool2d_with_index') > -1) {
                 this.name = 'pool2d_max';
+            }
+
+            else if (this.name.indexOf('sync_batch_norm') > -1) {
+                this.name = 'batchnorm';
+            }
+            else if (this.name.indexOf('bilinear_interp_v2') > -1) {
+                this.name = 'bilinear_interp';
+            }
+            else if (this.name.indexOf('leaky_relu') > -1) {
+                this.name = 'conv2d_elementwise_add';
             }
 
             // unique behavior

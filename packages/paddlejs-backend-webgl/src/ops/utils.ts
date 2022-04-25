@@ -20,7 +20,11 @@ const tensorParams = [
     'offset_y',
     'channel',
     'total_shape',
-    'numbers_shape'
+    'numbers_shape',
+    'scale',
+    'bias',
+    'mean',
+    'variance'
 ];
 
 

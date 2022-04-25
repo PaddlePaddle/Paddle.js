@@ -64,6 +64,10 @@ import {
     imgFeed, pack_out, nhwc_2_nchw, unpacked_2_packed,
     packed_2_unpacked, feedPost
 } from './shader/custom';
+import connect_mul from './shader/connect_mul';
+import instancenorm from './shader/instancenorm';
+import instancenorm_variance from './shader/instancenorm_variance';
+import instancenorm_mean from './shader/instancenorm_mean';
 
 
 const ops = {
@@ -140,7 +144,12 @@ const ops = {
     density_prior_box,
     prior_box,
     stack,
-    slice
+    slice,
+    'conv2d-elementwise_add-leaky_relu': conv2d_elementwise_add,
+    connect_mul,
+    instance_norm: instancenorm,
+    instance_norm_mean: instancenorm_mean,
+    instance_norm_variance: instancenorm_variance
 };
 export {
     ops

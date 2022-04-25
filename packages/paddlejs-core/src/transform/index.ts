@@ -4,6 +4,8 @@ import type Transformer from './transformer';
 import SplitOp from './splitOp';
 import PackOutOp from './packOutOp';
 import FeedProcess from './feedProcess';
+import OptModel from './optModel';
+import FormateInstanceNorm from './formatInstanceNorm';
 
 interface TransformerAction {
     preTransforms: Transformer[];
@@ -14,8 +16,10 @@ interface TransformerAction {
 const actions: TransformerAction = {
     preTransforms: [
         new SplitOp(),
+        new FormateInstanceNorm(),
         new PackOutOp(),
-        new FeedProcess()
+        new FeedProcess(),
+        new OptModel()
     ],
     transforms: [
         new FormatInputsX(),

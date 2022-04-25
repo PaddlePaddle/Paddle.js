@@ -70,6 +70,17 @@ def validateShape(shape, name):
     if len(shape) > 4:
         newShape = shape[-4:]
         print('\033[31m ' + name + ' tensor shape length > 4, 处理为丢弃头部shape \033[0m')
+        for index, value in enumerate(modelInfo["ops"]):
+            if 'X' in value['inputs'].keys():
+                # squeeze2 axes纠正
+                if value['type'] == 'squeeze2' and name == value['inputs']['X'][0] and 'axes' in value['attrs'].keys():
+                    modelInfo["ops"][index]['attrs']['axes'][0] = modelInfo["ops"][index]['attrs']['axes'][0] - 1
+                # transpose2 axis纠正
+                if value['type'] == 'transpose2' and name == value['inputs']['X'][0] and 'axis'in value['attrs'].keys():
+                    for i, v in enumerate(value['attrs']['axis']):
+                        if i > 0:
+                            modelInfo["ops"][index]['attrs']['axis'][i] = v - 1
+                    modelInfo["ops"][index]['attrs']['axis'] = modelInfo["ops"][index]['attrs']['axis'][-4:]
         return newShape
     return shape
 

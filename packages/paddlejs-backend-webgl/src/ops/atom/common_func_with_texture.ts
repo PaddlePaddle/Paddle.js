@@ -3,6 +3,7 @@
  * @author yueshuangyan
  */
 
+// 根据tensor坐标获取对应纹理位置的pixel.r，返回值为 R 通道值
 export function getValueFromTensorPos(
     textureName: string,
     { width_shape, height_shape, channel, width_texture, height_texture }
@@ -10,10 +11,10 @@ export function getValueFromTensorPos(
     const chw = width_shape * height_shape * channel;
     const hw = width_shape * height_shape;
     return `
-    // 根据tensor坐标获取这个tensor位置的值
     float getValueFromTensorPos_${textureName}(int n, int c, int h, int w) {
         int index = n * ${chw} + c * ${hw} + h * ${width_shape} + w;
-        int pos_w = int(mod(float(index), float(${width_texture})));
+        // 0.01 hack: 在 PC/WISE 机器上，出现某个值（比如 index 为 3520） float(index) 和 float(3520) 返回值不同的情况，目前 +0.01 hack
+        int pos_w = int(mod(float(index) + 0.01, float(${width_texture})));
         int pos_h = index / int(${width_texture});
         vec4 pixels = TEXTURE2D(texture_${textureName},
             vec2(
@@ -21,11 +22,11 @@ export function getValueFromTensorPos(
                 (float(pos_h) + 0.5) / float(${height_texture})
             )
         );
-        // 只用了r通道
         return pixels.r;
     }`;
 }
 
+// 根据tensor坐标获取对应纹理位置的pixel，返回值为四通道值 RGBA
 export function getValueFromTensorPosPacking(
     textureName: string,
     { channel, height_shape, width_texture, height_texture, width_shape }
@@ -33,10 +34,10 @@ export function getValueFromTensorPosPacking(
     const chw = width_shape * height_shape * channel;
     const hw = width_shape * height_shape;
     return `
-    // 根据tensor坐标获取这个tensor位置的值
     vec4 getValueFromTensorPosPacking_${textureName}(int n, int c, int h, int w) {
         int index = n * ${chw} + c * ${hw} + h * ${width_shape} + w;
-        int pos_w = int(mod(float(index), float(${width_texture})));
+        // 0.01 hack: 在 PC/WISE 设备上，出现某个值（比如 index 为 3520） float(index) 和 float(3520) 返回值不同的情况，目前 +0.01 hack
+        int pos_w = int(mod(float(index) + 0.01, float(${width_texture})));
         int pos_h = index / int(${width_texture});
         vec4 pixels = TEXTURE2D(texture_${textureName},
             vec2(
@@ -44,7 +45,6 @@ export function getValueFromTensorPosPacking(
                 (float(pos_h) + 0.5) / float(${height_texture})
             )
         );
-        // 只用了r通道
         return pixels;
     }`;
 }

@@ -13,13 +13,22 @@ function mainFunc(
         fuse_relu,
         filter_nearest_vec4,
         filter_remainder_vec4,
-        act_type
+        act_type,
+        padding_algorithm = ''
     }
 ) {
     const [stride_v = 1, stride_h = 1] = strides;
-    const [padTop = 0, padLeft = 0] = paddings;
+    let [padTop = 0, padLeft = 0] = paddings;
     const [dilation_v = 1, dilation_h = 1] = dilations;
 
+    function calcPadding() {
+        if (padding_algorithm === 'SAME'
+            && ((Math.ceil((origin.width_shape - filter.width_shape) / stride_v) + 1) !== out.width_shape)) {
+            padTop = 1;
+            padLeft = 1;
+        }
+    }
+    calcPadding();
     return `
     // start函数
     void main(void) {

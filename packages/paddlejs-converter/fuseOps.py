@@ -60,7 +60,7 @@ def opListFuse(ops):
                 if op['type'] == fuse:
                     prevOp = ops[index - 1]
 
-                    if opExistSingleNode(prevOp['outputs']['Out'][0]):
+                    if opExistSingleNode(prevOp['outputs']['Out'][0]) and len(prevOp['outputs']['Out']) == 1 :
                         prevOp['attrs']['fuse_opt'] = {}
                         if 'fuse_opt' in op['attrs']:
                             prevOp['attrs']['fuse_opt'] = op['attrs']['fuse_opt']

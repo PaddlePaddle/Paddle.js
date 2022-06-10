@@ -1,6 +1,6 @@
 {
   "name": "@paddlejs/paddlejs-backend-webgl",
-  "version": "1.2.0",
+  "version": "1.2.7",
   "description": "",
   "main": "lib/index",
   "scripts": {

@@ -4,12 +4,15 @@
 
 function mainFunc(
     {},
-    { target_length, num, dim }
+    { target_length, num, dim, sections }
 ) {
+
+    const splitChip = sections && sections.length > 1 ? sections[0] : target_length / num;
+
     return `
     // start函数
     void main(void) {
-        int length = int(${target_length} / ${num});
+        int length = int(${splitChip});
         ivec4 oPos = getOutputTensorPos();
         // 输出坐标转换为输入坐标
         oPos[${dim}] = oPos[${dim}] + layer_run_time * length;

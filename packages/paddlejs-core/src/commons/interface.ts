@@ -63,9 +63,13 @@ export interface FeedShape {
     fh: number;
 };
 
+
+export interface ParamObject {
+    [key: string]: number;
+}
 interface ModelObj {
     model: Model;
-    params: Float32Array
+    params: Float32Array | ParamObject
 }
 export interface RunnerConfig {
     modelPath?: string;

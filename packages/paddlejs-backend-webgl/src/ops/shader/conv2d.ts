@@ -13,8 +13,11 @@ function mainFunc(
         fuse_relu,
         filter_nearest_vec4,
         filter_remainder_vec4,
-        act_type,
-        padding_algorithm = ''
+        act_type = '',
+        padding_algorithm = '',
+        hard_swish_offset = 3.0,
+        hard_swish_scale = 6.0,
+        hard_swish_threshold = 6.0
     }
 ) {
     const [stride_v = 1, stride_h = 1] = strides;
@@ -118,6 +121,12 @@ function mainFunc(
         }
         else if (${act_type === 'relu6'}) {
             res = min(max(0.0, res), 6.0);
+        }
+        else if (${act_type === 'hard_swish'}) {
+            res = res * min(
+                max(0.0, res + float(${hard_swish_offset})),
+                float(${hard_swish_threshold})
+            ) / float(${hard_swish_scale});
         }
 
         setOutput(res);

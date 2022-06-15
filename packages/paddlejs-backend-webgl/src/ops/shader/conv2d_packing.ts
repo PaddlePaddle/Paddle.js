@@ -10,7 +10,10 @@ function mainFunc(
         paddings = [],
         dilations = [],
         fuse_relu,
-        act_type
+        act_type,
+        hard_swish_offset = 3.0,
+        hard_swish_scale = 6.0,
+        hard_swish_threshold = 6.0
     }
 ) {
     const [stride_v = 1, stride_h = 1] = strides;
@@ -84,6 +87,13 @@ function mainFunc(
         else if (${act_type === 'relu6'}) {
             res = min(max(vec4(0.0, 0.0, 0.0, 0.0), res), vec4(6.0, 6.0, 6.0, 6.0));
         }
+        else if (${act_type === 'hard_swish'}) {
+            res = res * min(
+                max(vec4(0.0, 0.0, 0.0, 0.0), res + vec4(${hard_swish_offset})),
+                vec4(${hard_swish_threshold})
+            ) / vec4(${hard_swish_scale});
+        }
+
         setPackedOutput(res);
     }
     `;

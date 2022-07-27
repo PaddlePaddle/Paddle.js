@@ -10,6 +10,7 @@ import conv2d_depthwise from './shader/conv2d_depthwise';
 import depthwise_conv2d from './shader/depthwise_conv2d';
 import conv2d_elementwise_add from './shader/conv2d_elementwise_add';
 import pool2d from './shader/pool2d';
+import pool2d_avg_adaptive from './shader/pool2d_avg_adaptive';
 import pool2d_max from './shader/pool2d_max';
 import pool2d_winograd from './shader/pool2d_winograd';
 import elementwise_add from './shader/elementwise_add';
@@ -117,6 +118,7 @@ const ops = {
     rnn_cell,
     rnn_origin,
     pool2d_avg,
+    pool2d_avg_adaptive,
     prelu: dynamic('prelu'),
     relu6: dynamic('relu6'),
     leakyRelu: dynamic('leakyRelu'),

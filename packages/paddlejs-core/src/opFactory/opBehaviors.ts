@@ -92,6 +92,17 @@ const behaviors : Behaviors = {
         }
     },
 
+    isAdaptiveAvg() {
+        const {
+            adaptive,
+            pooling_type
+        } = this.processedAttrs;
+
+        if (adaptive && pooling_type === 'avg') {
+            this.name += '_avg_adaptive';
+        }
+    },
+
     isMax() {
         const type = this.processedAttrs['pooling_type'] === 'max' ? 1 : 0;
         this.processedAttrs['pooling_type'] = type;

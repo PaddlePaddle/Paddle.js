@@ -18,7 +18,6 @@ function mainFunc(
         float res = 0.0;
         // 获取output的坐标
         ivec4 out_pos = getOutputTensorPos();
-        int count_pool = 0;
         int i = out_pos[2] * ${stride_v} - ${padTop};
         int j = out_pos[3] * ${stride_h} - ${padLeft};
         int hstart = int(floor(float(i) * float(${H}) / float(${ksize_y})));
@@ -29,9 +28,9 @@ function mainFunc(
             for (int fx = wstart; fx < wend; fx++) {
                 float curr = getValueFromTensorPos_origin(out_pos[0], out_pos[1], fy, fx);
                 res += curr;
-                count_pool++;
             }
         }
+        int count_pool = (hend - hstart) * (wend - wstart);
         res = res / float(count_pool);
         setOutput(res);
     }

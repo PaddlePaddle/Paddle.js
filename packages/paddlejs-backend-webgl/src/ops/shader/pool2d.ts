@@ -64,6 +64,7 @@ export default {
         origin: ['getValueFromTensorPos']
     },
     behaviors: [
+        'isAdaptiveAvg',
         'isMax',
         'setPacked',
         'setAdaptive',

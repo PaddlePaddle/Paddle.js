@@ -5,7 +5,7 @@
 function mainFunc({
     out
 }) {
-    const THRESHHOLD = 0.4;
+    const THRESHHOLD = 0.2;
     return `
 
     #define SIGMA SIGMA 3.0
@@ -29,8 +29,7 @@ function mainFunc({
         kernel[1] = 0.13298;
         kernel[2] = 0.12579369017522166;
 
-
-        float origin_alpha = TEXTURE2D(texture_origin, vec2(outCoord.x, outCoord.y / 2.0 + 0.5)).r;
+        float origin_alpha = 1.0 - TEXTURE2D(texture_origin, vec2(outCoord.x, outCoord.y) / 2.0).r;
         vec4 counter = TEXTURE2D(texture_counter, outCoord.xy);
         vec4 res = vec4(0.0);
 
@@ -58,46 +57,8 @@ function mainFunc({
             }
         }
         else if (type == 1) {
-            vec4 pixel = vec4(1.0, 1.0, 1.0, 0.0);
-            if (origin_alpha > ${THRESHHOLD}) {
-                pixel.a = origin_alpha;
-            }
-            else {
-                pixel = vec4(0.0, 0.0, 0.0, 0.0);
-            }
-            vec4 bc = pixel;
-            vec4 gc = bc;
-
-            float alpha = 0.0;
-            float temp = 0.0;
-            float gZ = 0.0;
-            float gfactor;
-            const int kSize = (MSIZE-1)/2; // 1
-
-            //read out the texels
-            for (int i=-kSize; i <= kSize; ++i) {
-                for (int j=-kSize; j <= kSize; ++j) {
-                    // color at pixel in the neighborhood
-                    vec2 coord = outCoord.xy + vec2(float(i), float(j))*sourceTexelSize.xy;
-                    float r = TEXTURE2D(texture_origin, vec2(outCoord.x, outCoord.y / 2.0 + 0.5)).r;
-                    temp = r > ${THRESHHOLD} ? r : 0.0;
-
-                    // compute the gaussian smoothed
-                    gfactor = kernel[kSize+j]*kernel[kSize+i];
-                    gZ += gfactor;
-
-                    alpha += gfactor*temp;
-                }
-            }
-
-            gc = vec4(gc.rgb, alpha/gZ);
-
-            if (alpha/gZ > 0.1) {
-                gc = counter;
-                gc.a = alpha/gZ;
-            }
-            res = gc;
-            // res = vec4(gc.rgb * gc.a + counter.rgb * (1.0 - gc.a), 1.0);
+            res = counter;
+            res.a = origin_alpha;
         }
         else if (type == 2) {
             if (origin_alpha > ${THRESHHOLD}) {

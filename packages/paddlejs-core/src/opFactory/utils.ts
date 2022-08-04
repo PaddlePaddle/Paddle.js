@@ -88,6 +88,29 @@ export function packOpData(opData, packedName) {
 
 
 /**
+ * 将nchw排布数据转为nhwc排布数据
+ * @param {Array} data tensor data
+ * @param {Array} shape nchw
+ * @returns {Array} nhwc data
+ */
+export function nchw2nhwc(data: number[] | Float32Array, shape: number[]): number[] | Float32Array {
+    const [N, C, H, W] = shape;
+    const WXC = C * W;
+    const CXHXW = C * H * W;
+    const nhwcData: number[] | Float32Array = [];
+    for (let n = 0; n < N; n++) {
+        for (let c = 0; c < C; c++) {
+            for (let h = 0; h < H; h++) {
+                for (let w = 0; w < W; w++) {
+                    nhwcData.push(data[n * CXHXW + h * WXC + w * C + c]);
+                }
+            }
+        }
+    }
+    return new Float32Array(nhwcData);
+}
+
+/**
   * 将nhwc排布数据转为nchw排布数据
   * @param {Array} data tensor data
   * @param {Array} shape nchw

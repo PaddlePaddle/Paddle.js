@@ -3,9 +3,13 @@
  */
 
 function mainFunc(
-    { bias, scale, mean, variance },
+    { bias, scale, mean, variance, origin },
     { epsilon }
 ) {
+    // calc the real pos of channel
+    const len = origin.length_unformatted_shape;
+    const realCPos = 4 - len + 1;
+    const posStr = `oPos[${realCPos}]`;
     return `
     // start函数
     void main(void) {
@@ -14,11 +18,14 @@ function mainFunc(
         float o = getValueFromTensorPos_origin(oPos.r, oPos.g, oPos.b, oPos.a);
 
         // 归一化数据
-        vec4 scale = getPixelsFromTexturePos_scale(vec2( float(oPos.g) / float(${scale.width_texture}) + 0.00001, 0.0));
-        vec4 bias = getPixelsFromTexturePos_bias(vec2( float(oPos.g) / float(${bias.width_texture}) + 0.00001, 0.0));
-        vec4 mean = getPixelsFromTexturePos_mean(vec2((float(oPos.g)) / float(${mean.width_texture})  + 0.00001, 0.0));
+        vec4 scale = getPixelsFromTexturePos_scale(
+            vec2(float(${posStr}) / float(${scale.width_texture}) + 0.00001, 0.0));
+        vec4 bias = getPixelsFromTexturePos_bias(
+            vec2(float(${posStr}) / float(${bias.width_texture}) + 0.00001, 0.0));
+        vec4 mean = getPixelsFromTexturePos_mean(
+            vec2((float(${posStr})) / float(${mean.width_texture}) + 0.00001, 0.0));
         vec4 variance = getPixelsFromTexturePos_variance(
-            vec2((float(oPos.g)) / float(${variance.width_texture}) + 0.00001,
+            vec2((float(${posStr})) / float(${variance.width_texture}) + 0.00001,
             0.0)
         );
 

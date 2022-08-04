@@ -22,7 +22,7 @@ function mainFunc(
                 index = ${originShape[2] * originShape[3]} * out_pos[1] + ${originShape[3]} * oy + ox;
             }
         `;
-        outputCode = 'setOutput(float(index));';
+        outputCode = 'setOutput(float(res));';
     }
     return `
     // start函数

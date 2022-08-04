@@ -6,10 +6,10 @@ function mainFunc(
     { origin },
     { axis }
 ) {
-    let axisVal = axis;
-    if (!axis || axis < 0) {
-        axisVal = (axis || -1) + 4;
-    }
+    const length_unformatted_shape = origin.length_unformatted_shape;
+    const axisVal = !axis || axis < 0
+        ? ((axis || -1) + 4)
+        : axis + length_unformatted_shape;
     return `
     // start函数
     void main(void) {

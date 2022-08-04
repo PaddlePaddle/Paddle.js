@@ -3,19 +3,27 @@
  */
 
 function mainFunc(
-    {},
+    { origin, out },
     { axes }
 ) {
+    const length_unformatted_shape = origin.length_unformatted_shape;
+    const out_unformatted_shape = out.length_unformatted_shape;
     const axesArr = Array.isArray(axes) ? axes : [axes];
+    const diffNum = 4 - length_unformatted_shape;
+    const newAxes = axesArr.map(item => item === -1 ? 3 : (item + diffNum));
+
     // 获取output的维度
-    const posArr = [0, 1, 2, 3].filter(item => item >= axesArr.length);
-    const newPosArr = [0, 1, 2, 3].map(item => {
-        if (axesArr.indexOf(item) > -1) {
-            return 0;
+    // const posArr = [0, 1, 2, 3].filter(item => item >= axesArr.length);
+    const posArr = ['oPos.r', 'oPos.g', 'oPos.b', 'oPos.a'].slice(-1 * out_unformatted_shape);
+    const dest = [0, 1, 2, 3];
+    Array.from(newAxes, axis => dest.splice(axis, 1, -1));
+    const newPosArr = dest.reverse().map(item => {
+        if (item === -1) {
+            return '0';
         }
-        const nowIndex = posArr.splice(0, 1);
-        return `oPos[${nowIndex}]`;
-    });
+        return posArr.pop() || '0';
+    }).reverse();
+
     const posStr = newPosArr.join(',');
 
     return `

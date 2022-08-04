@@ -50,6 +50,7 @@ export interface Model {
     chunkNum?: number;
     feedShape?: FeedShape | null;
     dataLayout?: string;
+    feed?: ModelVar;
     ops: ModelOp[];
     vars: ModelVar[];
     multiOutputs?: ModelOp[];

@@ -13,7 +13,8 @@ const commonFuncBehaviors = {
     pow: ['transToPow'],
     exp: ['transToExp'],
     sqrt: ['transToSqrt'],
-    tanh: ['transToTanh']
+    tanh: ['transToTanh'],
+    abs: ['transToAbs']
 };
 
 function mainFunc(

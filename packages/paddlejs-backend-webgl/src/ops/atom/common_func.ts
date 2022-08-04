@@ -75,6 +75,11 @@ float exp_func(float x, float y, float z) {
     return result;
 }`;
 
+const abs_func = `
+float abs_func(float x, float y, float z) {
+    return abs(x);
+}`;
+
 export {
     prelu,
     relu6,
@@ -87,6 +92,7 @@ export {
     sqrt,
     pow_func,
     tanh_func,
+    abs_func,
     transferFromNHWCtoNCHW
 };
 

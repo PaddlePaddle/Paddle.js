@@ -46,16 +46,19 @@ export default class WebglFeedProcess extends Transformer {
         AddItemToVars(vars, [originImgVar, processImgVar]);
 
         // change recieve_img op input
-        const imageOriginInputOp = ops.find(item => {
+        const imageOriginInputOps = ops.filter(item => {
             const inputsMap = item.inputs;
             return Object.keys(inputsMap).find(key => inputsMap[key][0] === 'image');
         });
-        const inputs = imageOriginInputOp.inputs;
-        Object.keys(inputs).forEach(key => {
-            if (inputs[key][0] === 'image') {
-                inputs[key][0] = IMG_PRE_PROCESS_VAR;
-            }
-        });
+
+        for (const imageOriginInputOp of imageOriginInputOps) {
+            const inputs = imageOriginInputOp.inputs;
+            Object.keys(inputs).forEach(key => {
+                if (inputs[key][0] === 'image') {
+                    inputs[key][0] = IMG_PRE_PROCESS_VAR;
+                }
+            });
+        }
 
         // make feed post process op
         const imgPreProcessOp: ModelOp = {

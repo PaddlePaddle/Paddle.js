@@ -101,27 +101,34 @@ export default class ModelGraph {
     }
 
     private arrangeMap() {
-        const executed: object = {};
         const inIndex: number[] = [];
         const idtoindex: object = {};
+        const indexMap: object = {};
 
         for (let index = 0; index < this.weightMap.length; index++) {
             const item = this.weightMap[index];
-            for (let index = 0; index < item.outputsName.length; index++) {
-                const outputName = item.outputsName[index];
-                executed[outputName] = true;
+            for (let i = 0; i < item.outputsName.length; i++) {
+                const outputName = item.outputsName[i];
+                if (!indexMap[outputName]) {
+                    indexMap[outputName] = 1;
+                }
+                else {
+                    indexMap[outputName]++;
+                }
+                idtoindex[item.id] = index;
             }
+        }
+
+        for (let index = 0; index < this.weightMap.length; index++) {
+            const item = this.weightMap[index];
+
             inIndex[index] = 0;
-            idtoindex[item.id] = index;
-            if (item.inputsName.length > 1) {
-                item.inputsName.forEach(i => {
-                    if (executed[i] === true) {
-                        inIndex[index]++;
-                    }
-                });
-            }
-            else {
-                inIndex[index] = item.inputsName.length;
+
+            for (let i = 0; i < item.inputsName.length; i++) {
+                const inputName = item.inputsName[i];
+                if (indexMap[inputName]) {
+                    inIndex[index]++;
+                }
             }
         }
 
@@ -129,15 +136,37 @@ export default class ModelGraph {
     }
 
     private topoSort(ops: OpExecutor[], inIndex: number[], idtoindex: object) {
-        const inline: OpExecutor[] = [];
-        inline.push(ops[0]);
-        const ops_temp = ops.slice(0);
-        let prev: OpExecutor = null;
-        let iterator: OpExecutor = ops[0];
+        const zeroIndexList = [];
+        const bpOp = ops.slice(0);
+        for (let i = 0; i < inIndex.length; i++) {
+            if (inIndex[i] === 0) {
+                zeroIndexList.push(ops[i]);
+            }
+        }
+
+        let preOp = null;
+        for (const curOp of zeroIndexList) {
+            preOp = this.topoSortInner(ops, inIndex, idtoindex, curOp, bpOp, preOp);
+        }
+    }
+
+    private topoSortInner(
+        ops: OpExecutor[],
+        inIndex: number[],
+        idtoindex: object,
+        curOp: OpExecutor,
+        ops_temp: OpExecutor[],
+        preOp?: OpExecutor
+    ) {
+        const inline = [curOp];
+        let prev: OpExecutor = preOp;
+        let iterator: OpExecutor = curOp;
+
         while (inline.length > 0) {
-            if (prev != null) {
+            if (prev) {
                 ops[idtoindex[prev.id]].next = iterator.id;
             }
+
             prev = iterator;
             iterator = inline.pop() || {} as OpExecutor;
 
@@ -157,6 +186,9 @@ export default class ModelGraph {
                 }
             }
         }
+
+        ops[idtoindex[prev.id]].next = iterator.id;
+        return iterator;
     }
 
     /**

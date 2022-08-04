@@ -93,6 +93,10 @@ export default function genFuseOpCode(params: OpParams) {
                     act_name = 'exp_func';
                     break;
 
+                case 'abs':
+                    act_name = 'abs_func';
+                    break;
+
                 default:
                     break;
             }
@@ -127,7 +131,7 @@ export default function genFuseOpCode(params: OpParams) {
 
     return `
         ${activation_func}
-        
+
         float fuse_op(float x) {
             float res = x;
             ${calculation_str}

@@ -139,7 +139,7 @@ export default class MediaProcessor {
             }
         }
 
-        const nchwPixels: Float32Array = nhwc2nchw(result, [1, h, w, c]);
+        const nchwPixels: Float32Array = new Float32Array(nhwc2nchw(result, [1, h, w, c]));
         return nchwPixels;
     }
 
@@ -213,7 +213,7 @@ export default class MediaProcessor {
 
         this.targetContext.fillStyle = imageDataInfo.gapFillWith;
         this.targetContext.fillRect(0, 0, this.targetCanvas.width, this.targetCanvas.height);
-        this.targetContext.drawImage(image, x, y, sw, sh);
+        this.targetContext.drawImage(image, 0, 0, sw, sh);
     }
 
     /**

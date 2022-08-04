@@ -3,23 +3,35 @@
  */
 
 function mainFunc(
-    { out },
+    { origin, out },
     {}
 ) {
     return `
     // start函数
     void main(void) {
-        vec2 outCoord = vCoord.xy * (_2d_shape_texture_out);
-        int index = int(outCoord.x) + int(outCoord.y) * int(${out.width_texture});
-        ivec4 originPos = getTensorPosFromArrayIndex_origin(index);
-        float res = getValueFromTensorPos_origin(originPos[0], originPos[1], originPos[2], originPos[3]);
-        setOutput(res);
+        // 输出数据
+        ivec4 oPos = getOutputTensorPos();
+        // 输出坐标转换为输入坐标
+        int sumVal = oPos.a
+            + oPos.b * ${out.width_shape}
+            + oPos.g * ${out.height_shape} * ${out.width_shape}
+            + oPos.r * ${out.channel} * ${out.width_shape} * ${out.height_shape};
+        ivec4 new_oPos = transferFromNHWCtoNCHW(
+            sumVal,
+            ${origin.channel},
+            ${origin.width_shape},
+            ${origin.height_shape},
+            ${origin.total_shape}
+        );
+        float o = getValueFromTensorPos_origin(new_oPos.r, new_oPos.g, new_oPos.b, new_oPos.a);
+        setOutput(float(o));
     }
     `;
 }
 export default {
     mainFunc,
     textureFuncConf: {
-        origin: ['getTensorPosFromArrayIndex', 'getValueFromTensorPos']
-    }
+        origin: ['getValueFromTensorPos']
+    },
+    commonFuncConf: ['transferFromNHWCtoNCHW']
 };

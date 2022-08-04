@@ -4,7 +4,7 @@
 
 function mainFunc(
     {
-        origin
+        out
     },
     {
         axes
@@ -12,19 +12,30 @@ function mainFunc(
 ) {
     const {
         length_unformatted_shape
-    } = origin;
+    } = out;
 
     const axes_arr = Array.isArray(axes) ? axes : [axes];
-    const diffNum = 4 - length_unformatted_shape - axes_arr.length;
-    const newAxes = axes_arr.map(item => item + diffNum);
+    const newAxes = axes_arr.map(item => item === -1 ? 3 : item);
 
     // 获取 output shape 里原本对应 origin shape 的维度
-    const posArr = [0, 1, 2, 3];
-    const newPosArr = posArr.filter(item => newAxes.indexOf(item) === -1).map(item => `oPos[${item}]`);
-    const prefix = Array.from(new Array(newAxes.length), () => '0');
-    newPosArr.splice(0, 0, ...prefix);
-    const posStr = newPosArr.join(',');
+    const posArr = [0, 1, 2, 3].slice(4 - length_unformatted_shape);
 
+    for (const axis of newAxes) {
+        posArr.splice(axis, 1);
+    }
+
+    const prefixArr = Array.from(new Array(4 - posArr.length), () => -1);
+    const newPosArr = [...prefixArr, ...posArr];
+
+    const newPosStrArr = [];
+
+    for (let i = 0, len = newPosArr.length; i < len; i++) {
+        const v = newPosArr[i];
+        const str = v === -1 ? '0' : `oPos[${v}]`;
+        newPosStrArr.push(str);
+    }
+
+    const posStr = newPosStrArr.join(',');
     return `
     void main() {
         ivec4 oPos = getOutputTensorPos();

@@ -62,8 +62,8 @@ export default class ModelLoader {
         this.inNode = env.get('platform') === 'node';
     }
 
-    async load() {
-        const modelInfo: Model = await this.fetchModel();
+    async load(modelJSON) {
+        const modelInfo: Model = modelJSON || await this.fetchModel();
         this.separateChunk = !!modelInfo.chunkNum && modelInfo.chunkNum > 0;
         this.chunkNum = this.separateChunk ? modelInfo.chunkNum : 0;
 

@@ -26,6 +26,8 @@ import batchnorm from './shader/batchnorm';
 import reshape2 from './shader/reshape2';
 import bilinear_interp from './shader/bilinear_interp';
 import bilinear_interp_v2 from './shader/bilinear_interp_v2';
+import linear_interp from './shader/linear_interp';
+import linear_interp_v2 from './shader/linear_interp_v2';
 import transpose2 from './shader/transpose2';
 import softmax from './shader/softmax';
 import dynamic from './shader/dynamic';
@@ -36,11 +38,12 @@ import arg_min from './shader/arg_min';
 import unsqueeze2 from './shader/unsqueeze2';
 import flatten_contiguous_range from './shader/flatten_contiguous_range';
 import greater_than from './shader/greater_than';
-import reduce_sum from './shader/reduce_sum';
 import where from './shader/where';
 import connect from './shader/connect';
 import squeeze2 from './shader/squeeze2';
 import pad3d from './shader/pad3d';
+import reduce_sum from './shader/reduce_sum';
+import reduce_max from './shader/reduce_max';
 import reduce_mean from './shader/reduce_mean';
 import shuffle_channel from './shader/shuffle_channel';
 import hard_swish from './shader/hard_swish';
@@ -97,6 +100,7 @@ const ops = {
     reshape: reshape2,
     reshape2,
     bilinear_interp,
+    linear_interp,
     transpose2,
     unpacked_2_packed,
     packed_2_unpacked,
@@ -105,9 +109,10 @@ const ops = {
     flatten2: reshape2,
     greater_than,
     reduce_sum,
+    reduce_mean,
+    reduce_max,
     where,
     connect,
-    reduce_mean,
     hard_swish,
     nearest_interp,
     nearest_interp_v2,
@@ -130,9 +135,11 @@ const ops = {
     sqrt: dynamic('sqrt'),
     tanh: dynamic('tanh'),
     exp: dynamic('exp'),
+    abs: dynamic('abs'),
     squeeze2,
     pad3d,
     bilinear_interp_v2,
+    linear_interp_v2,
     shuffle_channel,
     pack_out,
     nhwc_2_nchw,

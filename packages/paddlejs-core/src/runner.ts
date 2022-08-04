@@ -15,7 +15,7 @@ import env from './env';
 
 import type OpExecutor from './opFactory/opExecutor';
 
-import { accShape } from './opFactory/utils';
+import { accShape, genTensorData } from './opFactory/utils';
 import postOpsList from './postOps';
 
 export default class Runner {
@@ -47,7 +47,7 @@ export default class Runner {
         }
     }
 
-    async init() {
+    async init(modelJSON?: Model) {
         if (!GLOBALS.backendInstance) {
             console.error('ERROR: Haven\'t register backend');
             return;
@@ -59,7 +59,7 @@ export default class Runner {
         }
         else {
             await GLOBALS.backendInstance.init();
-            await this.load();
+            await this.load(modelJSON);
         }
         this.genFeedData();
         this.genGraph();
@@ -77,11 +77,11 @@ export default class Runner {
         }
     }
 
-    async load() {
+    async load(modelJSON?: Model) {
         const { modelPath, modelObj = null } = this.runnerConfig;
         if (modelPath) {
             const loader = new Loader(modelPath);
-            this.model = await loader.load();
+            this.model = await loader.load(modelJSON);
         }
         else if (modelObj?.model && modelObj?.params) {
             const {
@@ -126,9 +126,11 @@ export default class Runner {
     }
 
     async checkModelLoaded() {
+        if (!this.model) {
+            await this.load();
+        }
         if (this.weightMap.length === 0) {
             console.info('It\'s better to preheat the model before running.');
-            await this.load();
             this.genFeedData();
             this.genGraph();
             this.genOpData();
@@ -168,7 +170,12 @@ export default class Runner {
         return callback ? callback(result) : result;
     }
 
-    async predictWithFeed(data: number[] | InputFeed[] | ImageData, callback?, shape?: number[]) {
+    async predictWithFeed(
+        data: number[] | InputFeed[] | ImageData,
+        callback?,
+        shape?: number[],
+        isNchw?: boolean
+    ) {
         const { fc = 3, fw, fh } = this.feedShape;
         let inputFeed;
 
@@ -194,6 +201,16 @@ export default class Runner {
                 ];
             }
         }
+        else if (ArrayBuffer.isView(data)) {
+            inputFeed = [
+                {
+                    data,
+                    shape: shape || [1, fc, fh, fw],
+                    name: 'image',
+                    persistable: true
+                }
+            ];
+        }
         else {
             // 类imageData类型
             const { width, height, data: inputData } = data as ImageData;
@@ -205,6 +222,16 @@ export default class Runner {
                     persistable: true
                 }
             ];
+        }
+
+        if (!isNchw) {
+            const feed = inputFeed[0];
+            feed.data = genTensorData(
+                feed.data,
+                'nhwc',
+                feed.shape,
+                false
+            );
         }
 
         let result = [];
@@ -226,7 +253,7 @@ export default class Runner {
         const { type, feedShape, webglFeedProcess } = this.runnerConfig;
         this.feedShape = this.model.feedShape || feedShape;
         const { fc = 3, fh, fw } = this.feedShape;
-        const vars = this.model.vars;
+        const { vars, feed } = this.model;
         let preheatFeedData;
         if (type === GraphType.MultipleInput) {
             // 默认第1个是输入op, 形为inputs: {X: [a, b]}
@@ -244,11 +271,11 @@ export default class Runner {
             }
         }
         else {
+            preheatFeedData = feed || findVarByKey(vars, 'image');
             const feedC = env.get('backend') !== 'wasm' && webglFeedProcess ? 4 : fc;
-            preheatFeedData = findVarByKey(vars, 'image');
             const imageBaseInfo = {
                 name: 'image',
-                shape: [1, feedC, fh, fw]
+                shape: [1, fc, fh, fw]
             };
             preheatFeedData = Object.assign(
                 imageBaseInfo,
@@ -258,6 +285,10 @@ export default class Runner {
                     persistable: true
                 }
             );
+
+            if (env.get('backend') !== 'wasm' && webglFeedProcess) {
+                preheatFeedData.shape[1] = 4;
+            }
         }
 
         AddItemToVars(vars, preheatFeedData);
@@ -265,50 +296,53 @@ export default class Runner {
 
     updateFeedData(inputFeed) {
         const feed = inputFeed[0];
-        const imageOp = this.weightMap.find(item => {
+        const imageOps = this.weightMap.filter(item => {
             if (!item.opData) {
                 return null;
             }
             const tensorData = item.opData.inputTensors;
             return tensorData.find(tensor => tensor.tensorId.endsWith('_image'));
-        }) as OpExecutor;
+        }) as OpExecutor[];
 
-        const imageInputTensor = imageOp.opData.inputTensors.find(
-            tensor => tensor.tensorId.endsWith('_image')
-        );
-        imageInputTensor.data = feed.data;
-
-        const {
-            webglFeedProcess = false,
-            keepRatio = true
-        } = this.runnerConfig;
-        if (webglFeedProcess || env.get('webgl_gpu_pipeline')) {
-            // support imageDataLike feed which has unit8ClampedArray data and width + height or shape
-            // support ImageElementLike feed which is HTMLImageElement or HTMLVideoElement or HTMLCanvasElement
-            let shape = feed.shape || [1, 1, feed.height, feed.width];
-            let feedData = new Uint8Array(feed.data || []);
-            const isImageElementLike = feed.width && feed.height && !feed.data;
-            if (isImageElementLike) {
-                const w = (feed as HTMLImageElement).naturalWidth || feed.width;
-                const h = (feed as HTMLImageElement).naturalHeight || feed.height;
-                shape = [1, 1, h, w];
-                feedData = feed;
+        for (const imageOp of imageOps) {
+            for (const tensor of imageOp.opData.inputTensors) {
+                if (tensor.tensorId.endsWith('_image')) {
+                    tensor.data = feed.data;
+                }
             }
 
-            const imageInputTensorParams = imageInputTensor.opts;
-            imageInputTensorParams.shape = shape;
-            const imageOpData = imageOp.opData;
-            const imageTensor = new Tensor(imageInputTensorParams);
-            imageTensor.data = feedData;
-            imageOpData.inputTensors = [imageTensor];
+            const {
+                webglFeedProcess = false,
+                keepRatio = true
+            } = this.runnerConfig;
+            if (webglFeedProcess || env.get('webgl_gpu_pipeline')) {
+                const inputTensor = imageOp.opData.inputTensors.find(tensor => tensor.tensorId.endsWith('_image'));
+                // support imageDataLike feed which has unit8ClampedArray data and width + height or shape
+                // support ImageElementLike feed which is HTMLImageElement or HTMLVideoElement or HTMLCanvasElement
+                let shape = feed.shape || [1, 1, feed.height, feed.width];
+                let feedData = new Uint8Array(feed.data || []);
+                const isImageElementLike = feed.width && feed.height && !feed.data;
+                if (isImageElementLike) {
+                    const w = (feed as HTMLImageElement).naturalWidth || feed.width;
+                    const h = (feed as HTMLImageElement).naturalHeight || feed.height;
+                    shape = [1, 1, h, w];
+                    feedData = feed;
+                }
 
-            const [h, w] = shape.slice(-2);
-            const [dh, dw] = imageOpData.outputTensors[0].shape.slice(-2);
-            const scale = this.mediaProcessor.cover(w, h, dw, dh);
-            imageOp.uniform.u_scale.value = scale;
-            imageOp.uniform.u_keep_ratio.value = +keepRatio;
+                const imageInputTensorParams = inputTensor.opts;
+                imageInputTensorParams.shape = shape;
+                const imageOpData = imageOp.opData;
+                const imageTensor = new Tensor(imageInputTensorParams);
+                imageTensor.data = feedData;
+                imageOpData.inputTensors = [imageTensor];
+
+                const [h, w] = shape.slice(-2);
+                const [dh, dw] = imageOpData.outputTensors[0].shape.slice(-2);
+                const scale = this.mediaProcessor.cover(w, h, dw, dh);
+                imageOp.uniform.u_scale.value = scale;
+                imageOp.uniform.u_keep_ratio.value = +keepRatio;
+            }
         }
-
     }
 
     async execute() {
@@ -418,5 +452,17 @@ export default class Runner {
 
     stopPredict() {
         this.isPaused = true;
+    }
+
+    dispose() {
+        for (const item of this.weightMap) {
+            if (!item.opData) {
+                continue;
+            }
+            const opData = item.opData;
+            GLOBALS.backendInstance.dispose && GLOBALS.backendInstance.dispose(opData);
+        }
+        this.weightMap = [];
+        this.model = null;
     }
 }

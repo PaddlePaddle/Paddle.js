@@ -409,7 +409,13 @@ export default class WebGLBackend extends PaddlejsBackend {
         return loc;
     }
 
-    dispose() {
-
+    dispose({ inputTensors }) {
+        for (const tensor of inputTensors) {
+            const tensorName = tensor.tensorId;
+            this.texturesMap[tensorName] && this.gl.deleteTexture(this.texturesMap[tensorName]);
+            this.cacheTextures[tensorName] && this.gl.deleteTexture(this.cacheTextures[tensorName]);
+            this.cacheTextures[tensorName] = null;
+            this.texturesMap[tensorName] = null;
+        }
     }
 }

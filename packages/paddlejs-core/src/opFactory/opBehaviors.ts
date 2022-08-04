@@ -151,6 +151,10 @@ const behaviors : Behaviors = {
         this.processedAttrs['active_function'] = 'tanh_func';
     },
 
+    transToAbs() {
+        this.processedAttrs['active_function'] = 'abs_func';
+    },
+
     transToExp() {
         this.processedAttrs['active_function'] = 'exp';
     },
@@ -217,7 +221,11 @@ const behaviors : Behaviors = {
     normalizeDim() {
         const originShape = this.tensorDataMap['origin'].shape;
         const shape = Utils.formatShape(originShape);
-        const axis = Utils.formatAxis(originShape, this.processedAttrs.axis);
+        const { axis: attrAxis, dim: attrDim } = this.processedAttrs;
+        const originAxis = attrAxis !== undefined
+            ? attrAxis
+            : (Array.isArray(attrDim) && attrDim.length ? attrDim[0] : attrDim);
+        const axis = Utils.formatAxis(originShape, originAxis);
         const dim_value: number[] = [];
         for (let index = 0; index < shape[axis]; index++) {
             dim_value[index] = index;

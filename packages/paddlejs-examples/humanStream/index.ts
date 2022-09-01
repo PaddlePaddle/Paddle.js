@@ -1,5 +1,5 @@
 import Camera from '@paddlejs-mediapipe/camera';
-import * as humanseg from '@paddlejs-models/humanseg';
+import * as humanseg from '@paddlejs-models/humanseg/lib/index_gpu';
 
 let camera = null;
 const loadingDom = document.getElementById('isLoading');
@@ -8,6 +8,18 @@ const videoToolDom = document.getElementById('video-tool');
 
 const bgElement = document.createElement('div') as HTMLDivElement;
 const container = document.querySelector('body');
+
+
+const back_canvas = document.getElementById('back') as HTMLCanvasElement;
+const background_canvas = document.createElement('canvas');
+background_canvas.width = back_canvas.width;
+background_canvas.height = back_canvas.height;
+
+const img = new Image();
+img.src = './bgImgs/bg.jpg';
+img.onload = () => {
+    background_canvas.getContext('2d').drawImage(img, 0, 0, background_canvas.width, background_canvas.height);
+};
 
 container.appendChild(bgElement);
 
@@ -35,7 +47,7 @@ const canvas1 = document.getElementById('demo') as HTMLCanvasElement;
 const videoCanvas = document.createElement('canvas') as HTMLCanvasElement;
 const videoCanvasCtx = videoCanvas.getContext('2d');
 async function load() {
-    await humanseg.load(true, true);
+    await humanseg.load();
     camera = new Camera(video, {
         mirror: true,
         enableOnInactiveState: true,
@@ -43,10 +55,7 @@ async function load() {
             videoCanvas.width = video.width;
             videoCanvas.height = video.height;
             videoCanvasCtx.drawImage(video, 0, 0, video.width, video.height);
-            const {
-                data
-            } = await humanseg.getGrayValue(videoCanvas);
-            humanseg.blurBackground(data, canvas1);
+            humanseg.drawHumanSeg(videoCanvas, canvas1, background_canvas);
         }
     });
 }

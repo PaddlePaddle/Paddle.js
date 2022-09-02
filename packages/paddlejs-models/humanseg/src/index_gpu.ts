@@ -16,8 +16,8 @@ interface LoadOptions {
 
 let runner = null as Runner;
 
-let WIDTH = 398;
-let HEIGHT = 224;
+const WIDTH = 398;
+const HEIGHT = 224;
 
 function registerCustomOp() {
     registerOp(segImg, 'segImg');
@@ -57,14 +57,7 @@ export async function load(options: LoadOptions = {
     canvasWidth: 500,
     canvasHeight: 280
 }) {
-    const modelpath = 'https://paddlejs.bj.bcebos.com/models/fuse/humanseg/humanseg_398x224_fuse_activation/model.json';
-    const lightModelPath = 'https://paddlejs.bj.bcebos.com/models/fuse/humanseg/humanseg_288x160_fuse_activation/model.json';
-    const modelPath = options.enableLightModel ? lightModelPath : modelpath;
-
-    if (options.enableLightModel) {
-        WIDTH = 288;
-        HEIGHT = 160;
-    }
+    const modelPath = 'https://paddlejs.cdn.bcebos.com/models/humansegv2/model.json';
 
     runner = new Runner({
         modelPath: modelPath,

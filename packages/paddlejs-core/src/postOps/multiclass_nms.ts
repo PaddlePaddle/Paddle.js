@@ -84,7 +84,7 @@ export default function compute(inputs, attrs) {
         // threshold, sort, slice
         const scoresMapList = getMaxScore(scores[i], score_threshold, nms_top_k);
         if (!scoresMapList || !scoresMapList.length) {
-            return [];
+            continue;
         }
         const maxScoreMap = scoresMapList.shift();
         const maxIndice = maxScoreMap.i;

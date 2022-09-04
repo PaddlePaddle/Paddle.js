@@ -1,11 +1,13 @@
 
 .DS_Store
 node_modules
+miniprogram_npm
 dist
 lib
 coverage
 .cache
 lerna-debug.log
 .vscode
+.idea
 !e2e/dist
 e2e/dist/*_bundle.js

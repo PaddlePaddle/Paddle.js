@@ -73,5 +73,20 @@ wx.canvasGetImageData({
 });
 ```
 
-## 4. 更多
+## 4. 常见问题
+### 4.1 出现报错 `Invalid context type [webgl2] for Canvas#getContext`
+
+可以不管，不影响正常代码运行和demo功能
+
+### 4.2 微信开发者工具出现黑屏，然后出现超多报错
+
+重启微信开发者工具
+
+### 4.3 模拟和真机调试结果不一致；模拟检测不到文本等
+
+可以以真机为准；
+
+模拟检测不到文本等可以尝试随意改动下代码（增删换行等）再点击编译
+
+## 5. 更多
 * [详细文档](https://mp.weixin.qq.com/s/KBjXawSfBreUCsIYbUgF-w)

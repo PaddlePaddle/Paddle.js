@@ -283,7 +283,7 @@ function get_rotate_crop_image(img, points) {
   const dsize = new CV.Size(img_crop_width, img_crop_height);
   // 透视转换
   CV.warpPerspective(src, dst, M, dsize, CV.INTER_CUBIC, CV.BORDER_REPLICATE, new CV.Scalar());
-  console.log('CV', src, dst);
+
   const dst_img_height = dst.rows;
   const dst_img_width = dst.cols;
   let dst_rot;
@@ -308,7 +308,7 @@ function get_rotate_crop_image(img, points) {
       scale = RECHEIGHT / dst_img_height;
       CV.resize(dst, dst_resize, dsize_resize, scale, scale, CV.INTER_AREA);
   }
-  console.log('resize', dst_resize);
+
   canvas_det.width = dst_resize.cols;
   canvas_det.height = dst_resize.rows;
   canvas_det.getContext('2d').clearRect(0, 0, canvas_det.width, canvas_det.height);
@@ -467,7 +467,7 @@ Page({
 
       // 排序，使得最后结果输出尽量按照从上到下的顺序
       const boxes = sorted_boxes(points.boxes);
-      console.log('boxs', boxes);
+
       const text_list = [];
 
       for (let i = 0; i < boxes.length; i++) {

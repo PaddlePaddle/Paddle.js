@@ -46,8 +46,6 @@ function decode(text_index, text_prob, is_remove_duplicate = false) {
   let text = '';
   let mean = 0;
 
-  console.log('char_list', char_list);
-
   if (char_list.length) {
       text = char_list.join('');
       let sum = 0;

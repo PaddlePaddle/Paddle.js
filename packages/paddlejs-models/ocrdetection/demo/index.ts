@@ -1,16 +1,38 @@
-import * as ocr from '../src/index';
+import { OCRDetection } from '../src/index';
 
 const loading = document.getElementById('isLoading');
 const inputElement = document.getElementById('uploadImg');
 const imgElement = document.getElementById('image1') as HTMLImageElement;
 const canvasOutput = document.getElementById('canvas') as HTMLCanvasElement;
 
+
+const defaultModelConfig = {modelPath: './ppocr_det_960_js/model.json', 
+                                        fill: '#fff',
+                                        mean: [0.485, 0.456, 0.406],
+                                        std: [0.229, 0.224, 0.225],
+                                        bgr: true};
+
+const ocrDetector = new OCRDetection(defaultModelConfig);
+
 load();
 
 async function load() {
-    await ocr.load();
+    await ocrDetector.init();
     loading.style.display = 'none';
 }
+
+inputElement.addEventListener('change', (e: Event) => {
+    imgElement.src = URL.createObjectURL((e.target as HTMLInputElement).files[0]);
+}, false);
+
+imgElement.onload = async function () {
+    canvasOutput.width = imgElement.width;
+    canvasOutput.height = imgElement.height;
+    const DetPostConfig = {thresh: 0.3, box_thresh: 0.6, unclip_ratio:2.5};
+    // 获取文本检测坐标
+    const res = await ocrDetector.detect(imgElement, DetPostConfig);
+    drawBox(res);
+};
 
 function drawBox(points: number[]) {
     canvasOutput.width = imgElement.naturalWidth;
@@ -31,15 +53,3 @@ function drawBox(points: number[]) {
         ctx.stroke();
     });
 }
-
-inputElement.addEventListener('change', (e: Event) => {
-    imgElement.src = URL.createObjectURL((e.target as HTMLInputElement).files[0]);
-}, false);
-
-imgElement.onload = async function () {
-    canvasOutput.width = imgElement.width;
-    canvasOutput.height = imgElement.height;
-    // 获取文本检测坐标
-    const res = await ocr.detect(imgElement);
-    drawBox(res);
-};

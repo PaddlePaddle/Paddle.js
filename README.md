@@ -104,26 +104,20 @@ https://paddlejs.baidu.com
 
 <p>
   <a target="_blank" href="./packages/paddlejs-examples/clasGame/README.md">
-    <img alt="clasGame" src="./packages/paddlejs-examples/clasGame/exampleImage/demo1.gif" style="width: 20%">
-  </a>
-  <a target="_blank" href="./packages/paddlejs-examples/wine/README.md">
-    <img alt="wine" src="https://user-images.githubusercontent.com/43414102/156372713-d07e190f-bdb6-433e-a5cd-866fffbbb5d6.gif" style="width: 20%">
-  </a>
-   <a target="_blank" href="./packages/paddlejs-examples/gesture/README.md">
-    <img alt="gesture" src="https://user-images.githubusercontent.com/43414102/156379706-065a4f57-cc75-4457-857a-18619589492f.gif" style="width: 20%">
-  </a>
-</p>
-<p>
-  <a target="_blank" href="./packages/paddlejs-examples/ocr/README.md">
-    <img alt="ocr" src="https://user-images.githubusercontent.com/43414102/156380942-2ee5ad8d-d023-4cd3-872c-b18ebdcbb3f3.gif" style="width: 60%">
+    <img alt="clasGame" src="./packages/paddlejs-examples/clasGame/exampleImage/demo1.gif" style="width: 100%">
+  </a><a target="_blank" href="./packages/paddlejs-examples/wine/README.md">
+    <img alt="wine" src="https://user-images.githubusercontent.com/43414102/156372713-d07e190f-bdb6-433e-a5cd-866fffbbb5d6.gif" style="width: 100%">
+  </a><a target="_blank" href="./packages/paddlejs-examples/gesture/README.md">
+    <img alt="gesture" src="https://user-images.githubusercontent.com/43414102/156379706-065a4f57-cc75-4457-857a-18619589492f.gif" style="width: 100%">
+  </a><a target="_blank" href="./packages/paddlejs-examples/ocr/README.md">
+    <img alt="ocr" src="https://user-images.githubusercontent.com/43414102/156380942-2ee5ad8d-d023-4cd3-872c-b18ebdcbb3f3.gif" style="width: 100%">
   </a>
 </p>
 <p>
   <a target="_blank" href="./packages/paddlejs-examples/humanseg/README.md">
-    <img alt="humanseg" src="https://user-images.githubusercontent.com/43414102/156384741-83f42d25-7062-49e1-9106-677bbbefbcfb.jpg" style="width: 32%">
-  </a>
-  <a target="_blank" href="./packages/paddlejs-models/facedetect/README.md">
-    <img alt="facedetect" src="https://user-images.githubusercontent.com/43414102/156384732-cb053df6-826e-42d7-92ba-536ab67011c4.jpg" style="width: 28%">
+    <img alt="humanseg" src="https://user-images.githubusercontent.com/43414102/156384741-83f42d25-7062-49e1-9106-677bbbefbcfb.jpg" style="width: 40%">
+  </a><a target="_blank" href="./packages/paddlejs-models/facedetect/README.md">
+    <img alt="facedetect" src="https://user-images.githubusercontent.com/43414102/156384732-cb053df6-826e-42d7-92ba-536ab67011c4.jpg" style="width: 40%">
   </a>
 </p>
 

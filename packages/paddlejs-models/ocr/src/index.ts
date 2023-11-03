@@ -73,7 +73,7 @@ export async function init(detCustomModel = null, recCustomModel = null) {
     }
 }
 
-async function detect(image) {
+export async function detect(image) {
     // 目标尺寸
     const targetWidth = DETSHAPE;
     const targetHeight = DETSHAPE;

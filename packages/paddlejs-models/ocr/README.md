@@ -2,7 +2,7 @@
 
 # ocr
 
-Ocr is a text recognition module, which includes two models: ocr_detection and ocr_recognition。 Ocr_detection model detects the region of the text in the picture, ocr_recognition model can recognize the characters (Chinese / English / numbers) in each text area. 
+Ocr is a text recognition module, which includes two models: ocr_detection and ocr_recognition。 Ocr_detection model detects the region of the text in the picture, ocr_recognition model can recognize the characters (Chinese / English / numbers) in each text area.
 
 <img src="https://img.shields.io/npm/v/@paddlejs-models/ocr?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddlejs-models/ocr" alt="size"> <img src="https://img.shields.io/npm/dm/@paddlejs-models/ocr?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddlejs-models/ocr" alt="downloads">
 
@@ -25,6 +25,8 @@ npm run dev
 
 # Usage
 
+## Text Recognition
+
 ```js
 
 import * as ocr from '@paddlejs-models/ocr';
@@ -43,6 +45,21 @@ const res = await ocr.recognize(img, option?);
 console.log(res.text);
 // text area points
 console.log(res.points);
+```
+
+## Text Detection
+
+To do text position detection without recognition:
+
+```js
+
+import * as ocr from '@paddlejs-models/ocr';
+
+// Model initialization
+await ocr.init();
+
+// Get the text detection points
+const points = await ocr.detect(img);
 ```
 
 # Online experience

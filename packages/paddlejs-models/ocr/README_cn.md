@@ -24,13 +24,15 @@ npm run dev
 
 # 使用
 
+## 文本识别
+
 ```js
 import * as ocr from '@paddlejs-models/ocr';
 
 // 模型初始化
 await ocr.init();
 
-// 获取文本识别结果API，img为用户上传图片，option为可选参数 
+// 获取文本识别结果API，img为用户上传图片，option为可选参数
 // option.canvas as HTMLElementCanvas：若用户需要绘制文本框选区域，传入canvas元素
 // option.style as object：若用户需要配置canvas 样式，传入style 对象
 // option.style.strokeStyle as string：文本框选颜色
@@ -41,6 +43,21 @@ const res = await ocr.recognize(img, option?);
 console.log(res.text);
 // 文本区域坐标
 console.log(res.points);
+```
+
+## 文本检测
+
+仅检测文本位置检测，而不识别文字：
+
+```js
+
+import * as ocr from '@paddlejs-models/ocr';
+
+// 模型初始化
+await ocr.init();
+
+// 获取文本位置检测结果
+const points = await ocr.detect(img);
 ```
 
 # 在线体验

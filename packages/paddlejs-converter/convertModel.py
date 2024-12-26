@@ -12,7 +12,6 @@ import shutil
 import stat
 import traceback
 import numpy as np
-import paddle.fluid as fluid
 import paddle as paddle
 import copy
 from functools import reduce
@@ -193,7 +192,7 @@ def organizeModelVariableInfo(result):
 
         # persistable数据存入paramValuesDict，等待排序
         if v.persistable:
-            tensor = np.array(fluid.global_scope().find_var(v.name).get_tensor())
+            tensor = np.array(paddle.static.global_scope().find_var(v.name).get_tensor())
             data = tensor.flatten().tolist()
             paramValuesDict[v.name] = data
 
@@ -214,7 +213,7 @@ def organizeModelVariableInfo(result):
     exe.run(program, feed=feedData, fetch_list=fetch_targets, return_numpy=False)
 
     for varKey in varInfoDict:
-        var = fluid.global_scope().find_var(varKey)
+        var = paddle.static.global_scope().find_var(varKey)
         varData = np.array(var.get_tensor())
         varShape = list(varData.shape)
         varInfoDict[varKey]['shape'] = validateShape(varShape, varKey)
@@ -363,7 +362,7 @@ def appendConnectOp(fetch_targets):
     # 从fetch_targets中提取输出算子信息
     for target in fetch_targets:
         name = target.name
-        curVar = fluid.global_scope().find_var(name)
+        curVar = paddle.static.global_scope().find_var(name)
         curTensor = np.array(curVar.get_tensor())
         shape = list(curTensor.shape)
         totalShape += reduce(lambda x, y: x * y, shape)
@@ -450,8 +449,8 @@ def convertToPaddleJSModel(modelDir, modelName, paramsName, outputDir, useGPUOpt
 
     # 初始化fluid运行环境和配置
     global exe
-    exe = fluid.Executor(fluid.CPUPlace())
-    result = fluid.io.load_inference_model(dirname=modelDir, executor=exe, model_filename=modelName, params_filename=paramsName)
+    exe = paddle.static.Executor(paddle.CPUPlace())
+    result = paddle.static.load_inference_model(path_prefix=modelDir, executor=exe)
     global program
     program = result[0]
     fetch_targets = result[2]

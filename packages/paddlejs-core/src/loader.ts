@@ -154,7 +154,7 @@ export default class ModelLoader {
             ? this.isLocalFile
                 ? this.fetchLocalFile
                 : require('node-fetch')
-            : window.fetch.bind(window);
+            : fetch;
 
         return this.realFetch(path, {
             method: method,
